@@ -285,7 +285,7 @@ if [ "$SQLITE" = "NO" ]; then
 else
 	out "checking for sqlite3..."; sqlite3 -version 2>/dev/null
 	if [ "$?" = "127" ]; then
-		echo "no (You need SQLite3 or newer.)"
+		echo "no (You need SQLite3 or newer (or disable SQLite3 support, cf. ./configure --help).)"
 		exit 1
 	fi
 
@@ -300,7 +300,7 @@ int main() {
   return 0;
 }
 EOF
-	gcc -o temp temp.c -lsqlite3 -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need libSQLite3 development files and library."
+	gcc -o temp temp.c -lsqlite3 -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need libSQLite3 development files and library (or disable SQLite3 support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
@@ -324,7 +324,7 @@ int main() {
   return 0;
 }
 EOF
-	gcc -o temp temp.c -lmysqlclient -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need the MySQL client library and their development files."
+	gcc -o temp temp.c -lmysqlclient -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need the MySQL client library and their development files (or disable MySQL support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
