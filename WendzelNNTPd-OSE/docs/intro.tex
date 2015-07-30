@@ -1,0 +1,44 @@
+\chapter{Introduction}\index{Introduction}
+
+WendzelNNTPd is a tiny but easy to use Usenet server (NNTP server) for Linux, *nix and BSD. The server is written in C. For security reasons, it is compiled with stack smashing protection by default, if your compiler supports that feature.
+
+\section{Features}
+
+\subsection{License}
+
+WendzelNNTPd uses the GPLv3 license.
+
+\subsection{Database Abstraction Layer}
+
+WendzelNNTPd contains a database abstraction layer. Currently supported database systems are SQlite3 and MySQL. New databases can be easily added.
+
+\subsection{Security}
+
+WendzelNNTPd contains different security features, the probably most important feature are Access Control Lists (ACLs) as well as the Role Based Access Control (RBAC) system. ACL and RBAC are described in a own chapter. WendzelNNTPd is probably the first Usenet server with support for RBAC.
+
+Another feature are ``invisible newsgroups'': If access control is activate, a user without permission will neither be able to see the existence of a newsgroup, nor will he be able to post to or read the newsgroup, if he would know about its existence.
+
+\subsection{Auto-prevention of double-postings}
+
+In case a user sends a posting to two equal newsgroups within one post command's ``Newsgroups:'' header tag, the server will add it only once to save memory on the server and the time of the readers.
+
+\subsection{IPv6}
+
+WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as well as multiple ports.
+
+\subsection{Why this is not a perfect Usenet server}
+
+WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the used regular expression library is not 100\% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
+
+\section{Contribute}
+
+See ``CONTRIBUTE'' file in the tarball.
+
+\section{History}
+
+The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped the development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I primarly fix reported bugs and add minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the ``HISTORY'' file in the tarball.
+
+
+
+
+

@@ -1,0 +1,42 @@
+# Project: WendzelNNTPd
+# Makefile created by Dev-C++ 4.9.9.2
+
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+LEX  = flex
+YACC = bison
+
+LIBS =  -L"C:/Dev-Cpp/lib" -lsqlite3 -lsqlite3dll -lws2_32 -lrx -lrx.dll -lpthreadGC2
+
+INCS =  -I"C:/Dev-Cpp/include" -Isrc/include
+
+#DEBUG= -DDEBUG -DXXDEBUG
+
+CFLAGS = $(INCS) -Isrc\include -Wall -Wshadow -Wcast-qual -Wsign-compare
+CFLAGS += $(TRIAL_VER) $(DEBUG)
+#CFLAGS += -Wpadded -Wstrict-prototypes
+
+RM = rm -f
+
+all : clean
+	$(LEX) src/config.l
+	$(YACC) -v -d -t -o config.tab.c src/config.y
+	$(CC) $(INCS) -c lex.yy.c -o bin/lex.yy.o
+	$(CC) $(INCS) -c config.tab.c -o bin/config.tab.o
+	$(CC) $(INCS) -c $(CFLAGS) src/log.c -o bin/log.o
+	$(CC) $(INCS) -c $(CFLAGS) src/database.c -o bin/database.o
+	$(CC) $(INCS) -c $(CFLAGS) src/cdpstrings.c -o bin/cdpstrings.o
+	$(CC) $(INCS) -c $(CFLAGS) src/server.c -o bin/server.o
+	$(CC) $(INCS) -c $(CFLAGS) src/main.c -o bin/main.o
+	$(CC) $(INCS) -c $(CFLAGS) src/charstack.c -o bin/charstack.o
+	$(CC) $(INCS) -c $(CFLAGS) src/w32trial.c -o bin/w32trial.o
+	$(CC) $(INCS) -c $(CFLAGS) src/xml_out.c -o bin/xml_out.o
+	$(CC) $(INCS) -c $(CFLAGS) src/libfunc.c -o bin/libfunc.o
+	$(CC) -o bin/wendzelnntpd.exe bin/main.o bin/log.o bin/charstack.o bin/server.o bin/lex.yy.o bin/config.tab.o bin/database.o bin/cdpstrings.o bin/w32trial.o bin/xml_out.o bin/libfunc.o $(LIBS)
+	$(CC) $(INCS) $(CFLAGS) -DTHIS_TOOLNAME=\"wendzelnntpadm\" -c src/cdpnntpadm.c -o bin/wendzelnntpadm.o
+	$(CC) -o bin/wendzelnntpadm.exe bin/wendzelnntpadm.o $(LIBS)
+
+
+clean :
+	$(RM) src/config.tab.c src/lex.yy.c bin/*.o bin/wendzelnntpd.exe bin/wendzelnntpadm.exe

@@ -1,0 +1,29 @@
+TODO-LIST
+=========
+
+SOON:
+ - unicode support or something similar (->Umlautdomains in "From:"!)
+AFTER:
+- post-size
+- AUTHINFO SIMPLE
+- LAST, NEXT
+- NEWGROUPS
+- Newsletter
+LATER:
+ - WendzelNNTPd-Thread-Problem:
+   Alle [\t\r\n] durch ' ' ersetzen, das dürfte klappen, dann hab ich die Clients hoffentlich
+   alle so weit, dass sie mir die threads vernünftig generieren (speziell das verfluchte sylpheed!)
+ - implement more NNTP commands
+ - SSL
+MUCH LATER:
+ - postgres support
+ - ldap
+
+MISC:
+- make use of strdup() ...
+- add a real GNU configure script ;-)
+- switch to different user+group id after startup
+- die usenet.db unter win32 is sicherheitstechnisch nen graus,
+	weil da die passwoerter drin liegen ... aber was interessiert mich Windows.
+- implement more RFC commands
+

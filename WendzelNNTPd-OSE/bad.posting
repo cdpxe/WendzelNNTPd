@@ -1,0 +1,32 @@
+produces: SQLite3 error: unrecognized token: "');
+
+Newsgroups: alt.wendzelnntpd.test
+From: Steffen Wendzel <swendzel@localhost>
+Subject: testposting
+
+This 15 ju57 a simpl3 test-posting.
+with some special char''''''###```´´´s, of c0ur53!
+';
+.
+
+
+Newsgroups: alt.test
+From: Steffen Wendzel <SteffenWendzel@gmx.net>
+Subject: First cool SQL Posting ever made with 2 groups at a time
+
+yeah. if this will work, I made a very good job today.
+
+regards
+steffen
+.
+
+
+
+
+Newsgroups: alt.test
+From: Steffen Wendzel <SteffenWendzel@gmx.net>
+Subject: blah
+
+yeah. this is a nice day hmm WHAT THE HELL IS
+ahmmmm
+.

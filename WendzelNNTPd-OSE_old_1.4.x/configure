@@ -1,0 +1,390 @@
+#!/bin/sh
+# WendzelNNTPd configure script by Steffen 'cdp_xe' Wendzel.
+# Based on the Xyria:DNSd/cdpNNTPd configure script I wrote
+# in 2004 or 2005.
+# e-mail: swendzel (at) ploetner-it (dot) de
+# web:    http://www.wendzel.de
+
+# WendzelNNTPd is distributed under the following license:
+#
+# Copyright (c) 2004-2012 Steffen Wendzel <steffen (at) ploetner-it.de>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. The name of the author may not be used to endorse or promote products
+#    derived from this software without specific prior written permission
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+VERSION="2.1.0_use2.0 - mar-02-2010"
+
+MAKEFILE_INC="Makefile.inc"
+
+USE_SOLARIS_NETLIBS="NO"
+USE_GCCLOCAL_PTHREAD="NO"
+NEED_GCCLOCAL_PTHREAD="NO"
+USE_LIBPTHREAD="YES"
+ORDER=""
+
+OS=`uname -s`
+RELEASE=`uname -r`
+
+TABCPATH='src/'
+
+###################################################
+
+out()
+{
+	if [ "$OS" = "SunOS" ]; then
+		echo $1 '\c'
+	else
+		echo -n $1
+	fi
+}
+
+check()
+{
+	RET_VAL=$?
+
+	if [ "$4" != "" ]; then
+		CHK_VAL=$4
+	else
+		CHK_VAL="0"
+	fi
+	if [ "$RET_VAL" = "$CHK_VAL" ]; then
+		echo $1
+	else
+		echo "$2 (returned $RET_VAL, what is not eq to $CHK_VAL)"
+		echo $3
+		exit
+	fi
+}
+
+############# WELCOME #########################
+
+echo "This is the WendzelNNTPd configuration script"
+echo "       configure script v. $VERSION"
+echo
+echo "(C) 2004-2010 Steffen Wendzel"
+echo "    mail: steffenwendzel (at) gmx (dot) net"
+echo "    http://www.wendzel.de"
+echo
+
+###### check some env #########
+ADD_CFLAGS=$CFLAGS
+ADD_LNKFLAGS=$LDFLAGS
+
+# make /usr/local the default DESTDIR
+if [ "$DESTDIR" = "" ]; then
+	DESTDIR=/usr/local
+fi
+
+# make /usr/local/etc the default CONFDIR
+if [ "$CONFDIR" = "" ]; then
+	CONFDIR=/usr/local/etc
+fi
+
+if [ "$FAKECDIR" = "" ]; then
+	FAKECDIR=$CONFDIR
+fi
+
+if [ "$1" != "" ]; then
+	echo "This configure script takes some environment variables:"
+	echo
+	echo "DESTDIR  - the installation destination base dir (would be /usr"
+	echo "           or /usr/local in 99% of all cases)."
+	echo "           default: /usr/local"
+	echo "CONFDIR  - the installation destination of the config file"
+	echo "           (would be /etc or /usr/local/etc in 99% of all cases)."
+	echo "           default: /usr/local/etc"
+	echo "FAKECDIR - this is a fake directory to place the config file in"
+	echo "           (for example copy to fakeroot-.../etc/ but the code"
+	echo "           will use CONFDIR nevertheless). this is useful for"
+	echo "           building ports and packages in Linux and *BSD."
+	echo "           default: same as CONFDIR"
+	exit 1
+fi
+
+############# OS DEPENDENT PART ###############
+
+echo "operating system is...$OS"
+echo "operating system release is...$RELEASE"
+
+out 'checking for solaris...'
+if [ "$OS" = "SunOS" ]; then
+	echo "yes"
+	USE_SOLARIS_NETLIBS="YES"
+	TABCPATH=""
+	out "byte_order..."
+	if [ "`uname -m`" = "i86pc" ]; then
+		ORDER=1
+		echo "little endian"
+	else
+		ORDER=0
+		echo "big endian"
+		echo
+		echo "NOTE: WendzelNNTPd was never tested on big endian plattforms."
+		echo
+	fi
+else
+	echo "no"
+fi
+
+out "config for gcc-local -pthread..."
+if [ "$OS" = "OpenBSD" ]; then
+	USE_GCCLOCAL_PTHREAD="YES"
+	NEED_GCCLOCAL_PTHREAD="YES"
+	USE_LIBPTHREAD="NO"
+fi
+echo "done"
+
+out "checking for linux sort parameters (-bg)..."
+if [ "$OS" = "Linux" ]; then
+	ADDSORT="-bg"
+	echo "yes"
+else
+	echo "no"
+fi
+
+out "configuring for 'install' command..."
+if [ "$OS" = "SunOS" ]; then
+	# OpenSolaris
+	CMD_INSTALL_USEROPT="-u"
+else
+	# OpenBSD, FreeBSD, Linux
+	CMD_INSTALL_USEROPT="-o"
+fi
+echo "done, using '$CMD_INSTALL_USEROPT root' for installation."
+
+############# OS INDEPENDENT PART #############
+
+out "checking for gcc..."; gcc -v >/dev/null 2>&1; check "yes" "no" "You need gcc (or set PATH)."
+
+###############
+out "checking for libc..."
+cat << EOF >temp.c
+#include <stdio.h>
+int main() {
+	printf("WendzelNNTPd\n");
+	return 0;
+}
+EOF
+gcc -o temp temp.c>/dev/null 2>&1; check "yes" "no" "You need libc."
+rm -f temp temp.c
+
+
+###############
+out "checking for -fstack-protector..."
+cat << EOF >temp.c
+#include <stdio.h>
+int main() {
+        printf("WendzelNNTPd\n");
+        return 0;
+}
+EOF
+gcc -o temp -fstack-protector temp.c>/dev/null 2>&1
+if [ "$?" = "1" ]; then
+	echo "no (compiling without stack protection)"
+	STACK_PROT=""
+else
+	echo "yes"
+	STACK_PROT="-fstack-protector"
+fi
+rm -f temp temp.c
+	
+###############
+out "checking for strftime()/ltime()..."
+cat << EOF >temp.c
+#include <time.h>
+int main() {
+	char unused[0xff] = {'\0'};
+	time_t ltime;
+
+	ltime = time(NULL);
+	if (ltime == (time_t) - 1) {
+		return;
+	}
+	strftime(unused, 0xff-1, "%a, %d %b %y %H:%M:%S", localtime(&ltime));
+	return 0;
+}
+EOF
+gcc -o temp temp.c >/dev/null 2>&1; check "yes" "no" "You need strftime() and ltime()."
+rm -f temp temp.c
+
+###############
+out "checking for %z support in strftime()..."
+cat << EOF >temp.c
+#include <time.h>
+int main() {
+	char unused[0xff] = {'\0'};
+	time_t ltime;
+
+	ltime = time(NULL);
+	if (ltime == (time_t) - 1) {
+		return;
+	}
+	strftime(unused, 0xff-1, "%z", localtime(&ltime));
+	return 0;
+}
+EOF
+gcc -o temp temp.c >/dev/null 2>&1
+if [ "$?" = "0" ]; then
+	echo "yes"
+else
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DNOSUPPORT_STRFTIME_z_FLAG "`
+	echo "no"
+fi
+rm -f temp temp.c
+
+###############
+#out "checking for g++..."; g++ -v >/dev/null 2>&1; check "yes" "no" "You need g++ (or set PATH)."
+out "checking for flex..."; flex -V >/dev/null 2>&1; check "yes" "no" "You need flex."
+out "checking for bison..."; bison -V >/dev/null 2>&1; check "yes" "no" "You need Bison."
+
+###############
+#TODO: remove this
+out "checking for sqlite3..."; sqlite3 -version 2>/dev/null
+if [ "$?" = "127" ]; then
+	echo "no (You need SQLite3 or newer.)"
+	exit 1
+fi
+
+# TODO: remove this too
+out "checking for libsqlite3..."
+cat << EOF > temp.c
+#include <sqlite3.h>
+int main() {
+  sqlite3 *db;
+  int rc;
+  rc = sqlite3_open("nothing", &db);
+  sqlite3_close(db);
+  return 0;
+}
+EOF
+gcc -o temp temp.c -lsqlite3 -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need libSQLite3."
+rm -f temp temp.c
+
+#TODO: add libMySQL check
+
+###############
+out "checking for libpthread..."
+cat << EOF >temp.c
+#include <pthread.h>
+int main(){pthread_self();return 0;}
+EOF
+gcc -o temp temp.c -lpthread >/dev/null 2>&1; check "yes" "no" "You need libpthread."
+rm -f temp temp.c
+
+
+###############
+out "checking for strndup()..."
+cat << EOF >temp.c
+#include <stdio.h>
+#include <string.h>
+#ifdef __svr4__
+   #include <strings.h>	
+#endif
+int main(){char *q = "test"; strndup(q, 1);return 0;}
+EOF
+gcc -o temp temp.c >/dev/null 2>&1
+if [ "$?" = "0" ]; then
+	echo "yes"
+else
+	echo "no [adding to ADD_CFLAGS]"
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DNOSUPPORT_STRNDUP "`
+fi
+rm -f temp temp.c
+
+
+###############
+
+#out "checking for openssl..."
+#	openssl -v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
+#
+#out "checking for libssl..."
+#cat << EOF >temp.c
+##include <openssl/ssl.h>
+#int main(){SSL_library_init();return 0;}
+#EOF
+#gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+#rm -f temp temp.c
+
+############# MAKEFILE.INC CREATE #############
+
+out "creating Makefile.inc..."
+
+cat /dev/null > $MAKEFILE_INC
+
+echo "SORT=sort $ADDSORT" >> $MAKEFILE_INC
+
+echo "CMD_INSTALL_USEROPT=$CMD_INSTALL_USEROPT" >> $MAKEFILE_INC
+
+if [ "$USE_SOLARIS_NETLIBS" = "YES" ]; then
+	echo 'SOLNETLIBS=-lnsl -lsocket'>> $MAKEFILE_INC
+else
+	echo 'SOLNETLIBS='>> $MAKEFILE_INC
+fi
+
+if [ "$NEED_GCCLOCAL_PTHREAD" = "YES" ]; then
+	echo 'GCCLOCALPTHREAD=-pthread'>> $MAKEFILE_INC
+else
+	echo 'GCCLOCALPTHREAD='>> $MAKEFILE_INC
+fi
+
+if [ "$USE_LIBPTHREAD" = "YES" ]; then
+	echo 'LIBPTHREAD=-lpthread'>> $MAKEFILE_INC
+else
+	echo 'LIBPTHREAD='>> $MAKEFILE_INC
+fi
+
+echo "TABCPATH=$TABCPATH">> $MAKEFILE_INC
+echo "ORDER=-DORDER=$ORDER">> $MAKEFILE_INC
+echo >> $MAKEFILE_INC
+echo "STACK_PROT=$STACK_PROT">> $MAKEFILE_INC
+echo "ADD_CFLAGS=$ADD_CFLAGS">> $MAKEFILE_INC
+echo "ADD_LNKFLAGS=$ADD_LNKFLAGS">> $MAKEFILE_INC
+echo >> $MAKEFILE_INC
+echo "DESTDIR=$DESTDIR">> $MAKEFILE_INC
+echo "CONFDIR=$CONFDIR">> $MAKEFILE_INC
+echo "FAKECDIR=$FAKECDIR">> $MAKEFILE_INC
+
+echo '
+SRC=src
+LIBDIRS=-L/usr/local/lib
+
+INCDIRS=-I. -I./src -I./src/include -I/usr/local/include
+CPP=g++
+CC=gcc
+LEX=flex
+YACC=bison
+
+' >> $MAKEFILE_INC
+
+echo "done."
+echo "(you can now run make (or gmake on OpenSolaris) ...)"
+echo
+echo "===================================================="
+echo "Please note: You are using WendzelNNTPd-1.4.x. This "
+echo "1.4.x branch will be supported up to 2013 with bug- "
+echo "fixes but I recommend you to use version 2.x.y in-  "
+echo "stead as soon as it is available (about april or may"
+echo "2010).                                              "
+echo "===================================================="
+echo
+

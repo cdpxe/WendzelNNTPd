@@ -1,0 +1,107 @@
+Installing and Upgrading WendzelNNTPd under Linux/BSD/*nix:
+===========================================================
+
+Note: There is a additional documentation file called
+       documentation.pdf included.
+
+To compile the server + console admin tool under *nix/Linux/BSD:
+  $ ./configure   <-- checks only for needed tools+libs of the server
+  $ make
+
+To compile the GUI too you need libQt4-dev installed:
+  $ cd gui/src
+  $ ./compile     <-- needs libQt4, qmake and g++
+
+Now you should either install a new WendzelNNTPd or upgrade an existing
+one.
+
+>>> Installation:
+
+To install everything (also the GUI, if it was compiled) run install.sh
+as user root:
+  $ su
+  # make install
+
+>>> Upgrade:
+
+For an upgrade two additional tasks need to be done:
+
+1. If you do not use the default config file, you also should make a
+copy of your wendzelnntpd.conf before running 'make install' and then
+copy it back.
+
+2. Since 'make install' creates a backup of your usenet database file,
+you simply have to copy the backup file (named usenet.db.Timestamp.bkp)
+back to 'usenet.db' using 'cp'.
+
+Here is an upgrade example. Run as user 'root':
+# cp /usr/local/etc/{wendzelnntpd.conf,wendzelnntpd.conf.backup}
+# make install
+# cp /var/spool/news/wendzelnntpd/usenet.db.INSERT_DATE_HERE.bkp \
+  /var/spool/news/wendzelnntpd/usenet.db
+
+Installing WendzelNNTPd under Windows:
+======================================
+
+Either you simply install it using the Setup.exe you can download from
+one of the sourceforge mirrors (-> sf.net/projects/wendzelnntpd) or you
+have to compile everything from the source code.
+
+NOTE: It is RECOMMENDED to use the pre compiled installer! It isn't
+      easy to build the software from its code under win32!
+
+To build the software from code nevertheless: here is -- in short --
+what you need to do:
+
+I use this software to do the job:
+
+	- Dev-C++, includes lots of needed programs:
+	   \- gcc
+	   \- g++
+	   \- make
+	   \- ...
+	- sqlite libs
+	- regex libs (rx)
+	- qt win32, includes the needed qmake
+	- gnu win32 flex
+	- gnu win32 bison
+	- pthread lib
+
+Okay, let's say that you have installed everything and that all the
+needed binaries are in your %path% (don't forget the Qt4 binaries!).
+
+First, load the project in Dev-C++, then _before doing anything else_
+tell this shit damn buggy tool that you want to use a CUSTOM Makefile
+(Project -> Options -> Makefile). Use the 'Makefile.win32' as the de-
+fault Makefile. Then compile the code, what compiles the server and
+the admin tool.
+
+If you also want to have the gui, change into gui\src and run the
+script 'compile.bat', what creates the GUI tool in the releases\
+subdirectory.
+
+To install the compiled programms under windows, you have to copy
+all the following files in one and the same directory:
+
+bin\wendzelnntpadm.exe
+bin\wendzelnntpd.exe
+gui\src\release\wendzelnntpGUI.exe
+log.txt
+start_daemon.bat
+LICENSE.txt
+README_win32.txt
+wendzelnntpd.conf
+usenet.db
+
+You also need these files you can find in the subdirectories of
+your Dev-C++ installation and the subdirectories of your pthreads
+and your Qt4 installation:
+
+pthreadGC2.dll, rx.dll, mingwm10.dll, qtcore4.dll, qtgui4.dll
+
+Good luck!
+
+Have fun and please report all bugs (even typos) you can find!
+
+							-- Steffen
+

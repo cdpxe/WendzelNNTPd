@@ -1,0 +1,24 @@
+TODO:
+	- make use of strdup() ...
+	- add a real GNU configure script ;-)
+	- switch to different user+group id after startup
+		(+ implementation in the GUI)
+	- die usenet.db unter win32 is sicherheitstechnisch nen graus,
+		weil da die passwoerter drin liegen ...
+	- server.c: free() all the allocated mem since it is not removed
+		after child process exit();
+	- maybe kick out all the perror()'s, (f)printf()'s and so on in
+		the server.c file
+	- implement more RFC commands
+	- use chuid() and chgid() to switch to a wendzelnntpd user after init
+	- maybe: SSL support
+	- maybe: MySQL || postgresql support
+		
+	Before Release:
+	-> Test it with:
+	- sylpheed
+	- outlook express (if available)
+	- slrn
+	- mozilla
+	- knode
+

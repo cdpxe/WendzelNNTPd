@@ -1,0 +1,5 @@
+CREATE TABLE newsgroups (id INTEGER PRIMARY KEY, name TEXT, pflag CHARACTER, high INTEGER);
+CREATE TABLE ngposts (msgid TEXT, ng TEXT, postnum INTEGER, PRIMARY KEY(msgid, ng));
+CREATE TABLE postings (msgid TEXT PRIMARY KEY, date INTEGER, author TEXT, newsgroups TEXT, subject TEXT, lines TEXT, header VARCHAR(16000));
+CREATE TABLE users (name TEXT PRIMARY KEY, password TEXT);
+

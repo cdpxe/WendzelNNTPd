@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS newsgroups;
+DROP TABLE IF EXISTS ngposts;
+DROP TABLE IF EXISTS postings;
+DROP TABLE IF EXISTS users;
+

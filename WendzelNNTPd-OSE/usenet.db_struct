@@ -1,0 +1,23 @@
+CREATE TABLE newsgroups (id INTEGER PRIMARY KEY, name TEXT, pflag CHARACTER, high INTEGER);
+CREATE TABLE ngposts (msgid TEXT, ng TEXT, postnum INTEGER, PRIMARY KEY(msgid, ng));
+CREATE TABLE postings (msgid TEXT PRIMARY KEY, date INTEGER, author TEXT, newsgroups TEXT, subject TEXT, lines TEXT, header VARCHAR(16000));
+
+-- Authentification (as well as ACL)
+CREATE TABLE users (name TEXT PRIMARY KEY, password TEXT);
+
+--
+-- This is all needed for ACL
+--
+
+-- Define roles
+CREATE TABLE roles (role TEXT PRIMARY KEY);
+-- User 2 Roles
+CREATE TABLE users2roles (username TEXT, role TEXT, PRIMARY KEY(username, role));
+-- User 2 Newsgroup
+CREATE TABLE acl_users (username TEXT, ng TEXT, PRIMARY KEY(username, ng));
+-- Roles 2 Newsgroup
+CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
+
+-- Check:
+--SELECT * FROM users2roles ur,acl_roles aclr WHERE ur.username='swendzel' AND ur.role=aclr.role AND aclr.ng='alt.katze';
+

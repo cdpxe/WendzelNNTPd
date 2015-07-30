@@ -1,0 +1,19 @@
+This is a TODO-list of bugs in WendzelNNTPd:
+--------------------------------------------
+
+
+Bug #1, state: unsolved, detection-date: 09-feb-2008 00:40
+comments: unable to re-produce this bug at the moment.
+----------------------------------------------------------
+
+xhdr ... 1 seems to work on most parts (newsgroup, from, ...) but
+not with the subject line. It returns two postings in this case
+while it should only return posting number 1:
+
+xhdr subject 1
+221 Header follows
+1 This is a test posting to the newsgroup alt.wendzelnntpd.test
+5 test2
+.
+
+

@@ -1,0 +1,23 @@
+You want to contribute to the project? Here a few things you can do
+which would help the project:
+
+- Tell others about WendzelNNTPd. Write something in about it in your
+  blog or on twitter. Create a link to WendzelNNTPd.
+
+- WendzelNNTPd still does not have an own logo. You could draw one and
+  send it to me. Note: The logo can only be accepted under a the GPL
+  license.
+
+- Run it, test it, send feedback
+
+- If you found a bug: report it or (if possible) write a patch and
+  send it to me.
+
+- Create a port or package for your favorite Linux distribution, BSD
+  derivate, Unix derivate or similar.
+
+- Port WendzelNNTPd to new operating systems (e.g. MacOS X) and send
+  me the patches.
+
+- Translate the documentation to another language.
+
