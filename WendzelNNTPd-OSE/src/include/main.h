@@ -103,8 +103,8 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.0.5"
-#define RELEASENAME		"'Auckland'"
+#define VERSION			"2.0.6"
+#define RELEASENAME		"'Miami'"
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"

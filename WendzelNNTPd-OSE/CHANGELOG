@@ -2,10 +2,11 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.0.6-stable "...." : ??-???-201?
+2.0.6-stable "Miami" : ??-???-201?
  MISC:
  - Improved the 1.4.x -> 2.0.x upgrade documentation (thx to @Ann).
  - Dont show 'read uselessinput' when asking for RETURN in make upgrade
+ - Improved hints in ./configure for disabling MySQL and SQLite3 support
 
 2.0.5-stable "Auckland" : 28-Mar-2015
  SECURITY FIXES:
