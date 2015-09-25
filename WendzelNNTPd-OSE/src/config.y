@@ -27,16 +27,17 @@ extern int size_sockinfo_t; /* is set to 0 on startup in main.c */
 
 short parser_mode = PARSER_MODE_SERVER;
 
-sockinfo_t *sockinfo=0;
-int peak=0;
-int port=DEFAULTPORT;
+sockinfo_t *sockinfo = 0;
+int peak = 0;
+int port = DEFAULTPORT;
+int max_post_size = MAX_POSTSIZE_DEFAULT;
 fd_set fds;
 
-unsigned short use_auth=0;	/* global var i check in server.c while socket-loop */
-unsigned short use_acl=0;	/* do we use access control lists? */
-unsigned short be_verbose=0;	/* for debugging reasons */
-unsigned short anonym_message_ids=0; /* if eq 1: do not set IP or hostname within message IDs */
-unsigned short dbase=DBASE_NONE;/* specifies the database engine to use */
+unsigned short use_auth = 0;	/* global var i check in server.c while socket-loop */
+unsigned short use_acl = 0;	/* do we use access control lists? */
+unsigned short be_verbose = 0;	/* for debugging reasons */
+unsigned short anonym_message_ids = 0; /* if eq 1: do not set IP or hostname within message IDs */
+unsigned short dbase = DBASE_NONE;/* specifies the database engine to use */
 
 char *db_server = NULL;
 char *db_user = NULL;
@@ -45,7 +46,7 @@ unsigned short db_port = 0;
 
 #define LF_ANY_IP	0x01
 #define	LF_SPEC_IP	0x02
-int listenflag=0;
+int listenflag = 0;
 
 void
 yyerror(const char *str)
@@ -159,6 +160,7 @@ basic_setup_server(void)
 %token TOK_USE_ACL
 %token TOK_LISTEN_ON
 %token TOK_PORT
+%token TOK_MAX_POST_SIZE;
 %token TOK_DYNIPDEV
 %token TOK_CLIENT_LIMIT
 %token TOK_CHANGEUID
@@ -176,7 +178,7 @@ basic_setup_server(void)
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -220,11 +222,26 @@ usePort:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			port = atoi(yytext);
 			if (!port) {
-				fprintf(stderr, "Port %s is not valid.\n", yytext);
+				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
 				exit(1);
 			}
 		}
 	};
+
+maxPostSize:
+	TOK_MAX_POST_SIZE TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			max_post_size = atoi(yytext);
+			if (!max_post_size) {
+				fprintf(stderr, "Max. posting size value '%s' is not valid.\n", yytext);
+				exit(1);
+			} /*else {
+				fprintf(stderr, "Max. posting size set to %s bytes\n", yytext);
+			}*/
+		}
+	};
+
 
 listenonSpec:  /* done */
 	TOK_LISTEN_ON TOK_NAME

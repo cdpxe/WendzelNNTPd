@@ -33,6 +33,6 @@
 #endif
 
 /* The maximum size of a NNTP posting */
-#define MAX_POSTSIZE		20*1024*1024	/* 20M */
+#define MAX_POSTSIZE_DEFAULT	20*1024*1024	/* 20M */
 
 

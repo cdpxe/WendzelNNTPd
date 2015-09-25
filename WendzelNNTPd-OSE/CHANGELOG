@@ -2,9 +2,14 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.0.6-stable "Miami" : ??-???-201?
+2.0.6-stable "Miami" : ??-Sep-2015
+ ADDED_FEATURES:
+ - Added max-size-of-postings as an optional parameter to the
+   configuration file to allow increasing/decreasing the size of
+   allowed postings.
  MISC:
  - Improved the 1.4.x -> 2.0.x upgrade documentation (thx to @Ann).
+ - Performed other tiny improvements in the documentation.
  - Dont show 'read uselessinput' when asking for RETURN in make upgrade
  - Improved hints in ./configure for disabling MySQL and SQLite3 support
 

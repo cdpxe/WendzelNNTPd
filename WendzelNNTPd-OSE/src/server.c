@@ -858,6 +858,7 @@ static void
 docmd_post(server_cb_inf *inf)
 {
 	extern unsigned short anonym_message_ids; /* config.y */
+	extern int max_post_size; /* config.y */
 #define MAX_IPLEN 49
 	int len=0;
 	size_t lenb = 0;
@@ -898,7 +899,7 @@ docmd_post(server_cb_inf *inf)
 		int peak = 0;
 		struct timeval tv;
 		
-		if ((buf = (char *) calloc(MAX_POSTSIZE, sizeof(char))) == NULL) {
+		if ((buf = (char *) calloc(max_post_size, sizeof(char))) == NULL) {
 			perror("malloc");
 			DO_SYSL("memory low. killing child process.")
 			kill_thread(inf);
@@ -928,7 +929,7 @@ docmd_post(server_cb_inf *inf)
 				
 				recv_ret = recv(inf->sockinf->sockfd,
 						buf + recv_bytes,
-						MAX_POSTSIZE - recv_bytes - 1, 0);
+						max_post_size - recv_bytes - 1, 0);
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");

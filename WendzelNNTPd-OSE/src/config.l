@@ -44,6 +44,7 @@ use-acl                             return TOK_USE_ACL;
 enable-anonym-mids                  return TOK_ANONYM_MIDS;
 listen                              return TOK_LISTEN_ON;
 port                                return TOK_PORT;
+max-size-of-postings                return TOK_MAX_POST_SIZE;
 dynamic-ip-device                   return TOK_DYNIPDEV;
 client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
