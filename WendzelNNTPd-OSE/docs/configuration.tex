@@ -78,6 +78,14 @@ listen	192.168.0.1
 
 You {\it could} also use different ports for different IP addresses by placing a {\bf port} command right before each {\bf listen} command but this is not recommended.
 
+\section{Setting the Allowed Size of Postings}
+
+To change the maximum size of a posting to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
+
+\begin{verbatim}
+max-size-of-postings 20971520
+\end{verbatim}
+
 \section{Verbose Mode}
 
 If you have any problems running WendzelNNTPd or if you simply want more information about what is happening, you can uncomment the {\bf verbose-mode} line.
@@ -120,5 +128,4 @@ By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs wh
 ; Uncomment it to enable this feature.
 enable-anonym-mids
 \end{verbatim}
-
 
