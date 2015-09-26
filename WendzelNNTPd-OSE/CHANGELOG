@@ -2,7 +2,7 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.0.6-stable "Miami" : ??-Sep-2015
+2.0.6-stable "Miami" : 26-Sep-2015
  ADDED_FEATURES:
  - Added max-size-of-postings as an optional parameter to the
    configuration file to allow increasing/decreasing the size of
