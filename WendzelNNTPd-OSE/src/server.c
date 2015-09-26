@@ -97,6 +97,7 @@ char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 programm error, function not performed\r\n";
+char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
@@ -927,6 +928,22 @@ docmd_post(server_cb_inf *inf)
 				u_int32_t offset;
 				char *haystack_ptr;
 				
+				/* check if already the max. number of allowed bytes
+				 * were received. As FD_ISSET() returned true, there
+				 * are bytes left nevertheless, i.e. posting is too
+				 * big.
+				 */
+				if (max_post_size - recv_bytes <= 1) {
+					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
+					fprintf(stderr, "Posting is larger than allowed max (%i Bytes) "
+						"in docmd_post()\n", max_post_size);
+					DO_SYSL("posting from client larger than allowed max. value. "
+						"Please check the documentation if you want to allow "
+						"larger postings.")
+					kill_thread(inf);
+					/* NOTREACHED */
+				}
+						
 				recv_ret = recv(inf->sockinf->sockfd,
 						buf + recv_bytes,
 						max_post_size - recv_bytes - 1, 0);
