@@ -6,7 +6,7 @@ WendzelNNTPd ChangeLog:
  ADDED_FEATURES:
  - Added max-size-of-postings as an optional parameter to the
    configuration file to allow increasing/decreasing the size of
-   allowed postings.
+   allowed postings. (thx @pintman for feature request)
  MISC:
  - Improved the 1.4.x -> 2.0.x upgrade documentation (thx to @Ann).
  - Performed other tiny improvements in the documentation.
