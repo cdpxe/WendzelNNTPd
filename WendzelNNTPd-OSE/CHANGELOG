@@ -12,6 +12,7 @@ WendzelNNTPd ChangeLog:
  - Performed other tiny improvements in the documentation.
  - Dont show 'read uselessinput' when asking for RETURN in make upgrade
  - Improved hints in ./configure for disabling MySQL and SQLite3 support
+ - Performed a cleanup of several text files in base directory
 
 2.0.5-stable "Auckland" : 28-Mar-2015
  SECURITY FIXES:

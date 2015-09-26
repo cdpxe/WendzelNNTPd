@@ -2,9 +2,12 @@ This is a TODO-list of bugs in WendzelNNTPd:
 --------------------------------------------
 
 
-Bug #1, state: unsolved, detection-date: 09-feb-2008 00:40
-comments: unable to re-produce this bug at the moment.
-----------------------------------------------------------
+Bug #1:
+ status:   * unsolved, detection-date: 09-feb-2008 00:40
+ comments: * unable to re-produce this bug at the moment
+	   * considered unlikely that bug is still present after major
+	     works on the code withint the last 6,5 years.
+-----------------------------------------------------------------------
 
 xhdr ... 1 seems to work on most parts (newsgroup, from, ...) but
 not with the subject line. It returns two postings in this case
