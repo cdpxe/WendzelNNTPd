@@ -3,7 +3,10 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 2.0.7-stable "Berlin" : ??-???-20??
- (nothing so far)
+ FIXES:
+ - If an XHDR command is requested for a header that is either not
+   present or not implemented, return code 221 instead of 211 (this is
+   conforming to RFC 2980).
 
 2.0.6-stable "Miami" : 26-Sep-2015
  ADDED_FEATURES:
