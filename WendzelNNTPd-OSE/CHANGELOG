@@ -10,6 +10,7 @@ WendzelNNTPd ChangeLog:
  MISC:
  - Improve error reporting for chk_file_sec() as it can also return -1
    if a file does not exist.
+ - Some tiny code cleanups
 
 2.0.6-stable "Miami" : 26-Sep-2015
  ADDED_FEATURES:
