@@ -49,6 +49,9 @@
    #include <syslog.h>
 #endif
 #include <errno.h>
+#ifdef __linux__
+#include <err.h>
+#endif
 #include <sys/stat.h> /* umask() */
 
 #ifdef __svr4__
