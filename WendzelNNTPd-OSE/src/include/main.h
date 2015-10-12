@@ -120,6 +120,8 @@
 #define OK_RETURN		OK_EXIT
 #define ERR_EXIT		0x01
 #define ERR_RETURN		ERR_EXIT
+#define NOSUCHFILE_RETURN	0x02
+#define INSECURE_RETURN		0x03
 
 
 /* for timestamp in database.c */

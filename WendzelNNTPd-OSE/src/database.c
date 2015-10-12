@@ -63,28 +63,28 @@ chk_file_sec(char *filename)
 	if ((file = open(filename, O_RDONLY)) < 0) {
 		fprintf(stderr, "chk_file_sec: file does not exists: ");
 		perror(filename);
-		return -1;
+		return NOSUCHFILE_RETURN;
 	}
 	
 	if (fstat(file, &s) == -1) {
 		fprintf(stderr, "fstat(%s) returned -1\n", filename);
-		return -1;
+		return NOSUCHFILE_RETURN; /* make no distinction to not-found here */
 	}
 	close(file);
 	
 	if (S_ISLNK(s.st_mode) || (S_IWOTH & s.st_mode) || (S_IWGRP & s.st_mode)) {
 		fprintf(stderr, "File mode of %s has changed or file is a symlink!\n",
 			filename);
-		return -1;
+		return INSECURE_RETURN;
 	}
 	
 	if(s.st_uid != 0 && s.st_uid != getuid() && s.st_uid != geteuid()) {
 		fprintf(stderr, "Owner of %s is neither zero (root) nor my (e)uid!\n",
 			filename);
-		return -1;
+		return INSECURE_RETURN;
 	}
 #endif
-	return 0;
+	return OK_RETURN;
 }
 
 /* create a new message id and return it */
@@ -95,18 +95,28 @@ get_uniqnum(void)
 	char *buf;
 	FILE *fp;
 	long long id;
+	int ret;
 	
 	if (!(buf = (char *) calloc(MAX_IDNUM_LEN + 1, sizeof(char)))) {
 		DO_SYSL("Not enough memory!")
 		return NULL;
 	}
 	
-	if (chk_file_sec(MSGID_FILE) != 0) {
-		DO_SYSL("File " MSGID_FILE " not found (not a problem,"
-			" it will be created for you right now and "
-			"this message will not appear next time) "
-			"-OR- the file's permissions are insecure "
-			"(e.g. file is a symlink).")
+	if ((ret = chk_file_sec(MSGID_FILE)) != OK_RETURN) {
+		switch (ret) {
+		case INSECURE_RETURN:
+			DO_SYSL("File " MSGID_FILE ": permissions are insecure"
+				" (e.g. file is a symlink).")
+			break;
+		case NOSUCHFILE_RETURN:
+			DO_SYSL("File " MSGID_FILE " not found (not a problem,"
+				" it will be created for you right now and "
+				"this message should not appear next time)")
+			break;
+		default:
+			DO_SYSL("Internal error 0x49643. Should not happen.")
+			break;
+		}
 		/* do not exit here, only log it ... */
 	}
 	if (!(fp=fopen(MSGID_FILE, "rb+"))) {

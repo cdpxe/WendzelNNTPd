@@ -75,7 +75,7 @@ basic_setup_admtool()
 		perror("Unable to open " CONFIGFILE);
 		exit(ERR_EXIT);
 	}
-	if (chk_file_sec(CONFIGFILE) != 0) {
+	if (chk_file_sec(CONFIGFILE) == INSECURE_RETURN) {
 		fprintf(stderr, "aborting startup because of insecure "
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
@@ -95,11 +95,11 @@ basic_setup_server(void)
 #endif
 
 	close(0);
-	if((yyin=fopen(CONFIGFILE, "r"))==NULL) {
+	if((yyin = fopen(CONFIGFILE, "r")) == NULL) {
 		perror("Unable to open " CONFIGFILE);
 		exit(ERR_EXIT);
 	}
-	if (chk_file_sec(CONFIGFILE) != 0) {
+	if (chk_file_sec(CONFIGFILE) == INSECURE_RETURN) {
 		fprintf(stderr, "aborting startup because of insecure "
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);

@@ -94,12 +94,11 @@ logstr(char *file, int line, char *func_name, char *str)
 	if (be_verbose)
 		fprintf(stderr, "%s", buf);
 	
-	if (chk_file_sec(LOGFILE) != 0) {
+	if (chk_file_sec(LOGFILE) == INSECURE_RETURN) {
 		/* do nothing here -> this could lead to a while(1)! */
 #ifndef __WIN32__
 		syslog(LOG_DAEMON|LOG_NEWS|LOG_NOTICE, "%s:%i: " LOGFILE
-			" does not exist (and will be created now) -OR-"
-			" it has insecure file permissions, e.g. is a symlink.",
+			" has insecure file permissions, e.g. is a symlink.",
 			file, line);
 #endif
 	}
