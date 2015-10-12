@@ -102,8 +102,11 @@ get_uniqnum(void)
 	}
 	
 	if (chk_file_sec(MSGID_FILE) != 0) {
-		DO_SYSL("File permissions of " MSGID_FILE " are "
-			"insecure and/or file is a symlink!")
+		DO_SYSL("File " MSGID_FILE " not found (not a problem,"
+			" it will be created for you right now and "
+			"this message will not appear next time) "
+			"-OR- the file's permissions are insecure "
+			"(e.g. file is a symlink).")
 		/* do not exit here, only log it ... */
 	}
 	if (!(fp=fopen(MSGID_FILE, "rb+"))) {
@@ -156,7 +159,8 @@ filebackend_retrbody(char *message_id_in)
 	snprintf(filename, strlen(SPOOLFOLDER) + 1 + strlen(message_id) + 1, SPOOLFOLDER "/%s", message_id);
 	
 	if (chk_file_sec(filename) != 0) {
-		DO_SYSL("will not open requested usenet body file due to insecurity")
+		DO_SYSL("will not open requested usenet body file (it does not exist or "
+			"has insecure permissions, e.g. is a symlink)")
 		fprintf(stderr, "filebackend_retrbody:chk_file_sec:error\n");
 		return NULL;
 	}

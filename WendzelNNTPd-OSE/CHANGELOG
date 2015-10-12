@@ -7,6 +7,9 @@ WendzelNNTPd ChangeLog:
  - If an XHDR command is requested for a header that is either not
    present or not implemented, return code 221 instead of 211 (this is
    conforming to RFC 2980).
+ MISC:
+ - Improve error reporting for chk_file_sec() as it can also return -1
+   if a file does not exist.
 
 2.0.6-stable "Miami" : 26-Sep-2015
  ADDED_FEATURES:

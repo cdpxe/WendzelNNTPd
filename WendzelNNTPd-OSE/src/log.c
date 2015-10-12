@@ -98,7 +98,8 @@ logstr(char *file, int line, char *func_name, char *str)
 		/* do nothing here -> this could lead to a while(1)! */
 #ifndef __WIN32__
 		syslog(LOG_DAEMON|LOG_NEWS|LOG_NOTICE, "%s:%i: " LOGFILE
-			" has insecure file permissions or is a symlink.",
+			" does not exist (and will be created now) -OR-"
+			" it has insecure file permissions, e.g. is a symlink.",
 			file, line);
 #endif
 	}
