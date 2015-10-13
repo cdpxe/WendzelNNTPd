@@ -4,18 +4,23 @@ TODO-LIST
 SOON:
  - unicode support or something similar (->Umlautdomains in "From:"!)
  - documentation: How to delete old postings?
+
 AFTER:
 - AUTHINFO SIMPLE
 - LAST, NEXT
 - NEWGROUPS
 - Newsletter
+
 LATER:
  - implement more NNTP commands
- - SSL
+ - TLS, cf. https://tools.ietf.org/html/rfc4642
+   => I need to implement the CAPABILITIES command first
+
 MUCH LATER:
  - postgres support
  - ldap
  - PAM support
+
 MISC:
 - make use of strdup() ...
 - add a real GNU configure script ;-)
