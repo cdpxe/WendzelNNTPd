@@ -101,7 +101,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
 	chown root:root $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
-	# config files
+	# documentation and config files
 	cp $(DOCFILES_TO_INST) $(DESTDIR)/share/doc/wendzelnntpd/
 	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
@@ -134,6 +134,7 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
 	chown root:root $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
+	# documentation
 	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
 	chown root:root $(DESTDIR)/share/doc/wendzelnntpd/*
