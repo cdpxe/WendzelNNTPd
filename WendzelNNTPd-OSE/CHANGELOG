@@ -2,6 +2,9 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
+2.0.8-stable "Oslo" : __-___-201_
+ (nothing so far)
+
 2.0.7-stable "Berlin" : 26-Oct-2015
  FIXES:
  - If an XHDR command is requested for a header that is either not
