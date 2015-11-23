@@ -1,7 +1,7 @@
 all :
 	rm -vf docs.{aux,bbl,blg,dvi,ilg,ind,lof,log,lot,ps,pdf,toc,nlo,nls}
 	pdflatex docs.tex
-	makeindex docs
+	#makeindex docs
 	pdflatex docs.tex
 	makeindex docs
 	pdflatex docs.tex

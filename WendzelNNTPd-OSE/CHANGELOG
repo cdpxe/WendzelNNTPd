@@ -3,7 +3,9 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 2.0.8-stable "Oslo" : __-___-201_
- (nothing so far)
+ MISC:
+ - Slight improvement of the documentation (how to start/stop/restart
+   the service and how to install the startup script).
 
 2.0.7-stable "Berlin" : 26-Oct-2015
  FIXES:

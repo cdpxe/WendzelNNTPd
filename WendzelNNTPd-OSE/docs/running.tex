@@ -6,13 +6,59 @@ Once your WendzelNNTPd installation has been configured, you can run the server 
 
 \begin{verbatim}
 $ /usr/local/sbin/wendzelnntpd 
-WendzelNNTPd-OSE (Open Source Edition): peak: 3, size_sockinfo: 1
-WendzelNNTPd-OSE (Open Source Edition): version 1.9.0-pre-alpha 'Stockholm'  - (Mar  5 2010 21:36:19 #2326) is ready.
+WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+26 2015 14:10:20 #2544) is ready.
 \end{verbatim}
 
 {\bf Note (Daemon Mode):} If you want to run WendzelNNTPd as a background daemon process on *nix-like operating systems, you should use the parameter {\bf -d}.
 
-{\bf Note (Admininstration Tool):} Use the command line tool {\bf wendzelnntpadm} to configure user, role and newsgroup settings of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
+\section{Stopping and Restarting the Service}\index{Stopping WendzelNNTPd}\index{Restarting WendzelNNTPd}
+
+The server can be stopped by killing its process:
+
+\begin{verbatim}
+$ pkill wendzelnntpd
+\end{verbatim}
+
+The server has a handler for the kill signal that allows to safely shutdown using {\bf pkill} or {\bf kill}.
+
+To restart the service, kill and start the service.
+
+\subsection{Automating Start, Stop, and Restart}
+
+The script {\bf init.d\_script} in the directory {\it scripts/startup} of the tarball can be used to start, restart, and stop WendzelNNTPd. It is a standard init.d script for Linux operating systems that can usually be copied to {\it /etc/init.d} (it must be executable).
+
+\begin{verbatim}
+$ cp scripts/startup/init.d_script /etc/init.d/wendzelnntpd
+$ chmod +x /etc/init.d/wendzelnntpd
+\end{verbatim}
+
+{\bf Note:} Please note that some operating systems use different directories than {\it /etc/init.d} or other startup script formats. In such cases, the script works nevertheless but should simply be installed to {\it /usr/local/sbin} instead.
+
+
+To start, stop, and restart WendzelNNTPd, the following commands can be used afterwards:
+
+\begin{verbatim}
+$ /etc/init.d/wendzelnntpd start
+Starting WendzelNNTPd ... done.
+WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+26 2015 14:10:20 #2544) is ready.
+
+$ /etc/init.d/wendzelnntpd restart
+Stopping WendzelNNTPd ... done.
+Starting WendzelNNTPd ... done.
+WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+26 2015 14:10:20 #2544) is ready.
+
+$ /etc/init.d/wendzelnntpd stop
+Stopping WendzelNNTPd ... done.
+\end{verbatim}
+
+
+
+\section{Administration Tool `wendzelnntpadm'}
+
+Use the command line tool {\bf wendzelnntpadm} to configure user, role and newsgroup settings of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
 
 \begin{verbatim}
 $ wendzelnntpadm help

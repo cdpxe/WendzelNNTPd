@@ -57,10 +57,12 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 You will probably see no posting bodies right now if postings are requested by your client. Therefore, switch into {\bf /var/spool/news/wendzelnntpd} and run (as superuser) this command, it will replace the broken trailings with corrected ones:
 
 \begin{verbatim}
-for filn in `/bin/ls cdp*`; do echo $filn; cat $filn | \
+$ cd /var/spool/news/wendzelnntpd 
+$ for filn in `/bin/ls cdp*`; do echo $filn; cat $filn | \
 sed 's/\.\r/.\r\n/' > new;  num=`wc -l new| \
 awk '{$minone=$1-1; print $minone}'` ; \
 head -n $num new > $filn; done
+$
 \end{verbatim}
 
 \paragraph*{Last Step (Checking whether it works!):}
