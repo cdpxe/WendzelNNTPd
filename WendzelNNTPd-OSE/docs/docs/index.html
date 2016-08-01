@@ -37,7 +37,6 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <DIV CLASS="author_info">
 
 <P ALIGN="CENTER"><STRONG>Steffen Wendzel, www.wendzel.de</STRONG></P>
-<P ALIGN="CENTER"><STRONG>November 23, 2015</STRONG></P>
 </DIV>
 
 <P>
@@ -185,7 +184,7 @@ Contents</A>
 <!--End of Table of Contents-->
 <P>
 
-<H1><A NAME="SECTION00200000000000000000"></A><A NAME="42"></A>
+<H1><A NAME="SECTION00200000000000000000"></A><A NAME="41"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Introduction
 </H1>
@@ -276,14 +275,14 @@ The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria 
 
 <P>
 
-<H1><A NAME="SECTION00300000000000000000"></A><A NAME="93"></A>
+<H1><A NAME="SECTION00300000000000000000"></A><A NAME="92"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Installation
 </H1>
 
 <P>
 This chapter provides a guide on how to install WendzelNNTPd-OSE (Open Source Edition) 2.x.<A NAME="tex2html1"
-  HREF="footnode.html#foot94"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A>
+  HREF="footnode.html#foot93"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A>
 <P>
 
 <H1><A NAME="SECTION00310000000000000000">
@@ -292,7 +291,7 @@ This chapter provides a guide on how to install WendzelNNTPd-OSE (Open Source Ed
 
 <P>
 To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.<A NAME="tex2html2"
-  HREF="footnode.html#foot121"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
+  HREF="footnode.html#foot120"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -357,7 +356,7 @@ Not supported.
 
 <P>
 
-<H1><A NAME="SECTION00400000000000000000"></A><A NAME="189"></A>
+<H1><A NAME="SECTION00400000000000000000"></A><A NAME="188"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Configuration
 </H1>
@@ -560,14 +559,14 @@ By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs wh
 enable-anonym-mids
 </PRE>
 
-<H1><A NAME="SECTION00500000000000000000"></A><A NAME="357"></A>
+<H1><A NAME="SECTION00500000000000000000"></A><A NAME="356"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A NAME="SECTION00510000000000000000"></A><A NAME="359"></A>
+<H1><A NAME="SECTION00510000000000000000"></A><A NAME="358"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -587,7 +586,7 @@ WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A NAME="SECTION00520000000000000000"></A><A NAME="366"></A><A NAME="367"></A>
+<H1><A NAME="SECTION00520000000000000000"></A><A NAME="365"></A><A NAME="366"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1117,7 +1116,7 @@ Besides the already mentioned authentification, ACL and RBAC features, the secur
 
 <P>
 
-<H1><A NAME="SECTION00600000000000000000"></A><A NAME="658"></A><A NAME="Ch:Upgrade"></A>
+<H1><A NAME="SECTION00600000000000000000"></A><A NAME="657"></A><A NAME="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Upgrade to a newer version
 </H1>
@@ -1155,18 +1154,38 @@ An upgrade from version 1.4.x was not foreseen due to the limited available time
 <P>
 
 <H4><A NAME="SECTION00620010000000000000">
-First Step:</A>
-</H4> You need to install Wendzelnntpd-2.x on a Linux system. This requires some libraries and tools.
-Under <I>Ubuntu</I> they all come as packages: <B>sudo apt-get install libmysqlclient-dev, libsqlite3-dev, flex, bison, sqlite3</B>. Under <I>CentOS</I> they come as packages as well: <B>sudo yum install make gcc bison flex sqlite-devel</B>. <I>Other</I> operating systems should provide the same or similar packages/ports.
-
-<P>
-Run <B>MYSQL=NO ./configure</B>, <B>make</B>, and <B>sudo make install</B>. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x.
+Preparation Step:</A>
+</H4> You need to create <SPAN  CLASS="textbf">a back of your existing installation first</SPAN>, at least everything from <SPAN  CLASS="textbf">/var/spool/news/wendzelnntpd</SPAN> as you will need all these files later.
 
 <P>
 
 <H4><A NAME="SECTION00620020000000000000">
+First Step:</A>
+</H4> Install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools.
+
+<P>
+Under <I>Ubuntu</I> they all come as packages:
+<PRE>
+$ sudo apt-get install libmysqlclient-dev libsqlite3-dev flex bison sqlite3
+</PRE>
+
+<P>
+Under <I>CentOS</I> they come as packages as well:
+<PRE>
+$ sudo yum install make gcc bison flex sqlite-devel
+</PRE>
+
+<P>
+<I>Other</I> operating systems should provide the same or similar packages/ports.
+
+<P>
+Run <B>MYSQL=NO ./configure</B>, followed by <B>make</B>, and <B>sudo make install</B>. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x (and it would be significantly more difficult to bring the SQLite database content to a MySQL database).
+
+<P>
+
+<H4><A NAME="SECTION00620030000000000000">
 Second Step:</A>
-</H4> Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. In <B>/usr/local/etc/wendzelnntpd.conf</B> make sure that WendzelNNTPd uses sqlite3 instead of mysql:
+</H4> Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. Therefore, in the configuration file <B>/usr/local/etc/wendzelnntpd.conf</B> make sure that WendzelNNTPd uses sqlite3 instead of mysql:
 
 <P>
 <PRE>
@@ -1175,13 +1194,13 @@ database-engine sqlite3
 
 <P>
 
-<H4><A NAME="SECTION00620030000000000000">
+<H4><A NAME="SECTION00620040000000000000">
 Third Step:</A>
 </H4>
 Now comes the tricky part. The install command should have created
-<B>/var/spool/news/wendzelnntpd/usenet.db</B>
+<B>/var/spool/news/wendzelnntpd/usenet.db</B>.
 However, it is an empty usenet database file in the new format.
-Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all <B>cdp*</B> files and the <B>nextmsgid</B> file from your Windows directory to <B>/var/spool/news/wendzelnntpd/</B>. 
+Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old <B>cdp*</B> files and the old <B>nextmsgid</B> file from your Windows system/from your backup directory to <B>/var/spool/news/wendzelnntpd/</B>. 
 
 <P>
 The following step is a very dirty hack but I hope it works for you. It is not 100% perfect as important table columns are then still of the type 'STRING' instead of the type 'TEXT'!
@@ -1208,7 +1227,7 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 
 <P>
 
-<H4><A NAME="SECTION00620040000000000000">
+<H4><A NAME="SECTION00620050000000000000">
 Fix Postings</A>
 </H4>
 
@@ -1227,7 +1246,7 @@ $
 
 <P>
 
-<H4><A NAME="SECTION00620050000000000000">
+<H4><A NAME="SECTION00620060000000000000">
 Last Step (Checking whether it works!):</A>
 </H4>
 
@@ -1262,10 +1281,10 @@ should list all access control entries (which will be empty right now but if no 
 &nbsp;
 
 <P>
-Now start WendzelNNTPd via <B>sudo wendzelnntpd</B> and try to connect with an NNTP client to your WendzelNNTPd and then try reading postings and try sending new postings and try replying to these.
+Now start WendzelNNTPd via <B>sudo wendzelnntpd</B> and try to connect with a NNTP client to your WendzelNNTPd and then try reading postings and try sending new postings; also try replying to these postings.
 
 <P>
-If this works, you can now run v2.x on 32bit and 64bit Linux :)
+If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you made it and chances are you are the second user who did that. Let me know via e-mail if it worked for you.
 
 <P>
 
@@ -1275,20 +1294,20 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :)
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#189"><SPAN CLASS="arabic">3</SPAN></A>
+<DD><A HREF="docs.html#188"><SPAN CLASS="arabic">3</SPAN></A>
 <DT><STRONG>Installation</STRONG>
-<DD><A HREF="docs.html#93"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#92"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Introduction</STRONG>
-<DD><A HREF="docs.html#42"><SPAN CLASS="arabic">1</SPAN></A>
+<DD><A HREF="docs.html#41"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#367"><SPAN CLASS="arabic">2</SPAN></A>
-<DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#357"><SPAN CLASS="arabic">4</SPAN></A>
- | <A HREF="docs.html#359"><SPAN CLASS="arabic">1</SPAN></A>
-<DT><STRONG>Stopping WendzelNNTPd</STRONG>
 <DD><A HREF="docs.html#366"><SPAN CLASS="arabic">2</SPAN></A>
+<DT><STRONG>Starting WendzelNNTPd</STRONG>
+<DD><A HREF="docs.html#356"><SPAN CLASS="arabic">4</SPAN></A>
+ | <A HREF="docs.html#358"><SPAN CLASS="arabic">1</SPAN></A>
+<DT><STRONG>Stopping WendzelNNTPd</STRONG>
+<DD><A HREF="docs.html#365"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#658"><SPAN CLASS="arabic">5</SPAN></A>
+<DD><A HREF="docs.html#657"><SPAN CLASS="arabic">5</SPAN></A>
 
 </DL>
 
@@ -1312,7 +1331,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-show_section_numbers -local_icons -split 2 docs.tex</TT>
 <P>
-The translation was initiated by Steffen Wendzel on 2015-11-23
+The translation was initiated by Dr. Steffen Wendzel on 2016-08-01
 <BR><HR>
 <!--Table of Child-Links-->
 <A NAME="CHILD_LINKS"></A>
@@ -1498,8 +1517,8 @@ The translation was initiated by Steffen Wendzel on 2015-11-23
 <BR></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
-Steffen Wendzel
-2015-11-23
+Dr. Steffen Wendzel
+2016-08-01
 </ADDRESS>
 </BODY>
 </HTML>

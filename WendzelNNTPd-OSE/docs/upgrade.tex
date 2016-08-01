@@ -16,13 +16,19 @@ Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described 
 
 An upgrade from version 1.4.x was not foreseen due to the limited available time I have for the development. However, here is a dirty hack:
 
-\paragraph*{First Step:} You need to create \textbf{a back of your existing installation first}, at least everything from \textbf{/var/spool/news/wendzelnntpd} as you will need all these files later. Afterwards, install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools. Under {\it Ubuntu} they all come as packages:
+\paragraph*{Preparation Step:} You need to create \textbf{a back of your existing installation first}, at least everything from \textbf{/var/spool/news/wendzelnntpd} as you will need all these files later.
 
-{\bf sudo apt-get install libmysqlclient-dev libsqlite3-dev flex bison sqlite3}
+\paragraph*{First Step:} Install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools.
+
+Under {\it Ubuntu} they all come as packages:
+\begin{verbatim}
+$ sudo apt-get install libmysqlclient-dev libsqlite3-dev flex bison sqlite3
+\end{verbatim}
 
 Under {\it CentOS} they come as packages as well:
-
-{\bf sudo yum install make gcc bison flex sqlite-devel}
+\begin{verbatim}
+$ sudo yum install make gcc bison flex sqlite-devel
+\end{verbatim}
 
 {\it Other} operating systems should provide the same or similar packages/ports.
 
