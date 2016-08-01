@@ -16,12 +16,19 @@ Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described 
 
 An upgrade from version 1.4.x was not foreseen due to the limited available time I have for the development. However, here is a dirty hack:
 
-\paragraph*{First Step:} You need to install Wendzelnntpd-2.x on a Linux system. This requires some libraries and tools.
-Under {\it Ubuntu} they all come as packages: {\bf sudo apt-get install libmysqlclient-dev, libsqlite3-dev, flex, bison, sqlite3}. Under {\it CentOS} they come as packages as well: {\bf sudo yum install make gcc bison flex sqlite-devel}. {\it Other} operating systems should provide the same or similar packages/ports.
+\paragraph*{First Step:} You need to install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools. Under {\it Ubuntu} they all come as packages:
 
-Run {\bf MYSQL=NO ./configure}, {\bf make}, and {\bf sudo make install}. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x.
+{\bf sudo apt-get install libmysqlclient-dev libsqlite3-dev flex bison sqlite3}
 
-\paragraph*{Second Step:} Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. In {\bf /usr/local/etc/wendzelnntpd.conf} make sure that WendzelNNTPd uses sqlite3 instead of mysql:
+Under {\it CentOS} they come as packages as well:
+
+{\bf sudo yum install make gcc bison flex sqlite-devel}
+
+{\it Other} operating systems should provide the same or similar packages/ports.
+
+Run {\bf MYSQL=NO ./configure}, followed by {\bf make}, and {\bf sudo make install}. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x (and it would be significantly more difficult to bring the SQLite database content to a MySQL database).
+
+\paragraph*{Second Step:} Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. Therefore, in the configuration file {\bf /usr/local/etc/wendzelnntpd.conf} make sure that WendzelNNTPd uses sqlite3 instead of mysql:
 
 \begin{verbatim}
 database-engine sqlite3
@@ -29,9 +36,9 @@ database-engine sqlite3
 
 \paragraph*{Third Step:}
 Now comes the tricky part. The install command should have created
-{\bf /var/spool/news/wendzelnntpd/usenet.db}
+{\bf /var/spool/news/wendzelnntpd/usenet.db}.
 However, it is an empty usenet database file in the new format.
-Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all {\bf cdp*} files and the {\bf nextmsgid} file from your Windows directory to {\bf /var/spool/news/wendzelnntpd/}. 
+Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all {\bf cdp*} files and the {\bf nextmsgid} file from your Windows system/from your backup original directory to {\bf /var/spool/news/wendzelnntpd/}. 
 
 The following step is a very dirty hack but I hope it works for you. It is not 100\% perfect as important table columns are then still of the type 'STRING' instead of the type 'TEXT'!
 
