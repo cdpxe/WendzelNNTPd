@@ -5,7 +5,8 @@ WendzelNNTPd ChangeLog:
 2.0.8-stable "Oslo" : __-___-201_
  MISC:
  - Slight improvement of the documentation (how to start/stop/restart
-   the service and how to install the startup script).
+   the service and how to install the startup script) and in the expla-
+   nation of the default config file (wendzelnntpd.conf).
 
 2.0.7-stable "Berlin" : 26-Oct-2015
  FIXES:
