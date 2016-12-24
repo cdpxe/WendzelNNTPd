@@ -10,7 +10,7 @@ all :
 #	pdflatex docs.tex
 
 v :
-	evince docs.pdf
+	evince docs.pdf || atril docs.pdf
 
 view : v
 
