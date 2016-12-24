@@ -1,2 +1,1 @@
-Place for compiled binaries during make process.
-
+Place for compiled binaries (binaries are placed here during `make' process).
