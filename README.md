@@ -21,4 +21,4 @@ http://steffen-wendzel.blogspot.de/p/wendzelnntpd.html
 
 ## Documentation
 
-http://www.wendzel.de/dr.org/files/Projects/wendzelnntpd/docs_2.0/docs.pdf
+https://github.com/cdpxe/WendzelNNTPd/blob/master/WendzelNNTPd-OSE/docs/docs.pdf
