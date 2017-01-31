@@ -99,17 +99,17 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)/share/doc/wendzelnntpd ]; then install -d -m 0755 $(DESTDIR)/share/doc/wendzelnntpd; fi
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
-	chown root:root $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
+	chown 0:0 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	# documentation and config files
 	cp $(DOCFILES_TO_INST) $(DESTDIR)/share/doc/wendzelnntpd/
 	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
-	chown root:root $(DESTDIR)/share/doc/wendzelnntpd/*
+	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
 	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
 	# config
 	cp wendzelnntpd.conf $(FAKECDIR)/
-	chown root:root $(FAKECDIR)/wendzelnntpd.conf
+	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
 	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
 	# nextmsgid and usenet.db are placed here:
 	mkdir -p /var/spool/news/wendzelnntpd
@@ -118,7 +118,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	# create a backup of the old usenet database, if needed
 	@if [ -f $(UDBFILE) ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M:%S"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M:%S"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 	@# create new database, dir already exists due to earlier mkdir call
-	install -d -m 0700 $(CMD_INSTALL_USEROPT) root -g root /var/spool/news/wendzelnntpd
+	install -d -m 0700 $(CMD_INSTALL_USEROPT) 0 -g 0 /var/spool/news/wendzelnntpd
 	@#
 	@# create sqlite initial database if Sqlite3 is used
 	@# AND
@@ -132,12 +132,12 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@read uselessinput
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
-	chown root:root $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
+	chown 0:0 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
 	# documentation
 	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
-	chown root:root $(DESTDIR)/share/doc/wendzelnntpd/*
+	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
 	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
 	@echo "Upgrade finished."
 
