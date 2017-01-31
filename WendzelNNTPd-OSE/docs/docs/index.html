@@ -291,7 +291,7 @@ This chapter provides a guide on how to install WendzelNNTPd-OSE (Open Source Ed
 
 <P>
 To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.<A NAME="tex2html2"
-  HREF="footnode.html#foot120"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
+  HREF="footnode.html#foot127"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -305,7 +305,10 @@ $ ./configure
 <B>Please Note:</B> <I>If you wish to compile WITHOUT MySQL or WITHOUT SQlite support</I>, then run <B>MYSQL=NO ./configure</B> or <B>SQLITE=NO ./configure</B>, respectively.
 
 <P>
-After configure finished, run <B>make</B>:
+<B>Please Note:</B> <I>For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e. run <TT>MYSQL=NO ./configure</TT>). Packages are available for all *BSD derivates. However, please also run <TT>configure</TT> as well as <TT>make</TT> in the <TT>bash</TT> shell (under some BSDs you first need to install the <TT>bash</TT>).</I>
+
+<P>
+After <TT>configure</TT> has finished, run <B>make</B>:
 
 <P>
 <PRE>
@@ -356,7 +359,7 @@ Not supported.
 
 <P>
 
-<H1><A NAME="SECTION00400000000000000000"></A><A NAME="188"></A>
+<H1><A NAME="SECTION00400000000000000000"></A><A NAME="202"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Configuration
 </H1>
@@ -559,14 +562,14 @@ By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs wh
 enable-anonym-mids
 </PRE>
 
-<H1><A NAME="SECTION00500000000000000000"></A><A NAME="356"></A>
+<H1><A NAME="SECTION00500000000000000000"></A><A NAME="370"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A NAME="SECTION00510000000000000000"></A><A NAME="358"></A>
+<H1><A NAME="SECTION00510000000000000000"></A><A NAME="372"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -586,7 +589,7 @@ WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A NAME="SECTION00520000000000000000"></A><A NAME="365"></A><A NAME="366"></A>
+<H1><A NAME="SECTION00520000000000000000"></A><A NAME="379"></A><A NAME="380"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1117,7 +1120,7 @@ Besides the already mentioned authentification, ACL and RBAC features, the secur
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <TT>nmap</TT> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A NAME="SECTION00600000000000000000"></A><A NAME="658"></A><A NAME="Ch:Upgrade"></A>
+<H1><A NAME="SECTION00600000000000000000"></A><A NAME="672"></A><A NAME="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Upgrade to a newer version
 </H1>
@@ -1295,20 +1298,20 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you ma
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#188"><SPAN CLASS="arabic">3</SPAN></A>
+<DD><A HREF="docs.html#202"><SPAN CLASS="arabic">3</SPAN></A>
 <DT><STRONG>Installation</STRONG>
 <DD><A HREF="docs.html#92"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Introduction</STRONG>
 <DD><A HREF="docs.html#41"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#366"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#380"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#356"><SPAN CLASS="arabic">4</SPAN></A>
- | <A HREF="docs.html#358"><SPAN CLASS="arabic">1</SPAN></A>
+<DD><A HREF="docs.html#370"><SPAN CLASS="arabic">4</SPAN></A>
+ | <A HREF="docs.html#372"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#365"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#379"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#658"><SPAN CLASS="arabic">5</SPAN></A>
+<DD><A HREF="docs.html#672"><SPAN CLASS="arabic">5</SPAN></A>
 
 </DL>
 
@@ -1332,7 +1335,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-show_section_numbers -local_icons -split 2 docs.tex</TT>
 <P>
-The translation was initiated by Prof. Dr. Steffen Wendzel on 2016-12-24
+The translation was initiated by Prof. Dr. Steffen Wendzel on 2017-01-31
 <BR><HR>
 <!--Table of Child-Links-->
 <A NAME="CHILD_LINKS"></A>
@@ -1519,7 +1522,7 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2016-12-24
 <!--End of Navigation Panel-->
 <ADDRESS>
 Prof. Dr. Steffen Wendzel
-2016-12-24
+2017-01-31
 </ADDRESS>
 </BODY>
 </HTML>

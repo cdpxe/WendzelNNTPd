@@ -15,7 +15,9 @@ $ ./configure
 
 {\bf Please Note:} {\it If you wish to compile WITHOUT MySQL or WITHOUT SQlite support}, then run {\bf MYSQL=NO ./configure} or {\bf SQLITE=NO ./configure}, respectively.
 
-After configure finished, run {\bf make}:
+{\bf Please Note:} {\it For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e.\ run \texttt{MYSQL=NO ./configure}). Packages are available for all *BSD derivates. However, please also run \texttt{configure} as well as \texttt{make} in the \texttt{bash} shell (under some BSDs you first need to install the \texttt{bash}).}
+
+After \texttt{configure} has finished, run {\bf make}:
 
 \begin{verbatim}
 $ make

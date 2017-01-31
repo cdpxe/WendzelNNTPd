@@ -3,6 +3,11 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 2.0.8-stable "Oslo" : __-___-201_
+ ADDED_FEATURES:
+ - *BSD support: Add comment how to install WendzelNNTPd under FreeBSD
+   and other BSD derivates in documentation and also adjust the Makefile
+   accordingly since group `root' is called `wheel' there. No use 0:0
+   instead of root:root in install/upgrade targets of the Makefile.
  MISC:
  - Slight improvement of the documentation (how to start/stop/restart
    the service and how to install the startup script) and in the expla-
