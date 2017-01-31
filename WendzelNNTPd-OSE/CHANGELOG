@@ -2,7 +2,7 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.0.8-stable "Oslo" : __-___-201_
+2.0.8-stable "Oslo" : 31-Jan-2017
  ADDED_FEATURES:
  - *BSD support: Add comment how to install WendzelNNTPd under FreeBSD
    and other BSD derivates in documentation and also adjust the Makefile
@@ -14,6 +14,7 @@ WendzelNNTPd ChangeLog:
    nation of the default config file (wendzelnntpd.conf).
  - Slight improvement of help output and comments in configure script
    and Makefile.
+ - Tiny code e-mail address clean-up
 
 2.0.7-stable "Berlin" : 26-Oct-2015
  FIXES:

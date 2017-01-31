@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2015 Steffen Wendzel <steffen (at) ploetner-it (dot) de>
+ * Copyright (c) 2004-2015 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
  * 
  * This program is free software; you can redistribute it and/or modify

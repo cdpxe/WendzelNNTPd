@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPadm is distributed under the following license:
  *
- * Copyright (c) 2004-2010 Steffen Wendzel <steffen (at) ploetner-it (dot) de>
+ * Copyright (c) 2004-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
