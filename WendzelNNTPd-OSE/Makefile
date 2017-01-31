@@ -154,7 +154,7 @@ count : clean
 clean :
 	rm -f bin/wendzelnntpd bin/wendzelnntpadm *.core `find . -name '*.o'` \
 	y.output gpmon.out log *.BAK lex.*.[ch] *.tab.[ch] `find . -name '*~'` \
-	config.output
+	config.output temp.c
 	@# documentation cleanup
 	rm -f docs/docs.ilg docs/docs.ind docs/*.idx docs/*.aux docs/*.toc \
 	docs/*.log \
