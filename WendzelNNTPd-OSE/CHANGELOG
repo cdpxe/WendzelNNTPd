@@ -12,6 +12,8 @@ WendzelNNTPd ChangeLog:
  - Slight improvement of the documentation (how to start/stop/restart
    the service and how to install the startup script) and in the expla-
    nation of the default config file (wendzelnntpd.conf).
+ - Slight improvement of help output and comments in configure script
+   and Makefile.
 
 2.0.7-stable "Berlin" : 26-Oct-2015
  FIXES:

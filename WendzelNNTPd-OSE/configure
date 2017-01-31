@@ -1,13 +1,14 @@
 #!/bin/sh
 # WendzelNNTPd configure script by Steffen 'cdp_xe' Wendzel.
-# Based on the Xyria:DNSd/cdpNNTPd configure script I wrote
-# in 2004 or 2005.
-# e-mail: swendzel (at) ploetner-it (dot) de
+# Based on the Xyria:DNSd/cdpNNTPd configure script I wrote in 2004 or 2005.
+# This script is basically unchanged since 2015 as I only added detail
+# improvements.
+# e-mail: wendzel (at) hs-worms (dot) de
 # web:    http://www.wendzel.de
-
+#
 # WendzelNNTPd is distributed under the following license:
 #
-# Copyright (c) 2004-2010 Steffen Wendzel <steffen (at) ploetner-it.de>
+# Copyright (c) 2004-2017 Steffen Wendzel <steffen (at) ploetner-it.de>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,7 +33,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-VERSION="2.3.0 - Mar-26-2015"
+VERSION="2.3.1 - Jan-31-2017"
 
 MAKEFILE_INC="Makefile.inc"
 
@@ -78,11 +79,10 @@ check()
 
 ############# WELCOME #########################
 
-echo "This is the WendzelNNTPd configuration script"
-echo "       configure script v. $VERSION"
+echo "This is the WendzelNNTPd configuration script v.${VERSION}"
 echo
-echo "(C) 2004-2015 Steffen Wendzel"
-echo "    mail: steffen at ploetner-it dot de"
+echo "(C) 2004-2017 Steffen Wendzel"
+echo "    mail: wendzel (at) hs-worms (dot) de"
 echo "    http://www.wendzel.de"
 echo
 
@@ -107,30 +107,34 @@ fi
 if [ "$1" != "" ]; then
 	echo "This configure script takes some environment variables:"
 	echo
-	echo "1) Directory setup:"
+	echo "1) Directory setup (can be used e.g. if you build a package/port):"
 	echo 
-	echo "DESTDIR  - the installation destination base dir (would be /usr"
-	echo "           or /usr/local in 99% of all cases)."
-	echo "           default: /usr/local"
-	echo "CONFDIR  - the installation destination of the config file"
+	echo "DESTDIR  - The installation destination base dir (would be /usr"
+	echo "           or /usr/local in 99% of all cases) and there is"
+	echo "           usually little reason to change this variable."
+	echo "           The default value is: /usr/local"
+	echo "CONFDIR  - The installation destination of the config file"
 	echo "           (would be /etc or /usr/local/etc in 99% of all cases)."
-	echo "           default: /usr/local/etc"
-	echo "FAKECDIR - this is a fake directory to place the config file in"
-	echo "           (for example copy to fakeroot-.../etc/ but the code"
-	echo "           will use CONFDIR nevertheless). this is useful for"
-	echo "           building ports and packages in Linux and *BSD."
-	echo "           default: same as CONFDIR"
+	echo "           The default value is: /usr/local/etc"
+	echo "FAKECDIR - This is a fake directory to place the config file into"
+	echo "           (for example copy to ./fakeroot-xyz/etc/ but the code"
+	echo "           will use CONFDIR nevertheless). This is useful for"
+	echo "           building ports and packages in Linux and *BSD. However,"
+	echo "           use-cases will be pretty rare."
+	echo "           The default value: same as CONFDIR"
 	echo
-	echo "2) Databases:"
+	echo "2) Databases (options to disable support at compile-time):"
 	echo
-	echo "MYSQL    - disables support for MySQL if you do not want to"
+	echo "MYSQL=NO - Disables support for MySQL if you do not wish to"
 	echo "           install mysqlclient and mysql development libraries"
-	echo "           (use MYSQL=NO)."
-	echo "SQLITE   - disables support for SQLITE if you do not want to"
-	echo "           install sqlite development libraries"
-	echo "           (use SQLITE=NO)."
-	echo "Note: You can only deactivate either MYSQL or SQLITE as at"
-	echo "least one database is required."
+	echo "           or if you do not wish to have WendzelNNTPd contain"
+	echo "           any support for MySQL (use: 'MYSQL=NO ./configure')."
+	echo "SQLITE   - Disables support for SQLITE if you do not wish to"
+	echo "           install sqlite development libraries or if you do"
+	echo "           not wish to have WendzelNNTPd contain any support"
+	echo "           for SQLite (use: 'SQLITE=NO ./configure')."
+	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE but not"
+	echo "both as least one database is required to operate WendzelNNTPd."
 	exit 1
 fi
 
@@ -276,7 +280,7 @@ out "checking for bison..."; bison -V >/dev/null 2>&1; check "yes" "no" "You nee
 
 if [ "$SQLITE" = "NO" -a "$MYSQL" = "NO" ]; then
 	echo "error: you cannot deactivate support for MySQL *and* SQlite as"
-	echo "you need at least one database!";
+	echo "you need to integrate support for at least one database!";
 	exit 1
 fi
 

@@ -126,9 +126,10 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@#
 	@if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi
 	@echo "Installation finished."
+	@echo "Thank you for using this software! Have fun using it!"
 
 upgrade : bin/wendzelnntpd bin/wendzelnntpadm
-	@echo "*** Please only upgrade if you run WendzelNNTPd 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration file remain untouched. Press RETURN to perform an upgrade or CTRL+C to abort. ***"
+	@echo "*** Please only upgrade your WendzelNNTPd if your existing installation is WendzelNNTPd version 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration files remain untouched. Press RETURN to perform an upgrade or press CTRL+C to abort. ***"
 	@read uselessinput
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
@@ -139,7 +140,7 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
 	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
 	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
-	@echo "Upgrade finished."
+	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
 
 exec : bin/wendzelnntpd
 	./bin/wendzelnntpd
