@@ -179,7 +179,15 @@ else
 	echo "no"
 fi
 
-out "configuring for 'install' command..."
+out "checking for 'install' command..."
+install >/dev/null 2>&1; check "yes" "no" "you need the 'install' tool." 1 # == error because no useful parameter provided, but that is what we need, because if not present, return value would be 127==not found
+#if [ "$?" = "127" ]; then
+#	echo "no"
+#else
+#	echo "yes"
+#fi
+
+out "configuring for 'install' command parameters..."
 if [ "$OS" = "SunOS" ]; then
 	# OpenSolaris
 	CMD_INSTALL_USEROPT="-u"

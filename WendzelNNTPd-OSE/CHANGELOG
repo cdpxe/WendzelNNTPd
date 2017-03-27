@@ -2,6 +2,11 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
+current : ??-??-201?
+ MISC:
+ - Configure did not check whether the `install' tool is present. The
+   tool's presence is now also checked.
+
 2.0.8-stable "Oslo" : 31-Jan-2017
  ADDED_FEATURES:
  - *BSD support: Add comment how to install WendzelNNTPd under FreeBSD
