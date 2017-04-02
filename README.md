@@ -4,9 +4,9 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 
 ## Features
 
-* Runs on Linux, OpenSolaris, BSD
+* Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
-* Database abstraction (supports SQLite3 and MySQL)
+* Database abstraction layer (supports SQLite3 and MySQL)
 * Tiny (only about 7,500 Lines of Code)
 * Written in C
 * Supports NNTP authentication (AUTHINFO USER/PASS)
