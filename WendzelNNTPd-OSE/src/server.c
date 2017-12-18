@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2015 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2017 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -210,9 +210,9 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 	 * A good thing I noticed in Feb-2008: OpenSolaris 2008-11 _has_ %z -- good!
 	 * Note: Make special Win32 check here too because Win32 uses no configure script!
 	 */
-	strftime(tbuf, 39, "%a, %d %b %y %H:%M:%S %Z", localtime(&ltime));
+	strftime(tbuf, 39, "%a, %d %b %Y %H:%M:%S %Z", localtime(&ltime));
 #else
-	strftime(tbuf, 39, "%a, %d %b %y %H:%M:%S %z", localtime(&ltime));
+	strftime(tbuf, 39, "%a, %d %b %Y %H:%M:%S %z", localtime(&ltime));
 #endif
 }
 

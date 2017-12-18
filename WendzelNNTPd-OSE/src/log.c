@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2017 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,11 +77,11 @@ logstr(char *file, int line, char *func_name, char *str)
 	time_t ltime;
 	int len;
 	char *buf;
-	char tbuf[40] = {'\0'};
+	char tbuf[42] = {'\0'};
 	extern short be_verbose;
 	
 	ltime = time(NULL);
-	strftime(tbuf, 39, "%a, %d %b %y %H:%M:%S", localtime(&ltime));
+	strftime(tbuf, 41, "%a, %d %b %Y %H:%M:%S", localtime(&ltime));
 	
 	len = strlen(tbuf) + strlen(file) + strlen(func_name)
 		+ strlen(str) + 0x7f;

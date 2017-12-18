@@ -3,6 +3,10 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 current : ??-??-201?
+ ADDED_FEATURES:
+ - Old RFC 850 mentions YY (two-digit) yearly format. However, INNd
+   uses YYYY (four-digit) yearly format. WendzelNNTPd now does the
+   same (which prevents a y2k bug in 2017 :-)).
  MISC:
  - Configure did not check whether the `install' tool is present. The
    tool's presence is now also checked.
