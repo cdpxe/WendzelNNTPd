@@ -2,18 +2,18 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-current : ??-??-201?
- ADDED_FEATURES:
+2.0.9-stable "Bergen, Christmas Releae 2017" : 18-Dec-2017
+ FIXES:
+ - 'configure' script did not check whether the `install' tool is
+   present. The tool's presence is now also checked.
+ MISC:
  - Old RFC 850 mentions YY (two-digit) yearly format. However, INNd
    uses YYYY (four-digit) yearly format. WendzelNNTPd now does the
-   same (which prevents a y2k bug in 2017 :-)).
- MISC:
- - Configure did not check whether the `install' tool is present. The
-   tool's presence is now also checked.
- - Code cleanup (removed two doubled prototype definitions).
+   same.
+ - Tiny code cleanup (removed two doubled prototype definitions).
  - Ran WendzelNNTPd with lib efence, just to see whether memory leaks
-   would be detected. Executed (hopefully) all possible NNTP commands;
-   no memory leaks were revealed. However, tested only Sqlite3 setup,
+   would be detected. Executed (hopefully) all possible NNTP commands.
+   No memory leaks were revealed. However, tested only Sqlite3 setup,
    not MySQL.
 
 2.0.8-stable "Oslo" : 31-Jan-2017
