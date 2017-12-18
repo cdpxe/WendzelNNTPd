@@ -9,14 +9,15 @@ UDBFILE=/var/spool/news/wendzelnntpd/usenet.db
 DESTCFLAGS=-DCONFDIR=\"$(CONFDIR)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
-CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
-	-Wsign-compare -Wstrict-prototypes -Wcast-align #\
-#	-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror-Wno-unused
-#CFLAGS+=-Wextra -Wunreachable-code
+#CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
+#	-Wsign-compare -Wstrict-prototypes -Wcast-align \
+#	-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow \
+#	-Wstrict-overflow=5 -Wundef -Werror -Wno-unused
+#CFLAGS+=-Wextra -Wunreachable-code  #-Wsign-conversion -Wswitch-default
 CFLAGS+=$(ADD_CFLAGS)
 
 BUILD=-DBUILD=\"`cat build`\"
-GDBON=-ggdb -g
+GDBON=-ggdb -g -efence
 
 #DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
