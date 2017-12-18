@@ -6,6 +6,11 @@ current : ??-??-201?
  MISC:
  - Configure did not check whether the `install' tool is present. The
    tool's presence is now also checked.
+ - Code cleanup (removed two doubled prototype definitions).
+ - Ran WendzelNNTPd with lib efence, just to see whether memory leaks
+   would be detected. Executed (hopefully) all possible NNTP commands;
+   no memory leaks were revealed. However, tested only Sqlite3 setup,
+   not MySQL.
 
 2.0.8-stable "Oslo" : 31-Jan-2017
  ADDED_FEATURES:

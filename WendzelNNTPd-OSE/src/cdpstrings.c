@@ -29,10 +29,6 @@
 #define PERROR_PREAMBLE "LibCDPstrings: File " __FILE__ ": "
 
 /* return the last char of a string */
-
-char CDP_lastchr(char *);
-char *CDP_return_linevalue(char *, char *);
-
 char
 CDP_lastchr(char *str)
 {
