@@ -33,7 +33,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-VERSION="2.3.1 - Jan-31-2017"
+VERSION="2.4 - Dec-21-2017"
 
 MAKEFILE_INC="Makefile.inc"
 
@@ -349,6 +349,23 @@ EOF
 gcc -o temp temp.c -lpthread >/dev/null 2>&1; check "yes" "no" "You need libpthread."
 rm -f temp temp.c
 
+###############
+out "checking for libmhash..."
+cat << EOF >temp.c
+#include <mhash.h>
+int main(){MHASH td = mhash_init(MHASH_MD5);return 0;}
+EOF
+gcc -o temp temp.c -lmhash >/dev/null 2>&1; check "yes" "no" "You need libmhash."
+rm -f temp temp.c
+
+###############
+out "checking for SHA-256..."
+cat << EOF >temp.c
+#include <mhash.h>
+int main(){MHASH td = mhash_init(MHASH_SHA256);return 0;}
+EOF
+gcc -o temp temp.c -lmhash >/dev/null 2>&1; check "yes" "no" "You need a version of libmhash that supports SHA-256."
+rm -f temp temp.c
 
 ###############
 out "checking for strndup()..."
