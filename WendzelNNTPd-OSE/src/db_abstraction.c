@@ -601,7 +601,7 @@ db_modify_newsgroup(server_cb_inf *inf, char *newsgroup, char post_flg)
 }
 
 void
-db_add_user(server_cb_inf *inf, char *username, char *password)
+db_add_user(server_cb_inf *inf, char *username, char *password /* this is a hashed pw */)
 {
 	switch (dbase) {
 #ifndef NOSQLITE

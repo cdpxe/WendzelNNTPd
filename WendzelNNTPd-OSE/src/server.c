@@ -248,7 +248,7 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 	char need_more_inf[]="381 More authentication information required.\r\n";
 	char auth_accept[]="281 Authentication accepted.\r\n";
 	char auth_reject[]="482 Authentication rejected.\r\n";	
-	char *pass;
+	char *pass, *pass_hash = NULL;
 	char *log_str = NULL;
 	
 	inf->servinf->auth_is_there=0;
@@ -260,7 +260,13 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 		}
 		if (inf->servinf->cur_auth_pass)
 			free(inf->servinf->cur_auth_pass);
-		inf->servinf->cur_auth_pass = pass;
+		pass_hash = get_sha256_hash_from_str(pass);
+		if (!pass_hash) {
+			DO_SYSL("Internal error: get_sha256_from_str() returned an error, probably out of memory. Cannot authenticate user.")
+			kill_thread(inf);
+			return;
+		}
+		inf->servinf->cur_auth_pass = pass_hash;
 		
 		/* do the whole authentication check on DB */
 		db_authinfo_check(inf);
@@ -287,6 +293,9 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 			free(inf->servinf->cur_auth_user); /* do this for security reasons! */
 			inf->servinf->cur_auth_user = NULL;
 		}
+		/* overwrite password to prevent memory leaks */
+		memset(pass, 0x0, strlen(pass));
+		memset(pass_hash, 0x0, strlen(pass_hash));
 		free(inf->servinf->cur_auth_pass);
 		inf->servinf->cur_auth_pass = NULL;
 	} else {

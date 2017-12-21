@@ -471,3 +471,6 @@ void charstack_free(charstack_t *);
 /* acl.c */
 short acl_check_user_group(server_cb_inf *, char *, char *);
 
+/* hash.c */
+char *get_sha256_hash_from_str(char *);
+

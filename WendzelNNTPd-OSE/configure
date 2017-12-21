@@ -433,6 +433,8 @@ else
 	echo 'SQLITEOBJ=db_sqlite3.o'>> $MAKEFILE_INC
 fi
 
+echo "LIBMHASH=-lmhash">> $MAKEFILE_INC
+
 echo "TABCPATH=$TABCPATH">> $MAKEFILE_INC
 echo "ORDER=-DORDER=$ORDER">> $MAKEFILE_INC
 echo >> $MAKEFILE_INC

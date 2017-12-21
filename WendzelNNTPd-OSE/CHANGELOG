@@ -1,6 +1,11 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
+2.x.x-???? "..." : ??-???-201?
+ ADDED_FEATURES:
+ - Finally, passwords are saved using a hash function (SHA-256).
+ 
+****** TODO: add configurable salt for pw hashing
 
 2.0.9-stable "Bergen, Christmas Releae 2017" : 18-Dec-2017
  FIXES:

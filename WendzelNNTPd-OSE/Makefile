@@ -17,18 +17,18 @@ CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
 CFLAGS+=$(ADD_CFLAGS)
 
 BUILD=-DBUILD=\"`cat build`\"
-GDBON=-ggdb -g -efence
+GDBON=-ggdb -g -lefence
 
-#DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
+DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 
 # The list of documentation files we wish to install
 DOCFILES_TO_INST=AUTHOR CHANGELOG HISTORY README INSTALL LICENSE usenet.db_struct mysql_db_struct.sql
 
-all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
+all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
 	expr `cat build` \+ 1 >build
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) charstack.o libfunc.o $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD)
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) charstack.o libfunc.o $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
 	#strip bin/wendzelnntpd
 
 lexyacc : lex.yy.o config.tab.o
@@ -74,6 +74,9 @@ cdpstrings.o : $(SRC)/cdpstrings.c $(HEADERS)
 server.o : $(SRC)/server.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
 
+hash.o : $(SRC)/hash.c $(HEADERS)
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+
 charstack.o : $(SRC)/charstack.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
 
@@ -86,8 +89,8 @@ cdpnntpadm.o : $(SRC)/cdpnntpadm.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) \
 	-DTHIS_TOOLNAME=\"wendzelnntpd\" -c $<
 
-wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(CCCLOCALPTHREAD) $(LIBPTHREAD)
+wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(CCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
 	#strip bin/wendzelnntpadm
 
 # misc targets

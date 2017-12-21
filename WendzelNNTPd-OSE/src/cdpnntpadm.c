@@ -180,7 +180,7 @@ exit_if_role_not_exists(server_cb_inf *inf, char *role)
 int
 main(int argc, char *argv[])
 {
-	char *pass;
+	char *pass, *pass_hash;
 	int len_argvs;
 	server_cb_inf *inf;
 	
@@ -338,10 +338,18 @@ main(int argc, char *argv[])
 		}
 		
 		exit_if_user_exists(inf, argv[2]);
-		db_add_user(inf, argv[2], pass);
+		pass_hash = get_sha256_hash_from_str(pass);
+		if (!pass_hash) {
+			/* bzero the password to clean up the mem */
+			memset(pass, 0x0, strlen(pass));
+			printf("error in mhash utilization");
+			exit(ERR_EXIT);
+		}
+		db_add_user(inf, argv[2], pass_hash);
 		
 		/* bzero the pass just to clean up the mem */
 		memset(pass, 0x0, strlen(pass));
+		memset(pass_hash, 0x0, strlen(pass_hash));
 		break;
 	case MOD_DELUSER:
 		exit_if_user_not_exists(inf, argv[2]);
