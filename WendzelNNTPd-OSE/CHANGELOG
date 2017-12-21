@@ -1,7 +1,7 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
-2.x.x-???? "..." : ??-???-201?
+2.1.0-beta "Sydney" : ??-???-201?
  ADDED_FEATURES:
  - Finally, passwords are saved using a hash function (SHA-256).
  
