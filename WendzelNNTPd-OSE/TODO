@@ -1,23 +1,25 @@
 To-do List
-=========
+==========
 
 WendzelNNTPd is still somehow unfinished. First of all, it lacks
 several NNTP commands specified in the RFCs. Secondly, some highly
 desirable features are missing, such as a support for encrypted
 connections.
 
-- unicode support (->Umlautdomains in "From:"!)
+Major:
+- add TLS support, cf. https://tools.ietf.org/html/rfc4642
+  ==> I need to implement the CAPABILITIES command first
+
+Minor:
+- unicode support (-> domains with special characters, e.g. ä,ö,ü in "From:")
 - documentation: How to delete old postings?
 - AUTHINFO SIMPLE
 - LAST, NEXT
 - NEWGROUPS
-- implement more NNTP commands
-- add TLS, cf. https://tools.ietf.org/html/rfc4642
-  ==> I need to implement the CAPABILITIES command first
+- in general: implement more NNTP commands
 - add postgres support
 - add ldap support
 - add PAM support
 - make use of strdup() ...
 - add a real GNU configure script ;-)
 - switch to different user+group id after startup
-
