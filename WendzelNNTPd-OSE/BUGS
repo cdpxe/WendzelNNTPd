@@ -1,6 +1,6 @@
 This is a TODO-list of bugs in WendzelNNTPd:
 --------------------------------------------
 
-none known @ the moment.
-
-
+- Sometimes, Thunderbird does not display threads correctly.
+  It is currently unclear whether this is a bug in
+  Thunderbird or in WendzelNNTPd.
