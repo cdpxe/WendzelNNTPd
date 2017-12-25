@@ -1,3 +1,7 @@
+=== This file contains some posting that resulted in problems in *earlier*
+=== versions of WendzelNNTPd. These postings are kept to check them from
+=== time to time -- just in case.
+
 produces: SQLite3 error: unrecognized token: "');
 
 Newsgroups: alt.wendzelnntpd.test
