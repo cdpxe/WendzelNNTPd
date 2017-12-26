@@ -129,3 +129,18 @@ By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs wh
 enable-anonym-mids
 \end{verbatim}
 
+\subsection{Changing the Default Salt for Password Hashing}
+
+When uncommenting the keyword {\bf hash-salt}, the default salt value that is used to enrich the password hashes can be changed. Please note that you have to define the salt {\it before} you set-up the first password since it will otherwise be stored as hashed with an old salt, rendering it unusable. For this reason, it is best to define your salt right after running {\bf make install}.
+
+\begin{verbatim}
+; This keyword defines a salt to be used in conjunction with the
+; passwords to calculate the cryptographic hashes. The salt must
+; be in the form [a-zA-Z0-9.:\/-_]+.
+; ATTENTION: If you change the salt after passwords have been
+; stored, they will be rendered invalid! If you comment out
+; hash-salt, then the default hash salt defined in the source
+; code will be used.
+hash-salt 0.hG4//3baA-::_\
+\end{verbatim}
+
