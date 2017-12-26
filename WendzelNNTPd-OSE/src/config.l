@@ -49,6 +49,7 @@ dynamic-ip-device                   return TOK_DYNIPDEV;
 client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
 change-gid                          return TOK_CHANGEGID;
+hash-salt                           return TOK_HASHSALT;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */

@@ -43,6 +43,7 @@ char *db_server = NULL;
 char *db_user = NULL;
 char *db_pass = NULL;
 unsigned short db_port = 0;
+char *hash_salt = "default-hash-salt-0_----3331";
 
 #define LF_ANY_IP	0x01
 #define	LF_SPEC_IP	0x02
@@ -172,13 +173,14 @@ basic_setup_server(void)
 %token TOK_DB_USER
 %token TOK_DB_PASS
 %token TOK_DB_PORT
+%token TOK_HASHSALT
 %token TOK_EOF
 
 %%
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -394,6 +396,15 @@ dbPort:
 		}
 	}
 
+hashSalt:
+	TOK_HASHSALT TOK_NAME
+	{
+		if (!(hash_salt = strdup(yytext))) {
+			DO_SYSL("strdup() error (hash_salt)")
+			err(1, "strdup() error (hash_salt)");
+		}
+		fprintf(stderr, "Using custom hash salt '%s'.\n", hash_salt);
+	}
 
 eof:
 	TOK_EOF
