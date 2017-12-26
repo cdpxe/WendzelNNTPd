@@ -403,7 +403,6 @@ hashSalt:
 			DO_SYSL("strdup() error (hash_salt)")
 			err(1, "strdup() error (hash_salt)");
 		}
-		fprintf(stderr, "Using custom hash salt '%s'.\n", hash_salt);
 	}
 
 eof:
