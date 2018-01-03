@@ -591,14 +591,19 @@ When uncommenting the keyword <B>hash-salt</B>, the default salt value that is u
 hash-salt 0.hG4//3baA-::_\
 </PRE>
 
-<H1><A NAME="SECTION00500000000000000000"></A><A NAME="392"></A>
+<P>
+WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users.
+
+<P>
+
+<H1><A NAME="SECTION00500000000000000000"></A><A NAME="396"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A NAME="SECTION00510000000000000000"></A><A NAME="394"></A>
+<H1><A NAME="SECTION00510000000000000000"></A><A NAME="398"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -618,7 +623,7 @@ WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A NAME="SECTION00520000000000000000"></A><A NAME="401"></A><A NAME="402"></A>
+<H1><A NAME="SECTION00520000000000000000"></A><A NAME="405"></A><A NAME="406"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1149,7 +1154,7 @@ Besides the already mentioned authentification, ACL and RBAC features, the secur
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <TT>nmap</TT> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A NAME="SECTION00600000000000000000"></A><A NAME="694"></A><A NAME="Ch:Upgrade"></A>
+<H1><A NAME="SECTION00600000000000000000"></A><A NAME="698"></A><A NAME="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Upgrade to a newer version
 </H1>
@@ -1333,14 +1338,14 @@ Index</A>
 <DT><STRONG>Introduction</STRONG>
 <DD><A HREF="docs.html#41"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#402"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#406"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#392"><SPAN CLASS="arabic">4</SPAN></A>
- | <A HREF="docs.html#394"><SPAN CLASS="arabic">1</SPAN></A>
+<DD><A HREF="docs.html#396"><SPAN CLASS="arabic">4</SPAN></A>
+ | <A HREF="docs.html#398"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#401"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#405"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#694"><SPAN CLASS="arabic">5</SPAN></A>
+<DD><A HREF="docs.html#698"><SPAN CLASS="arabic">5</SPAN></A>
 
 </DL>
 
@@ -1364,7 +1369,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-show_section_numbers -local_icons -split 2 docs.tex</TT>
 <P>
-The translation was initiated by Steffen Wendzel on 2017-12-26
+The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
 <BR><HR>
 <!--Table of Child-Links-->
 <A NAME="CHILD_LINKS"></A>
@@ -1552,8 +1557,8 @@ The translation was initiated by Steffen Wendzel on 2017-12-26
 <BR></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
-Steffen Wendzel
-2017-12-26
+Prof. Dr. Steffen Wendzel
+2018-01-03
 </ADDRESS>
 </BODY>
 </HTML>

@@ -338,7 +338,7 @@ main(int argc, char *argv[])
 		}
 		
 		exit_if_user_exists(inf, argv[2]);
-		pass_hash = get_sha256_hash_from_str(pass);
+		pass_hash = get_sha256_hash_from_str(argv[2], pass);
 		if (!pass_hash) {
 			/* bzero the password to clean up the mem */
 			memset(pass, 0x0, strlen(pass));

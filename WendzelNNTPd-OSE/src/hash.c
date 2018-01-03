@@ -30,15 +30,15 @@ void bzero_and_free_sensitive_strings(char *str_1, char *str_2, char *str_3)
 	if (str_3) { bzero(str_3, strlen(str_3)); free(str_3); }
 }
 
-char *get_sha256_hash_from_str(char *str)
+char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 {
 	int i;
 	MHASH td;
 	char *hash = NULL;
 	char *hash_raw = NULL;
-	char * str_plus_salt = NULL;
+	char *strs_plus_salt = NULL;
 	extern char *hash_salt;
-	int len_str_plus_salt;
+	int len_strs_plus_salt;
 	
 	/* because we allocate only half the bytes for the binary value but
 	 * all the bytes for the hex value, see below */
@@ -49,33 +49,33 @@ char *get_sha256_hash_from_str(char *str)
 	if (!(hash_raw = calloc(SHA256_LEN + 1, 1)))
 		return NULL;
 	
-	len_str_plus_salt = strlen(str) + strlen(hash_salt);
-	if (!(str_plus_salt = calloc(len_str_plus_salt + 1, 1)))
+	len_strs_plus_salt = strlen(username) + strlen(password) + strlen(hash_salt);
+	if (!(strs_plus_salt = calloc(len_strs_plus_salt + 1, 1)))
 		return NULL;
 	
 	bzero(hash, SHA256_LEN + 1);
 	bzero(hash_raw, SHA256_LEN + 1);
-	bzero(str_plus_salt, len_str_plus_salt + 1);
+	bzero(strs_plus_salt, len_strs_plus_salt + 1);
 	
-	/* combine salt and password */
-	snprintf(str_plus_salt, len_str_plus_salt, "%s%s", hash_salt, str);
+	/* combine salt, username (to prevent pw-identification attacks) and password */
+	snprintf(strs_plus_salt, len_strs_plus_salt, "%s%s%s", hash_salt, username, password);
 	
 	if ((td = mhash_init(MHASH_SHA256)) == MHASH_FAILED) {
-		bzero_and_free_sensitive_strings(hash, hash_raw, str_plus_salt); /* overwrite with zeros */
+		bzero_and_free_sensitive_strings(hash, hash_raw, strs_plus_salt); /* overwrite with zeros */
 		DO_SYSL("mhash_init() returned MHASH_FAILED. Aborting connection.")
 		return NULL;
 	}
 	
 	/* mhash() always returns MUTILS_OK in the library's code, i.e. no
 	 * error checking necessary. */
-	mhash(td, str_plus_salt, len_str_plus_salt);
+	mhash(td, strs_plus_salt, len_strs_plus_salt);
 	/* mhash_deinit() returns void, so no checking here either */
 	mhash_deinit(td, hash_raw);
 	
 	for (i = 0; i < SHA256_LEN/2; i++) {
 		snprintf(hash + (2 * i), 4, "%.2x", hash_raw[i]);
 	}
-	bzero_and_free_sensitive_strings(hash_raw, str_plus_salt, NULL); /* overwrite with zeros */
+	bzero_and_free_sensitive_strings(hash_raw, strs_plus_salt, NULL); /* overwrite with zeros */
 	return hash;
 }
 

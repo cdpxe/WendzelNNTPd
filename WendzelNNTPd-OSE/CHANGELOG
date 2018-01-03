@@ -6,7 +6,7 @@ WendzelNNTPd ChangeLog:
  - Finally, passwords are saved using a hash function (SHA-256) and are
    additionally combined with a configurable salt.
 
-
+2.0.9-stable "Bergen, Christmas Releae 2017" : 18-Dec-2017
  FIXES:
  - 'configure' script did not check whether the `install' tool is
    present. The tool's presence is now also checked.

@@ -144,3 +144,6 @@ When uncommenting the keyword {\bf hash-salt}, the default salt value that is us
 hash-salt 0.hG4//3baA-::_\
 \end{verbatim}
 
+WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users.
+
+

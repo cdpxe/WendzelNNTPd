@@ -260,7 +260,7 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 		}
 		if (inf->servinf->cur_auth_pass)
 			free(inf->servinf->cur_auth_pass);
-		pass_hash = get_sha256_hash_from_str(pass);
+		pass_hash = get_sha256_hash_from_str(inf->servinf->cur_auth_user, pass);
 		if (!pass_hash) {
 			DO_SYSL("Internal error: get_sha256_from_str() returned an error, probably out of memory. Cannot authenticate user.")
 			kill_thread(inf);
