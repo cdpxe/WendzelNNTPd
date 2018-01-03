@@ -11,6 +11,7 @@ Major:
   ==> I need to implement the CAPABILITIES command first
 
 Minor:
+- replace hash(salt,username,password) w/ hash(salt,rand(),password).
 - unicode support (-> domains with special characters, e.g. ä,ö,ü in "From:")
 - documentation: How to delete old postings?
 - AUTHINFO SIMPLE
@@ -23,3 +24,4 @@ Minor:
 - make use of strdup() ...
 - add a real GNU configure script ;-)
 - switch to different user+group id after startup
+
