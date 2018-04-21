@@ -18,7 +18,7 @@ In your configuration file, you will find a line called {\bf database-engine}. H
 database-engine mysql
 \end{verbatim}
 
-If you use MySQL, you also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on the localhost or uses not the default MySQL port, you have to modify these values too.
+If you choose to use MySQL then you will also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on localhost or uses a non-default MySQL port you will have to modify these values too.
 
 \begin{verbatim}
 ; Your database hostname (not needed for sqlite3)
@@ -80,7 +80,7 @@ You {\it could} also use different ports for different IP addresses by placing a
 
 \section{Setting the Allowed Size of Postings}
 
-To change the maximum size of a posting to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
+To change the maximum size of a post to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
 
 \begin{verbatim}
 max-size-of-postings 20971520
@@ -103,7 +103,7 @@ verbose-mode
 
 \subsection{Authentication and Access Control Lists (ACL)}
 
-WendzelNNTPd contains an extensive access control subsystem. If you want to allow only authenticated users the access to the server, you should uncomment {\bf use-authentication}. This gives every authenticated user access to each newsgroup.
+WendzelNNTPd contains an extensive access control subsystem. If you want to only allow authenticated users access to the server, you should uncomment {\bf use-authentication}. This gives every authenticated user access to each newsgroup.
 
 \begin{verbatim}
 ; Activate authentication
