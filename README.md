@@ -21,4 +21,13 @@ http://steffen-wendzel.blogspot.de/p/wendzelnntpd.html
 
 ## Documentation
 
-https://github.com/cdpxe/WendzelNNTPd/blob/master/WendzelNNTPd-OSE/docs/docs.pdf
+The WendzelNNTPd-OSE (Open Source Edition*) documentation can be found
+in the directory 'docs/' (LaTeX code and the PDF file) and 'docs/docs/'
+(HTML code) as well as online at
+http://steffen-wendzel.blogspot.de/p/wendzelnntpd.html
+
+Please also read the included INSTALL file.
+
+* Note: There is no non-OSS edition. The naming is just historically
+  rooted.
+

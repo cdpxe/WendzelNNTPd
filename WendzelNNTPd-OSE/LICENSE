@@ -1,12 +1,4 @@
-ALERT: The installer will overwrite an existing installation (but
-       only under Windows) what means that your Usenet database
-       will get removed. Make a backup first, if you want to keep
-       your USENET database.
-
 WendzelNNTP is released under the terms of the GNU General Public License (GPL)
-
-with the additional exception that compiling, linking, and using sqlite
-and pthreads is allowed.
 
 	    GNU GENERAL PUBLIC LICENSE
 		       Version 3, 29 June 2007
