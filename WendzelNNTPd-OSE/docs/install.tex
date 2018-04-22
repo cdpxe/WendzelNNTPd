@@ -4,7 +4,7 @@ This chapter provides a guide on how to install WendzelNNTPd-OSE (Open Source Ed
 
 \section{Linux/*nix/BSD}
 
-To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.\footnote{On some *nix-like O.S.es you need to run {\bf gzip -d wendzelnntpd-VERSION.tgz}, and then {\bf tar -xf wendzelnntpd-VERSION.tar}.} Extract it and run {\bf ./configure}. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
+To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.\footnote{On some *nix-like O.S.es you need to run {\bf gzip -d wendzelnntpd-VERSION.tgz}, and then {\bf tar -xf wendzelnntpd-VERSION.tar}.} Extract it and run {\bf ./configure}. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
 
 \begin{verbatim}
 $ tar -xzf wendzelnntpd-2.0.0.tgz
@@ -17,7 +17,7 @@ $ ./configure
 
 ~
 
-{\bf Please Note:} {\it For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e.\ run \texttt{MYSQL=NO ./configure}). Run \texttt{configure} as well as \texttt{make} in the \texttt{bash} shell (under some BSDs you first need to install the \texttt{bash}).}
+{\bf Please Note:} {\it For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e.\ run \texttt{MYSQL=NO ./configure}). Run \texttt{configure} as well as \texttt{make} in the \texttt{bash} shell (under some BSDs you first need to install \texttt{bash}).}
 
 ~
 
@@ -42,7 +42,7 @@ $ sudo make install
 
 There is a init script in the directory scripts/startup. It uses the usual parameters like ``start'', ``stop'' and ``restart''.
 
-\section{Inofficial Note: Mac OS X}
+\section{Unofficial Note: Mac OS X}
 
 A user reported WendzelNNTPd-2.0.0 is installable under Mac OS X 10.5.8. The only necessary change was to add the flag ``-arch x86\_64'' to compile the code on a 64 bit system. However, I never tried to compile WendzelNNTPd on a Mac.
 

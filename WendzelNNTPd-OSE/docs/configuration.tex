@@ -1,16 +1,16 @@
 \chapter{Configuration}\index{Configuration}
 
-This chapter will explain how to configure WendzelNNTPd once it has been installed on your system.
+This chapter will explain how to configure WendzelNNTPd after installation.
 
-{\bf Note:} The configuration file of WendzelNNTPd is named {\it /usr/local/etc/wendzelnntpd.conf}. The format of the configuration file should be self describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
+{\bf Note:} The configuration file for WendzelNNTPd is named {\it /usr/local/etc/wendzelnntpd.conf}. The format of the configuration file should be self-describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
 
 {\bf Note:} On *nix-like operating systems the default installation path is {\it /usr/local/*} what means that the configuration file of WendzelNNTPd will be {\it /usr/local/etc/wendzelnntpd.conf}, and the binaries will be placed in {\it /usr/local/sbin}. %On Windows all files are placed in the directory you choosed for the installation.
 
-\section{Choosing an database engine}
+\section{Choosing a database engine}
 
-The first, and most important step, is to choose a database engine. You can either use SQlite3 (what is the default case and easy to use, but not very performant) or MySQL (what is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQlite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
+The first, and most important step, is to choose a database engine. You can use either SQLite3 (what is the default case and easy to use, but not very performant) or MySQL (which is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQLite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
 
-\subsection{Modifying the wendzelnntpd.conf}
+\subsection{Modifying wendzelnntpd.conf}
 
 In your configuration file, you will find a line called {\bf database-engine}. Here you can either write {\bf sqlite} or {\bf mysql}.
 
@@ -18,7 +18,7 @@ In your configuration file, you will find a line called {\bf database-engine}. H
 database-engine mysql
 \end{verbatim}
 
-If you use MySQL, you also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on the localhost or uses not the default MySQL port, you have to modify these values too.
+If you choose to use MySQL then you will also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on localhost or uses a non-default MySQL port you will have to modify these values too.
 
 \begin{verbatim}
 ; Your database hostname (not needed for sqlite3)
@@ -37,11 +37,11 @@ database-password supercoolpass
 
 Once you have chosen your database, you need to create the (database and) table in your database.
 
-\subsubsection{SQlite}
+\subsubsection{SQLite}
 
-In the case of SQlite, {\bf make install} already did this for you.
+In the case of SQLite, {\bf make install} already did this for you.
 
-{\bf Note:} The SQlite database file as well as the posting management files will be stored in {\it /var/spool/news/wendzelnntpd/}.
+{\bf Note:} The SQLite database file as well as the posting management files will be stored in {\it /var/spool/news/wendzelnntpd/}.
 
 \subsubsection{MySQL}
 
@@ -80,7 +80,7 @@ You {\it could} also use different ports for different IP addresses by placing a
 
 \section{Setting the Allowed Size of Postings}
 
-To change the maximum size of a posting to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
+To change the maximum size of a post to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
 
 \begin{verbatim}
 max-size-of-postings 20971520
@@ -103,14 +103,14 @@ verbose-mode
 
 \subsection{Authentication and Access Control Lists (ACL)}
 
-WendzelNNTPd contains an extensive access control subsystem. If you want to allow only authenticated users the access to the server, you should uncomment {\bf use-authentication}. This gives every authenticated user access to each newsgroup.
+WendzelNNTPd contains an extensive access control subsystem. If you want to only allow authenticated users access to the server, you should uncomment {\bf use-authentication}. This gives every authenticated user access to each newsgroup.
 
 \begin{verbatim}
 ; Activate authentication
 use-authentication
 \end{verbatim}
 
-If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting {\bf use-acl}. This activates the support for Role based ACL too.
+If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting {\bf use-acl}. This activates the support for Role-based ACL too.
 
 \begin{verbatim}
 ; If you activated authentication, you can also activate access
@@ -120,7 +120,7 @@ use-acl
 
 \subsection{Anonymized Message-ID}
 
-By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs when a user sents a posting using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do that by uncommenting {\bf enable-anonym-mids}, what enables anonymized Message-IDs.
+By default, WendzelNNTPd makes a user's hostname or IP address part of new message-IDs when a user sends a post using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do so by uncommenting {\bf enable-anonym-mids}, which enables anonymized Message-IDs.
 
 \begin{verbatim}
 ; This prevents that IPs or Hostnames will become part of the
