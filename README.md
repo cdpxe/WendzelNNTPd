@@ -21,7 +21,4 @@ http://steffen-wendzel.blogspot.de/p/wendzelnntpd.html
 
 ## Documentation
 
-The documentation can be found in the directory (docs/)[docs/].
-
-Please also read the included (INSTALL)[INSTALL] file.
-
+The documentation can be found in the directory [docs/](docs/).
