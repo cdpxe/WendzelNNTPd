@@ -8,7 +8,7 @@ This chapter will explain how to configure WendzelNNTPd after installation.
 
 \section{Choosing a database engine}
 
-The first, and most important step, is to choose a database engine. You can use either SQlite3 (what is the default case and easy to use, but not very performant) or MySQL (which is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQlite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
+The first, and most important step, is to choose a database engine. You can use either SQLite3 (what is the default case and easy to use, but not very performant) or MySQL (which is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQLite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
 
 \subsection{Modifying wendzelnntpd.conf}
 
@@ -21,14 +21,14 @@ database-engine mysql
 If you choose to use MySQL then you will also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on localhost or uses a non-default MySQL port you will have to modify these values too.
 
 \begin{verbatim}
-; Your database hostname (not needed for sqlite3)
+; Your database hostname (not needed for SQLite3)
 database-server 127.0.0.1
 
-; the database connection port (not needed for sqlite3)
+; the database connection port (not needed for SQLite3)
 ; Comment out to use the default port of your database engine
 database-port 3306
 
-; Server authentication (not needed for sqlite3)
+; Server authentication (not needed for SQLite3)
 database-username mysqluser
 database-password supercoolpass
 \end{verbatim}
@@ -37,11 +37,11 @@ database-password supercoolpass
 
 Once you have chosen your database, you need to create the (database and) table in your database.
 
-\subsubsection{SQlite}
+\subsubsection{SQLite}
 
-In the case of SQlite, {\bf make install} already did this for you.
+In the case of SQLite, {\bf make install} already did this for you.
 
-{\bf Note:} The SQlite database file as well as the posting management files will be stored in {\it /var/spool/news/wendzelnntpd/}.
+{\bf Note:} The SQLite database file as well as the posting management files will be stored in {\it /var/spool/news/wendzelnntpd/}.
 
 \subsubsection{MySQL}
 
