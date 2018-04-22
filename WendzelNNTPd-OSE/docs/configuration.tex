@@ -21,14 +21,14 @@ database-engine mysql
 If you choose to use MySQL then you will also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on localhost or uses a non-default MySQL port you will have to modify these values too.
 
 \begin{verbatim}
-; Your database hostname (not needed for SQLite3)
+; Your database hostname (not needed for sqlite3)
 database-server 127.0.0.1
 
-; the database connection port (not needed for SQLite3)
+; the database connection port (not needed for sqlite3)
 ; Comment out to use the default port of your database engine
 database-port 3306
 
-; Server authentication (not needed for SQLite3)
+; Server authentication (not needed for sqlite3)
 database-username mysqluser
 database-password supercoolpass
 \end{verbatim}
