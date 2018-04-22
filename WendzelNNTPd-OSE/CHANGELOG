@@ -5,6 +5,8 @@ WendzelNNTPd ChangeLog:
  ADDED_FEATURES:
  - Finally, passwords are saved using a hash function (SHA-256) and are
    additionally combined with a configurable salt.
+ MISC:
+ - Improved documentation, thanks to @deavmi
 *TODO*: make salt not only dependent on username to prevent pw identification attacks
 
 2.0.9-stable "Bergen, Christmas Releae 2017" : 18-Dec-2017

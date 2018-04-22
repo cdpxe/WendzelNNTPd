@@ -84,7 +84,7 @@ Contents</A>
   HREF="docs.html#SECTION00311000000000000000">1 Init Script for automatic Startup</A>
 </UL>
 <LI><A NAME="tex2html80"
-  HREF="docs.html#SECTION00320000000000000000">2 Inofficial Note: Mac OS X</A>
+  HREF="docs.html#SECTION00320000000000000000">2 Unofficial Note: Mac OS X</A>
 <LI><A NAME="tex2html81"
   HREF="docs.html#SECTION00330000000000000000">3 Windows</A>
 </UL>
@@ -93,10 +93,10 @@ Contents</A>
   HREF="docs.html#SECTION00400000000000000000">3 Configuration</A>
 <UL>
 <LI><A NAME="tex2html83"
-  HREF="docs.html#SECTION00410000000000000000">1 Choosing an database engine</A>
+  HREF="docs.html#SECTION00410000000000000000">1 Choosing a database engine</A>
 <UL>
 <LI><A NAME="tex2html84"
-  HREF="docs.html#SECTION00411000000000000000">1 Modifying the wendzelnntpd.conf</A>
+  HREF="docs.html#SECTION00411000000000000000">1 Modifying wendzelnntpd.conf</A>
 <LI><A NAME="tex2html85"
   HREF="docs.html#SECTION00412000000000000000">2 Generating your database tables</A>
 </UL>
@@ -142,7 +142,7 @@ Contents</A>
   HREF="docs.html#SECTION00543000000000000000">3 Deleting a newsgroup</A>
 </UL>
 <LI><A NAME="tex2html102"
-  HREF="docs.html#SECTION00550000000000000000">5 Administrating User Accounts</A>
+  HREF="docs.html#SECTION00550000000000000000">5 User Accounts Administration</A>
 <UL>
 <LI><A NAME="tex2html103"
   HREF="docs.html#SECTION00551000000000000000">1 Listing Users (and Passwords)</A>
@@ -172,7 +172,7 @@ Contents</A>
 </UL>
 <BR>
 <LI><A NAME="tex2html114"
-  HREF="docs.html#SECTION00600000000000000000">5 Upgrade to a newer version</A>
+  HREF="docs.html#SECTION00600000000000000000">5 Upgrading</A>
 <UL>
 <LI><A NAME="tex2html115"
   HREF="docs.html#SECTION00610000000000000000">1 Upgrade from 2.0.x to 2.0.y</A>
@@ -225,7 +225,7 @@ WendzelNNTPd contains a database abstraction layer. Currently supported database
 </H2>
 
 <P>
-WendzelNNTPd contains different security features, the probably most important feature are Access Control Lists (ACLs) as well as the Role Based Access Control (RBAC) system. ACL and RBAC are described in a own chapter. WendzelNNTPd is probably the first Usenet server with support for RBAC.
+WendzelNNTPd contains different security features, the most important features are probably Access Control Lists (ACLs) and the Role Based Access Control (RBAC) system. ACL and RBAC are described in a own chapter. WendzelNNTPd is probably the first Usenet server with support for RBAC.
 
 <P>
 Another feature are so-called ``invisible newsgroups'': If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case he knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
@@ -237,7 +237,7 @@ Another feature are so-called ``invisible newsgroups'': If access control is act
 </H2>
 
 <P>
-In case a user sends a posting to two equal newsgroups within one post command's ``Newsgroups:'' header tag, the server will add it only once to save memory on the server and the time of the readers.
+In case a user sends a post to two equal newsgroups within one post command's ``Newsgroups:'' header tag, the server will add it only once to save memory on the server and the time of the readers.
 
 <P>
 
@@ -255,7 +255,7 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 </H2>
 
 <P>
-WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the used regular expression library is not 100% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
+WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
 
 <P>
 
@@ -264,7 +264,7 @@ WendzelNNTPd does not implement all NNTP commands, but the (most) important ones
 </H1>
 
 <P>
-See ``CONTRIBUTE'' file in the tarball.
+See the ``CONTRIBUTE'' file in the tarball.
 
 <P>
 
@@ -273,7 +273,7 @@ See ``CONTRIBUTE'' file in the tarball.
 </H1>
 
 <P>
-The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped the development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I primarly fix reported bugs and add minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the ``HISTORY'' file in the tarball.
+The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarly fixed reported bugs and added minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the ``HISTORY'' file in the tarball.
 
 <P>
 
@@ -293,7 +293,7 @@ This chapter provides a guide on how to install WendzelNNTPd-OSE (Open Source Ed
 
 <P>
 To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.<A NAME="tex2html2"
-  HREF="footnode.html#foot127"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packets that you may first need to install using the package system of your operating system.
+  HREF="footnode.html#foot127"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <B>./configure</B>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -310,7 +310,7 @@ $ ./configure
 &nbsp;
 
 <P>
-<B>Please Note:</B> <I>For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e. run <TT>MYSQL=NO ./configure</TT>). Run <TT>configure</TT> as well as <TT>make</TT> in the <TT>bash</TT> shell (under some BSDs you first need to install the <TT>bash</TT>).</I>
+<B>Please Note:</B> <I>For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e. run <TT>MYSQL=NO ./configure</TT>). Run <TT>configure</TT> as well as <TT>make</TT> in the <TT>bash</TT> shell (under some BSDs you first need to install <TT>bash</TT>).</I>
 
 <P>
 &nbsp;
@@ -350,7 +350,7 @@ There is a init script in the directory scripts/startup. It uses the usual param
 <P>
 
 <H1><A NAME="SECTION00320000000000000000">
-<SPAN CLASS="arabic">2</SPAN> Inofficial Note: Mac OS X</A>
+<SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
 </H1>
 
 <P>
@@ -373,26 +373,26 @@ Not supported.
 </H1>
 
 <P>
-This chapter will explain how to configure WendzelNNTPd once it has been installed on your system.
+This chapter will explain how to configure WendzelNNTPd after installation.
 
 <P>
-<B>Note:</B> The configuration file of WendzelNNTPd is named <I>/usr/local/etc/wendzelnntpd.conf</I>. The format of the configuration file should be self describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
+<B>Note:</B> The configuration file for WendzelNNTPd is named <I>/usr/local/etc/wendzelnntpd.conf</I>. The format of the configuration file should be self-describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
 
 <P>
 <B>Note:</B> On *nix-like operating systems the default installation path is <I>/usr/local/*</I> what means that the configuration file of WendzelNNTPd will be <I>/usr/local/etc/wendzelnntpd.conf</I>, and the binaries will be placed in <I>/usr/local/sbin</I>. 
 <P>
 
 <H1><A NAME="SECTION00410000000000000000">
-<SPAN CLASS="arabic">1</SPAN> Choosing an database engine</A>
+<SPAN CLASS="arabic">1</SPAN> Choosing a database engine</A>
 </H1>
 
 <P>
-The first, and most important step, is to choose a database engine. You can either use SQlite3 (what is the default case and easy to use, but not very performant) or MySQL (what is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQlite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
+The first, and most important step, is to choose a database engine. You can use either SQLite3 (what is the default case and easy to use, but not very performant) or MySQL (which is of course the better solution, but also a little bit more complicated to realize). By default, WendzelNNTPd is configured for SQLite3 and is ready to run. If you want to keep this setting, you do not have to read this section.
 
 <P>
 
 <H2><A NAME="SECTION00411000000000000000">
-<SPAN CLASS="arabic">1</SPAN> Modifying the wendzelnntpd.conf</A>
+<SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
 </H2>
 
 <P>
@@ -404,7 +404,7 @@ database-engine mysql
 </PRE>
 
 <P>
-If you use MySQL, you also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on the localhost or uses not the default MySQL port, you have to modify these values too.
+If you choose to use MySQL then you will also need to specify the user and password which WendzelNNTPd should use to connect to the server. If your server does not run on localhost or uses a non-default MySQL port you will have to modify these values too.
 
 <P>
 <PRE>
@@ -432,14 +432,14 @@ Once you have chosen your database, you need to create the (database and) table 
 <P>
 
 <H3><A NAME="SECTION00412100000000000000">
-<SPAN CLASS="arabic">1</SPAN> SQlite</A>
+<SPAN CLASS="arabic">1</SPAN> SQLite</A>
 </H3>
 
 <P>
-In the case of SQlite, <B>make install</B> already did this for you.
+In the case of SQLite, <B>make install</B> already did this for you.
 
 <P>
-<B>Note:</B> The SQlite database file as well as the posting management files will be stored in <I>/var/spool/news/wendzelnntpd/</I>.
+<B>Note:</B> The SQLite database file as well as the posting management files will be stored in <I>/var/spool/news/wendzelnntpd/</I>.
 
 <P>
 
@@ -496,7 +496,7 @@ You <I>could</I> also use different ports for different IP addresses by placing 
 </H1>
 
 <P>
-To change the maximum size of a posting to be sent to the server, change the variable <B>max-size-of-postings</B>. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
+To change the maximum size of a post to be sent to the server, change the variable <B>max-size-of-postings</B>. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
 
 <P>
 <PRE>
@@ -535,7 +535,7 @@ verbose-mode
 </H2>
 
 <P>
-WendzelNNTPd contains an extensive access control subsystem. If you want to allow only authenticated users the access to the server, you should uncomment <B>use-authentication</B>. This gives every authenticated user access to each newsgroup.
+WendzelNNTPd contains an extensive access control subsystem. If you want to only allow authenticated users access to the server, you should uncomment <B>use-authentication</B>. This gives every authenticated user access to each newsgroup.
 
 <P>
 <PRE>
@@ -544,7 +544,7 @@ use-authentication
 </PRE>
 
 <P>
-If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting <B>use-acl</B>. This activates the support for Role based ACL too.
+If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting <B>use-acl</B>. This activates the support for Role-based ACL too.
 
 <P>
 <PRE>
@@ -560,7 +560,7 @@ use-acl
 </H2>
 
 <P>
-By default, WendzelNNTPd makes a users hostname or IP part of new message-IDs when a user sents a posting using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do that by uncommenting <B>enable-anonym-mids</B>, what enables anonymized Message-IDs.
+By default, WendzelNNTPd makes a user's hostname or IP address part of new message-IDs when a user sends a post using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do so by uncommenting <B>enable-anonym-mids</B>, which enables anonymized Message-IDs.
 
 <P>
 <PRE>
@@ -785,7 +785,7 @@ done.
 <P>
 
 <H1><A NAME="SECTION00550000000000000000">
-<SPAN CLASS="arabic">5</SPAN> Administrating User Accounts</A>
+<SPAN CLASS="arabic">5</SPAN> User Accounts Administration</A>
 </H1>
 
 <P>
@@ -798,7 +798,7 @@ The easiest way to give only some people access to your server is to create user
 </H2>
 
 <P>
-This command always prints you the password of a user too.
+This command always prints the password of the user too.
 
 <P>
 <PRE>
@@ -1156,7 +1156,7 @@ Please also note that WendzelNNTPd can be easily identified due to its welcoming
 
 <H1><A NAME="SECTION00600000000000000000"></A><A NAME="698"></A><A NAME="Ch:Upgrade"></A>
 <BR>
-<SPAN CLASS="arabic">5</SPAN> Upgrade to a newer version
+<SPAN CLASS="arabic">5</SPAN> Upgrading
 </H1>
 
 <P>
@@ -1319,7 +1319,7 @@ should list all access control entries (which will be empty right now but if no 
 &nbsp;
 
 <P>
-Now start WendzelNNTPd via <B>sudo wendzelnntpd</B> and try to connect with a NNTP client to your WendzelNNTPd and then try reading postings and try sending new postings; also try replying to these postings.
+Now start WendzelNNTPd via <B>sudo wendzelnntpd</B> and try to connect with a NNTP client to your WendzelNNTPd and then try reading posts, sending new posts and replying to these posts.
 
 <P>
 If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you made it and chances are you are the second user who did that. Let me know via e-mail if it worked for you.
@@ -1369,7 +1369,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-show_section_numbers -local_icons -split 2 docs.tex</TT>
 <P>
-The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
+The translation was initiated by Steffen Wendzel on 2018-04-22
 <BR><HR>
 <!--Table of Child-Links-->
 <A NAME="CHILD_LINKS"></A>
@@ -1412,7 +1412,7 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
   HREF="docs.html#SECTION00311000000000000000"><SPAN CLASS="arabic">1</SPAN> Init Script for automatic Startup</A>
 </UL>
 <LI><A NAME="tex2html17"
-  HREF="docs.html#SECTION00320000000000000000"><SPAN CLASS="arabic">2</SPAN> Inofficial Note: Mac OS X</A>
+  HREF="docs.html#SECTION00320000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
 <LI><A NAME="tex2html18"
   HREF="docs.html#SECTION00330000000000000000"><SPAN CLASS="arabic">3</SPAN> Windows</A>
 </UL>
@@ -1421,15 +1421,15 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
   HREF="docs.html#SECTION00400000000000000000"><SPAN CLASS="arabic">3</SPAN> Configuration</A>
 <UL>
 <LI><A NAME="tex2html20"
-  HREF="docs.html#SECTION00410000000000000000"><SPAN CLASS="arabic">1</SPAN> Choosing an database engine</A>
+  HREF="docs.html#SECTION00410000000000000000"><SPAN CLASS="arabic">1</SPAN> Choosing a database engine</A>
 <UL>
 <LI><A NAME="tex2html21"
-  HREF="docs.html#SECTION00411000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying the wendzelnntpd.conf</A>
+  HREF="docs.html#SECTION00411000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
 <LI><A NAME="tex2html22"
   HREF="docs.html#SECTION00412000000000000000"><SPAN CLASS="arabic">2</SPAN> Generating your database tables</A>
 <UL>
 <LI><A NAME="tex2html23"
-  HREF="docs.html#SECTION00412100000000000000"><SPAN CLASS="arabic">1</SPAN> SQlite</A>
+  HREF="docs.html#SECTION00412100000000000000"><SPAN CLASS="arabic">1</SPAN> SQLite</A>
 <LI><A NAME="tex2html24"
   HREF="docs.html#SECTION00412200000000000000"><SPAN CLASS="arabic">2</SPAN> MySQL</A>
 </UL>
@@ -1476,7 +1476,7 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
   HREF="docs.html#SECTION00543000000000000000"><SPAN CLASS="arabic">3</SPAN> Deleting a newsgroup</A>
 </UL>
 <LI><A NAME="tex2html41"
-  HREF="docs.html#SECTION00550000000000000000"><SPAN CLASS="arabic">5</SPAN> Administrating User Accounts</A>
+  HREF="docs.html#SECTION00550000000000000000"><SPAN CLASS="arabic">5</SPAN> User Accounts Administration</A>
 <UL>
 <LI><A NAME="tex2html42"
   HREF="docs.html#SECTION00551000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing Users (and Passwords)</A>
@@ -1534,7 +1534,7 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
 </UL>
 <BR>
 <LI><A NAME="tex2html62"
-  HREF="docs.html#SECTION00600000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrade to a newer version</A>
+  HREF="docs.html#SECTION00600000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrading</A>
 <UL>
 <LI><A NAME="tex2html63"
   HREF="docs.html#SECTION00610000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade from 2.0.x to 2.0.y</A>
@@ -1557,8 +1557,8 @@ The translation was initiated by Prof. Dr. Steffen Wendzel on 2018-01-03
 <BR></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
-Prof. Dr. Steffen Wendzel
-2018-01-03
+Steffen Wendzel
+2018-04-22
 </ADDRESS>
 </BODY>
 </HTML>
