@@ -13,7 +13,7 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 * Supports advanced ACL and role based access control (RBAC)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
-* It is free software! :)
+* It is open, free software! :)
 
 ## Website
 
