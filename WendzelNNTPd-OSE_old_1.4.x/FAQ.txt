@@ -1,9 +1,0 @@
-WendzelNNTPd FAQ
-================
-
-Q: Where can I find the documentation and the FAQ?
-A: The official documentation as well as the FAQ can be found on the
-   official project website http://www.wendzel.de/?sub=softw&ssub=wendzelnntpd
-   A copy of this documentation is included in the tarball and named
-   documentation.pdf.
-
