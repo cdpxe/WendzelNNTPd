@@ -19,4 +19,4 @@ to help the project:
 
 - Extend WendzelNNTPd with your desired features and send me your
   patch so I can integrate it and make it accessible to all users this
-  way (of course with a refernce to you!).
+  way (of course with a reference to you!).

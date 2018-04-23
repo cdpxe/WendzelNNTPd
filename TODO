@@ -27,3 +27,4 @@ Minor:
 
 Others:
 - I, @deavmi, saw that there are references to Windows in the source code. Considering we no longer support Windows (as per the PDF documentation) we should probably get rid of those references.
+- Move the database configuration files (usenet.db and the like) into a separate folder as to clear up the root of the repo and organize it a bit more.
