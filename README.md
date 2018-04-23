@@ -17,8 +17,8 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 
 ## Website
 
-http://steffen-wendzel.blogspot.de/p/wendzelnntpd.html
+https://cdpxe.github.io/WendzelNNTPd/
 
 ## Documentation
 
-The documentation can be found in the directory [docs/](docs/).
+The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
