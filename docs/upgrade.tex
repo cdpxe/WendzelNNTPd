@@ -44,7 +44,7 @@ database-engine sqlite3
 Now comes the tricky part. The install command should have created
 {\bf /var/spool/news/wendzelnntpd/usenet.db}.
 However, it is an empty usenet database file in the new format.
-Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old {\bf cdp*} files and the old {\bf nextmsgid} file from your Windows system/from your backup directory to {\bf /var/spool/news/wendzelnntpd/}. 
+Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old {\bf cdp*} files and the old {\bf nextmsgid} file from your Windows system/from your backup directory to {\bf /var/spool/news/wendzelnntpd/}.
 
 The following step is a very dirty hack but I hope it works for you. It is not 100\% perfect as important table columns are then still of the type 'STRING' instead of the type 'TEXT'!
 
@@ -67,10 +67,10 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 
 \paragraph*{Fix Postings}
 
-You will probably see no posting bodies right now if postings are requested by your client. Therefore, switch into {\bf /var/spool/news/wendzelnntpd} and run (as superuser) this command, it will replace the broken trailings with corrected ones:
+You will probably see no post bodies right now if posts are requested by your client. Therefore, switch into {\bf /var/spool/news/wendzelnntpd} and run (as superuser) this command, it will replace the broken trailings with corrected ones:
 
 \begin{verbatim}
-$ cd /var/spool/news/wendzelnntpd 
+$ cd /var/spool/news/wendzelnntpd
 $ for filn in `/bin/ls cdp*`; do echo $filn; cat $filn | \
 sed 's/\.\r/.\r\n/' > new;  num=`wc -l new| \
 awk '{$minone=$1-1; print $minone}'` ; \
@@ -80,7 +80,7 @@ $
 
 \paragraph*{Last Step (Checking whether it works!):}
 
-First check, whether the datbase file is accepted at all:
+First check, whether the database file is accepted at all:
 
 \begin{verbatim}
 $ sudo wendzelnntpadm listgroups
@@ -105,4 +105,3 @@ should list all access control entries (which will be empty right now but if no 
 Now start WendzelNNTPd via {\bf sudo wendzelnntpd} and try to connect with a NNTP client to your WendzelNNTPd and then try reading posts, sending new posts and replying to these posts.
 
 If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you made it and chances are you are the second user who did that. Let me know via e-mail if it worked for you.
-
