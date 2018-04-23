@@ -1,3 +1,6 @@
+Contributing
+============
+
 You want to contribute to the project? Here a few things you can do
 to help the project:
 
@@ -17,4 +20,3 @@ to help the project:
 - Extend WendzelNNTPd with your desired features and send me your
   patch so I can integrate it and make it accessible to all users this
   way (of course with a refernce to you!).
-
