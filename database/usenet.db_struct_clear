@@ -1,0 +1,13 @@
+-- Association classes first
+DROP TABLE IF EXISTS users2roles;
+DROP TABLE IF EXISTS acl_users;
+DROP TABLE IF EXISTS acl_roles;
+DROP TABLE IF EXISTS ngposts;
+
+-- Now: the classes left
+DROP TABLE IF EXISTS newsgroups;
+DROP TABLE IF EXISTS postings;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
+
+
