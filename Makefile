@@ -115,7 +115,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	cp wendzelnntpd.conf $(FAKECDIR)/
 	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
 	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
-	# nextmsgid and usenet.db are placed here:
+	# nextmsgid and database/usenet.db are placed here:
 	mkdir -p /var/spool/news/wendzelnntpd
 	# og-rwx since the passwords are stored in the database too!
 	chmod 700 /var/spool/news/wendzelnntpd
