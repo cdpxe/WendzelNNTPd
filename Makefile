@@ -5,7 +5,7 @@
 
 include Makefile.inc
 
-UDBFILE=/var/spool/news/wendzelnntpd/usenet.db
+UDBFILE=/var/spool/news/wendzelnntpd/database/usenet.db
 DESTCFLAGS=-DCONFDIR=\"$(CONFDIR)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
@@ -24,7 +24,7 @@ GDBON=-ggdb -g -lefence
 BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 
 # The list of documentation files we wish to install
-DOCFILES_TO_INST=AUTHOR CHANGELOG HISTORY README INSTALL LICENSE usenet.db_struct mysql_db_struct.sql
+DOCFILES_TO_INST=AUTHOR CHANGELOG HISTORY README INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 
 all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
 	expr `cat build` \+ 1 >build
@@ -128,7 +128,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@# AND
 	@# create initial newsgroup for sqlite3
 	@#
-	@if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi
+	@if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi
 	@echo "Installation finished."
 	@echo "Thank you for using this software! Have fun using it!"
 
@@ -167,5 +167,3 @@ clean :
 
 print_version :
 	@/bin/sh ./getver.sh
-
-
