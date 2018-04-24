@@ -4,11 +4,11 @@ ADM=./bin/wendzelnntpadm
 
 # remove old tables (if exists) and prevent stderr messages during
 # the install
-cat usenet.db_struct_clear | \
+cat database/usenet.db_struct_clear | \
 	sqlite3 /var/spool/news/wendzelnntpd/usenet.db >/dev/null 2>&1
 
 # now create the real database
-cat usenet.db_struct | \
+cat database/usenet.db_struct | \
 	sqlite3 /var/spool/news/wendzelnntpd/usenet.db
 
 # find wendzelnntpadm
@@ -25,4 +25,3 @@ fi
 
 # create first newsgroup
 $ADM create alt.wendzelnntpd.test y
-
