@@ -24,9 +24,9 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <BODY >
 
 <DIV CLASS="navigation"><!--Navigation Panel-->
-<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
-<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
-<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">
 <BR>
 <BR>
 <BR></DIV>
@@ -379,7 +379,7 @@ This chapter will explain how to configure WendzelNNTPd after installation.
 <B>Note:</B> The configuration file for WendzelNNTPd is named <I>/usr/local/etc/wendzelnntpd.conf</I>. The format of the configuration file should be self-describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
 
 <P>
-<B>Note:</B> On *nix-like operating systems the default installation path is <I>/usr/local/*</I> what means that the configuration file of WendzelNNTPd will be <I>/usr/local/etc/wendzelnntpd.conf</I>, and the binaries will be placed in <I>/usr/local/sbin</I>. 
+<B>Note:</B> On *nix-like operating systems the default installation path is <I>/usr/local/*</I> what means that the configuration file of WendzelNNTPd will be <I>/usr/local/etc/wendzelnntpd.conf</I>, and the binaries will be placed in <I>/usr/local/sbin</I>.
 <P>
 
 <H1><A NAME="SECTION00410000000000000000">
@@ -448,20 +448,20 @@ In the case of SQLite, <B>make install</B> already did this for you.
 </H3>
 
 <P>
-For MySQL, a SQL script file is included called <I>mysql_db_struct.sql</I>. It creates the WendzelNNTPd database as well as all needed tables. Use the MySQL console tool to execute the script.
+For MySQL, a SQL script file is included called <I>database/mysql_db_struct.sql</I>. It creates the WendzelNNTPd database as well as all needed tables. Use the MySQL console tool to execute the script.
 
 <P>
 <PRE>
 $ cd /path/to/your/extracted/wendzelnntpd-archive/
 $ mysql -u YOUR-USER -p
-Enter password: 
+Enter password:
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 48
 Server version: 5.1.37-1ubuntu5.1 (Ubuntu)
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-mysql&gt; source mysql\_db\_struct.sql
+mysql&gt; source database/mysql\_db\_struct.sql
 ...
 mysql&gt; quit
 Bye
@@ -613,7 +613,7 @@ Once your WendzelNNTPd installation has been configured, you can run the server 
 
 <P>
 <PRE>
-$ /usr/local/sbin/wendzelnntpd 
+$ /usr/local/sbin/wendzelnntpd
 WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
 26 2015 14:10:20 #2544) is ready.
 </PRE>
@@ -1149,7 +1149,7 @@ If you want to give all developers access to the group ``project-x.news'', you a
 </H1>
 
 <P>
-Besides the already mentioned authentification, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a chroot environment or letting it run under an unpriviledged user account (the user then needs write access to /var/spool/news/wendzelnntpd and read access to (/usr/local)/etc/wendzelnntpd.conf). An unpriviledged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are reserved. This means that the server should use a port &gt;= 1024 if it is started by a non-root user. Note: Some Unix systems may have another priviledged port configuration. 
+Besides the already mentioned authentification, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a chroot environment or letting it run under an unpriviledged user account (the user then needs write access to /var/spool/news/wendzelnntpd and read access to (/usr/local)/etc/wendzelnntpd.conf). An unpriviledged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are reserved. This means that the server should use a port &gt;= 1024 if it is started by a non-root user. Note: Some Unix systems may have another priviledged port configuration.
 
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <TT>nmap</TT> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
@@ -1238,7 +1238,7 @@ Third Step:</A>
 Now comes the tricky part. The install command should have created
 <B>/var/spool/news/wendzelnntpd/usenet.db</B>.
 However, it is an empty usenet database file in the new format.
-Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old <B>cdp*</B> files and the old <B>nextmsgid</B> file from your Windows system/from your backup directory to <B>/var/spool/news/wendzelnntpd/</B>. 
+Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old <B>cdp*</B> files and the old <B>nextmsgid</B> file from your Windows system/from your backup directory to <B>/var/spool/news/wendzelnntpd/</B>.
 
 <P>
 The following step is a very dirty hack but I hope it works for you. It is not 100% perfect as important table columns are then still of the type 'STRING' instead of the type 'TEXT'!
@@ -1274,7 +1274,7 @@ You will probably see no posting bodies right now if postings are requested by y
 
 <P>
 <PRE>
-$ cd /var/spool/news/wendzelnntpd 
+$ cd /var/spool/news/wendzelnntpd
 $ for filn in `/bin/ls cdp*`; do echo $filn; cat $filn | \
 sed 's/\.\r/.\r\n/' &gt; new;  num=`wc -l new| \
 awk '{$minone=$1-1; print $minone}'` ; \
@@ -1359,11 +1359,11 @@ This document was generated using the
 <A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2008 (1.71)
 <P>
 Copyright &#169; 1993, 1994, 1995, 1996,
-Nikos Drakos, 
+Nikos Drakos,
 Computer Based Learning Unit, University of Leeds.
 <BR>
 Copyright &#169; 1997, 1998, 1999,
-<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
@@ -1551,9 +1551,9 @@ The translation was initiated by Steffen Wendzel on 2018-04-22
 
 <DIV CLASS="navigation"><HR>
 <!--Navigation Panel-->
-<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
-<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
-<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">
 <BR></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
