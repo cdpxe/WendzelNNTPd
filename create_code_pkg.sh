@@ -16,7 +16,7 @@ if [ "$a" != "y" ]; then
 	exit 0
 fi
 
-echo -n "Are you sure that the usenet.db file only includes an empty "
+echo -n "Are you sure that the database/usenet.db file only includes an empty "
 echo -n "database? (y/n) "
 read a
 if [ "$a" != "y" ]; then
@@ -30,7 +30,7 @@ rm -f Makefile.inc
 rm -rf $DST /tmp/wendzelnntpd*.tgz /tmp/wendzelnntp*.zip
 mkdir -p $DST
 mkdir -v $DST/src $DST/docs $DST/docs/docs $DST/src/include $DST/images $DST/scripts $DST/scripts/startup $DST/bin
-cp -v AUTHOR BUGS build CHANGELOG configure CONTRIBUTE FAQ.txt HISTORY INSTALL LICENSE log.txt Makefile README tiny_doc.txt usenet.db wendzelnntpd.conf re_create_db.sh TODO usenet.db_struct usenet.db_struct_clear mysql_db_struct.sql getver.sh $DST/
+cp -v AUTHOR BUGS build CHANGELOG configure CONTRIBUTE FAQ.txt HISTORY INSTALL LICENSE log.txt Makefile README tiny_doc.txt database/usenet.db wendzelnntpd.conf re_create_db.sh TODO database/usenet.db_struct database/usenet.db_struct_clear mysql_db_struct.sql getver.sh $DST/
 cp -v src/*.[cyl] $DST/src/
 cp -v scripts/startup/init.d_script $DST/scripts/startup/
 cp -v src/include/*.h $DST/src/include/
@@ -50,4 +50,3 @@ tar -czvf wendzelnntpd-${VER}-src.tgz wendzelnntpd
 cd ${CWD}
 
 echo "done."
-
