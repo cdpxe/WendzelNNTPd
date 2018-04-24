@@ -5,7 +5,7 @@
 
 include Makefile.inc
 
-UDBFILE=/var/spool/news/wendzelnntpd/database/usenet.db
+UDBFILE=/var/spool/news/wendzelnntpd/usenet.db
 DESTCFLAGS=-DCONFDIR=\"$(CONFDIR)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
