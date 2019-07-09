@@ -37,7 +37,7 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	char *hash = NULL;
 	char *hash_raw = NULL;
 	char *strs_plus_salt = NULL;
-	extern char *hash_salt;
+	extern char *hash_salt; /* from configuration file */
 	int len_strs_plus_salt;
 	
 	/* because we allocate only half the bytes for the binary value but
@@ -57,7 +57,7 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	bzero(hash_raw, SHA256_LEN + 1);
 	bzero(strs_plus_salt, len_strs_plus_salt + 1);
 	
-	/* combine salt, username (to prevent pw-identification attacks) and password */
+	/* combine salt (essentially [hash_salt||username] to prevent pw-identification attacks) and password */
 	snprintf(strs_plus_salt, len_strs_plus_salt, "%s%s%s", hash_salt, username, password);
 	
 	if ((td = mhash_init(MHASH_SHA256)) == MHASH_FAILED) {
