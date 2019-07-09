@@ -9,7 +9,7 @@ WendzelNNTPd ChangeLog:
  - Improved documentation, thanks to @deavmi
 *TODO*: make salt not only dependent on username to prevent pw identification attacks
 
-2.0.9-stable "Bergen, Christmas Releae 2017" : 18-Dec-2017
+2.0.9-stable "Bergen, Christmas Release 2017" : 18-Dec-2017
  FIXES:
  - 'configure' script did not check whether the `install' tool is
    present. The tool's presence is now also checked.
