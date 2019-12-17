@@ -112,6 +112,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
 	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
 	# config
+	@if [ -f $(FAKECDIR)/wendzelnntpd.conf ]; then cp $(FAKECDIR)/wendzelnntpd.conf $(FAKECDIR)/wendzelnntpd.conf.bkp; chmod 0644 $(FAKECDIR)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
 	cp wendzelnntpd.conf $(FAKECDIR)/
 	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
 	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
@@ -120,7 +121,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	# og-rwx since the passwords are stored in the database too!
 	chmod 700 /var/spool/news/wendzelnntpd
 	# create a backup of the old usenet database, if needed
-	@if [ -f $(UDBFILE) ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M:%S"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M:%S"`.bkp; echo "***Your old usenet database was backuped!***"; fi
+	@if [ -f $(UDBFILE) ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 	@# create new database, dir already exists due to earlier mkdir call
 	install -d -m 0700 $(CMD_INSTALL_USEROPT) 0 -g 0 /var/spool/news/wendzelnntpd
 	@#
@@ -129,7 +130,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@# create initial newsgroup for sqlite3
 	@#
 	@if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi
-	@echo "Installation finished."
+	@echo "Installation finished. Please note that your existing wendzelnntpd.conf might have been replaced (a backup should be located in the same folder as your original configuration file)."
 	@echo "Thank you for using this software! Have fun using it!"
 
 upgrade : bin/wendzelnntpd bin/wendzelnntpadm
