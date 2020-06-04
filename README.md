@@ -22,3 +22,7 @@ https://cdpxe.github.io/WendzelNNTPd/
 ## Documentation/FAQ
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf). However, if you are looking for a quick and easy to read frequently asked questions section then see [FAQ.md](FAQ.md).
+
+## Open Thesis Topics
+- Add TLS support (NTTPS) for WendzelnNNTPd
+- Add support for MariaDB and perform code auditing checks
