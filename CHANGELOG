@@ -3,12 +3,14 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 2.1.0-alpha "Sydney" : ??-???-201?
  ADDED_FEATURES:
- - Finally, passwords are saved using a hash function (SHA2, 256 bits)
-   and are additionally combined with a configurable salt.
-   *TODO*: make salt not only dependent on username to prevent pw
-identification attacks
+ - Finally, passwords are saved using a hash function (SHA2, 256 bits).
+   The hashed string is a concatenation of a configurable system-wide
+   salt, the username and the password. This is not a perfect solution
+   since it would be better to have unique salts per user (currently
+   the "unique salt" is just the username), but it is at least a start.
  MISC:
  - Improved documentation, thanks to @deavmi
+ - Default max size for postings is now 20 MBytes in config file.
 
 2.0.9-stable "Bergen, Christmas Release 2017" : 18-Dec-2017
  FIXES:
