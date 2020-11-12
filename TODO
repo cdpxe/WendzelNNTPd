@@ -4,11 +4,12 @@ To-do List
 WendzelNNTPd is still somehow unfinished. First of all, it lacks
 several NNTP commands specified in the RFCs. Secondly, some highly
 desirable features are missing, such as a support for encrypted
-connections.
+and integrity-checked connections.
 
 Major:
-- add TLS support, cf. https://tools.ietf.org/html/rfc4642
-  ==> I need to implement the CAPABILITIES command first
+- add TLS support, cf. https://tools.ietf.org/html/rfc4642 (check for newer
+  version of this RFC!)
+  ==> One needs to implement the CAPABILITIES command first!
 
 Minor:
 - replace hash(salt,username,password) w/ hash(salt,rand(),password).
@@ -25,3 +26,4 @@ Minor:
 - add a real GNU configure script ;-)
 - switch to different user+group id after startup
 - remove support for Windows fully from codebase
+
