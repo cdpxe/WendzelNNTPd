@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2009-2015 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2009-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,7 +633,7 @@ db_sqlite3_xover_cb(void *infp, int argc, char **argv, char **col)
 {
 	server_cb_inf *inf = (server_cb_inf *) infp;
 	int articlenum, lines;
-	int postlen;
+	int postlen = 0;
 	int len;
 	char *ref, *xref, *bodylen;
 	char *add_to_response;
@@ -649,6 +649,10 @@ db_sqlite3_xover_cb(void *infp, int argc, char **argv, char **col)
 	if (bodylen) {
 		postlen = atoi(bodylen);
 		free(bodylen);
+	} else {
+		/* this should not be reachable as the minimum body size
+		 * is 3 (.\r\n). */
+		bodylen = 0;
 	}
 	postlen += strlen(argv[6]);
 	
