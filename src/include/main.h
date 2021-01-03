@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2017 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@
 #endif
 
 #define VERSION			"2.1.0"
-#define RELEASENAME		"'Sydney'"
+#define RELEASENAME		"'Sydney' (post NYE release 2021)"
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"
