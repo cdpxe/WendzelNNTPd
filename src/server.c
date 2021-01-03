@@ -163,10 +163,11 @@ static void
 Send(int lsockfd, char *str, int len)
 {
 	if(send(lsockfd, str, len, 0)<0) {
-		if (daemon_mode)
+		if (daemon_mode) {
 			DO_SYSL("send() returned -lt 0. killing connection.")
-		else
+		} else {
 			perror("send");
+		}
 		pthread_exit(NULL);
 	}
 }
@@ -884,7 +885,7 @@ docmd_post(server_cb_inf *inf)
 	size_t s;
 	const char sep[]=NNTP_HDR_NG_SEP_STR;
 	char *newid;
-	struct hostent *hostinfo;
+	struct hostent *hostinfo = NULL;
 	char *addr;
 	char *from    = NULL,
 	     *subj    = NULL,
