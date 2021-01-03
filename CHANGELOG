@@ -2,6 +2,12 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 2.1.0-alpha "Sydney" : ??-???-201?
+ FIXES:
+ - Improved error handling in database.c:
+   - removed a memory leak and unclosed file handles in case of errors
+ - Improved error handling in db_sqlite3.c:
+   - *Explicitly* use zero body length if length of body is zero
+     (should not be possible but this makes the code safer).
  ADDED_FEATURES:
  - Finally, passwords are saved using a hash function (SHA2, 256 bits).
    The hashed string is a concatenation of a configurable system-wide
@@ -11,6 +17,7 @@ WendzelNNTPd ChangeLog:
  MISC:
  - Improved documentation, thanks to @deavmi
  - Default max size for postings is now 20 MBytes in config file.
+ - tiny improvements of coding style
 
 2.0.9-stable "Bergen, Christmas Release 2017" : 18-Dec-2017
  FIXES:
