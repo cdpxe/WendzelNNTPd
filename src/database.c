@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2015 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -123,13 +123,15 @@ get_uniqnum(void)
 		id = 0;
 		fp = fopen(MSGID_FILE, "wb+");
 		if(!fp) {
-            		DO_SYSL("Unable to create file " MSGID_FILE)
+            DO_SYSL("Unable to create file " MSGID_FILE)
+            free(buf);
 			return NULL;
 		}
 	} else {
 		if(!fread(&id, sizeof(long long), 1, fp)) {
 			fclose(fp);
-            		DO_SYSL("Unable to read file " MSGID_FILE)
+            DO_SYSL("Unable to read file " MSGID_FILE)
+			free(buf);
 			return NULL;
 		}
 		fseek(fp, 0, SEEK_SET);
@@ -142,7 +144,8 @@ get_uniqnum(void)
 	
 	if(!fwrite(&id, sizeof(long long), 1, fp)) {
 		fclose(fp);
-        	DO_SYSL("Unable to write to file " MSGID_FILE)
+        DO_SYSL("Unable to write to file " MSGID_FILE)
+        free(buf);
 		return NULL;
 	}
 	fclose(fp);
@@ -186,6 +189,7 @@ filebackend_retrbody(char *message_id_in)
 	
 	if (!(body = (char *) calloc(file_len + 1, sizeof(char)))) {
 		DO_SYSL("Not enough memory!")
+		fclose(fp);
 		return NULL;
 	}
 	{
@@ -195,6 +199,7 @@ filebackend_retrbody(char *message_id_in)
 			perror("fread");
 			DO_SYSL("Unable to read usenet backend file")
 			free(body);
+			fclose(fp);
 			return NULL;
 		}
 	}
