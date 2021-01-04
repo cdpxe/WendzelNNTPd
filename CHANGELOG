@@ -1,11 +1,11 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
-$current-dev "Current-Dev" : ??-???-20??
+2.1.1-stable "Sydney" : 05-Jan-2021
  MISC:
- - Updated documentation to better reflect new 2.1 sub-version.
- - tiny adjustments of provided text files.
- - removed "OSE (Open Source Edition)" string as there is (nor ever
+ - Updated documentation to better reflect the new 2.1 sub-version.
+ - Tiny adjustments of provided text files.
+ - Removed "OSE (Open Source Edition)" string as there is (nor ever
    was!) a non-free edition of this software.
 
 2.1.0-stable "Sydney (Post-NYE Release 2021)" : 04-Jan-2021

@@ -106,8 +106,8 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.1.0"
-#define RELEASENAME		"'Sydney' (post NYE release 2021)"
+#define VERSION			"2.1.1"
+#define RELEASENAME		"'Sydney/Crows Nest'"
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"

@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,9 +95,9 @@ main(int argc, char *argv[])
 	      		setsid();
 	      		chdir("/");
 	      		umask(077);
-	      		DO_SYSL("----WendzelNNTPd-OSE (Open Source Edition) is running in daemon mode now----")
+	      		DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
 		} else {
-			fprintf(stderr, "WendzelNNTPDd-OSE: unknown option\n");
+			fprintf(stderr, "WendzelNNTPDd: unknown option\n");
 			fprintf(stderr, "The only option available is: -d\n");
 			return ERR_EXIT;
 		}

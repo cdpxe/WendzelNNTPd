@@ -72,7 +72,7 @@ char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				"Lines:\r\n"
 				"Xref:full\r\n"
 				".\r\n";
-char welcomestring[]=         "200 WendzelNNTPd-OSE (Open Source Edition) " WELCOMEVERSION " ready (posting ok).\r\n";
+char welcomestring[]=         "200 WendzelNNTPd " WELCOMEVERSION " ready (posting ok).\r\n";
 char mode_reader_ok[]=        "200 hello, you can post\r\n";
 char quitstring[]=            "205 closing connection - goodbye!\r\n";
 char article_list_follows[]=  "211 Article list follows\r\n";
