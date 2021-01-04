@@ -1,7 +1,7 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
-2.1.0-alpha "Sydney (Post-NYE Release 2021)" : 04-Jan-2021
+2.1.0-stable "Sydney (Post-NYE Release 2021)" : 04-Jan-2021
  FIXES:
  - Improved error handling in database.c:
    - Removed a memory leak and unclosed file handles in case of errors
