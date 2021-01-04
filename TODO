@@ -26,4 +26,5 @@ Minor:
 - add a real GNU configure script ;-)
 - switch to different user+group id after startup
 - remove support for Windows fully from codebase
-
+- check whether this code can be compiled on an old i486 architecture and
+  on outdated OS releases, such as SuSE 7 or so.
