@@ -3,7 +3,8 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 $current-dev "Current-Dev" : ??-???-20??
  MISC:
- - tiny adjustments of provided text files
+ - Updated documentation to better reflect new 2.1 sub-version.
+ - tiny adjustments of provided text files.
  - removed "OSE (Open Source Edition)" string as there is (nor ever
    was!) a non-free edition of this software.
 

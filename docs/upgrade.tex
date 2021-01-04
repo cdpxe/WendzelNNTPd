@@ -1,8 +1,16 @@
 \chapter{Upgrading}\index{Upgrade}\label{Ch:Upgrade}
 
+\section{Upgrade from 2.0.x to 2.1.y}
+
+Please follow the upgrade instructions for upgrading from 2.0.x to 2.0.y below. However, once you use cryptographic hashes in your \textit{wendzelnntpd.conf}, your previous passwords will not work anymore, i.e.\ you need to reset all passwords or deactivate the hashing feature.
+
+~
+
+~
+
 \section{Upgrade from 2.0.x to 2.0.y}
 
-Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described but run {\bf make upgrade} instead of {\bf make install}. Afterwards, start WendzelNNTPd again.
+Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described but run \textbf{make upgrade} instead of \textbf{make install}. Afterwards, start WendzelNNTPd again.
 
 ~
 
@@ -10,7 +18,7 @@ Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described 
 
 \section{Upgrade from v.1.4.x to 2.0.x}
 
-{\bf Acknowledgement:} I would like to thank Ann from Href.com for helping a lot with finding out how to upgrade from 1.4.x to 2.0.x!
+\textbf{Acknowledgement:} I would like to thank Ann from Href.com for helping a lot with finding out how to upgrade from 1.4.x to 2.0.x!
 
 ~
 
@@ -20,21 +28,21 @@ An upgrade from version 1.4.x was not foreseen due to the limited available time
 
 \paragraph*{First Step:} Install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools.
 
-Under {\it Ubuntu} they all come as packages:
+Under \textit{Ubuntu} they all come as packages:
 \begin{verbatim}
 $ sudo apt-get install libmysqlclient-dev libsqlite3-dev flex bison sqlite3
 \end{verbatim}
 
-Under {\it CentOS} they come as packages as well:
+Under \textit{CentOS} they come as packages as well:
 \begin{verbatim}
 $ sudo yum install make gcc bison flex sqlite-devel
 \end{verbatim}
 
-{\it Other} operating systems should provide the same or similar packages/ports.
+\textit{Other} operating systems should provide the same or similar packages/ports.
 
-Run {\bf MYSQL=NO ./configure}, followed by {\bf make}, and {\bf sudo make install}. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x (and it would be significantly more difficult to bring the SQLite database content to a MySQL database).
+Run \textbf{MYSQL=NO ./configure}, followed by \textbf{make}, and \textbf{sudo make install}. This will compile, build and install WendzelNNTPd without MySQL support as you only rely on SQLite3 from v.1.4.x (and it would be significantly more difficult to bring the SQLite database content to a MySQL database).
 
-\paragraph*{Second Step:} Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. Therefore, in the configuration file {\bf /usr/local/etc/wendzelnntpd.conf} make sure that WendzelNNTPd uses sqlite3 instead of mysql:
+\paragraph*{Second Step:} Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. Therefore, in the configuration file \textbf{/usr/local/etc/wendzelnntpd.conf} make sure that WendzelNNTPd uses sqlite3 instead of mysql:
 
 \begin{verbatim}
 database-engine sqlite3
@@ -42,9 +50,9 @@ database-engine sqlite3
 
 \paragraph*{Third Step:}
 Now comes the tricky part. The install command should have created
-{\bf /var/spool/news/wendzelnntpd/usenet.db}.
+\textbf{/var/spool/news/wendzelnntpd/usenet.db}.
 However, it is an empty usenet database file in the new format.
-Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old {\bf cdp*} files and the old {\bf nextmsgid} file from your Windows system/from your backup directory to {\bf /var/spool/news/wendzelnntpd/}.
+Now REPLACE that file with the file you use on your existing WendzelNNTPd installation, which uses the old 1.4.x format. Also copy all of your old \textbf{cdp*} files and the old \textbf{nextmsgid} file from your Windows system/from your backup directory to \textbf{/var/spool/news/wendzelnntpd/}.
 
 The following step is a very dirty hack but I hope it works for you. It is not 100\% perfect as important table columns are then still of the type 'STRING' instead of the type 'TEXT'!
 
@@ -67,7 +75,7 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 
 \paragraph*{Fix Postings}
 
-You will probably see no post bodies right now if posts are requested by your client. Therefore, switch into {\bf /var/spool/news/wendzelnntpd} and run (as superuser) this command, it will replace the broken trailings with corrected ones:
+You will probably see no post bodies right now if posts are requested by your client. Therefore, switch into \textbf{/var/spool/news/wendzelnntpd} and run (as superuser) this command, it will replace the broken trailings with corrected ones:
 
 \begin{verbatim}
 $ cd /var/spool/news/wendzelnntpd
@@ -102,6 +110,6 @@ should list all access control entries (which will be empty right now but if no 
 
 ~
 
-Now start WendzelNNTPd via {\bf sudo wendzelnntpd} and try to connect with a NNTP client to your WendzelNNTPd and then try reading posts, sending new posts and replying to these posts.
+Now start WendzelNNTPd via \textbf{sudo wendzelnntpd} and try to connect with a NNTP client to your WendzelNNTPd and then try reading posts, sending new posts and replying to these posts.
 
 If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you made it and chances are you are the second user who did that. Let me know via e-mail if it worked for you.

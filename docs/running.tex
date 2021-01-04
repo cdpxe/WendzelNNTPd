@@ -2,15 +2,15 @@
 
 \section{Starting the Service}\index{Starting WendzelNNTPd}
 
-Once your WendzelNNTPd installation has been configured, you can run the server (in the default case you need superuser access to do that since this is required to bind WendzelNNTPd to the default NNTP port 119) by starting {\bf /usr/local/sbin/wendzelnntpd}.
+Once your WendzelNNTPd installation has been configured, you can run the server (in the default case you need superuser access to do that since this is required to bind WendzelNNTPd to the default NNTP port 119) by starting \textbf{/usr/local/sbin/wendzelnntpd}.
 
 \begin{verbatim}
 $ /usr/local/sbin/wendzelnntpd 
-WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 26 2015 14:10:20 #2544) is ready.
 \end{verbatim}
 
-{\bf Note (Daemon Mode):} If you want to run WendzelNNTPd as a background daemon process on *nix-like operating systems, you should use the parameter {\bf -d}.
+\textbf{Note (Daemon Mode):} If you want to run WendzelNNTPd as a background daemon process on *nix-like operating systems, you should use the parameter \textbf{-d}.
 
 \section{Stopping and Restarting the Service}\index{Stopping WendzelNNTPd}\index{Restarting WendzelNNTPd}
 
@@ -20,20 +20,20 @@ The server can be stopped by killing its process:
 $ pkill wendzelnntpd
 \end{verbatim}
 
-The server has a handler for the kill signal that allows to safely shutdown using {\bf pkill} or {\bf kill}.
+The server has a handler for the kill signal that allows to safely shutdown using \textbf{pkill} or \textbf{kill}.
 
 To restart the service, kill and start the service.
 
 \subsection{Automating Start, Stop, and Restart}
 
-The script {\bf init.d\_script} in the directory {\it scripts/startup} of the tarball can be used to start, restart, and stop WendzelNNTPd. It is a standard init.d script for Linux operating systems that can usually be copied to {\it /etc/init.d} (it must be executable).
+The script \textbf{init.d\_script} in the directory \textit{scripts/startup} of the tarball can be used to start, restart, and stop WendzelNNTPd. It is a standard init.d script for Linux operating systems that can usually be copied to \textit{/etc/init.d} (it must be executable).
 
 \begin{verbatim}
 $ cp scripts/startup/init.d_script /etc/init.d/wendzelnntpd
 $ chmod +x /etc/init.d/wendzelnntpd
 \end{verbatim}
 
-{\bf Note:} Please note that some operating systems use different directories than {\it /etc/init.d} or other startup script formats. In such cases, the script works nevertheless but should simply be installed to {\it /usr/local/sbin} instead.
+\textbf{Note:} Please note that some operating systems use different directories than \textit{/etc/init.d} or other startup script formats. In such cases, the script works nevertheless but should simply be installed to \textit{/usr/local/sbin} instead.
 
 
 To start, stop, and restart WendzelNNTPd, the following commands can be used afterwards:
@@ -41,13 +41,13 @@ To start, stop, and restart WendzelNNTPd, the following commands can be used aft
 \begin{verbatim}
 $ /etc/init.d/wendzelnntpd start
 Starting WendzelNNTPd ... done.
-WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 26 2015 14:10:20 #2544) is ready.
 
 $ /etc/init.d/wendzelnntpd restart
 Stopping WendzelNNTPd ... done.
 Starting WendzelNNTPd ... done.
-WendzelNNTPd-OSE (Open Source Edition): version 2.0.7 'Berlin'  - (Oct
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 26 2015 14:10:20 #2544) is ready.
 
 $ /etc/init.d/wendzelnntpd stop
@@ -58,7 +58,7 @@ Stopping WendzelNNTPd ... done.
 
 \section{Administration Tool `wendzelnntpadm'}
 
-Use the command line tool {\bf wendzelnntpadm} to configure user, role and newsgroup settings of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
+Use the command line tool \textbf{wendzelnntpadm} to configure user, role and newsgroup settings of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
 
 \begin{verbatim}
 $ wendzelnntpadm help
@@ -81,7 +81,7 @@ usage: wendzelnntpd <command> [parameters]
 
 \section{Creating/Listing/Deleting Newsgroups}
 
-You can either list, create or delete newsgroups using {\bf wendzelnntpadm}.
+You can either list, create or delete newsgroups using \textbf{wendzelnntpadm}.
 
 \subsection{Listing existing newsgroups}
 
@@ -171,7 +171,7 @@ User UserName2 does currently not exist: okay.
 done.
 \end{verbatim}
 
-{\bf Please Note:} A password must include at least 8 characters and may not include more than 100 characters.
+\textbf{Please Note:} A password must include at least 8 characters and may not include more than 100 characters.
 
 \subsection{Deleting an existing user}
 
@@ -188,9 +188,9 @@ done.
 
 Welcome to the advanced part of WendzelNNTPd. WendzelNNTPd includes a powerful role based access control system. You can either only use normal access control lists where you can configure which user will have access to which newsgroup. Or you can use the advanced role system: You can add users to roles (e.g. the user ``boss99'' to the role ``management'') and give a role access to a group (e.g. role ``management'' shall have access to ``discuss.management'').
 
-{\bf Note:} Please note that you must activate the ACL feature in your configuration file to use it.
+\textbf{Note:} Please note that you must activate the ACL feature in your configuration file to use it.
 
-{\bf Note:} To see *ALL* data related to the ACL subsystem of your WendzelNNTPd installation, simply use ``wendzelnntpadm listacl''.
+\textbf{Note:} To see *ALL* data related to the ACL subsystem of your WendzelNNTPd installation, simply use ``wendzelnntpadm listacl''.
 
 \subsection{Invisible Newsgroups}
 
@@ -335,7 +335,7 @@ done.
 
 \subsubsection{Disconnecting a Role from a Newsgroup}
 
-This is done like in the example above but you have to use the command ``rolegroup{\bf un}connect'' instead of ``rolegroupconnect''.
+This is done like in the example above but you have to use the command ``rolegroup\textbf{un}connect'' instead of ``rolegroupconnect''.
 
 \subsection{Listing your whole ACL configuration again}
 

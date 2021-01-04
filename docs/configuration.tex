@@ -2,9 +2,9 @@
 
 This chapter will explain how to configure WendzelNNTPd after installation.
 
-{\bf Note:} The configuration file for WendzelNNTPd is named {\it /usr/local/etc/wendzelnntpd.conf}. The format of the configuration file should be self-describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
+\textbf{Note:} The configuration file for WendzelNNTPd is named \textit{/usr/local/etc/wendzelnntpd.conf}. The format of the configuration file should be self-describing and the standard config file includes many comments which will help you to understand the lines you can see and modify there.
 
-{\bf Note:} On *nix-like operating systems the default installation path is {\it /usr/local/*} what means that the configuration file of WendzelNNTPd will be {\it /usr/local/etc/wendzelnntpd.conf}, and the binaries will be placed in {\it /usr/local/sbin}. %On Windows all files are placed in the directory you choosed for the installation.
+\textbf{Note:} On *nix-like operating systems the default installation path is \textit{/usr/local/*} what means that the configuration file of WendzelNNTPd will be \textit{/usr/local/etc/wendzelnntpd.conf}, and the binaries will be placed in \textit{/usr/local/sbin}. %On Windows all files are placed in the directory you choosed for the installation.
 
 \section{Choosing a database engine}
 
@@ -12,7 +12,7 @@ The first, and most important step, is to choose a database engine. You can use 
 
 \subsection{Modifying wendzelnntpd.conf}
 
-In the configuration file you will find a line called {\bf database-engine}. You can choose to use either MySQL or SQLite as the backend storage system by appending either {\bf sqlite} or {\bf mysql}.
+In the configuration file you will find a line called \textbf{database-engine}. You can choose to use either MySQL or SQLite as the backend storage system by appending either \textbf{sqlite} or \textbf{mysql}.
 
 \begin{verbatim}
 database-engine mysql
@@ -39,13 +39,13 @@ Once you have chosen your database backend you will need to create the database 
 
 \subsubsection{SQLite}
 
-If you chose SQLite as your database backend then you can skip this step as running {\bf make install} does this for you.
+If you chose SQLite as your database backend then you can skip this step as running \textbf{make install} does this for you.
 
-{\bf Note:} The SQLite database file as well as the posting management files will be stored in {\it /var/spool/news/wendzelnntpd/}.
+\textbf{Note:} The SQLite database file as well as the posting management files will be stored in \textit{/var/spool/news/wendzelnntpd/}.
 
 \subsubsection{MySQL}
 
-For MySQL, a SQL script file is included called {\it mysql\_db\_struct.sql}. It creates the WendzelNNTPd database as well as all the needed tables. Use the MySQL console tool to execute the script.
+For MySQL, a SQL script file is included called \textit{mysql\_db\_struct.sql}. It creates the WendzelNNTPd database as well as all the needed tables. Use the MySQL console tool to execute the script.
 
 \begin{verbatim}
 $ cd /path/to/your/extracted/wendzelnntpd-archive/
@@ -76,11 +76,11 @@ listen	::1
 listen	192.168.0.1
 \end{verbatim}
 
-You {\it could} also use different ports for each IP address by placing a {\bf port} command right before each {\bf listen} command but this is not recommended.
+You \textit{could} also use different ports for each IP address by placing a \textbf{port} command right before each \textbf{listen} command but this is not recommended.
 
 \section{Setting the Allowed Size of Postings}
 
-To change the maximum size of a post to be sent to the server, change the variable {\bf max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
+To change the maximum size of a post to be sent to the server, change the variable \textbf{max-size-of-postings}. The value must be set in Bytes and the default value is 20971520 (20 MBytes).
 
 \begin{verbatim}
 max-size-of-postings 20971520
@@ -88,7 +88,7 @@ max-size-of-postings 20971520
 
 \section{Verbose Mode}
 
-If you have any problems running WendzelNNTPd or if you simply want more information about what is happening, you can uncomment the {\bf verbose-mode} line.
+If you have any problems running WendzelNNTPd or if you simply want more information about what is happening, you can uncomment the \textbf{verbose-mode} line.
 
 \begin{verbatim}
 ; Uncomment 'verbose-mode' if you want to find errors or if you
@@ -105,14 +105,14 @@ Please note that WendzelNNTPd does not support SSL/TLS!
 
 \subsection{Authentication and Access Control Lists (ACL)}
 
-WendzelNNTPd contains an extensive access control subsystem. If you want to only allow authenticated users access to the server, you should uncomment {\bf use-authentication}. This gives every authenticated user access to each newsgroup.
+WendzelNNTPd contains an extensive access control subsystem. If you want to only allow authenticated users access to the server, you should uncomment \textbf{use-authentication}. This gives every authenticated user access to each newsgroup.
 
 \begin{verbatim}
 ; Activate authentication
 use-authentication
 \end{verbatim}
 
-If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting {\bf use-acl}. This activates the support for Role-based ACL too.
+If you need a slightly more advanced authentication system, you can activate Access Control Lists (ACL) by uncommenting \textbf{use-acl}. This activates the support for Role-based ACL too.
 
 \begin{verbatim}
 ; If you activated authentication, you can also activate access
@@ -122,7 +122,7 @@ use-acl
 
 \subsection{Anonymized Message-ID}
 
-By default, WendzelNNTPd makes a user's hostname or IP address part of new message-IDs when a user sends a post using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do so by uncommenting {\bf enable-anonym-mids}, which enables anonymized Message-IDs.
+By default, WendzelNNTPd makes a user's hostname or IP address part of new message-IDs when a user sends a post using the NNTP POST command. If you do not want that, you can force WendzelNNTPd not to do so by uncommenting \textbf{enable-anonym-mids}, which enables anonymized Message-IDs.
 
 \begin{verbatim}
 ; This prevents that IPs or Hostnames will become part of the
@@ -133,7 +133,7 @@ enable-anonym-mids
 
 \subsection{Changing the Default Salt for Password Hashing}
 
-When uncommenting the keyword {\bf hash-salt}, the default salt value that is used to enrich the password hashes can be changed. Please note that you have to define the salt {\it before} you set-up the first password since it will otherwise be stored as hashed with an old salt, rendering it unusable. For this reason, it is best to define your salt right after running {\bf make install}.
+When uncommenting the keyword \textbf{hash-salt}, the default salt value that is used to enrich the password hashes can be changed. Please note that you have to define the salt \textit{before} you set-up the first password since it will otherwise be stored as hashed with an old salt, rendering it unusable. For this reason, it is best to define your salt right after running \textbf{make install}.
 
 \begin{verbatim}
 ; This keyword defines a salt to be used in conjunction with the
