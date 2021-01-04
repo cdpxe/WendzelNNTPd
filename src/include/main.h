@@ -182,7 +182,7 @@
 #define ARTCLTYP_NUMBER		0x02
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
 
-#define PR_STRING		"WendzelNNTPd-OSE (Open Source Edition): "
+#define PR_STRING		"WendzelNNTPd: "
 #define PROMPT(x)		printf(PR_STRING x "\n")
 
 /* rename it since we don't use syslog now: DO_LOGSTR */

@@ -4,6 +4,8 @@ WendzelNNTPd ChangeLog:
 $current-dev "Current-Dev" : ??-???-20??
  MISC:
  - tiny adjustments of provided text files
+ - remove "OSE (Open Source Edition)" string as there is (nor ever was)
+   a non-free edition of this software.
 
 2.1.0-stable "Sydney (Post-NYE Release 2021)" : 04-Jan-2021
  FIXES:
