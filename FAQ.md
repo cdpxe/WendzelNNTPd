@@ -8,4 +8,4 @@ A: The official documentation as well as the FAQ can be found on the
 
 ### Q: Can I convert an old v.1.4.x database file to the 2.x database file format?
 
-A: Yes. There is a hack-quality solution for that. Please the documentation.
+A: Yes. There is a hack-quality solution for that. Please check the documentation.
