@@ -1,6 +1,10 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
+$current-dev "Current-Dev" : ??-???-20??
+ MISC:
+ - tiny adjustments of provided text files
+
 2.1.0-stable "Sydney (Post-NYE Release 2021)" : 04-Jan-2021
  FIXES:
  - Improved error handling in database.c:
