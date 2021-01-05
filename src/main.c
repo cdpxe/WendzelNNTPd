@@ -72,7 +72,8 @@ main(int argc, char *argv[])
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
 			welcome_(0);
 			exit(1);
-		} else if (strncmp(argv[1], "-h", 2) == 0) { /* display help */
+		} else if (!strncmp(argv[1], "-d", 2) == 0) { /* display help if not daemon mode requested here */
+			/* this also catches -h :-) */
 			usage_();
 			exit(1);
 		}
