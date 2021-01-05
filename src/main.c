@@ -34,12 +34,25 @@ extern fd_set fds;
 extern sockinfo_t *sockinfo;
 extern int peak;
 
-static void welcome_(void);
+static void usage_(void);
+static void welcome_(int ready);
 
 static void
-welcome_(void)
+usage_(void)
 {
-	PROMPT("version " WELCOMEVERSION " is ready.");
+	fprintf(stderr, "WendzelNNTPd accepts the following *exclusive* parameters:\n"
+					"-d     run WendzelNNTPd in daemon mode\n"
+					"-h     print help\n"
+					"-v     print the version and exit\n");
+}
+
+static void
+welcome_(int ready)
+{
+	PROMPT("version " WELCOMEVERSION);
+	if (ready == 1) {
+		PROMPT("service is ready.");
+	}
 }
 
 int
@@ -55,6 +68,16 @@ main(int argc, char *argv[])
 	pthread_t th1;
 	sockinfo_t *sockinf;
 	
+	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
+		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
+			welcome_(0);
+			exit(1);
+		} else if (strncmp(argv[1], "-h", 2) == 0) { /* display help */
+			usage_();
+			exit(1);
+		}
+	}
+
 /* BASIC INITIALIZATION */
 	bzero(&sa, sizeof(sa));
 	bzero(&sa6, sizeof(sa6));
@@ -96,10 +119,6 @@ main(int argc, char *argv[])
 	      		chdir("/");
 	      		umask(077);
 	      		DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
-		} else {
-			fprintf(stderr, "WendzelNNTPDd: unknown option\n");
-			fprintf(stderr, "The only option available is: -d\n");
-			return ERR_EXIT;
 		}
 #endif
 	}
@@ -109,7 +128,7 @@ main(int argc, char *argv[])
 #endif
 	
 	check_db();
-	welcome_();
+	welcome_(1);
 	
 /* SOCKET MAINLOOP */
 	/* from now on: db abstraction in thread mode.
