@@ -162,9 +162,11 @@ clean :
 	config.output temp.c
 	@# documentation cleanup
 	rm -f docs/docs.ilg docs/docs.ind docs/*.idx docs/*.aux docs/*.toc \
-	docs/*.log \
+	docs/*.log docs/docs.out \
 	docs/docs/*.tex docs/docs/*.pl docs/docs/*.log docs/docs/*.idx \
-	docs/docs/WARNINGS docs/docs/*.old docs/docs/*.aux
+	docs/docs/WARNINGS docs/docs/*.old docs/docs/*.aux docs/docs/images.out \
+	docs/docs/images.pdf docs/docs/img1.svg
 
 print_version :
 	@/bin/sh ./getver.sh
+
