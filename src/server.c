@@ -343,7 +343,7 @@ docmd_list(char *cmdstring, server_cb_inf *inf, int cmdtyp)
 		break;
 	case CMDTYP_LIST_NEWSGROUPS:
 		if (!(wildmat = get_slinearg(cmdstring, 2))) {
-			/* if no wildmat is given, we list all newsgroups, according to RFC3977
+			/* if no wildmat is given, we list all newsgroups, according to RFC 3977
 			 * therefore, set wildmat to '.*'. */
 			 wildmat = ".*";
 		}
@@ -1147,7 +1147,7 @@ docmd_post(server_cb_inf *inf)
 		}
 		snprintf(message_id, len - 1, "%s" NNTPD_ANONYM_HOST ">", newid);
 	}
-	/* Free the newly created Message-ID since we finaly built the message_id */
+	/* Free the newly created Message-ID since we finally built the message_id */
 	free(newid);
 	
 	/*
@@ -1177,7 +1177,7 @@ docmd_post(server_cb_inf *inf)
 					/* do nothing */
 				}
 				lenb += 2;
-				// now add the rest of the header from position i on
+				/* now add the rest of the header from position i on */
 				while (lenb <= strlen(header)) {
 					header[i] = header[lenb];
 					i++;
@@ -1359,7 +1359,7 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 			} else {
-				DO_SYSL("Catched a douple newsgroup posting (posted it only once to the group).")
+				DO_SYSL("Catched a duplicated newsgroup posting (posted it only once to the group).")
 			}
 		}
 #ifndef __WIN32__

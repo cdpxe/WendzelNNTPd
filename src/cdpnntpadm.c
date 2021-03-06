@@ -310,7 +310,7 @@ main(int argc, char *argv[])
 		}
 		/* If the password was not given as a parameter: read it */
 		else {
-#ifndef __WIN32__ /* why the hell does win32 don't support this func??? */
+#ifndef __WIN32__ /* why the hell does win32 not support this func??? */
 			pass = getpass("Enter new password for this user (max. 100 chars):");
 #else
 			if (!(pass = (char *)calloc(101, sizeof(char)))) {

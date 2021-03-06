@@ -55,7 +55,7 @@ chk_file_sec(char *filename)
 {
 #ifndef __WIN32__
 	/* based on the AstroCam source code I wrote in the past
-	 * (see sf.net/projects/astrocam for details)
+	 * (see https://github.com/cdpxe/astrocam for details)
 	 */
 	int file;
 	struct stat s;

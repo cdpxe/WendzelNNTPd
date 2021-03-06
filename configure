@@ -8,7 +8,7 @@
 #
 # WendzelNNTPd is distributed under the following license:
 #
-# Copyright (c) 2004-2017 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+# Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -81,9 +81,9 @@ check()
 
 echo "This is the WendzelNNTPd configuration script v.${VERSION}"
 echo
-echo "(C) 2004-2017 Steffen Wendzel"
+echo "Written by Steffen Wendzel"
 echo "    mail: wendzel (at) hs-worms (dot) de"
-echo "    http://www.wendzel.de"
+echo "    https://www.wendzel.de"
 echo
 
 ###### check some env #########
@@ -156,7 +156,7 @@ if [ "$OS" = "SunOS" ]; then
 		ORDER=0
 		echo "big endian"
 		echo
-		echo "NOTE: WendzelNNTPd was never tested on big endian plattforms."
+		echo "NOTE: WendzelNNTPd was never tested on big endian platforms."
 		echo
 	fi
 else

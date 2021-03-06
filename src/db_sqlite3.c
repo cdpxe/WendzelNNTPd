@@ -53,7 +53,7 @@ db_sqlite3_close_connection(server_cb_inf *inf)
 	sqlite3_close(inf->servinf->db);
 }
 
-/* this was a good idea but acctually it does nothing more than executing sqlite3_exec. I do
+/* this was a good idea but actually it does nothing more than executing sqlite3_exec. I do
  * all the checks by hand, what is better because it is needed only two times in this whole
  * file! Btw. This is good because I can better add the database abstraction layer later!
  */
@@ -704,7 +704,7 @@ db_sqlite3_xover(server_cb_inf *inf, u_int32_t min, u_int32_t max)
 	free(sql_cmd);
 }
 
-/* ***** POST FUNCTIONS, ALSO USABLE BY OTHERS (PARTWISE) ***** */
+/* ***** POST FUNCTIONS, ALSO (PARTIALLY) USABLE BY OTHER PARTS ***** */
 
 /* NOTES:
  * 1. This function is used by multiple sqlite3 functions as

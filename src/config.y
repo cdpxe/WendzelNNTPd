@@ -262,8 +262,8 @@ listenonSpec:  /* done */
 		
 			if (listenflag == LF_ANY_IP) {
 				fprintf(stderr,
-					"error: you have to choose between ANY ip address or some specific\n"
-					"but you cannot use both features at the same time.\n");
+					"error: you have to choose between ANY IP address or some specific\n"
+					"IP address but you cannot use both features at the same time.\n");
 				exit(0);
 			}
 			listenflag = LF_SPEC_IP;

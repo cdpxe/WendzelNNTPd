@@ -38,7 +38,7 @@ CDP_lastchr(char *str)
 /* This is a special function I implemented for my Usenet-Server. Say that the buffer
  * contains 'name: nobody\nage: 100yrs\n', then you specify a 'key' (e.g. 'name:') and
  * this function will return you the value for this line (e.g. 'nobody').
- * Update: This function is NOT case sensitive what brings more compfort with it.
+ * Update: This function is NOT case sensitive what brings more comfort with it.
  */
 
 char *
