@@ -154,7 +154,7 @@ done.
 
 \subsection{Creating a new user}
 
-You can either enter the password as additional parameter (usefull for scripts that create users automatically) ...
+You can either enter the password as additional parameter (useful for scripts that create users automatically) ...
 
 \begin{verbatim}
 $ wendzelnntpadm adduser UserName HisPassWord
@@ -374,7 +374,7 @@ If you want to give all developers access to the group ``project-x.news'', you a
 
 \section{Hardening}
 
-Besides the already mentioned authentification, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a chroot environment or letting it run under an unpriviledged user account (the user then needs write access to /var/spool/news/wendzelnntpd and read access to (/usr/local)/etc/wendzelnntpd.conf). An unpriviledged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are reserved. This means that the server should use a port >= 1024 if it is started by a non-root user. Note: Some Unix systems may have another priviledged port configuration. 
+Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a chroot environment or letting it run under an unprivileged user account (the user then needs write access to /var/spool/news/wendzelnntpd and read access to (/usr/local)/etc/wendzelnntpd.conf). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are reserved. This means that the server should use a port >= 1024 if it is started by a non-root user. Note: Some Unix systems may have another privileged port configuration. 
 
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as \texttt{nmap} provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
