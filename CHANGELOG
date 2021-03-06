@@ -5,6 +5,8 @@ WendzelNNTPd ChangeLog:
 2.1.2-current "Sydney/???" : ??-???-202?
  ADDED_FEATURES:
  - Added support for parameters -h and -v now to check for the version.
+MISC:
+ - Improved wording/fixed some typos.
 
 2.1.1-stable "Sydney/Crows Nest" : 05-Jan-2021
  MISC:
