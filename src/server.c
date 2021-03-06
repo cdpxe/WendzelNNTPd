@@ -96,7 +96,7 @@ char auth_req[]=              "480 authentication required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
-char progerr503[]=            "503 programm error, function not performed\r\n";
+char progerr503[]=            "503 program error, function not performed\r\n";
 char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
 char period_end[]=            ".\r\n";
 
@@ -207,7 +207,7 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 {
 	/* RFC-850-Format: Wdy, DD Mon YY HH:MM:SS TIMEZONE */
 #if defined(NOSUPPORT_STRFTIME_z_FLAG) && !defined(__WIN32__)
-	/* Solaris 8 makes some problemes here. Why didn't they implement the fucking '%z'?
+	/* Solaris 8 makes some problems here. Why didn't they implement the damn '%z'?
 	 * A good thing I noticed in Feb-2008: OpenSolaris 2008-11 _has_ %z -- good!
 	 * Note: Make special Win32 check here too because Win32 uses no configure script!
 	 */
@@ -221,7 +221,7 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 	AUTHINFO USER / AUTHINFO PASS
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/* Do not check if a user realy exists in docmd_authinfo_user because this would make it
+/* Do not check if a user really exists in docmd_authinfo_user because this would make it
  * easier for attackers to get access!
  */
   
@@ -564,7 +564,7 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 	/* if no articles are in the range -> return a 420 error */
 	if (	    min > REALmax
 		/*|| (max > REALmax) <-- this was  actually a good thing, but
-		 * the shitty usenet clients, like pan, just simply request
+		 * the crappy usenet clients, like pan, just simply request
 		 * independently of the real max values sent to them! Result:
 		 * they do not display anything! */
 		|| min > max) {
@@ -645,7 +645,7 @@ docmd_article(char *cmdstring, server_cb_inf *inf)
 		break;
 						
 	case ARTCLTYP_CURRENT:
-		// erstmal testen, ob nen article selected ist
+		/* first check whether an article is selected */
 		if (inf->servinf->selected_article == NULL) {
 			ToSend(noarticleselected, strlen(noarticleselected), inf);
 			return;
@@ -1231,7 +1231,7 @@ docmd_post(server_cb_inf *inf)
 	
 	/* now, with the new values, generate the new part of the header ... */
 	if (!(add_to_hdr = (char *) calloc(0x7ff + strlen(message_id) + 2*127 /* 127 chars for
-			the hostname + 127 chars for the domainname /should/ be enough */
+			the hostname + 127 chars for the domain name /should/ be enough */
 			+ strlen(header) /* for strcat() */, sizeof(char)))) {
 		DO_SYSL("not enough memory.")
 		kill_thread(inf);
@@ -1279,7 +1279,7 @@ docmd_post(server_cb_inf *inf)
 	strcat(add_to_hdr, header);
 	free(header);
 
-	/* ALERT: this is the last occurence of body; don't free it, since it
+	/* ALERT: this is the last occurrence of body; don't free it, since it
 	 * is part of 'buf'! */
 	filebackend_savebody(message_id, body);
 	free(buf);
