@@ -17,10 +17,13 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 * Supports "invisible newsgroups"
 * It is open, free software! :)
 
+## Why you want a Usenet server
+
+Probably because you are into retro computing and already run a Gopher service! :) WendzelNNTPd is not tailored as a critical service, it is for nerds who like to play with the protocol and want to use it for fun! Also, feel invited to contribute your patches and extensions!
+
 ## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
-However, if you are looking for a quick and easy to read frequently asked questions section then see [FAQ.md](https://github.com/cdpxe/WendzelNNTPd/blob/master/FAQ.md).
 
 ### Current Development Branch
 
