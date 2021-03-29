@@ -6,7 +6,9 @@ WendzelNNTPd ChangeLog:
  ADDED_FEATURES:
  - Added support for parameters -h and -v now to check for the version.
  - init (rc.d) script is now patched to desired DESTDIR in configure.
-MISC:
+ FIXES:
+ - fixed path database/ problem in create_code_pkg.sh
+ MISC:
  - Improved wording/fixed some typos.
 
 2.1.1-stable "Sydney/Crows Nest" : 05-Jan-2021

@@ -29,8 +29,9 @@ rm -f Makefile.inc
 
 rm -rf $DST /tmp/wendzelnntpd*.tgz /tmp/wendzelnntp*.zip
 mkdir -p $DST
-mkdir -v $DST/src $DST/docs $DST/docs/docs $DST/src/include $DST/images $DST/scripts $DST/scripts/startup $DST/bin
-cp -v AUTHOR BUGS build CHANGELOG configure CONTRIBUTING.md FAQ.md HISTORY INSTALL LICENSE log.txt Makefile README.md tiny_doc.txt database/usenet.db wendzelnntpd.conf re_create_db.sh TODO database/usenet.db_struct database/usenet.db_struct_clear database/mysql_db_struct.sql getver.sh $DST/
+mkdir -v $DST/src $DST/docs $DST/docs/docs $DST/database $DST/src/include $DST/images $DST/scripts $DST/scripts/startup $DST/bin
+cp -v AUTHOR BUGS build CHANGELOG configure CONTRIBUTING.md FAQ.md HISTORY INSTALL LICENSE log.txt Makefile README.md tiny_doc.txt wendzelnntpd.conf re_create_db.sh TODO getver.sh $DST/
+cp -v database/usenet.db_struct database/usenet.db_struct_clear database/mysql_db_struct.sql database/usenet.db $DST/database
 cp -v src/*.[cyl] $DST/src/
 cp -v scripts/startup/init.d_script $DST/scripts/startup/
 cp -v src/include/*.h $DST/src/include/
