@@ -59,9 +59,9 @@ rm -rf $PKG
 mkdir -p $PKG
 
 cd $TMP
-rm -rf $PKGNAM-${VERSION}
-tar xvf $CWD/${PKGNAM}-$VERSION.tgz || exit 1
-cd $PKGNAM || exit 1
+rm -rf $WendzelNNTPd-${VERSION}
+tar xvf $CWD/${WendzelNNTPd}-$VERSION.tgz || exit 1
+cd $WendzelNNTPd || exit 1
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
