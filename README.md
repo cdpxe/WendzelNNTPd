@@ -4,6 +4,10 @@
 
 #### [Download the latest stable release from Sourceforge.net](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.2/) (v. 2.1.2 -- tgz)
 
+#### Packages
+
+- [Slackware64-current package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.2/slackware64-current-package/) (v. 2.1.2 -- txz)
+
 ## Why you want a Usenet server
 
 Probably because you are into retro computing and already run a Gopher service! :) WendzelNNTPd is not tailored as a critical service, it is for nerds who like to play with the protocol and want to use it for fun! Also, feel invited to contribute your patches and extensions!
