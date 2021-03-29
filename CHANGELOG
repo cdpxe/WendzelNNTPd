@@ -2,7 +2,11 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.1.2-current "Sydney/Waverton" : 29-Mar-2021
+current "..." : ??-???-202?
+ MISC:
+ - Listen on ::1 per default, too (in addition to 127.0.0.1).
+
+2.1.2 "Sydney/Waverton" : 29-Mar-2021
  ADDED_FEATURES:
  - Slackware package for amd64 was added (beta!)
  - Added support for parameters -h and -v now to check for the version.
