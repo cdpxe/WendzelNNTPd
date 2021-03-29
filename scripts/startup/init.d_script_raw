@@ -2,8 +2,7 @@
 #
 # Init.d script for WendzelNNTPd
 #
-# Copyright (c) 2009-2012 Steffen Wendzel <steffenwendzel (at) gmx (dot) net>
-# http://www.wendzel.de
+# Copyright (c) 2009-2021 Steffen Wendzel, https://www.wendzel.de
 #
 # This is free software; you may redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -19,7 +18,7 @@
 # this software;  if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-DAEMON=/usr/local/sbin/wendzelnntpd
+DAEMON=REPLACETHIS_WITH_DAEMONPATH
 
 if [ "$1" != "start" -a "$1" != "stop" -a "$1" != "restart" ]; then
 	echo "usage: $0 start|stop|restart"
