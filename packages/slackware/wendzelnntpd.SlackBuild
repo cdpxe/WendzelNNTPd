@@ -1,0 +1,131 @@
+#!/bin/bash -e
+
+# Copyright 2021 Steffen Wendzel, https://www.wendzel.de
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This script was written using the one from slackbuilds.org as a reference,
+# so thanks to Patrick Volkerding and Adis Nezirovic for the original work.
+
+cd $(dirname $0) ; CWD=$(pwd)
+
+PKGNAM=wendzelnntpd
+VERSION=2.1.2
+BUILD=1
+
+echo "=========================================="
+echo "This script removes your database file.   "
+echo "Hit RETURN to continue or CTRL+C to abort."
+echo "=========================================="
+read abortornot
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) export ARCH=i586 ;;
+    arm*) export ARCH=arm ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+       *) export ARCH=$( uname -m ) ;;
+  esac
+fi
+
+# If the variable PRINT_PACKAGE_NAME is set, then this script will report what
+# the name of the created package would be, and then exit. This information
+# could be useful to other scripts.
+if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
+  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz"
+  exit 0
+fi
+
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-${PKGNAM}
+rm -rf $PKG
+mkdir -p $PKG
+
+cd $TMP
+rm -rf $PKGNAM-${VERSION}
+tar xvf $CWD/${PKGNAM}-$VERSION.tgz || exit 1
+cd $PKGNAM || exit 1
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+find . \
+ \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+ -exec chmod 755 {} \+ -o \
+ \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+ -exec chmod 644 {} \+
+
+# Configure:
+echo DESTDIR=$PKG/usr
+MYSQL=NO DESTDIR=$PKG/usr CONFDIR=$PKG/etc ./configure  || exit 1
+
+# Build and install:
+make || exit 1
+
+make install || exit 1
+
+# Here comes the tiny hack ... move files from /var/spool to $PKG/...
+# (modified content of the Makefile)
+ mkdir -p $PKG/var/spool/news/wendzelnntpd
+ # og-rwx since the passwords are stored in the database too!
+ chmod 700 $PKG/var/spool/news/wendzelnntpd
+ install -d -m 0700 -o 0 -g 0 $PKG/var/spool/news/wendzelnntpd
+ cp /var/spool/news/wendzelnntpd/usenet.db $PKG/var/spool/news/wendzelnntpd/usenet.db.new
+ chmod 600 $PKG/var/spool/news/wendzelnntpd/usenet.db.new
+# end of hack
+
+# add the rc.d script
+mkdir -p $PKG/etc/rc.d
+cp scripts/startup/init.d_script $PKG/etc/rc.d/rc.wendzelnntpd.new
+
+# rename config file to .new
+mv $PKG/etc/wendzelnntpd.conf $PKG/etc/wendzelnntpd.conf.new
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+# add version number to doc directory and also put it in /usr/doc
+# instead of /usr/share/doc
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/
+mv $PKG/usr/share/doc/$PKGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION/
+rm -rv $PKG/usr/share
+
+# Strip binaries:
+find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+# Compress and link manpages, if any:
+#if [ -d $PKG/usr/man ]; then
+#  ( cd $PKG/usr/man
+#    for manpagedir in $(find . -type d -name "man*") ; do
+#      ( cd $manpagedir
+#        for eachpage in $( find . -type l -maxdepth 1) ; do
+#          ln -s $( readlink $eachpage ).gz $eachpage.gz
+#          rm $eachpage
+#        done
+#        gzip -9 *.*
+#      )
+#    done
+#  )
+#fi
+
+cd $PKG
+/sbin/makepkg -l y -c n $TMP/${PKGNAM}-$VERSION-$ARCH-$BUILD.txz
+
