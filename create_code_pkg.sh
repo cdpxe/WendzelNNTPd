@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+echo "THIS FILE IS OBSOLETE and uses wrong path names, inconsistent with Git!"
+exit 1
+######################
+
 DST=/tmp/wendzelnntpd/
 CWD=`pwd`
 VER=`grep '#define VERSION' src/include/main.h | head -n 1 | tr '"' ' ' | awk '{print $3}'`

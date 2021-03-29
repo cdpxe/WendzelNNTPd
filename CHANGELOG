@@ -7,9 +7,12 @@ WendzelNNTPd ChangeLog:
  - Added support for parameters -h and -v now to check for the version.
  - init (rc.d) script is now patched to desired DESTDIR in configure.
  FIXES:
- - fixed path database/ problem in create_code_pkg.sh
+ - Incorrect path for database files from create_code_pkg.sh was used
+   in the last tarball (support for this script now dropped; see MISC).
  MISC:
  - Improved wording/fixed some typos.
+ - Dropped create_code_pkg.sh because of path inconsistency; we now
+   use github for this job.
 
 2.1.1-stable "Sydney/Crows Nest" : 05-Jan-2021
  MISC:
