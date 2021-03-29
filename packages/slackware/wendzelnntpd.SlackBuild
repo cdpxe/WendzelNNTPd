@@ -60,7 +60,7 @@ mkdir -p $PKG
 
 cd $TMP
 rm -rf $WendzelNNTPd-${VERSION}
-tar xvf $CWD/${WendzelNNTPd}-$VERSION.tgz || exit 1
+tar xvf $CWD/${WendzelNNTPd}-$VERSION.tar.gz || exit 1
 cd $WendzelNNTPd || exit 1
 
 # Make sure ownerships and permissions are sane:
