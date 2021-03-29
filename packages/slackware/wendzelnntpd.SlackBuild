@@ -59,9 +59,9 @@ rm -rf $PKG
 mkdir -p $PKG
 
 cd $TMP
-rm -rf $WendzelNNTPd-${VERSION}
-tar xvf $CWD/${WendzelNNTPd}-$VERSION.tar.gz || exit 1
-cd $WendzelNNTPd || exit 1
+rm -rf WendzelNNTPd-${VERSION}
+tar -xvf $CWD/WendzelNNTPd-$VERSION.tar.gz || exit 1
+cd WendzelNNTPd || exit 1
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -73,11 +73,12 @@ find . \
 
 # Configure:
 echo DESTDIR=$PKG/usr
-MYSQL=NO DESTDIR=$PKG/usr CONFDIR=$PKG/etc ./configure  || exit 1
+MYSQL=NO DESTDIR=$PKG/usr CONFDIR=/etc ./configure  || exit 1
 
 # Build and install:
 make || exit 1
 
+rm -fv /etc/wendzelnntpd.conf
 make install || exit 1
 
 # Here comes the tiny hack ... move files from /var/spool to $PKG/...
@@ -90,12 +91,13 @@ make install || exit 1
  chmod 600 $PKG/var/spool/news/wendzelnntpd/usenet.db.new
 # end of hack
 
-# add the rc.d script
+# add the rc.d script ; also fix URL of the deamon binary
 mkdir -p $PKG/etc/rc.d
-cp scripts/startup/init.d_script $PKG/etc/rc.d/rc.wendzelnntpd.new
+cat scripts/startup/init.d_script | sed 's/^DAEMON=.*$/DAEMON=\/usr\/sbin\/wendzelnntpd/' > $PKG/etc/rc.d/rc.wendzelnntpd.new
+chmod 755 $PKG/etc/rc.d/rc.wendzelnntpd.new
 
 # rename config file to .new
-mv $PKG/etc/wendzelnntpd.conf $PKG/etc/wendzelnntpd.conf.new
+mv /etc/wendzelnntpd.conf $PKG/etc/wendzelnntpd.conf.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
