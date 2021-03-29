@@ -2,7 +2,7 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-2.1.2-current "Sydney/???" : ??-???-202?
+2.1.2-current "Sydney/Waverton" : 29-Mar-2021
  ADDED_FEATURES:
  - Slackware package for amd64 was added (beta!)
  - Added support for parameters -h and -v now to check for the version.
