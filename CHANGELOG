@@ -5,6 +5,7 @@ WendzelNNTPd ChangeLog:
 2.1.2-current "Sydney/???" : ??-???-202?
  ADDED_FEATURES:
  - Added support for parameters -h and -v now to check for the version.
+ - init (rc.d) script is now patched to desired DESTDIR in configure.
 MISC:
  - Improved wording/fixed some typos.
 

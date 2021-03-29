@@ -400,6 +400,15 @@ rm -f temp temp.c
 #gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
 #rm -f temp temp.c
 
+############# rc.d script ADJUSTMENT ##########
+
+echo -n "patching scripts/startup/init.d_script_raw to scripts/startup/init.d_script..."
+echo -n $DESTDIR | sed 's/\//\\\//g' >ignore
+PATCH_DESTDIR=`cat ignore`
+rm ignore
+cat scripts/startup/init.d_script_raw | sed 's/REPLACETHIS\_WITH\_DAEMONPATH/'$PATCH_DESTDIR'\/sbin\/wendzelnntpd/' > scripts/startup/init.d_script
+echo "done."
+
 ############# MAKEFILE.INC CREATE #############
 
 out "creating Makefile.inc..."
