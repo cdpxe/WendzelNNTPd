@@ -37,5 +37,5 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
 
-![Powered by WendzelNNTPd](images/wendzelnntpd_powered2.png "powered by WendzelNNTPd server")
+![Powered by WendzelNNTPd](images/wendzelnntpd_powered.png "powered by WendzelNNTPd server")
 
