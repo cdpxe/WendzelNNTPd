@@ -20,6 +20,8 @@ to help the project:
 
 - Check the `issues` tab on WendzelNNTPd's GitHub page.
 
+- Check the `TODO` file.
+
 - Extend WendzelNNTPd with your desired features and send me your
   patch so I can integrate it and make it accessible to all users this
   way (of course with a reference to you!).
