@@ -27,13 +27,9 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PKGNAM=wendzelnntpd
 VERSION=2.1.2
-BUILD=1
+TGZ_DIRNAME=cdpxe-WendzelNNTPd-5ea53d6 # for v2.1.2
+BUILD=2
 
-echo "=========================================="
-echo "This script removes your database file.   "
-echo "Hit RETURN to continue or CTRL+C to abort."
-echo "=========================================="
-read abortornot
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -59,9 +55,9 @@ rm -rf $PKG
 mkdir -p $PKG
 
 cd $TMP
-rm -rf WendzelNNTPd-${VERSION}
-tar -xvf $CWD/WendzelNNTPd-$VERSION.tar.gz || exit 1
-cd WendzelNNTPd || exit 1
+rm -rf $TGZ_DIRNAME
+tar -xvf $CWD/v$VERSION.tar.gz || exit 1
+cd $TGZ_DIRNAME || exit 1
 
 # Make sure ownerships and permissions are sane:
 chown -R root:root .
@@ -72,32 +68,32 @@ find . \
  -exec chmod 644 {} \+
 
 # Configure:
-echo DESTDIR=$PKG/usr
-MYSQL=NO DESTDIR=$PKG/usr CONFDIR=/etc ./configure  || exit 1
+MYSQL=NO DESTDIR=/usr CONFDIR=/etc ./configure  || exit 1
 
 # Build and install:
 make || exit 1
 
-rm -fv /etc/wendzelnntpd.conf
-make install || exit 1
-
-# Here comes the tiny hack ... move files from /var/spool to $PKG/...
-# (modified content of the Makefile)
- mkdir -p $PKG/var/spool/news/wendzelnntpd
- # og-rwx since the passwords are stored in the database too!
- chmod 700 $PKG/var/spool/news/wendzelnntpd
- install -d -m 0700 -o 0 -g 0 $PKG/var/spool/news/wendzelnntpd
- cp /var/spool/news/wendzelnntpd/usenet.db $PKG/var/spool/news/wendzelnntpd/usenet.db.new
- chmod 600 $PKG/var/spool/news/wendzelnntpd/usenet.db.new
-# end of hack
+# spool dir + usenet database
+mkdir -p $PKG/var/spool/news/wendzelnntpd
+# og-rwx since the passwords are stored in the database too!
+install -d -m 0700 -o 0 -g 0 $PKG/var/spool/news/wendzelnntpd
+cp database/usenet.db $PKG/var/spool/news/wendzelnntpd/usenet.db.new
+chmod 600 $PKG/var/spool/news/wendzelnntpd/usenet.db.new
 
 # add the rc.d script ; also fix URL of the deamon binary
 mkdir -p $PKG/etc/rc.d
 cat scripts/startup/init.d_script | sed 's/^DAEMON=.*$/DAEMON=\/usr\/sbin\/wendzelnntpd/' > $PKG/etc/rc.d/rc.wendzelnntpd.new
 chmod 755 $PKG/etc/rc.d/rc.wendzelnntpd.new
 
+# add the binaries
+mkdir -p $PKG/usr/sbin
+chmod 0755 $PKG/usr/sbin/
+cp -v bin/wendzelnntpd bin/wendzelnntpadm $PKG/usr/sbin/
+chmod 755 $PKG/usr/sbin/*
+
 # rename config file to .new
-mv /etc/wendzelnntpd.conf $PKG/etc/wendzelnntpd.conf.new
+cp -v wendzelnntpd.conf $PKG/etc/wendzelnntpd.conf.new
+chmod 644 $PKG/etc/wendzelnntpd.conf.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
@@ -106,8 +102,10 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 # add version number to doc directory and also put it in /usr/doc
 # instead of /usr/share/doc
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/
-mv $PKG/usr/share/doc/$PKGNAM/* $PKG/usr/doc/$PKGNAM-$VERSION/
-rm -rv $PKG/usr/share
+cp -vr docs/docs $PKG/usr/doc/$PKGNAM-$VERSION/
+cp -v docs/docs.pdf $PKG/usr/doc/$PKGNAM-$VERSION/docs.pdf
+cp -v AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PKGNAM-$VERSION/
+chmod -R 0644 $PKG/usr/doc/$PKGNAM-$VERSION/*
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
