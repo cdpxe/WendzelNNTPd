@@ -16,6 +16,9 @@ to help the project:
 
 - Create a port or package for your favorite Linux distribution, BSD
   derivate, Unix derivate or similar.
+	- Package creation code can be added to packages/ if desired.
+
+- Check the `issues` tab on WendzelNNTPd's GitHub page.
 
 - Extend WendzelNNTPd with your desired features and send me your
   patch so I can integrate it and make it accessible to all users this
