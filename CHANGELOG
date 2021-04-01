@@ -6,7 +6,8 @@ current "..." : ??-???-202?
  MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).
  - Slackware build script does not require `make install` anymore,
-   which makes the whole process much clearer.
+   which makes the whole process much clearer. Also, this is quicker.
+ - Added additional meta-data for Slackbuild.com compatibility (beta).
 
 2.1.2 "Sydney/Waverton" : 29-Mar-2021
  ADDED_FEATURES:
