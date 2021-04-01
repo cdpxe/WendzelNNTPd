@@ -26,7 +26,7 @@ current "..." : ??-???-202?
  MISC:
  - Updated documentation to better reflect the new 2.1 sub-version.
  - Tiny adjustments of provided text files.
- - Removed "OSE (Open Source Edition)" string as there is (nor ever
+ - Removed "OSE (Open Source Edition)" string as there is no (nor ever
    was!) a non-free edition of this software.
 
 2.1.0-stable "Sydney (Post-NYE Release 2021)" : 04-Jan-2021
