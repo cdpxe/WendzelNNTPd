@@ -7,7 +7,7 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 #### Packages
 
 - [Slackware64-current package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.2/slackware64-current-package/) (v. 2.1.2 -- txz)
-
+     - Installation via `installpkg (filename)`
 
 #### Current Development Branch
 
