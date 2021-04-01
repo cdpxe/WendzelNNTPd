@@ -36,3 +36,6 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 ## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
+
+<img src="images/wendzelnntpd_powered2.png />
+
