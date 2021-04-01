@@ -32,10 +32,11 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 https://cdpxe.github.io/WendzelNNTPd/
 
-## Documentation/FAQ
+## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
 
-## Open Thesis Topics
+## Open Tasks / Thesis Topics
 - Add TLS support (NTTPS) for WendzelnNNTPd
+- Add Synchronization
 - Add support for MariaDB and perform code auditing checks
