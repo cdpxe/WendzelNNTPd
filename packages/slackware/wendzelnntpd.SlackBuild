@@ -25,8 +25,8 @@
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PKGNAM=wendzelnntpd
-VERSION=2.1.2
+PRGNAM=wendzelnntpd
+VERSION=${VERSION:-2.1.2}
 TGZ_DIRNAME=cdpxe-WendzelNNTPd-5ea53d6 # for v2.1.2
 BUILD=2
 
@@ -45,12 +45,12 @@ fi
 # the name of the created package would be, and then exit. This information
 # could be useful to other scripts.
 if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
-  echo "$PKGNAM-$VERSION-$ARCH-$BUILD.txz"
+  echo "$PRGNAM-$VERSION-$ARCH-$BUILD.txz"
   exit 0
 fi
 
 TMP=${TMP:-/tmp}
-PKG=$TMP/package-${PKGNAM}
+PKG=$TMP/package-${PRGNAM}
 rm -rf $PKG
 mkdir -p $PKG
 
@@ -101,11 +101,11 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # add version number to doc directory and also put it in /usr/doc
 # instead of /usr/share/doc
-mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION/
-cp -vr docs/docs $PKG/usr/doc/$PKGNAM-$VERSION/
-cp -v docs/docs.pdf $PKG/usr/doc/$PKGNAM-$VERSION/docs.pdf
-cp -v AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PKGNAM-$VERSION/
-chmod -R 0644 $PKG/usr/doc/$PKGNAM-$VERSION/*
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/
+cp -vr docs/docs $PKG/usr/doc/$PRGNAM-$VERSION/
+cp -v docs/docs.pdf $PKG/usr/doc/$PRGNAM-$VERSION/docs.pdf
+cp -v AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PRGNAM-$VERSION/
+chmod -R 0644 $PKG/usr/doc/$PRGNAM-$VERSION/*
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
@@ -127,5 +127,5 @@ find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
 #fi
 
 cd $PKG
-/sbin/makepkg -l y -c n $TMP/${PKGNAM}-$VERSION-$ARCH-$BUILD.txz
+/sbin/makepkg -l y -c n $TMP/${PRGNAM}-$VERSION-$ARCH-$BUILD.txz
 
