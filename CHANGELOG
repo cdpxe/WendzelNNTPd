@@ -3,6 +3,8 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 current "..." : ??-???-202?
+ ADDED FEATURES:
+ - Created manpage wendzelnntpd(8).
  MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).
  - Slackware build script does not require `make install` anymore,
