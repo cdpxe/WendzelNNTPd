@@ -799,8 +799,7 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	int correctline=FALSE;
 	
 	/* Newsgroups: */
-	if (wnntpd_rx_contain(
-     "^[nN][eE][wW][sS][gG][rR][oO][uU][pP][sS]: [a-zA-Z0-9.-]+(,[a-zA-Z0-9.-]+)*\r\n", header) == 0)
+	if (wnntpd_rx_contain("^[nN][eE][wW][sS][gG][rR][oO][uU][pP][sS]: [a-zA-Z0-9.-]+(,[a-zA-Z0-9.-]+)*\r\n", header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_newsgroup)
 
