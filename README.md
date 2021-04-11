@@ -10,7 +10,7 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
      - Installation via `installpkg (filename)`
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
-  - 
+
 ##### Current Development Branch
 
 The current version of the development code is available [here](https://github.com/cdpxe/WendzelNNTPd).
