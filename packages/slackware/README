@@ -7,14 +7,6 @@ Control Lists (ACL), Role-based Access Control (RBAC) and supports
 invisible newsgroups. It currently supports MySQL and SQLite backends.
 
 Note: This package is compiled without MYSQL support and uses
-      sqlite3 instead. Also, it requires flex, bison and libmhash. All
-      these packages are contained in the standard Slackware Linux
-      distribution.
-      
+      sqlite3 instead.
       If you want to use MySQL instead of sqlite3, remove the
       "MYSQL=NO" before ./configure in wendzelnntpd.Slackbuild.
-      
-      If you have any questions / found any bugs, please let me know so
-      that I can improve this package (see https://www.wendzel.de for
-      contact details).
-

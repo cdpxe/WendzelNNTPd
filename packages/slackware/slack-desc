@@ -15,7 +15,5 @@ wendzelnntpd: configuration file and tool. The server is portable (Linux/*BSD/
 wendzelnntpd: *nix), supports AUTHINFO authentication, contains support for Access
 wendzelnntpd: Control Lists (ACL), Role-based Access Control (RBAC) and supports
 wendzelnntpd: invisible newsgroups. It currently supports MySQL and SQLite backends.
-wendzelnntpd:
 wendzelnntpd: Note: This package is compiled without MYSQL support and uses
 wendzelnntpd:       sqlite3 instead.
-wendzelnntpd:
