@@ -2,7 +2,7 @@
  * WendzelNNTPd is distributed under the following license:
  *
  * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * http://www.wendzel.de
+ * https://www.wendzel.de
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "\txgtitle [wildmat*] (equals LIST NEWSGROUPS but return code differs)\r\n"
                                  "--\r\n"
                                  "Send questions and problems to <wendzel [at] hs-worms [dot] de>\r\n"
-                                 "Website: http://www.wendzel.de\r\n"
+                                 "Website: https://www.wendzel.de\r\n"
                                  "\r\n"
                                  "Notes:\r\n"
                                  "* Wildmat format is based on the used regex library and is not 100%\r\n"
@@ -164,7 +164,7 @@ Send(int lsockfd, char *str, int len)
 {
 	if(send(lsockfd, str, len, 0)<0) {
 		if (daemon_mode) {
-			DO_SYSL("send() returned -lt 0. killing connection.")
+			DO_SYSL("send() returned <0 -- killing connection.")
 		} else {
 			perror("send");
 		}
@@ -410,7 +410,7 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 	} else if (strncasecmp(ptr, "lines", 5) == 0) {
 		xhdr_part = XHDR_LINES;
 	} else {
-		/* say that header does not exist; RFC says '(none)' is
+		/* Say that header does not exist; RFC says '(none)' is
 		 * valid response. However, we also do not check for 'to'
 		 * and other hdr lines. Quote:
 		 * >>... return the 221 response code followed by a period on a line by
@@ -439,7 +439,7 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 			
 			req_message_id = 0;
 			min = atoi(range_ptr);
-			max = min; /* this is correct. if we find a '-',
+			max = min; /* This is correct; if we find a '-',
 			* we will change it in a moment */
 			
 			/* check for the '-' character */
@@ -454,7 +454,7 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 				/* look if there is an end-value for max */
 				if (range_ptr[0] != '\0') {
 					max = atoi(range_ptr);
-					/* if the client sent us bullshit then
+					/* If the client sent us bullshit then
 					 * max could be zero ... */
 					if (!max) {
 						/* ... in this case, we set it
@@ -535,8 +535,8 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 				  * exist. Some plausibility checks are done later in this
 				  * function. */
 				  
-		max = min; /* this is correct. if we find a '-', we will change it in a moment */
-		/* check for the '-' character */
+		max = min; /* This is correct. If we find a '-', we will change it in a moment */
+		/* check for the '-' character. */
 		
 		while (ptr[0] != '\0' && max != REALmax) {
 			if (ptr[0] == '-') { /* all articles from min to the end */
@@ -562,8 +562,8 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 	           "min: ", min, " max: ", max, " REALmax: ", REALmax, "\n");
 
 	/* if no articles are in the range -> return a 420 error */
-	if (	    min > REALmax
-		/*|| (max > REALmax) <-- this was  actually a good thing, but
+	if (       min > REALmax
+		/*|| (max > REALmax) <-- this was actually a good thing, but
 		 * the crappy usenet clients, like pan, just simply request
 		 * independently of the real max values sent to them! Result:
 		 * they do not display anything! */
@@ -799,26 +799,26 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	int correctline=FALSE;
 	
 	/* Newsgroups: */
-	if (wnntpd_rx_contain("^[nN][eE][wW][sS][gG][rR][oO][uU][pP][sS]: [a-zA-Z0-9.,-]*\r\n", header) == 0)
+	if (wnntpd_rx_contain("^[nN][eE][wW][sS][gG][rR][oO][uU][pP][sS]: [a-zA-Z0-9.-]+(,[a-zA-Z0-9.-]+)*\r\n", header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_newsgroup)
 
 	/* From: */
 	/* "blah@blah.com" */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]*@[a-zA-Z0-9.-]*\r\n", header) == 0)
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+\r\n", header) == 0)
 		correctline = TRUE;
 	/* blah@blah.com (Name Name) */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]*@[a-zA-Z0-9.-]* ([a-zA-Z0-9. -_+]*)\r\n",
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+ ([a-zA-Z0-9. -_+]+)\r\n",
 				header) == 0)
 		correctline=TRUE;
 	/* Name [... [Name]] <blah@blah.com> */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [^\r\n\t]* <[a-zA-Z0-9.-_+]*@[a-zA-Z0-9.-]*>\r\n",
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [^\r\n\t]* <[a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+>\r\n",
 				header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_from)
 
 	/* Subject: */
-	if (wnntpd_rx_contain("^[sS][uU][bB][jJ][eE][cC][tT]: .*\r\n", header) == 0)
+	if (wnntpd_rx_contain("^[sS][uU][bB][jJ][eE][cC][tT]: [^\r\n\t]*\r\n", header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_subject)
 	
