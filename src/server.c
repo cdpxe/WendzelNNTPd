@@ -805,6 +805,9 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 
 	/* From: */
 	/* "blah@blah.com" */
+	/* Comments:
+	 * - This allows "max....mustermann@muster.com", but we let it pass here.
+	 */
 	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+\r\n", header) == 0)
 		correctline = TRUE;
 	/* blah@blah.com (Name Name) */
