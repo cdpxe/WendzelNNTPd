@@ -11,8 +11,10 @@ This time it is Friedrichroda, Germany.
  - add a manpage for `wendzelnntpadm`
 
 FIXES:
- - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***
+ - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***.
     This would be exploitable easily by "echo | telnet hostname port"!
+    This fix requires support for the send() flag MSG_NOSIGNAL. Seems
+    to be pressent in *BSD and Linux (at least).
  - Modified regex checks during POST command:
    - Prevent postings to Newsgroups: ,,,
    - Prevent sender '@'
