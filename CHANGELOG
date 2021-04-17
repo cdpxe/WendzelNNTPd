@@ -8,14 +8,13 @@ As usual, every new release gets named after a nice travel location.
 This time it is Friedrichroda, Germany.
 
 **TODO:**
- - Make `make install` handle the manpages.
  - Add manpages to Slackbuild script.
 
 FIXES:
  - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***.
     This would be exploitable easily by "echo | telnet hostname port"!
     This fix requires support for the send() flag MSG_NOSIGNAL. Seems
-    to be pressent in *BSD and Linux (at least).
+    to be present in *BSD and Linux (at least).
  - Modified regex checks during POST command:
    - Prevent postings to Newsgroups: ,,,
    - Prevent sender '@'
@@ -24,6 +23,7 @@ FIXES:
 
 ADDED FEATURES:
  - Created the manpages `wendzelnntpd(8)` and `wendzelnntpadm(8)`.
+ - The make target "install" now installs manpages, too.
 
 MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).

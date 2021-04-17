@@ -25,6 +25,7 @@ BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 
 # The list of documentation files we wish to install
 DOCFILES_TO_INST=AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
+MANPAGES=wendzelnntpd.8 wendzelnntpadm.8
 
 all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
 	expr `cat build` \+ 1 >build
@@ -101,6 +102,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)/share ]; then install -d -m 0755 $(DESTDIR)/share; fi
 	if [ ! -d $(DESTDIR)/share/doc ]; then install -d -m 0755 $(DESTDIR)/share/doc; fi
 	if [ ! -d $(DESTDIR)/share/doc/wendzelnntpd ]; then install -d -m 0755 $(DESTDIR)/share/doc/wendzelnntpd; fi
+	if [ ! -d $(DESTDIR)/share/man/man8 ]; then install -d -m 0755 $(DESTDIR)/share/man/man8; fi
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
 	chown 0:0 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
@@ -111,6 +113,10 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
 	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
 	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
+	# manpages
+	cp $(MANPAGES) $(DESTDIR)/share/man/man8/
+	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpd.8
+	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpadm.8
 	# config
 	@if [ -f $(FAKECDIR)/wendzelnntpd.conf ]; then cp $(FAKECDIR)/wendzelnntpd.conf $(FAKECDIR)/wendzelnntpd.conf.bkp; chmod 0644 $(FAKECDIR)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
 	cp wendzelnntpd.conf $(FAKECDIR)/
