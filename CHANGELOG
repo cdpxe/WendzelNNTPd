@@ -9,7 +9,6 @@ This time it is Friedrichroda, Germany.
 
 **TODO**:
  - Run tests of RBAC, ACL and newsgroups again. Before release.
- - Maybe(!) fully implement posting-allowed flag's functionality.
 
 FIXES:
  - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***.
