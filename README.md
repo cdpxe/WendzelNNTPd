@@ -2,6 +2,12 @@
 
 The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal to maximize usability on the console level. WendzelNNTPd achieves that by breaking down complicated things to an easy-to-use configuration file + tool. The server is portable (Linux/*BSD/*nix), supports AUTHINFO authentication, contains support for Access Control Lists (ACL), role based access control (RBAC) and supports invisible newsgroups. It currently allows MySQL and SQLite backends
 
+## Download
+
+##### Source
+
+- Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.2/) (v. 2.1.2 -- tgz)
+
 ##### Packages & Executables
 
 - *Slackware Linux*: 
@@ -13,7 +19,7 @@ The WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the main goal
 
 ##### Current Development Branch
 
-The current version of the development code is available [here](https://github.com/cdpxe/WendzelNNTPd).
+- The current version of the development code is available [here](https://github.com/cdpxe/WendzelNNTPd).
 
 
 ## Features
