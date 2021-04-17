@@ -9,7 +9,6 @@ This time it is Friedrichroda, Germany.
 
 **TODO:**
  - Make `make install` handle the manpages.
- - Fix formating of manpages.
  - Add manpages to Slackbuild script.
 
 FIXES:

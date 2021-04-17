@@ -23,9 +23,9 @@ I. Newsgroup management commands:
 .B listgroups
 Lists all newsgroups of the database.
 .TP
-.BI addgroup \ newsgroup \  (y/n)
+.BI addgroup \ grp \  [y/n]
 Create the newsgroup
-.I newsgroup
+.I grp
 in which posting is either allowed (
 .I y
 ) or not (
@@ -33,10 +33,10 @@ in which posting is either allowed (
 n
 ).
 .TP
-.BI delgroup \ newsgroup
+.BI delgroup \ grp
 Delete the newsgroup
 .I
-newsgroup.
+grp.
 .br
 .br
 .TP
@@ -46,19 +46,22 @@ II. User management commands:
 .B listusers
 Lists all known users of a database.
 .TP
-.BI adduser \ username \  [password]
+.BI adduser \ usr \  [pw]
 Create the user
 .I
-username.
+usr
+with the password
+.I
+pw.
 If the parameter
 .I
-password
+pw
 is not provided, it will be prompted.
 .TP
-.BI deluser \ username
+.BI deluser \ usr
 Delete the user
 .I
-username
+usr
 from the database.
 .br
 .br
@@ -70,65 +73,65 @@ III. ACL (Access Control List) administration commands:
 .B listacl
 List all ACL rules.
 .TP
-.BI addacluser \ username \  newsgroup
+.BI addacluser \ usr \  grp
 Add the user
 .I
-username
+usr
 to the newsgroup
 .I
-newsgroup.
+grp.
 .TP
-.BI delacluser \ username \  newsgroup
+.BI delacluser \ usr \  grp
 Remove the user
 .I
-username
+usr
 from the newsgroup
 .I
-newsgroup.
+grp.
 .br
 .br
 .TP
 .I
 IV. Advanced role-based ACL (RBAC) commands:
 .TP
-.BI addaclrole \ role
+.BI addaclrole \ rl
 Create the ACL role
 .I
-role.
+rl.
 .TP
-.BI delaclrole \ role
+.BI delaclrole \ rl
 Remove the ACL role
 .I
-role.
+rl.
 .TP
-.BI rolegroupconnect \ role \  newsgroup
+.BI rolegroupconnect \ rl \  grp
 Link the role
-.I role
+.I rl
 to the newsgroup
 .I
-newsgroup.
+grp.
 .TP
-.BI rolegroupunconnect \ role \  newsgroup
+.BI rolegroupunconnect \ rl \  grp
 Unlink the role
 .I
-role
+rl
 from the newsgroup
 .I
-newsgroup.
+grp.
 .TP
-.BI roleuserconnect \ role \  username
+.BI roleuserconnect \ rl \  usr
 Link the user
 .I
-username
+usr
 to the role
 .I
-role.
+rl.
 .TP
-.BI roleuserunconnect \ role \  username
-Unlink the role
+.BI roleuserunconnect \ rl \  usr
+Unlink the user
 .I
-username
-from the role
+usr
+from the rl
 .I
 role.
 
