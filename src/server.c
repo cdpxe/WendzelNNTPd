@@ -796,6 +796,8 @@ docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 static int
 docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 {
+	#define DOMAIN_NAME "[a-zA-Z0-9.-]+"
+	#define EMAIL_NAME "[a-zA-Z0-9._+-]+"
 	int correctline=FALSE;
 	
 	/* Newsgroups: */
@@ -808,14 +810,13 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	/* Comments:
 	 * - This allows "max....mustermann@muster.com", but we let it pass here.
 	 */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+\r\n", header) == 0)
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: "EMAIL_NAME"@"DOMAIN_NAME"\r\n", header) == 0)
 		correctline = TRUE;
 	/* blah@blah.com (Name Name) */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+ ([a-zA-Z0-9. -_+]+)\r\n", /* FIXME: ' ' or '\n'? */
-				header) == 0)
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: "EMAIL_NAME"@"DOMAIN_NAME" ([^\r\n\t]+)\r\n", header) == 0)
 		correctline=TRUE;
 	/* Name [... [Name]] <blah@blah.com> */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [^\r\n\t]* <[a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+>\r\n",
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [^\r\n\t]* <"EMAIL_NAME"@"DOMAIN_NAME">\r\n",
 				header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_from)
