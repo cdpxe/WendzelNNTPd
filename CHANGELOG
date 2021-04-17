@@ -11,6 +11,7 @@ current:
 
 FIXES:
  - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***
+    This would be exploitable easily by "echo | telnet hostname port"!
  - Modified regex checks during POST command:
    - Prevent postings to Newsgroups: ,,,
    - Prevent sender '@'
