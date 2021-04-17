@@ -312,7 +312,7 @@ char *get_uniqnum(void);
 short int filebackend_savebody(char *, char *);
 char *filebackend_retrbody(char *);
 
-/* main.c */
+/* globals.c */
 void sig_handler(int);
 
 /* server.c */
