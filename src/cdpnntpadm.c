@@ -76,8 +76,8 @@ usage()
 			" <listacl>\n"
 			" <addacluser | delacluser> <username> <newsgroup>\n"
 			" <addaclrole | delaclrole> <role>\n"
-			" <rolegroupconnect | rolegroupunconnect> <role> <newsgroup>\n"
-			" <roleuserconnect | roleuserunconnect> <role> <username>\n"
+			" <rolegroupconnect | rolegroupdisconnect> <role> <newsgroup>\n"
+			" <roleuserconnect | roleuserdisconnect> <role> <username>\n"
 			);
 	exit(ERR_EXIT);
 }
@@ -230,11 +230,11 @@ main(int argc, char *argv[])
 		mode = MOD_DELACLROLE;
 	else if (strcmp(argv[1], "rolegroupconnect") == 0)
 		mode = MOD_ROLEGROUPC;
-	else if (strcmp(argv[1], "rolegroupunconnect") == 0)
+	else if (strcmp(argv[1], "rolegroupdisconnect") == 0)
 		mode = MOD_ROLEGROUPUC;
 	else if (strcmp(argv[1], "roleuserconnect") == 0)
 		mode = MOD_ROLEUSERC;
-	else if (strcmp(argv[1], "roleuserunconnect") == 0)
+	else if (strcmp(argv[1], "roleuserdisconnect") == 0)
 		mode = MOD_ROLEUSERUC;
 	else {
 		fprintf(stderr, "Invalid mode: %s'.\n", argv[1]);
@@ -387,7 +387,7 @@ main(int argc, char *argv[])
 	case MOD_ROLEGROUPUC:
 		exit_if_role_not_exists(inf, argv[2]);
 		exit_if_newsgroup_not_exists(inf, argv[3]);
-		db_acl_role_unconnect_group(inf, argv[2], argv[3]);
+		db_acl_role_disconnect_group(inf, argv[2], argv[3]);
 		break;
 	case MOD_ROLEUSERC:
 		exit_if_role_not_exists(inf, argv[2]);
@@ -397,7 +397,7 @@ main(int argc, char *argv[])
 	case MOD_ROLEUSERUC:
 		exit_if_role_not_exists(inf, argv[2]);
 		exit_if_user_not_exists(inf, argv[3]);
-		db_acl_role_unconnect_user(inf, argv[2], argv[3]);
+		db_acl_role_disconnect_user(inf, argv[2], argv[3]);
 		break;
 	default:
 		fprintf(stderr, "unknown command implementation.\n");

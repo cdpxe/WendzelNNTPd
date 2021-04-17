@@ -75,8 +75,8 @@ usage: wendzelnntpd <command> [parameters]
  <listacl>
  <addacluser | delacluser> <username> <newsgroup>
  <addaclrole | delaclrole> <role>
- <rolegroupconnect | rolegroupunconnect> <role> <newsgroup>
- <roleuserconnect | roleuserunconnect> <role> <username>
+ <rolegroupconnect | rolegroupdisconnect> <role> <newsgroup>
+ <roleuserconnect | roleuserdisconnect> <role> <username>
 \end{verbatim}
 
 \section{Creating/Listing/Deleting Newsgroups}
@@ -305,10 +305,10 @@ done.
 \subsubsection{Disconnecting a User from a Role}
 
 \begin{verbatim}
-$ wendzelnntpadm roleuserconnect project-x developer1
+$ wendzelnntpadm roleuserdisconnect project-x developer1
 Role project-x exists: okay.
 User developer1 exists: okay.
-Connecting role project-x with user developer1 ... done
+Dis-Connecting role project-x from user developer1 ... done
 done.
 \end{verbatim}
 
@@ -335,7 +335,7 @@ done.
 
 \subsubsection{Disconnecting a Role from a Newsgroup}
 
-This is done like in the example above but you have to use the command ``rolegroup\textbf{un}connect'' instead of ``rolegroupconnect''.
+This is done like in the example above but you have to use the command ``rolegroup\textbf{dis}connect'' instead of ``rolegroupconnect''.
 
 \subsection{Listing your whole ACL configuration again}
 

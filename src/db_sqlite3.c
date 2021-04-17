@@ -1139,14 +1139,14 @@ db_sqlite3_acl_role_connect_group(server_cb_inf *inf, char *role, char *newsgrou
 }
 
 void
-db_sqlite3_acl_role_unconnect_group(server_cb_inf *inf, char *role, char *newsgroup)
+db_sqlite3_acl_role_disconnect_group(server_cb_inf *inf, char *role, char *newsgroup)
 {
 	char *sql_cmd;
 	int len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
-	printf("Un-Connecting role %s with newsgroup %s ... ", role, newsgroup);
+	printf("Dis-Connecting role %s from newsgroup %s ... ", role, newsgroup);
 	len = strlen(role) + strlen(newsgroup) + 0x7f;
 	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
 	snprintf(sql_cmd, len - 1,
@@ -1176,14 +1176,14 @@ db_sqlite3_acl_role_connect_user(server_cb_inf *inf, char *role, char *user)
 }
 
 void
-db_sqlite3_acl_role_unconnect_user(server_cb_inf *inf, char *role, char *user)
+db_sqlite3_acl_role_disconnect_user(server_cb_inf *inf, char *role, char *user)
 {
 	char *sql_cmd;
 	int len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
-	printf("Un-Connecting role %s with user %s ... ", role, user);
+	printf("Dis-Connecting role %s from user %s ... ", role, user);
 	len = strlen(role) + strlen(user) + 0x7f;
 	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
 	snprintf(sql_cmd, len - 1,

@@ -358,8 +358,8 @@ void db_acl_del_user(server_cb_inf *, char *, char *);
 void db_acl_add_role(server_cb_inf *, char *);
 void db_acl_del_role(server_cb_inf *, char *);
 void db_acl_role_connect_group(server_cb_inf *, char *, char *);
-void db_acl_role_unconnect_group(server_cb_inf *, char *, char *);
-void db_acl_role_unconnect_user(server_cb_inf *, char *, char *);
+void db_acl_role_disconnect_group(server_cb_inf *, char *, char *);
+void db_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 void db_acl_role_connect_user(server_cb_inf *, char *, char *);
 
 /* db_sqlite3.c */
@@ -400,9 +400,9 @@ void db_sqlite3_acl_del_user(server_cb_inf *, char *, char *);
 void db_sqlite3_acl_add_role(server_cb_inf *, char *);
 void db_sqlite3_acl_del_role(server_cb_inf *, char *);
 void db_sqlite3_acl_role_connect_group(server_cb_inf *, char *, char *);
-void db_sqlite3_acl_role_unconnect_group(server_cb_inf *, char *, char *);
+void db_sqlite3_acl_role_disconnect_group(server_cb_inf *, char *, char *);
 void db_sqlite3_acl_role_connect_user(server_cb_inf *, char *, char *);
-void db_sqlite3_acl_role_unconnect_user(server_cb_inf *, char *, char *);
+void db_sqlite3_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 #endif
 
 /* db_mysql.c */
@@ -442,9 +442,9 @@ void db_mysql_chk_role_existence(server_cb_inf *);
 void db_mysql_acl_add_role(server_cb_inf *, char *);
 void db_mysql_acl_del_role(server_cb_inf *, char *);
 void db_mysql_acl_role_connect_group(server_cb_inf *, char *, char *);
-void db_mysql_acl_role_unconnect_group(server_cb_inf *, char *, char *);
+void db_mysql_acl_role_disconnect_group(server_cb_inf *, char *, char *);
 void db_mysql_acl_role_connect_user(server_cb_inf *, char *, char *);
-void db_mysql_acl_role_unconnect_user(server_cb_inf *, char *, char *);
+void db_mysql_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 #endif
 
 
