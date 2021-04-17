@@ -1,0 +1,92 @@
+.TH WENDZELNNTPADM 8 "17 Apr 2021" ""
+.\"=====================================================================
+.SH "NAME"
+wendzelnntpadm \- Newsgroup configuration tool for \fbwendzelnntpd (8)\fP.
+
+.SH "SYNOPSIS"
+\fBwendzelnntpadm\fP [options]
+
+.SH "DESCRIPTION"
+\fIwendzelnntpadm\fP is used for managing the newsgroups of
+.B wendzelnntpd\fP.
+
+.\"=====================================================================
+.SH OPTIONS
+This version of \fBwendzelnntpadm\fP understands the following options.
+.br
+.br
+.TP
+I. Newsgroup management commands:
+.TP
+.B listgroups
+Lists all newsgroups of the database.
+.TP
+.B addgroup <newsgroup> <posting-allowed-flag (y/n)>
+Create the newsgroup <newsgroup> in which posting is either allowed (y) or not (n).
+.TP
+.B delgroup <newsgroup>
+Delete the newsgroup <newsgroup>.
+.br
+.br
+.TP
+II. User management commands:
+.TP
+.B listusers
+Lists all known users of a database.
+.TP
+.B adduser <username> [password]
+Create the user <username>. If the parameter [password] is not provided, it will be prompted.
+.TP
+.B deluser <username>
+Delete the user <username> from the database.
+.br
+.br
+.TP
+III. ACL (Access Control List) administration commands:
+.br
+.TP
+.B listacl
+List all ACL rules.
+.TP
+.B addacluser <username> <newsgroup>
+Add the user <username> to the newsgroup <newsgroup>.
+.TP
+.B delacluser <username> <newsgroup>
+Remove the user <username> from the newsgroup <newsgroup>.
+.br
+.br
+.TP
+IV. Advanced role-based ACL (RBAC) commands:
+.TP
+.B addaclrole <role>
+Create the ACL role <role>.
+.TP
+.B delaclrole <role>
+Remove the ACL role <role>.
+.TP
+.B rolegroupconnect <role> <newsgroup>
+Link the role <role> with the newsgroup <newsgroup>.
+.TP
+.B rolegroupunconnect <role> <newsgroup>
+Unlink the role <role> with the newsgroup <newsgroup>.
+.TP
+.B roleuserconnect <role> <username>
+Link the user <username> to the role <role>.
+.TP
+.B roleuserunconnect <role> <username>
+Unlink the role <username> from the role <role>.
+
+.SH "WEBSITE"
+\fIhttps://www.wendzel.de\fP
+and
+\fIhttps://cdpxe.github.io/WendzelNNTPd/\fP
+
+.SH "AUTHOR"
+WendzelNNTPd was developed by Steffen Wendzel.
+
+.SH "BUGS"
+Please send bug reports to  \fIsteffen@wendzel.de\fP.
+
+.SH SEE ALSO
+.BR wendzelnntpd (8)
+

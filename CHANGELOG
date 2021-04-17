@@ -8,7 +8,9 @@ As usual, every new release gets named after a nice travel location.
 This time it is Friedrichroda, Germany.
 
 **TODO:**
- - add a manpage for `wendzelnntpadm`
+ - Make `make install` handle the manpages.
+ - Fix formating of manpages.
+ - Add manpages to Slackbuild script.
 
 FIXES:
  - Do not exit on SIG_PIPE (broken pipe) *** security fix (DoS) ***.
@@ -22,7 +24,7 @@ FIXES:
    - Unified structure of regex tests with macros
 
 ADDED FEATURES:
- - Created manpage `wendzelnntpd(8)`.
+ - Created the manpages `wendzelnntpd(8)` and `wendzelnntpadm(8)`.
 
 MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).
