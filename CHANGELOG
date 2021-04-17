@@ -17,6 +17,7 @@ FIXES:
    - Prevent sender '@'
    - Prevent \r\n\t in subjects
    - Unified structure of regex tests with macros
+ - Minor fix in documentation for ACL management.
 
 ADDED FEATURES:
  - Created the manpages `wendzelnntpd(8)` and `wendzelnntpadm(8)`.
