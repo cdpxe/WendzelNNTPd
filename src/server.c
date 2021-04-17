@@ -162,7 +162,7 @@ get_slinearg(char *cmdstring, int num)
 static void
 Send(int lsockfd, char *str, int len)
 {
-	if(send(lsockfd, str, len, 0)<0) {
+	if(send(lsockfd, str, len, MSG_NOSIGNAL)<0) {
 		if (daemon_mode) {
 			DO_SYSL("send() returned <0 -- killing connection.")
 		} else {
