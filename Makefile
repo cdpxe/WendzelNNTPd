@@ -17,7 +17,7 @@ CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
 CFLAGS+=$(ADD_CFLAGS)
 
 BUILD=-DBUILD=\"`cat build`\"
-GDBON=-ggdb -g -lefence
+GDBON=-ggdb -g #-lefence
 
 #DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
