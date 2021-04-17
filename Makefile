@@ -170,3 +170,11 @@ clean :
 print_version :
 	@/bin/sh ./getver.sh
 
+man_wendzelnntpd :
+	groff -Tascii -man wendzelnntpd.8  > test.man
+	man -l test.man
+
+man_wendzelnntpadm :
+	groff -Tascii -man wendzelnntpadm.8  > test.man
+	man -l test.man
+
