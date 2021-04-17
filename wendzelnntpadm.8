@@ -31,7 +31,9 @@ in which posting is either allowed (
 ) or not (
 .I
 n
-).
+). Also see
+.I
+modgroup.
 .TP
 .BI modgroup \ grp \  [y/n]
 Modify the posting-allowed property of the newsgroup
@@ -41,7 +43,10 @@ and set it to
 (yes) or
 .I
 n
-(no).
+(no). The flag is implemented but currently not considered. WendzelNNTPd considers all newsgroups as if they had the flag set to
+.I
+y.
+This might change in future versions.
 .TP
 .BI delgroup \ grp
 Delete the newsgroup
