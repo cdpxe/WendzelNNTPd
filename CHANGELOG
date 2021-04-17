@@ -5,6 +5,7 @@ WendzelNNTPd ChangeLog:
 current:
  **TODO:**
  - Because of the regex changes, I really need to change compatibility again before releasing a 2.1.3. Tests w/ Thunderbird and some other usenet clients mandatory!
+    - potentially, Umlaute are not covered anymore in "From"!
  - add a manpage for `wendzelnntpadm`
 FIXES:
  - Modified regex checks during POST command:
