@@ -808,7 +808,7 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+\r\n", header) == 0)
 		correctline = TRUE;
 	/* blah@blah.com (Name Name) */
-	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+ ([a-zA-Z0-9. -_+]+)\r\n",
+	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: [a-zA-Z0-9.-_+]+@[a-zA-Z0-9.-]+ ([a-zA-Z0-9. -_+]+)\r\n", /* FIXME: ' ' or '\n'? */
 				header) == 0)
 		correctline=TRUE;
 	/* Name [... [Name]] <blah@blah.com> */
