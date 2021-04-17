@@ -27,10 +27,10 @@ ADDED FEATURES:
 MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).
  - Slackware build script does not require `make install` anymore,
-   which makes the whole process much clearer. Also, this is quicker.
+   which makes the whole process much cleaner. Also, this is quicker.
  - Added additional meta-data for Slackbuild.com compatibility (beta).
  - Applied several adjustments and improvements from SBo's repository.
- - Improved some comments.
+ - Improved some comments in the code.
 
 
 2.1.2-stable "Sydney/Waverton" : 29-Mar-2021
