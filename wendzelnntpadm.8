@@ -7,8 +7,9 @@ wendzelnntpadm \- Newsgroup configuration tool for \fbwendzelnntpd (8)\fP.
 \fBwendzelnntpadm\fP [options]
 
 .SH "DESCRIPTION"
-\fIwendzelnntpadm\fP is used for managing the newsgroups of
-.B wendzelnntpd\fP.
+.B wendzelnntpadm
+is used for managing the newsgroups, users and roles of
+.B wendzelnntpd(8)\fP.
 
 .\"=====================================================================
 .SH OPTIONS
@@ -16,65 +17,120 @@ This version of \fBwendzelnntpadm\fP understands the following options.
 .br
 .br
 .TP
+.I
 I. Newsgroup management commands:
 .TP
 .B listgroups
 Lists all newsgroups of the database.
 .TP
-.B addgroup <newsgroup> <posting-allowed-flag (y/n)>
-Create the newsgroup <newsgroup> in which posting is either allowed (y) or not (n).
+.BI addgroup \ newsgroup \  (y/n)
+Create the newsgroup
+.I newsgroup
+in which posting is either allowed (
+.I y
+) or not (
+.I
+n
+).
 .TP
-.B delgroup <newsgroup>
-Delete the newsgroup <newsgroup>.
+.BI delgroup \ newsgroup
+Delete the newsgroup
+.I
+newsgroup.
 .br
 .br
 .TP
+.I
 II. User management commands:
 .TP
 .B listusers
 Lists all known users of a database.
 .TP
-.B adduser <username> [password]
-Create the user <username>. If the parameter [password] is not provided, it will be prompted.
+.BI adduser \ username \  [password]
+Create the user
+.I
+username.
+If the parameter
+.I
+password
+is not provided, it will be prompted.
 .TP
-.B deluser <username>
-Delete the user <username> from the database.
+.BI deluser \ username
+Delete the user
+.I
+username
+from the database.
 .br
 .br
 .TP
+.I
 III. ACL (Access Control List) administration commands:
 .br
 .TP
 .B listacl
 List all ACL rules.
 .TP
-.B addacluser <username> <newsgroup>
-Add the user <username> to the newsgroup <newsgroup>.
+.BI addacluser \ username \  newsgroup
+Add the user
+.I
+username
+to the newsgroup
+.I
+newsgroup.
 .TP
-.B delacluser <username> <newsgroup>
-Remove the user <username> from the newsgroup <newsgroup>.
+.BI delacluser \ username \  newsgroup
+Remove the user
+.I
+username
+from the newsgroup
+.I
+newsgroup.
 .br
 .br
 .TP
+.I
 IV. Advanced role-based ACL (RBAC) commands:
 .TP
-.B addaclrole <role>
-Create the ACL role <role>.
+.BI addaclrole \ role
+Create the ACL role
+.I
+role.
 .TP
-.B delaclrole <role>
-Remove the ACL role <role>.
+.BI delaclrole \ role
+Remove the ACL role
+.I
+role.
 .TP
-.B rolegroupconnect <role> <newsgroup>
-Link the role <role> with the newsgroup <newsgroup>.
+.BI rolegroupconnect \ role \  newsgroup
+Link the role
+.I role
+to the newsgroup
+.I
+newsgroup.
 .TP
-.B rolegroupunconnect <role> <newsgroup>
-Unlink the role <role> with the newsgroup <newsgroup>.
+.BI rolegroupunconnect \ role \  newsgroup
+Unlink the role
+.I
+role
+from the newsgroup
+.I
+newsgroup.
 .TP
-.B roleuserconnect <role> <username>
-Link the user <username> to the role <role>.
+.BI roleuserconnect \ role \  username
+Link the user
+.I
+username
+to the role
+.I
+role.
 .TP
-.B roleuserunconnect <role> <username>
-Unlink the role <username> from the role <role>.
+.BI roleuserunconnect \ role \  username
+Unlink the role
+.I
+username
+from the role
+.I
+role.
 
 .SH "WEBSITE"
 \fIhttps://www.wendzel.de\fP
