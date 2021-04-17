@@ -172,10 +172,10 @@ main(int argc, char *argv[])
 					strncpy(conn_logstr, new_conn_prefix, strlen(new_conn_prefix));
 #ifdef __WIN32__
 					{
-					/* Windows helper code, only IPv4-ready */
-					char *w32_helper_ip_ptr;
-					w32_helper_ip_ptr = inet_ntoa(sa.sin_addr);
-					strncpy((sockinfo+i)->ip, w32_helper_ip_ptr, sizeof((sockinfo+i)->ip));
+					 /* Windows helper code, only IPv4-ready */
+					 char *w32_helper_ip_ptr;
+					 w32_helper_ip_ptr = inet_ntoa(sa.sin_addr);
+					 strncpy((sockinfo+i)->ip, w32_helper_ip_ptr, sizeof((sockinfo+i)->ip));
 					}
 					if (!strlen((sockinfo+i)->ip))
 #else
