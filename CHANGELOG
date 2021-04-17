@@ -10,7 +10,7 @@ FIXES:
  - Modified regex checks during POST command:
    - Prevent postings to Newsgroups: ,,,
    - Prevent sender '@'
-   - Prevent \r\n\t in postings **FIXME???**
+   - Prevent \r\n\t in subjects
 
 ADDED FEATURES:
  - Created manpage `wendzelnntpd(8)`.
