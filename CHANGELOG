@@ -2,18 +2,23 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
-current "..." : ??-???-202?
+current:
 
-TODO: Because of the regex changes, I really need to change compatibility again before releasing a 2.1.3. Tests w/ Thunderbird and some other usenet clients mandatory!
-
- FIXES:
+ **TODO:**
+ - Because of the regex changes, I really need to change compatibility again before releasing a 2.1.3. Tests w/ Thunderbird and some other usenet clients mandatory!
+    - potentially, Umlaute and spaces are not covered anymore in "From" when " Name [... [Name]] <blah@blah.com>" or "blah@blah.com (Name Name)" would be used!
+ - add a manpage for `wendzelnntpadm`
+ 
+FIXES:
  - Modified regex checks during POST command:
    - Prevent postings to Newsgroups: ,,,
    - Prevent sender '@'
-   - Prevent \r\n\t in postings
- ADDED FEATURES:
- - Created manpage wendzelnntpd(8).
- MISC:
+   - Prevent \r\n\t in subjects
+
+ADDED FEATURES:
+ - Created manpage `wendzelnntpd(8)`.
+
+MISC:
  - Listen on ::1 per default, too (in addition to 127.0.0.1).
  - Slackware build script does not require `make install` anymore,
    which makes the whole process much clearer. Also, this is quicker.
@@ -21,7 +26,8 @@ TODO: Because of the regex changes, I really need to change compatibility again 
  - Applied several adjustments and improvements from SBo's repository.
  - Improved some comments.
 
-2.1.2 "Sydney/Waverton" : 29-Mar-2021
+
+2.1.2-stable "Sydney/Waverton" : 29-Mar-2021
  ADDED_FEATURES:
  - Slackware package for amd64 was added (beta!)
  - Added support for parameters -h and -v now to check for the version.
