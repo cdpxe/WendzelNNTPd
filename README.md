@@ -46,6 +46,10 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
 
+## Forum for your Questions and Comments
+
+[https://sourceforge.net/p/wendzelnntpd/discussion/general/](https://sourceforge.net/p/wendzelnntpd/discussion/general/)
+
 ## Propaganda
 
 ![Powered by WendzelNNTPd](images/wendzelnntpd_powered.png "powered by WendzelNNTPd usenet server")
