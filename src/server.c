@@ -92,6 +92,7 @@ char hdrerror_subject[]=      "441 'subject' line needed or incorrect.\r\n";
 char hdrerror_from[]=         "441 'from' line needed or incorrect.\r\n";
 char hdrerror_newsgroup[]=    "441 'newsgroups' line needed or incorrect.\r\n";
 char posterr_posttoobig[]=    "441 posting too huge.\r\n";
+char posterror_notallowed[]=  "441 posting failed.\r\n";
 char auth_req[]=              "480 authentication required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
@@ -908,11 +909,10 @@ docmd_post(server_cb_inf *inf)
 #endif
 	int linecount=0;
 	time_t ltime;
-
 	charstack_t *stackp = NULL;
 	
 	Send(inf->sockinf->sockfd, postok, strlen(postok));
-	
+
 	{
 		size_t recv_bytes = 0;
 		int finished = 0;
@@ -939,6 +939,7 @@ docmd_post(server_cb_inf *inf)
 					continue;
 				} else {
 					perror("select() in docmd_post()");
+					free(buf);
 					kill_thread(inf);
 					/* NOTREACHED */
 				}
@@ -960,6 +961,7 @@ docmd_post(server_cb_inf *inf)
 					DO_SYSL("posting from client larger than allowed max. value. "
 						"Please check the documentation if you want to allow "
 						"larger postings.")
+					free(buf);
 					kill_thread(inf);
 					/* NOTREACHED */
 				}
@@ -970,6 +972,7 @@ docmd_post(server_cb_inf *inf)
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");
+					free(buf);
 					kill_thread(inf);
 					/* NOTREACHED */
 				} else if ((int)recv_ret == 0) {
@@ -977,6 +980,7 @@ docmd_post(server_cb_inf *inf)
 					 * performs an ordinary shutdown.
 					 */
 					perror("Client disconnected in docmd_post()");
+					free(buf);
 					kill_thread(inf);
 					/* NOTREACHED */
 				}
@@ -1007,7 +1011,7 @@ docmd_post(server_cb_inf *inf)
 			}
 		}
 	}
-		
+	
 	/*onxxdebugm("%s%s%s", "buffer: '", buf, "'\n");*/
 	/*fprintf(stderr, "buffer: '%s'\n", buf);*/
 	
@@ -1022,6 +1026,7 @@ docmd_post(server_cb_inf *inf)
 					+ 1/*\0*/)) == NULL) {
 				perror("calloc");
 				DO_SYSL("mem low. killing child process.")
+				free(buf);
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
@@ -1031,6 +1036,7 @@ docmd_post(server_cb_inf *inf)
 	onxxdebugm("%s%s%s", "header: '", header, "'\n");
 	if (!header) {
 		DO_SYSL("client sent garbage posting. terminating connection.")
+		free(buf);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
@@ -1078,17 +1084,21 @@ docmd_post(server_cb_inf *inf)
 	/* get a uniq number */
 	if (!(newid = get_uniqnum())) {
 		DO_SYSL("I/O error in file DB -> can't create a new msg-id. Terminating child connection.")
+		free(buf);
+		free(header);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
 	/*printf("new uniq-id: %s\n", newid);*/
 	
 
-	/* If the user wants no anonymous message IDs: Find out hostname or use IP */
+	/* If the admin wants no anonymous message IDs: Find out hostname or use IP */
 	if (anonym_message_ids == 0) {
 		/* get the host of the sender */
 		if (!(addr = (char *) calloc(MAX_IPLEN, sizeof(char)))) {
 			DO_SYSL("not enough memory")
+			free(buf);
+			free(header);
 			kill_thread(inf);
 			/* NOTREACHED */
 		}
@@ -1103,6 +1113,8 @@ docmd_post(server_cb_inf *inf)
 	#endif
 			{
 				DO_SYSL("Can't get address of socket! Terminating child connection.")
+				free(buf);
+				free(header);
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
@@ -1113,6 +1125,8 @@ docmd_post(server_cb_inf *inf)
 			inet_ntop(AF_INET6, &inf->sockinf->sa6.sin6_addr, addr, MAX_IPLEN);
 			if(!addr) {
 				DO_SYSL("Can't get address of socket! Terminating child connection.")
+				free(buf);
+				free(header);
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
@@ -1126,6 +1140,8 @@ docmd_post(server_cb_inf *inf)
 			len=MAX_IDNUM_LEN+3+strlen(addr) + 1;
 			if (!(message_id = (char *) calloc(len, sizeof(char)))) {
 				DO_SYSL("Not enough memory")
+				free(buf);
+				free(header);
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
@@ -1134,6 +1150,8 @@ docmd_post(server_cb_inf *inf)
 			len=MAX_IDNUM_LEN+3+strlen(hostinfo->h_name) + 1;
 			if (!(message_id = (char *) calloc(len, sizeof(char)))) {
 				DO_SYSL("Not enough memory")
+				free(buf);
+				free(header);
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
@@ -1146,6 +1164,8 @@ docmd_post(server_cb_inf *inf)
 		len = MAX_IDNUM_LEN + 3 + strlen(NNTPD_ANONYM_HOST) + 1;
 		if (!(message_id = (char *) calloc(len, sizeof(char)))) {
 			DO_SYSL("not enough memory")
+			free(buf);
+			free(header);
 			kill_thread(inf);
 			/* NOTREACHED */
 		}
@@ -1162,6 +1182,8 @@ docmd_post(server_cb_inf *inf)
 	/* if there is a message ID, remove it (new is inserted by the write_posting() func */
 	if ((ptr = strstr(buf, "\r\n\r\n")) == 0) {
 		DO_SYSL("(internal) parsing error #1")
+		free(buf);
+		free(header);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
@@ -1204,6 +1226,8 @@ docmd_post(server_cb_inf *inf)
 	/* Get the current time */
 	ltime = time(NULL);
 	if (ltime == (time_t) - 1) {
+		free(buf);
+		free(header);
 		DO_SYSL("time(NULL) returned (time_t)-1")
 		kill_thread(inf);
 		/* NOTREACHED */
@@ -1214,6 +1238,8 @@ docmd_post(server_cb_inf *inf)
 	/* Get the # of lines */
 	if ((ptr=strstr(buf, "\r\n\r\n"))==NULL) {
 		DO_SYSL("posting aborted (no end of header found, client sent garbage).")
+		free(buf);
+		free(header);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
@@ -1238,6 +1264,8 @@ docmd_post(server_cb_inf *inf)
 			the hostname + 127 chars for the domain name /should/ be enough */
 			+ strlen(header) /* for strcat() */, sizeof(char)))) {
 		DO_SYSL("not enough memory.")
+		free(buf);
+		free(header);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
