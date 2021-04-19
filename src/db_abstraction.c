@@ -486,17 +486,17 @@ db_acl_role_connect_group(server_cb_inf *inf, char *role, char *newsgroup)
 }
 
 void
-db_acl_role_unconnect_group(server_cb_inf *inf, char *role, char *newsgroup)
+db_acl_role_disconnect_group(server_cb_inf *inf, char *role, char *newsgroup)
 {
 	switch (dbase) {
 #ifndef NOSQLITE
 	case DBASE_SQLITE3:
-		db_sqlite3_acl_role_unconnect_group(inf, role, newsgroup);
+		db_sqlite3_acl_role_disconnect_group(inf, role, newsgroup);
 		break;
 #endif
 #ifndef NOMYSQL
 	case DBASE_MYSQL:
-		db_mysql_acl_role_unconnect_group(inf, role, newsgroup);
+		db_mysql_acl_role_disconnect_group(inf, role, newsgroup);
 		break;
 #endif
 	default:
@@ -524,17 +524,17 @@ db_acl_role_connect_user(server_cb_inf *inf, char *role, char *user)
 }
 
 void
-db_acl_role_unconnect_user(server_cb_inf *inf, char *role, char *user)
+db_acl_role_disconnect_user(server_cb_inf *inf, char *role, char *user)
 {
 	switch (dbase) {
 #ifndef NOSQLITE
 	case DBASE_SQLITE3:
-		db_sqlite3_acl_role_unconnect_user(inf, role, user);
+		db_sqlite3_acl_role_disconnect_user(inf, role, user);
 		break;
 #endif
 #ifndef NOMYSQL
 	case DBASE_MYSQL:
-		db_mysql_acl_role_unconnect_user(inf, role, user);
+		db_mysql_acl_role_disconnect_user(inf, role, user);
 		break;
 #endif
 	default:
