@@ -112,6 +112,7 @@ cp -vr docs/docs $PKG/usr/doc/$PRGNAM-$VERSION/
 cp -v docs/docs.pdf $PKG/usr/doc/$PRGNAM-$VERSION/docs.pdf
 cp -v AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PRGNAM-$VERSION/
 chmod -R 0644 $PKG/usr/doc/$PRGNAM-$VERSION/*
+chmod +x $PKG/usr/doc/$PRGNAM-$VERSION/docs # the docs subdir must be +x
 
 # Strip binaries:
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
