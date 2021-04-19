@@ -324,6 +324,39 @@ db_mysql_chk_if_msgid_exists(server_cb_inf *inf, char *newsgroup, char *msgid)
 }
 
 void
+db_mysql_chk_newsgroup_posting_allowed(server_cb_inf *inf)
+{
+	int len;
+	char *sql_cmd;
+	MYSQL_RES *res;
+
+	inf->servinf->found_group = 0;
+
+	len = 0xfff + strlen(inf->servinf->chkname);
+	if (global_mode == MODE_THREAD) {
+		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+	} else {
+		CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
+	}
+	snprintf(sql_cmd, len - 1, "select * from newsgroups where name='%s' and pflag='y';",
+		inf->servinf->chkname);
+	
+	if (mysql_real_query(inf->servinf->myhndl, sql_cmd, strlen(sql_cmd)) != 0) {
+		MYSQL_CHK_ERR("mysql_real_query() error")
+	}
+	
+	if ((res = mysql_store_result(inf->servinf->myhndl)) == NULL) {
+		MYSQL_CHK_ERR("mysql_store_result error")
+	}
+	
+	if (mysql_num_rows(res) != 0) {
+		inf->servinf->found_group = 1;
+	}
+	free(sql_cmd);
+	mysql_free_result(res);
+}
+
+void
 db_mysql_chk_newsgroup_existence(server_cb_inf *inf)
 {
 	int len;

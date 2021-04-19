@@ -843,7 +843,7 @@ docmd_post_chk_ng_name_correctness(char *ngstrp_in, server_cb_inf *inf)
 	/* work only with a copy of the string because we need the original later */
 	ngstrp = strdup(ngstrp_in);
 	if (!ngstrp) {
-		DO_SYSL("Not enough mem for strdup")
+		DO_SYSL("Not enough mem for strdup() in docmd_post_chk_ng_name_correctness()")
 		return FALSE;
 	}
 	
@@ -855,16 +855,28 @@ docmd_post_chk_ng_name_correctness(char *ngstrp_in, server_cb_inf *inf)
 	strtok(ngstrp, sep)
 #endif
 	; newsgroup; ) {
+		/* 1. check whether group exists */
 	 	inf->servinf->chkname = db_secure_sqlbuffer(inf, newsgroup);
 		db_check_newsgroup_existence(inf);
 		db_secure_sqlbuffer_free(inf->servinf->chkname);
 		inf->servinf->chkname = NULL;
-
 		if (!inf->servinf->found_group) {
 			ToSend(nosuchgroup, strlen(nosuchgroup), inf);
 			return FALSE;
 		}
-		inf->servinf->found_group = 0; /* reset */
+
+		/* 2. check whether posting is allowed */
+	 	inf->servinf->chkname = db_secure_sqlbuffer(inf, newsgroup);
+		db_check_newsgroup_posting_allowed(inf);
+		db_secure_sqlbuffer_free(inf->servinf->chkname);
+		inf->servinf->chkname = NULL;
+		if (!inf->servinf->found_group) {
+			ToSend(posterror_notallowed, strlen(posterror_notallowed), inf);
+			return FALSE;
+		}
+
+		/* 3. reset for next group */
+		inf->servinf->found_group = 0;
 		
 		/* get the next group */
 #ifndef __WIN32__

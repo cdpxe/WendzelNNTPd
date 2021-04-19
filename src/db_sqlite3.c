@@ -712,6 +712,10 @@ db_sqlite3_xover(server_cb_inf *inf, u_int32_t min, u_int32_t max)
  *    reason.
  * 2. This callback function is used by both: the server and the
  *    admin tool.
+ * 3. The variable inf->servinf->found_group is used not only for
+ *    newsgroups, but also for users and roles (and maybe even more).
+ *    The name of the variable might change in the future to some more
+ *    reasonable name.
  */
 static int
 db_sqlite3_post_ng_cb(void *infp, int argc, char **argv, char **col)
@@ -724,7 +728,7 @@ db_sqlite3_post_ng_cb(void *infp, int argc, char **argv, char **col)
 	 * here ... */
 //	if (strcasecmp(inf->servinf->chkname, argv[1]) != 0)
 //		return 0;
-	inf->servinf->found_group = 1;
+	inf->servinf->found_group = 1; /* or: user, or: $something! */
 	return 0;
 }
 
@@ -803,6 +807,28 @@ db_sqlite3_chk_if_msgid_exists(server_cb_inf *inf, char *newsgroup, char *msgid)
 	free(sql_cmd);
 	return boolval;
 }
+
+void
+db_sqlite3_chk_newsgroup_posting_allowed(server_cb_inf *inf)
+{
+	int len;
+	char *sql_cmd;
+	
+	/* first: reset */
+	inf->servinf->found_group = 0;
+	
+	len = 0xfff + strlen(inf->servinf->chkname);
+	if (global_mode == MODE_THREAD) {
+		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+	} else {
+		CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
+	}
+	snprintf(sql_cmd, len - 1, "select * from newsgroups where name='%s' and pflag='y';",
+		inf->servinf->chkname);
+	sqlite3_secexec(inf, sql_cmd, db_sqlite3_post_ng_cb, inf);
+	free(sql_cmd);
+}
+
 
 void
 db_sqlite3_chk_newsgroup_existence(server_cb_inf *inf)

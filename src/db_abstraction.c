@@ -203,6 +203,24 @@ db_chk_if_msgid_exists(server_cb_inf *inf, char *newsgroup, char *msgid)
 	return retval;
 }
 
+void
+db_check_newsgroup_posting_allowed(server_cb_inf *inf)
+{
+	switch (dbase) {
+#ifndef NOSQLITE
+	case DBASE_SQLITE3:
+		db_sqlite3_chk_newsgroup_posting_allowed(inf);
+		break;
+#endif
+#ifndef NOMYSQL
+	case DBASE_MYSQL:
+		db_mysql_chk_newsgroup_posting_allowed(inf);
+		break;
+#endif
+	default:
+		DO_SYSL("NOT IMPLEMENTED; TODO!")
+	}
+}
 
 void
 db_check_newsgroup_existence(server_cb_inf *inf)
