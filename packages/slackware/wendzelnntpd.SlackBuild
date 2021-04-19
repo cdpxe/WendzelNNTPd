@@ -30,9 +30,9 @@
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=wendzelnntpd
-VERSION=${VERSION:-2.1.2}
-TGZ_DIRNAME=cdpxe-WendzelNNTPd-5ea53d6 # for v2.1.2
-BUILD=${BUILD:-3}
+VERSION=${VERSION:-2.1.3}
+TGZ_DIRNAME=cdpxe-WendzelNNTPd-17d557d # for v2.1.3
+BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 TMP=${TMP:-/tmp/SBo}
 OUTPUT=${OUTPUT:-/tmp}
@@ -117,13 +117,11 @@ chmod -R 0644 $PKG/usr/doc/$PRGNAM-$VERSION/*
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
-# This is kept for the case that wendzelnntpd will contain a manpage in the future.
+# Include the manpages
+mkdir -p $PKG/usr/man/man8
+cp wendzelnntpd.8 wendzelnntpadm.8 $PKG/usr/man/man8/
 # Compress man pages
-# If the man pages are installed to /usr/share/man instead, you'll need to either
-# add the --mandir=/usr/man flag to configure or move them manually after the
-# make install process is run.
-#find $PKG/usr/man -type f -exec gzip -9 {} \;
-#for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+find $PKG/usr/man -type f -exec gzip -9 {} \;
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/${PRGNAM}-$VERSION-$ARCH-${BUILD}${TAG}.${PKGTYPE:-tgz}
