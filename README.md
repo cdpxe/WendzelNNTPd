@@ -48,8 +48,3 @@ https://sourceforge.net/p/wendzelnntpd/discussion/general/
 ## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
-
-## Open Tasks / Thesis Topics
-- Add TLS support (NTTPS) for WendzelnNNTPd
-- Add Synchronization
-- Add support for MariaDB and perform code auditing checks
