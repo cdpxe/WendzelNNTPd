@@ -13,7 +13,6 @@ Major:
 
 Minor:
 - replace hash(salt,username,password) w/ hash(salt,rand(),password).
-- add manpage
 - unicode support (-> domains with special characters, e.g. ä,ö,ü in "From:")
 - documentation: How to delete old postings?
 - AUTHINFO SIMPLE
