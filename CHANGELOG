@@ -4,8 +4,7 @@ WendzelNNTPd ChangeLog:
 
 2.1.x-current "t.b.d." : t.b.d.
 ***TODO***:
- - Check functioning of posting (not) allowed on both, sqlite3 and
-   MySQL databases!
+ - Check functioning of posting (not) allowed on MySQL database.
  - Excessive testing of the POST function because of the removed
    memory leaks.
 ADDED FEATURES:
@@ -41,7 +40,6 @@ MISC:
  - Added additional meta-data for Slackbuild.com compatibility (beta).
  - Applied several adjustments and improvements from SBo's repository.
  - Improved some comments in the code.
-
 
 2.1.2-stable "Sydney/Waverton" : 29-Mar-2021
  ADDED_FEATURES:
