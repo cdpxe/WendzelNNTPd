@@ -106,8 +106,8 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.1.3"
-#define RELEASENAME		"'Friedrichroda'"
+#define VERSION			"2.1.4-unstable"
+#define RELEASENAME		"'St. Peter-Ording'"
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"
