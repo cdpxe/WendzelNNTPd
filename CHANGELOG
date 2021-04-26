@@ -9,11 +9,13 @@ WendzelNNTPd ChangeLog:
    memory leaks.
 ADDED FEATURES:
  - Finally, the "posting allowed" flag is considered in POST.
+FIXES:
+ - Fixed some memory leaks during postings that would occur on rather
+   rare errors.
 MISC:
  - Updated SBo script to work with v. 2.1.3; fixed bug that made
-   /usr/doc/wendzelnntpd-$ver/docs not accessible (+x permission
-   was missing)
- - Fixed some memory leaks.
+   /usr/doc/wendzelnntpd-$ver/docs inaccessible (+x permission was
+   missing)
  - Shifted manpages to docs/
 
 2.1.3-stable "Friedrichroda" : 17-Apr-2021:
