@@ -4,7 +4,7 @@ WendzelNNTPd ChangeLog:
 
 2.1.4-UNSTABLE "St. Peter-Ording" : t.b.d.
 ***TODO***:
- - Check functioning of posting (not) allowed on MySQL database.
+ - Check functioning of "posting (not) allowed" flag on MySQL database.
  - Excessive testing of the POST function because of the removed
    memory leaks.
 ADDED FEATURES:
