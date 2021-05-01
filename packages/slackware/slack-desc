@@ -8,12 +8,12 @@
             |-----handy-ruler------------------------------------------------------|
 wendzelnntpd: wendzelnntpd (Easy-to-use NNTP Server)
 wendzelnntpd:
-wendzelnntpd: WendzelNNTPd is an IPv6-ready Usenet server (NNTP daemon) with the
-wendzelnntpd: main goal to maximize usability on the console level. WendzelNNTPd
-wendzelnntpd: achieves this by breaking down complicated things into an easy-to-use
+wendzelnntpd: WendzelNNTPd is an easy to configure Usenet server (NNTP daemon).
+wendzelnntpd: WendzelNNTPd breaks down complicated things into an easy-to-use
 wendzelnntpd: configuration file and tool. The server is portable (Linux/*BSD/
-wendzelnntpd: *nix), supports AUTHINFO authentication, contains support for Access
-wendzelnntpd: Control Lists (ACL), Role-based Access Control (RBAC) and supports
-wendzelnntpd: invisible newsgroups. It currently supports MySQL and SQLite backends.
+wendzelnntpd: *nix), supports IPv4 and IPv6, AUTHINFO authentication, contains
+wendzelnntpd: support for Access Control Lists (ACL), Role-based Access Control
+wendzelnntpd: (RBAC) and supports invisible newsgroups. It currently supports
+wendzelnntpd: MySQL and SQLite backends.
 wendzelnntpd: Note: This package is compiled without MYSQL support and uses
 wendzelnntpd:       sqlite3 instead.
