@@ -107,7 +107,7 @@
 #endif
 
 #define VERSION			"2.1.4-unstable"
-#define RELEASENAME		"'St. Peter-Ording'"
+#define RELEASENAME		"'St.-Peter-Ording'" /* should not include white-spaces! */
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"
