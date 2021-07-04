@@ -218,6 +218,7 @@ db_sqlite3_xhdr_cb(void *infp, int argc, char **argv, char **col)
 	ToSend(add_to_response, strlen(add_to_response), inf);
 	
 	free(add_to_response);
+	
 	return 0;
 }
 
@@ -276,6 +277,9 @@ db_sqlite3_xhdr(server_cb_inf *inf, short message_id_flg, int xhdr, char *articl
 	}
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_xhdr_cb, inf);
 	free(sql_cmd);
+	/* Sqlite parameter clearing start */
+	inf->speccmd = 0;
+	/* Sqlite parameter clearing end */
 }
 
 /* ***** ARTICLE ***** */

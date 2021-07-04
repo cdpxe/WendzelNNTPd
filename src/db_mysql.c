@@ -492,6 +492,9 @@ db_mysql_xhdr(server_cb_inf *inf, short message_id_flg, int xhdr, char *article,
 	}
 	mysql_free_result(res);
 	free(sql_cmd);
+	/* Sqlite parameter clearing start */
+	inf->speccmd = 0;
+	/* Sqlite parameter clearing end */
 }
 
 /* ***** ARTICLE ***** */

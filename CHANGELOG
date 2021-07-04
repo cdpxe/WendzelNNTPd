@@ -9,6 +9,8 @@ WendzelNNTPd ChangeLog:
    memory leaks.
 ADDED FEATURES:
  - Finally, the "posting allowed" flag is considered in POST.
+ - Once xhdr requested "date", all following responses were interpreted
+   as "date" format, too.  Solved this by resettting inf->speccmd = 0;
 FIXES:
  - Fixed some memory leaks during postings that would occur on rather
    rare errors.
