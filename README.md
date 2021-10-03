@@ -28,13 +28,13 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
 * Conservative design philosophy:
-   * Tiny (less than 7,700 Lines of Code), to reduce potential (security) flaws.
+   * Tiny (less than 7,700 Lines of Code), to limit potential (security) flaws.
    * Do not implement unnecessary features.
    * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
 * Database abstraction layer (supports SQLite3 and MySQL)
 * Supports NNTP authentication (AUTHINFO USER/PASS)
-* Supports advanced ACL and role based access control (RBAC)
+* Supports advanced Access Control Lists (ACL) and Role-based Access Control (RBAC)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
