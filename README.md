@@ -18,14 +18,17 @@ The current version of the development code is available [here](https://github.c
 
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
-* Database abstraction layer (supports SQLite3 and MySQL)
-* Tiny (only about 7,500 Lines of Code)
+* Conservative design philosophy:
+   * Tiny (less than 7,700 Lines of Code), to limit potential (security) flaws.
+   * Do not implement unnecessary features.
+   * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
+* Database abstraction layer (supports SQLite3 and MySQL)
 * Supports NNTP authentication (AUTHINFO USER/PASS)
-* Supports advanced ACL and role based access control (RBAC)
+* Supports advanced Access Control Lists (ACL) and Role-based Access Control (RBAC)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
-* It is open, free software! :)
+* It is open + free software! :)
 
 ## Why you want a Usenet server
 
