@@ -1287,11 +1287,12 @@ docmd_post(server_cb_inf *inf)
 		char hostname[128] = { '\0' };
 		char domainname[128] = { '\0' };
 		char fqdn[256] = { '\0' };
+		char unknown[] = "unknown\0";
 	
 		if (gethostname(hostname, 127) == 0) {
 			strncpy(fqdn, hostname, strlen(hostname));
 		} else {
-			strncpy(fqdn, "unknown", strlen("unknown"));
+			strncpy(fqdn, unknown, strlen(unknown));
 		}
 		/* now also get the domain name */
 #ifdef __WIN32__ /* ... but not on Win32 */
@@ -1303,7 +1304,7 @@ docmd_post(server_cb_inf *inf)
 			strncpy(fqdn + strlen(fqdn), domainname, 127);		
 		} else {
 			fqdn[strlen(fqdn)] = '.';
-			strncpy(fqdn + strlen(fqdn), "unknown", strlen("unknown"));
+			strncpy(fqdn + strlen(fqdn), unknown, strlen(unknown));
 		}
 #endif
 		/* Add FQDN + other important headers */
