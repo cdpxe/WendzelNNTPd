@@ -171,7 +171,7 @@ clean :
 	docs/*.log docs/docs.out \
 	docs/docs/*.tex docs/docs/*.pl docs/docs/*.log docs/docs/*.idx \
 	docs/docs/WARNINGS docs/docs/*.old docs/docs/*.aux docs/docs/images.out \
-	docs/docs/images.pdf docs/docs/img1.svg
+	docs/docs/images.pdf docs/docs/img1.svg docs/docs/crossref.png
 
 print_version :
 	@/bin/sh ./getver.sh
