@@ -530,15 +530,15 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 	} else { /* at least a min-value is given */
 		char *ptr_orig = ptr;
 		
-		min = atoi(ptr); /* atoi, by definition, detects no errors, e.g. maybe
-				  * we convert a string like 'cat' to some number here but
+		min = atoi(ptr); /* atoi(), by definition, detects no errors, e.g. maybe
+				  * we convert a string like 'cat' to some number here, but
 				  * then we simply cannot return the posting as it will not
 				  * exist. Some plausibility checks are done later in this
 				  * function. */
 				  
 		max = min; /* This is correct. If we find a '-', we will change it in a moment */
-		/* check for the '-' character. */
 		
+		/* check for the '-' character. */
 		while (ptr[0] != '\0' && max != REALmax) {
 			if (ptr[0] == '-') { /* all articles from min to the end */
 				max = REALmax;
@@ -548,7 +548,7 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 		if (max == REALmax) { /* look if there is an end-value for max */
 			if (ptr[0] != '\0') {
 				max = atoi(ptr);
-				/* if the client sent us bullshit then max could be zero ... */
+				/* if the client sent us bullshit then max could be <=0 */
 				if (!max) {
 					/* ... in this case, we set it back to REALmax ;-) */
 					max = REALmax;
