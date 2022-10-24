@@ -277,7 +277,8 @@ main(int argc, char *argv[])
 			len_argvs += strlen(argv[4]);
 		
 		if (len_argvs > (BUFSIZE - 0xff)) {
-			fprintf(stderr, "Error: newsgroup name or username or both name is/are too long.\n");
+			fprintf(stderr, "Error: newsgroup name or username or both name"
+					"is/are too long.\n");
 			exit(ERR_EXIT);
 		}
 	}	
@@ -289,7 +290,8 @@ main(int argc, char *argv[])
 		for (i = 0; i < strlen(argv[2]); i++) {
 		    if (isalnum(argv[2][i]) == 0 && argv[2][i] != '.'
 			&& argv[2][i] != '-') {
-			fprintf(stderr, "The newsgroup's name must consist of alphanumeric letters, points (.) and dashes (-) only.\n");
+			fprintf(stderr, "The newsgroup's name must consist of alphanumeric"
+					"letters, points (.) and dashes (-) only.\n");
 			exit(ERR_EXIT);
 		    }
 		}
