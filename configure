@@ -143,7 +143,7 @@ fi
 echo "operating system is...$OS"
 echo "operating system release is...$RELEASE"
 
-out 'checking for solaris...'
+out 'checking for Solaris...'
 if [ "$OS" = "SunOS" ]; then
 	echo "yes"
 	USE_SOLARIS_NETLIBS="YES"
