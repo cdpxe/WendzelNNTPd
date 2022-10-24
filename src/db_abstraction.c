@@ -564,6 +564,10 @@ db_acl_role_disconnect_user(server_cb_inf *inf, char *role, char *user)
 void
 db_create_newsgroup(server_cb_inf *inf, char *newsgroup, char post_flg)
 {
+	if (post_flg != 'y' && post_flg != 'n') {
+		fprintf(stderr, "posting flag must be 'y' or 'n'.\n");
+		exit(ERR_EXIT);
+	}
 	switch (dbase) {
 #ifndef NOSQLITE
 	case DBASE_SQLITE3:
