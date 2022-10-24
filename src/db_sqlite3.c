@@ -57,7 +57,7 @@ db_sqlite3_close_connection(server_cb_inf *inf)
  * mode. Security checks must be done by hand in the code using ' quotations instead of "
  * quotations and then sqlite3_mprintf()!
  */
-/*TODO FIXME: In this file: make sure to always use ' quotations instead of " quotations and then %q in sqlite3_mprintf()*/
+/*TODO FIXME: In this file: make sure to always use ' quotations instead of " quotations and then %q in sqlite3_mprintf(); this requires to allocate memory w/ sqlite3_malloc64() each time and then free it with sqlite3_free(). What a junk. I need at least a macro for it. */
 sqlite3_secexec(server_cb_inf *inf, char *cmd, int (*cb)(void *, int, char **, char **), void *arg)
 {
 	if (sqlite3_exec(inf->servinf->db, cmd, cb, arg,
