@@ -287,6 +287,12 @@ main(int argc, char *argv[])
 			usage();
 		/* first check if the group already exists */
 		exit_if_newsgroup_exists(inf, argv[2]);
+		/* Race condition: theoretically, a newsgroup could be
+		 * created before we now call db_create_newsgroup().
+		 * However, this can be tolerated and would not have
+		 * much consequences. Also: two admins would need to do
+		 * that simultaneously!
+		 */
 		/* now insert the new group */
 		db_create_newsgroup(inf, argv[2], argv[3][0]);
 		break;
@@ -345,6 +351,12 @@ main(int argc, char *argv[])
 			printf("error in mhash utilization");
 			exit(ERR_EXIT);
 		}
+		/* Race condition: theoretically, the user could be
+		 * created before we now call db_add_user().
+		 * However, this can be tolerated and would not have
+		 * much consequences. Also: two admins would need to do
+		 * that simultaneously!
+		 */
 		db_add_user(inf, argv[2], pass_hash);
 		
 		/* bzero the pass just to clean up the mem */
