@@ -53,11 +53,11 @@ db_sqlite3_close_connection(server_cb_inf *inf)
 	sqlite3_close(inf->servinf->db);
 }
 
-/* This was a good idea but actually it does nothing more than executing sqlite3_exec. I do
- * all the checks by hand, what is better because it is needed only two times in this whole
- * file! Btw. This is good because I can better add the database abstraction layer later!
+/* This is called sqlite3_secexec() because it can be called both from server and admtool
+ * mode. Security checks must be done by hand in the code using ' quotations instead of "
+ * quotations and then sqlite3_mprintf()!
  */
-void
+/*TODO FIXME: In this file: make sure to always use ' quotations instead of " quotations and then %q in sqlite3_mprintf()*/
 sqlite3_secexec(server_cb_inf *inf, char *cmd, int (*cb)(void *, int, char **, char **), void *arg)
 {
 	if (sqlite3_exec(inf->servinf->db, cmd, cb, arg,
