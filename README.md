@@ -27,7 +27,7 @@ This server is tailored for workgroups, where users trust each other and where n
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
 * Conservative design philosophy:
-   * Tiny (less than 7,700 Lines of Code), to reduce potential (security) flaws.
+   * Tiny (around 7,800 Lines of Code), to reduce potential (security) flaws.
    * Do not implement unnecessary features.
    * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
