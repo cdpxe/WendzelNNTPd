@@ -183,6 +183,7 @@ main(int argc, char *argv[])
 	char *pass, *pass_hash;
 	int len_argvs;
 	server_cb_inf *inf;
+	int i = 0; /* multi-purpose counter */
 	
 	/* detect the database engine */
 	basic_setup_admtool();
@@ -285,7 +286,14 @@ main(int argc, char *argv[])
 	case MOD_NGCREATE:
 		if (argc < 4)
 			usage();
-		/* first check if the group already exists */
+		for (i = 0; i < strlen(argv[2]); i++) {
+		    if (isalnum(argv[2][i]) == 0 && argv[2][i] != '.'
+			&& argv[2][i] != '-') {
+			fprintf(stderr, "The newsgroup's name must consist of alphanumeric letters, points (.) and dashes (-) only.\n");
+			exit(ERR_EXIT);
+		    }
+		}
+		/* now check if the group already exists */
 		exit_if_newsgroup_exists(inf, argv[2]);
 		/* Race condition: theoretically, a newsgroup could be
 		 * created before we now call db_create_newsgroup().
@@ -327,6 +335,13 @@ main(int argc, char *argv[])
 			fgets(pass, 100, stdin);
 			pass[strlen(pass) - 1] = '\0'; /* remove \n */
 #endif
+		}
+		
+		for (i = 0; i < strlen(argv[2]); i++) {
+		    if (isalnum(argv[2][i]) == 0) {
+			fprintf(stderr, "The username must consist of alphanumeric letters only.\n");
+			exit(ERR_EXIT);
+		    }
 		}
 		
 		if (strlen(argv[2]) > 100) {
