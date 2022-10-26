@@ -15,7 +15,7 @@ FIXES:
  - Once xhdr requested "date", all following responses were interpreted
    as "date" format, too.  Solved this by resettting inf->speccmd = 0;
  - Make sure that Sqlite3 statements with quotes are double-escaped to
-   to prevent SQL injections.
+   prevent SQL injections.
 MISC:
  - Updated SBo script to work with v. 2.1.3; fixed bug that made
    /usr/doc/wendzelnntpd-$ver/docs inaccessible (+x permission was
