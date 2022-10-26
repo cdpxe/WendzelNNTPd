@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2009-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2009-2022 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,23 @@ extern short global_mode; /* global.c */
 
 extern char progerr503[];
 extern char period_end[];
+
+#define SQLITE3_CALLOC(__l__)									\
+			if ((sql_cmd = sqlite3_malloc64(__l__)) == NULL) {       		\
+			    if (global_mode == MODE_THREAD) {					\
+				DO_SYSL("couldn't allocate a datatype! mem-low.\n");		\
+				kill_thread(inf);					 	\
+			    } else if (global_mode == MODE_PROCESS) {				\
+				fprintf(stderr, "couldn't allocate a datatype! mem-low.\n");	\
+				exit(ERR_EXIT);							\
+			    } else {								\
+				DO_SYSL("internal error: no global_mode selected!");		\
+				fprintf(stderr, "internal error: no global_mode selected!");	\
+			    }									\
+			}									\
+			/* to handle strings that would be doubled entirely (only ' letters):*/	\
+			bzero(sql_cmd, __l__);
+
 
 void
 db_sqlite3_open_connection(server_cb_inf *inf)
@@ -57,7 +74,7 @@ db_sqlite3_close_connection(server_cb_inf *inf)
  * mode. Security checks must be done by hand in the code using ' quotations instead of "
  * quotations and then sqlite3_mprintf()!
  */
-/*TODO FIXME: In this file: make sure to always use ' quotations instead of " quotations and then %q in sqlite3_mprintf(); this requires to allocate memory w/ sqlite3_malloc64() each time and then free it with sqlite3_free(). What a junk. I need at least a macro for it. */
+void
 sqlite3_secexec(server_cb_inf *inf, char *cmd, int (*cb)(void *, int, char **, char **), void *arg)
 {
 	if (sqlite3_exec(inf->servinf->db, cmd, cb, arg,
@@ -88,18 +105,17 @@ db_sqlite3_authinfo_checkpass_cb(void *infp, int argc, char **argv, char **ColNa
 void
 db_sqlite3_authinfo_check(server_cb_inf *inf)
 {
-
 	char *sql_cmd;
-	int len;
+	sqlite_uint64 len;
 	
 	assert(global_mode == MODE_THREAD);
 	/* now check if combination of user+pass is valid */
 	len = strlen(inf->servinf->cur_auth_user) + strlen(inf->servinf->cur_auth_pass) + 0xff;
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "select * from users where name='%s' and password='%s';",
-		inf->servinf->cur_auth_user, inf->servinf->cur_auth_pass);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf(2*len, sql_cmd, "select * from users where name='%q' and password='%q';",
+		     inf->servinf->cur_auth_user, inf->servinf->cur_auth_pass);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_authinfo_checkpass_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 /* ***** LIST ***** */
@@ -226,7 +242,7 @@ void
 db_sqlite3_xhdr(server_cb_inf *inf, short message_id_flg, int xhdr, char *article, u_int32_t min,
 		u_int32_t max)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *hdr_type_str;
 	char *sql_cmd;
 	
@@ -260,23 +276,22 @@ db_sqlite3_xhdr(server_cb_inf *inf, short message_id_flg, int xhdr, char *articl
 	len = 0xfff + strlen(inf->servinf->selected_group) + strlen(hdr_type_str);
 	if (article != NULL)
 		len += strlen(article);
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	
+	SQLITE3_CALLOC(2*len)
 	if (message_id_flg == 1) {
-		snprintf(sql_cmd, len - 1,
-			"select n.postnum %s"
+	    sqlite3_snprintf(2*len-1, sql_cmd,
+			"select n.postnum %q"
 			" from ngposts n,postings p"
-			" where ng='%s' and p.msgid = '%s' and n.msgid = p.msgid;",
+			" where ng='%q' and p.msgid = '%q' and n.msgid = p.msgid;",
 			hdr_type_str, inf->servinf->selected_group, article);
 	} else {
-		snprintf(sql_cmd, len - 1,
-			"select n.postnum %s"
+	    sqlite3_snprintf(2*len-1, sql_cmd,
+			"select n.postnum %q"
 			" from ngposts n,postings p"
-			" where ng='%s' and (postnum between %i and %i) and n.msgid = p.msgid;",
+			" where ng='%q' and (postnum between %i and %i) and n.msgid = p.msgid;",
 			hdr_type_str, inf->servinf->selected_group, min, max);
 	}
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_xhdr_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	/* Sqlite parameter clearing start */
 	inf->speccmd = 0;
 	/* Sqlite parameter clearing end */
@@ -315,7 +330,8 @@ db_sqlite3_article_cb(void *infp, int argc, char **argv, char **col)
 	char *id;
 	char *sendbuffer;
 	char *sql_cmd = NULL;
-	int len, len_sql;
+	int len;
+	sqlite_uint64 len_sql;
 	
 	assert(global_mode == MODE_THREAD);
 	
@@ -345,10 +361,9 @@ db_sqlite3_article_cb(void *infp, int argc, char **argv, char **col)
 
 	/* compose return message */
 //postings (msgid string primary key, date string, author string, newsgroups string, subject string, lines string, header varchar(16000), body varchar(250000));
-	len_sql = 0x7f + strlen(msgid);
+	len_sql = 0x7f + (strlen(msgid) * 2);
 	
-	/* Do not use CALLOC_Thread() here since there is a free() inside! */
-	if (!(sql_cmd = (char *) calloc(len + 1, sizeof(char)))) {
+	if (!(sql_cmd = (char *) sqlite3_malloc64(len_sql + 1))) {
 		free(sendbuffer);
 		free(inf->servinf->selected_article);
 		inf->servinf->selected_article = NULL;
@@ -356,15 +371,16 @@ db_sqlite3_article_cb(void *infp, int argc, char **argv, char **col)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
+	bzero(sql_cmd, len_sql+1);
 	
 	switch (inf->cmdtype) {
 	case CMDTYP_ARTICLE:
 		snprintf(sendbuffer, len, "220 %s %s article retrieved - head and body follow\r\n", id, msgid);
-		snprintf(sql_cmd, len_sql, "select header from postings where msgid='%s';", msgid);
+		sqlite3_snprintf(len_sql, sql_cmd, "select header from postings where msgid='%q';", msgid);
 		break;
 	case CMDTYP_HEAD:
 		snprintf(sendbuffer, len, "221 %s %s article retrieved - head follows\r\n", id, msgid);
-		snprintf(sql_cmd, len_sql,  "select header from postings where msgid='%s';", msgid);
+		sqlite3_snprintf(len_sql, sql_cmd, "select header from postings where msgid='%q';", msgid);
 		break;
 	case CMDTYP_BODY:
 		snprintf(sendbuffer, len, "222 %s %s article retrieved - body follows\r\n", id, msgid);
@@ -381,7 +397,7 @@ db_sqlite3_article_cb(void *infp, int argc, char **argv, char **col)
 		sqlite3_secexec(inf, sql_cmd, db_sqlite3_article_cb_cb2, inf);
 	}
 	if (sql_cmd)
-		free(sql_cmd);
+		sqlite3_free(sql_cmd);
 	
 	/* send the body, if needed */
 	if (inf->cmdtype == CMDTYP_ARTICLE || inf->cmdtype == CMDTYP_BODY) {
@@ -393,14 +409,13 @@ db_sqlite3_article_cb(void *infp, int argc, char **argv, char **col)
 	}
 	
 	inf->servinf->found_article = 1;
-	
 	return 0;
 }
 
 void
 db_sqlite3_article(server_cb_inf *inf, int type, char *param)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_THREAD);
@@ -409,35 +424,34 @@ db_sqlite3_article(server_cb_inf *inf, int type, char *param)
 	case ARTCLTYP_MESSAGEID:
 		/* select * from ngposts where ng='%s' and messageid='%s'; */
 		len = 0x7f + strlen(inf->servinf->selected_group) + strlen(param);
-		CALLOC_Thread(inf, sql_cmd, (char *), len + 1, sizeof(char))
-		snprintf(sql_cmd, len, "select * from ngposts where ng='%s' and msgid='%s'",
+		SQLITE3_CALLOC(2*len)
+		sqlite3_snprintf(2*len-1, sql_cmd, "select * from ngposts where ng='%q' and msgid='%q'",
 			inf->servinf->selected_group, param);
 		break;
 	
 	case ARTCLTYP_NUMBER:
 		/* select * from ngposts where ng='%s' and messageid='%s'; */
 		len = 0x7f + strlen(inf->servinf->selected_group) + strlen(param);
-		CALLOC_Thread(inf, sql_cmd, (char *), len + 1, sizeof(char))
-		snprintf(sql_cmd, len, "select * from ngposts where ng='%s' and postnum='%s'",
+		SQLITE3_CALLOC(2*len)
+		sqlite3_snprintf(2*len-1, sql_cmd, "select * from ngposts where ng='%q' and postnum='%q'",
 			inf->servinf->selected_group, param);
 		break;
 	
 	case ARTCLTYP_CURRENT:
 		/* select * from ngposts where ng='%s' and messageid='%s'; */
 		len = 0x7f + strlen(inf->servinf->selected_group) + strlen(inf->servinf->selected_article);
-		CALLOC_Thread(inf, sql_cmd, (char *), len + 1, sizeof(char))
-		snprintf(sql_cmd, len, "select * from ngposts where ng='%s' and postnum='%s'",
+		SQLITE3_CALLOC(2*len)
+		sqlite3_snprintf(2*len-1, sql_cmd, "select * from ngposts where ng='%q' and postnum='%q'",
 			inf->servinf->selected_group, inf->servinf->selected_article);
 		break;
 	}
 
 	/* try to find the article and add header+body if found/needed */
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_article_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 /* ***** GROUP ***** */
-
 static int
 db_sqlite3_group_cbset_first_article_in_group_cb(void *infp, int argc, char **argv, char **col)
 {
@@ -466,13 +480,13 @@ static void
 db_sqlite3_group_cb_set_first_article_in_group(server_cb_inf *inf)
 {
 	char *sql_cmd;
-	int len;
+	sqlite_uint64 len;
 
 	assert(global_mode == MODE_THREAD);
 	
 	len = 0x7f + strlen(inf->servinf->selected_group);
 
-	CALLOC_Thread(inf, sql_cmd, (char *), len + 1, sizeof(char))
+	SQLITE3_CALLOC(2*len+1);
 	/* This query prevents an argv[0]==NULL value in the callback function if
 	 * there is no result. Without that subselect, Sqlite3 would return
 	 * argv[0]==NULL if there is an empty result set, what means that
@@ -481,11 +495,11 @@ db_sqlite3_group_cb_set_first_article_in_group(server_cb_inf *inf)
 	 * I added an additional check for argv[0] in the callback function just
 	 * to make sure the server runs 100% stable!
 	 */
-	snprintf(sql_cmd, len, "SELECT postnum FROM ngposts WHERE postnum = "
-		"(select min(postnum) as minimaleee from ngposts where ng='%s');",
+	sqlite3_snprintf(2*len, sql_cmd, "SELECT postnum FROM ngposts WHERE postnum = "
+		"(select min(postnum) as minimaleee from ngposts where ng='%q');",
 		inf->servinf->selected_group);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_group_cbset_first_article_in_group_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 static int
@@ -538,15 +552,15 @@ db_sqlite3_group(server_cb_inf *inf, char *group)
 	
 	assert(global_mode == MODE_THREAD);
 	
-	/* Do not use CALLOC_Thread() here since there is a free() inside! */
-	if ((sql_cmd = (char *) calloc(strlen(group) + 0x7f, sizeof(char))) == NULL) {
+	/* Do not use SQLITE3_CALLOC() here since there is a free() inside! */
+	if ((sql_cmd = (char *) sqlite3_malloc64((strlen(group)*2) + 0x7f + 1)) == NULL) {
 		DO_SYSL("GROUP: not enough memory.")
 		free(group);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	snprintf(sql_cmd, strlen(group) + 0x7f,
-		"select * from newsgroups where name='%s';", group);
+	sqlite3_snprintf((2*strlen(group)) + 0x7f, sql_cmd,
+		"select * from newsgroups where name='%q';", group);
 	/* the cb func sets found_group to '1' if the group is found */
 	inf->servinf->found_group = 0;
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_group_cb, inf);
@@ -555,7 +569,7 @@ db_sqlite3_group(server_cb_inf *inf, char *group)
 	if (inf->servinf->found_group == 0)
 		inf->servinf->found_group = old_foundgroup;
 
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 /* ***** LISTGROUP ***** */
@@ -597,18 +611,18 @@ db_sqlite3_listgroup(server_cb_inf *inf, char *group)
 	
 	assert(global_mode == MODE_THREAD);
 	
-	/* Do not use CALLOC_Thread() here since there is a free() inside! */
-	if ((sql_cmd = (char *) calloc(strlen(group) + 0x7f, sizeof(char))) == NULL) {
+	/* Do not use SQLITE3_CALLOC() here since there is a free() inside! */
+	if ((sql_cmd = (char *) sqlite3_malloc64(2*strlen(group) + 0x7f + 1)) == NULL) {
 		DO_SYSL("GROUP: not enough memory.")
 		free(group);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	snprintf(sql_cmd, strlen(group) + 0x7f,
-		"select postnum from ngposts where `ng`='%s' order by `postnum` asc;", group);
+	sqlite3_snprintf((2*strlen(group)) + 0x7f, sql_cmd,
+		"select postnum from ngposts where `ng`='%q' order by `postnum` asc;", group);
 	inf->servinf->counter = 0; /* incremented, if cb-func is called with article */
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_listgroup_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	
 	/* If there are NO articles in the group: Select NO article.
 	 * (RFC need!) */
@@ -631,7 +645,6 @@ db_sqlite3_listgroup(server_cb_inf *inf, char *group)
 /* argv:       0         1         2         3        4       5        6
  * select n.postnum, p.subject, p.author, p.date, n.msgid, p.lines, p.header
  */
-
 static int
 db_sqlite3_xover_cb(void *infp, int argc, char **argv, char **col)
 {
@@ -691,21 +704,21 @@ db_sqlite3_xover_cb(void *infp, int argc, char **argv, char **col)
 void
 db_sqlite3_xover(server_cb_inf *inf, u_int32_t min, u_int32_t max)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_THREAD);
 	
 	len = 0xfff + strlen(inf->servinf->selected_group);
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
+	SQLITE3_CALLOC(2*len+1);
+	sqlite3_snprintf(2*len, sql_cmd,
 		"select n.postnum, p.subject, p.author, p.date, n.msgid, p.lines, p.header"
 		" from ngposts n,postings p"
-		" where ng='%s' and (postnum between %i and %i) and n.msgid = p.msgid;",
+		" where ng='%q' and (postnum between %i and %i) and n.msgid = p.msgid;",
 		inf->servinf->selected_group, min, max);
 		
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_xover_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 /* ***** POST FUNCTIONS, ALSO (PARTIALLY) USABLE BY OTHER PARTS ***** */
@@ -746,21 +759,22 @@ db_sqlite3_get_high_value_cb(void *cur_high, int argc, char **argv, char **col)
 u_int32_t
 db_sqlite3_get_high_value(server_cb_inf *inf, char *newsgroup)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	u_int32_t cur_high;
 	
 	/* get high value */
 	len = strlen(newsgroup) + 0x7f;
-	if (!(sql_cmd = (char *) calloc(len, sizeof(char)))) {
+	if (!(sql_cmd = (char *) sqlite3_malloc64(2*len))) {
 		DO_SYSL("Not enough mem")
 		ToSend(progerr503, strlen(progerr503), inf);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	snprintf(sql_cmd, len - 1, "select * from newsgroups where name = '%s';",
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "select * from newsgroups where name = '%q';",
 		newsgroup);
 	
+	/* directly execute sqlite3_exec() here instead of calling sqlite3_secexec() */
 	if (sqlite3_exec(inf->servinf->db, sql_cmd, db_sqlite3_get_high_value_cb,
 			&cur_high, &inf->servinf->sqlite_err_msg) != SQLITE_OK) {
 		fprintf(stderr, "%s\n", inf->servinf->sqlite_err_msg);
@@ -770,7 +784,7 @@ db_sqlite3_get_high_value(server_cb_inf *inf, char *newsgroup)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	return cur_high;
 }
 
@@ -784,19 +798,19 @@ DB_chk_if_msgid_exists_cb(void *boolval, int argc, char **argv, char **col)
 int
 db_sqlite3_chk_if_msgid_exists(server_cb_inf *inf, char *newsgroup, char *msgid)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	int boolval = 0;
 	
 	/* get high value */
 	len = strlen(newsgroup) + strlen(msgid) + 0x7f;
-	if (!(sql_cmd = (char *) calloc(len, sizeof(char)))) {
+	if (!(sql_cmd = (char *) sqlite3_malloc64(2*len))) {
 		DO_SYSL("Not enough mem")
 		ToSend(progerr503, strlen(progerr503), inf);
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	snprintf(sql_cmd, len - 1, "select * from ngposts where ng = '%s' and msgid = '%s';",
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "select * from ngposts where ng = '%q' and msgid = '%q';",
 		newsgroup, msgid);
 	
 	if (sqlite3_exec(inf->servinf->db, sql_cmd, DB_chk_if_msgid_exists_cb, &boolval,
@@ -808,85 +822,76 @@ db_sqlite3_chk_if_msgid_exists(server_cb_inf *inf, char *newsgroup, char *msgid)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	return boolval;
 }
 
 void
 db_sqlite3_chk_newsgroup_posting_allowed(server_cb_inf *inf)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	/* first: reset */
 	inf->servinf->found_group = 0;
 	
 	len = 0xfff + strlen(inf->servinf->chkname);
-	if (global_mode == MODE_THREAD) {
-		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	} else {
-		CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	}
-	snprintf(sql_cmd, len - 1, "select * from newsgroups where name='%s' and pflag='y';",
+	SQLITE3_CALLOC(2*len+1)
+	sqlite3_snprintf(2*len, sql_cmd,
+		"select * from newsgroups where name='%q' and pflag='y';",
 		inf->servinf->chkname);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_post_ng_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 
 void
 db_sqlite3_chk_newsgroup_existence(server_cb_inf *inf)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
-	/* NOTE: This function is also used by the admin tool! */
-
 	/* first: reset */
 	inf->servinf->found_group = 0;
 	
 	len = 0xfff + strlen(inf->servinf->chkname);
-	if (global_mode == MODE_THREAD) {
-		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	} else {
-		CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	}
-	snprintf(sql_cmd, len - 1, "select * from newsgroups where name='%s';",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "select * from newsgroups where name='%q';",
 		inf->servinf->chkname);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_post_ng_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_chk_user_existence(server_cb_inf *inf)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_PROCESS);
 
-	len = 0xfff + strlen(inf->servinf->chkname);
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "select * from users where name='%s';",
+	len = 0xfff + 2*strlen(inf->servinf->chkname);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "select * from users where name='%q';",
 		inf->servinf->chkname);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_post_ng_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_chk_role_existence(server_cb_inf *inf)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_PROCESS);
 
 	len = 0xfff + strlen(inf->servinf->chkname);
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "select * from roles where role = '%s';",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "select * from roles where role = '%q';",
 		inf->servinf->chkname);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_post_ng_cb, inf);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
@@ -894,7 +899,7 @@ db_sqlite3_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 	time_t ltime, char *from, char *ngstrpb, char *subj,
 	int linecount, char *add_to_hdr)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	/* create table postings (msgid string primary key, date string, author string,
@@ -902,51 +907,52 @@ db_sqlite3_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 	 */
 	
 	len = strlen(add_to_hdr) + 0xfff + strlen(subj) + strlen(from);
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+	SQLITE3_CALLOC(2*len)
 	
-	snprintf(sql_cmd, len - 1,
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
 		"insert into postings (msgid, date, author, newsgroups, subject, "
-		"lines, header) values ('%s', '%li', '%s', '%s', '%s', '%i', '%s');",
+		"lines, header) values ('%q', '%li', '%q', '%q', '%q', '%i', '%q');",
 		message_id, ltime, from, ngstrpb, subj, linecount, add_to_hdr);
 	
 	sqlite3_secexec(inf, sql_cmd, NULL, 0);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_post_update_high_value(server_cb_inf *inf, u_int32_t new_high, char *newsgroup)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_THREAD);
 	
 	len = strlen(newsgroup) + 0x7f;
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "update newsgroups set high='%u' where name='%s';",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"update newsgroups set high='%u' where name='%q';",
 		new_high, newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, 0);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_post_insert_into_ngposts(server_cb_inf *inf, char *message_id, char *newsgroup,
 	u_int32_t new_high)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	
 	assert(global_mode == MODE_THREAD);
 	
 	/* add the posting in ngposts (msgid string primary key, ng string, postnum integer); */
 	len = 0xff + strlen(newsgroup) + strlen(message_id) + 20;
-	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+	SQLITE3_CALLOC(2*len)
 
-	snprintf(sql_cmd, len - 1,
-		"insert into ngposts (msgid, ng, postnum) values ('%s', '%s', '%i');",
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"insert into ngposts (msgid, ng, postnum) values ('%q', '%q', '%i');",
 		message_id, newsgroup, new_high);
 	sqlite3_secexec(inf, sql_cmd, NULL, 0);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 /* ***** ACL (not administration part of ACL) ****** */
@@ -967,32 +973,33 @@ db_sqlite3_acl_check_user_group_cb(void *allowed, int argc, char **argv, char **
 short
 db_sqlite3_acl_check_user_group(server_cb_inf *inf, char *user, char *newsgroup)
 {
-	int len;
+	sqlite3_uint64 len;
 	char *sql_cmd;
 	short allowed = FALSE;
 
 	assert(global_mode == MODE_THREAD);
 	
 	len = strlen(user) + strlen(newsgroup) + 0xff;
-	CALLOC_Thread(inf, sql_cmd, (char *), len + 1, sizeof(char))
+	SQLITE3_CALLOC(2*len)
 
 	/* 1st try: check, if the user has direct access to the group using
 	 * NON-role ACL */
-	snprintf(sql_cmd, len, "SELECT * FROM acl_users WHERE username='%s' AND ng='%s'\n",
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+		"SELECT * FROM acl_users WHERE username='%q' AND ng='%q'\n",
 		user, newsgroup);
 	sqlite3_secexec(inf, sql_cmd, db_sqlite3_acl_check_user_group_cb, &allowed);
 	
 	/* 2nd try: check, if the user has access to the group via an ACL
 	 * role he is member in */
 	if (allowed == FALSE) {
-		snprintf(sql_cmd, len,
+		sqlite3_snprintf((2*len)-1, sql_cmd,
 			"SELECT * FROM users2roles ur,acl_roles aclr WHERE "
-			"ur.username='%s' AND ur.role=aclr.role AND aclr.ng='%s';",
+			"ur.username='%q' AND ur.role=aclr.role AND aclr.ng='%q';",
 			user, newsgroup);
 		sqlite3_secexec(inf, sql_cmd, db_sqlite3_acl_check_user_group_cb, &allowed);
 	}
 	
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	return allowed;
 }
 
@@ -1001,7 +1008,6 @@ db_sqlite3_acl_check_user_group(server_cb_inf *inf, char *user, char *newsgroup)
 /* These functions are used by WendzelNNTPadm what means that global_mode must be
  * MODE_PROCESS!
  */
-
 static int
 db_sqlite3_list_users_cb(void *unused, int argc, char **argv, char **ColName)
 {
@@ -1066,56 +1072,57 @@ void
 db_sqlite3_acl_add_user(server_cb_inf *inf, char *username, char *newsgroup)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(username) + strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"insert into acl_users (username, ng) values ('%s', '%s');",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"insert into acl_users (username, ng) values ('%q', '%q');",
 		username, newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_acl_del_user(server_cb_inf *inf, char *username, char *newsgroup)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(username) + strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"delete from acl_users where username='%s' and ng='%s';",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"delete from acl_users where username='%q' and ng='%q';",
 		username, newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_acl_add_role(server_cb_inf *inf, char *role)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(role) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "insert into roles (role) values ('%s');", role);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"insert into roles (role) values ('%q');", role);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_acl_del_role(server_cb_inf *inf, char *role)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 
@@ -1123,29 +1130,29 @@ db_sqlite3_acl_del_role(server_cb_inf *inf, char *role)
 	/* pt. 1: users */
 	printf("Removing associations of role %s with their users ... ", role);
 	len = strlen(role) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "delete from users2roles where role='%s';", role);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from users2roles where role='%q';", role);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 	
 	/* pt. 2: newsgroups */
 	printf("Removing associations of role %s with their newsgroups ... ", role);
 	len = strlen(role) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "delete from acl_roles where role='%s';", role);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from acl_roles where role='%q';", role);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 
 	
 	/* Now remove the role */
 	printf("Removing role %s ... ", role);
 	len = strlen(role) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "delete from roles where role='%s';", role);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from roles where role='%q';", role);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 }
 
@@ -1153,18 +1160,18 @@ void
 db_sqlite3_acl_role_connect_group(server_cb_inf *inf, char *role, char *newsgroup)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	printf("Connecting role %s with newsgroup %s ... ", role, newsgroup);
 	len = strlen(role) + strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"INSERT INTO acl_roles (role, ng) VALUES ('%s', '%s');", role,
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"INSERT INTO acl_roles (role, ng) VALUES ('%q', '%q');", role,
 		newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 }
 
@@ -1172,17 +1179,17 @@ void
 db_sqlite3_acl_role_disconnect_group(server_cb_inf *inf, char *role, char *newsgroup)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	printf("Dis-Connecting role %s from newsgroup %s ... ", role, newsgroup);
 	len = strlen(role) + strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"DELETE FROM acl_roles WHERE role='%s' AND ng='%s';", role, newsgroup);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"DELETE FROM acl_roles WHERE role='%q' AND ng='%q';", role, newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 }
 
@@ -1190,18 +1197,18 @@ void
 db_sqlite3_acl_role_connect_user(server_cb_inf *inf, char *role, char *user)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	printf("Connecting role %s with user %s ... ", role, user);
 	len = strlen(role) + strlen(user) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"INSERT INTO users2roles (username, role) VALUES ('%s', '%s');",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"INSERT INTO users2roles (username, role) VALUES ('%q', '%q');",
 		user, role);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 }
 
@@ -1209,17 +1216,17 @@ void
 db_sqlite3_acl_role_disconnect_user(server_cb_inf *inf, char *role, char *user)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	printf("Dis-Connecting role %s from user %s ... ", role, user);
 	len = strlen(role) + strlen(user) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1,
-		"DELETE FROM users2roles WHERE role='%s' AND username='%s';", role, user);
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"DELETE FROM users2roles WHERE role='%q' AND username='%q';", role, user);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 	printf("done\n");
 }
 
@@ -1227,139 +1234,142 @@ void
 db_sqlite3_create_newsgroup(server_cb_inf *inf, char *newsgroup, char post_flg)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	
-	snprintf(sql_cmd, len - 1,
-		"insert into newsgroups (name, pflag, high) values ('%s', '%c', '0');",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len) - 1, sql_cmd,
+		"insert into newsgroups (name, pflag, high) values ('%q', '%c', '0');",
 		newsgroup, post_flg);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_delete_newsgroup(server_cb_inf *inf, char *newsgroup)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 
 	len = strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-
+	SQLITE3_CALLOC(2*len)
+	
 	/* 1nd: Delete all posting-to-newsgroup entries from the association class
 	 * ngposts which belong to %newsgroup */
 	printf("Clearing association class ... ");
-	snprintf(sql_cmd, len - 1, "delete from ngposts where ngposts.ng='%s';", newsgroup);
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from ngposts where ngposts.ng='%q';", newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 	
 	/* 2nd: Delete ACL associations of the newsgroup */
 	printf("Clearing ACL associations of newsgroup %s... ", newsgroup);
-	snprintf(sql_cmd, len - 1, "delete from acl_users where ng='%s';", newsgroup);
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from acl_users where ng='%q';", newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 	
 	/* 3rd: Delete ACL role associations of the newsgroup */
 	printf("Clearing ACL role associations of newsgroup %s... ", newsgroup);
-	snprintf(sql_cmd, len - 1, "delete from acl_roles where ng='%s';", newsgroup);
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from acl_roles where ng='%q';", newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 	
 	/* 4st: Delete the Newsgroup itself */
 	printf("Deleting newsgroup %s itself ... ", newsgroup);
-	snprintf(sql_cmd, len - 1, "delete from newsgroups where name = '%s';", newsgroup);
+	sqlite3_snprintf((2*len) - 1, sql_cmd, "delete from newsgroups where name = '%q';", newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 		
 	/* 5rd: Delete all remaining postings which do not belong to any existing
 	 * newsgroup. */
 	printf("Cleanup: Deleting postings that do not belong to an existing newsgroup ... ");
-	snprintf(sql_cmd, len - 1,
+	sqlite3_snprintf((2*len) - 1, sql_cmd, 
 		"DELETE FROM postings WHERE NOT EXISTS (select * from ngposts "
 		"where postings.msgid = ngposts.msgid);");
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
 	printf("done\n");
 	
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_modify_newsgroup(server_cb_inf *inf, char *newsgroup, char post_flg)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(newsgroup) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	
-	snprintf(sql_cmd, len - 1,
-		"update newsgroups set pflag = '%c' where name = '%s';", post_flg,
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+		"update newsgroups set pflag = '%c' where name = '%q';", post_flg,
 		newsgroup);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
-	free(sql_cmd);	
+	sqlite3_free(sql_cmd);	
 }
 
 void
 db_sqlite3_add_user(server_cb_inf *inf, char *username, char *password)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(username) + strlen(password) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
-	
-	snprintf(sql_cmd, len - 1,
-		"insert into users (name, password) values ('%s', '%s');",
+	SQLITE3_CALLOC(2*len)
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+		"insert into users (name, password) values ('%q', '%q');",
 		username, password);
 	
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
 	
 	/* Make sure we left no password in the memory */
 	bzero(sql_cmd, strlen(sql_cmd));
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
 
 void
 db_sqlite3_del_user(server_cb_inf *inf, char *username)
 {
 	char *sql_cmd;
-	int len;
+	sqlite3_uint64 len;
 	
 	assert(global_mode == MODE_PROCESS);
 	
 	len = strlen(username) + 0x7f;
-	CALLOC_Process(sql_cmd, (char *), len, sizeof(char))
+	SQLITE3_CALLOC(2*len)
 	
 	/* 1. delete the acl associations of the user */
 	printf("Clearing ACL associations of user %s... ", username);
-	snprintf(sql_cmd, len - 1, "delete from acl_users where username='%s';", username);
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+			 "delete from acl_users where username='%q';", username);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 	
 	/* 2. delete the role associations of the user */
 	printf("Clearing ACL role associations of user %s... ", username);
-	snprintf(sql_cmd, len - 1, "delete from users2roles where username='%s';", username);
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+			 "delete from users2roles where username='%q';", username);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
+	bzero(sql_cmd, 2*len);
 	printf("done\n");
 	
 	/* 3. delete the user from table "users" */
 	printf("Deleting user %s from database ... ", username);
-	snprintf(sql_cmd, len - 1, "delete from users where name='%s';", username);
+	sqlite3_snprintf((2*len)-1, sql_cmd,
+			 "delete from users where name='%q';", username);
 	sqlite3_secexec(inf, sql_cmd, NULL, NULL);
 	printf("done\n");
 
-	free(sql_cmd);
+	sqlite3_free(sql_cmd);
 }
-
-
-
