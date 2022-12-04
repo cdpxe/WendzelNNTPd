@@ -42,6 +42,7 @@ USE_GCCLOCAL_PTHREAD="NO"
 NEED_GCCLOCAL_PTHREAD="NO"
 USE_LIBPTHREAD="YES"
 ORDER=""
+USE_SSL="NO"
 
 OS=`uname -s`
 RELEASE=`uname -r`
@@ -389,16 +390,21 @@ rm -f temp temp.c
 
 ###############
 
-#out "checking for openssl..."
-#	openssl -v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
-#
-#out "checking for libssl..."
-#cat << EOF >temp.c
-##include <openssl/ssl.h>
-#int main(){SSL_library_init();return 0;}
-#EOF
-#gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
-#rm -f temp temp.c
+out "checking for openssl..."
+	openssl version >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
+
+out "checking for libssl..."
+cat << EOF >temp.c
+#include <openssl/ssl.h>
+int main(){SSL_library_init();return 0;}
+EOF
+gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+if [ "$?" = "0" ]; then
+	USE_SSL="YES"
+else
+	USE_SSL="NO"
+fi
+rm -f temp temp.c
 
 ############# rc.d script ADJUSTMENT ##########
 
@@ -457,6 +463,13 @@ if [ "$SQLITE" = "NO" ]; then
 else
 	echo 'SQLITELIB=-lsqlite3'>> $MAKEFILE_INC
 	echo 'SQLITEOBJ=db_sqlite3.o'>> $MAKEFILE_INC
+fi
+
+if [ "$USE_SSL" = "YES" ]; then
+	echo 'LIBSSL=-lssl -lcrypto'>> $MAKEFILE_INC
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DUSE_SSL "`
+else
+	echo 'LIBSSL='>> $MAKEFILE_INC
 fi
 
 echo "LIBMHASH=-lmhash">> $MAKEFILE_INC

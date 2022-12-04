@@ -50,9 +50,17 @@ client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
 change-gid                          return TOK_CHANGEGID;
 hash-salt                           return TOK_HASHSALT;
+\<connector\>			    return TOK_CONN_BEGIN;
+enable-ssl			    return TOK_SSL;
+enable-starttls			    return TOK_STARTTLS;
+openssl-ciphers			    return TOK_SSL_CIPHERS;
+openssl-tlsversion		    return TOK_SSL_VERSION;
+openssl-servercertificate	    return TOK_SSL_CERT;
+openssl-serverkey		    return TOK_SSL_KEY;
+\<\/connector\>			    return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */
-[a-zA-Z0-9\.\:\\\/\-\_]+            return TOK_NAME;
+[a-zA-Z0-9\.\:\\\/\-\_!]+            return TOK_NAME;
 \0                                  return TOK_EOF;
 %%

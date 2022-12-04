@@ -151,6 +151,7 @@
 #define IPv6ADDRLEN		48 /* 40 should be enough */
 
 #define DEFAULTPORT		119
+#define DEFAULTSSLPORT		563
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -234,7 +235,25 @@
    #error no BYTE_ORDER defined.
 #endif
 
+#ifdef USE_SSL
+	#include <openssl/ssl.h>
+	#include <openssl/err.h>
+#endif
 /*******************************************************************/
+
+typedef struct {
+   uint16_t port;
+   char     *listen;
+   uint8_t     enable_ssl;
+   uint8_t     enable_starttls;
+   char     *ciphers;
+   int      tlsversion_min,tlsversion_max;
+   char     *server_cert_file;
+   char     *server_key_file;
+#ifdef USE_SSL
+	SSL_CTX	*ctx;
+#endif
+} connectorinfo_t;
 
 typedef struct {
 	int		sockfd;
@@ -242,6 +261,11 @@ typedef struct {
 	struct sockaddr_in  sa;
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
+	uint8_t	ssl_active;
+#ifdef USE_SSL
+	SSL	*ssl;
+#endif
+	connectorinfo_t *connectorinfo;
 } sockinfo_t;
 
 typedef struct {
@@ -314,10 +338,11 @@ char *filebackend_retrbody(char *);
 
 /* globals.c */
 void sig_handler(int);
+void signal_action_handler (int, siginfo_t *, void *);
 
 /* server.c */
 void ToSend(char *, int, server_cb_inf *);
-void Recv(int sockfd, char *buf, int len);
+//void Recv(int sockfd, char *buf, int len);
 void *do_server(void *);
 void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);

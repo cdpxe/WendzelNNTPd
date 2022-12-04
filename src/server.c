@@ -50,6 +50,8 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "\tmode reader (always returns 200)\r\n"
                                  "\tpost\r\n"
                                  "\tquit\r\n"
+                                 "\tcapabilities\r\n"
+                                 "\tstarttls\r\n"
                                  "\tstat [number|<message-id>]\r\n"
                                  "\txhdr <from|date|newsgroups|subject|lines> <number[-[endnum]]|msgid>\r\n"
 				"\txover <from[-[to]]>\r\n"
@@ -62,6 +64,20 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "* Wildmat format is based on the used regex library and is not 100%\r\n"
                                  "  wildmat format compatible (XGTITLE *x -> XGTITLE .*x)!\r\n"
                                  ".\r\n";
+
+char capability_capalist[]=	"101 Capability list:\r\n";
+char capability_version[]=		"VERSION 2\r\n";
+char capability_reader[]=		"READER\r\n";
+char capability_starttls[]=	"STARTTLS\r\n";
+char capability_post[]=			"POST\r\n";
+char capability_hdr[]=			"HDR\r\n";
+char capability_ihave[]=		"IHAVE\r\n";
+char capability_list[]=			"LIST\r\n";
+char capability_over[]=			"OVER\r\n";
+char capability_modereader[]=	"MODE-READER\r\n";
+char capability_newnews[]=		"NEWNEWS\r\n";
+char capability_end[]=			".\r\n";
+
 char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				"Subject:\r\n"
 				"From:\r\n"
@@ -84,6 +100,7 @@ char xover[]=                 "224 overview information follows\r\n";
 char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
+char starttls_neg[]=          "382 Continue with TLS negotiation\r\n";
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -96,13 +113,16 @@ char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in w
 char auth_req[]=              "480 authentication required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
+char starttls_notallowed[]=   "502 STARTTLS not allowed with active TLS layer\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 program error, function not performed\r\n";
-char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
+char post_too_big[]=          "503 posting size too big (administratively prohibited)\r\n";
+char starttls_negerror[]=   	"580 Can not initiate TLS negotiation\r\n";
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
-static void Send(int, char *, int);
+//static void Send(int, char *, int);
+static void Send(sockinfo_t *sockinfo, char *str, int len);
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -111,6 +131,8 @@ static void docmd_xover(char *, server_cb_inf *);
 static void docmd_article(char *, server_cb_inf *);
 static void docmd_group(char *, server_cb_inf *);
 static void docmd_listgroup(char *, server_cb_inf *);
+static void docmd_capabilities(server_cb_inf *);
+static void docmd_starttls(server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
@@ -160,6 +182,7 @@ get_slinearg(char *cmdstring, int num)
 	return NULL;
 }
 
+/*
 static void
 Send(int lsockfd, char *str, int len)
 {
@@ -171,6 +194,51 @@ Send(int lsockfd, char *str, int len)
 		}
 		pthread_exit(NULL);
 	}
+}
+*/
+
+static void
+Send(sockinfo_t *sockinfo, char *str, int len)
+{
+int sentbytes=0;
+
+	if (sockinfo->ssl_active == TRUE) {
+#ifdef USE_SSL
+		sentbytes=SSL_write(sockinfo->ssl, str, len);
+//		fprintf(stderr,"SSL_write return %d\n",sentbytes);
+#endif
+	} else {
+		sentbytes=send(sockinfo->sockfd, str, len, MSG_NOSIGNAL);
+	}
+   if(sentbytes < 0) {
+      if (daemon_mode) {
+         DO_SYSL("send() returned <0 -- killing connection.")
+      } else {
+         perror("send");
+      }
+      pthread_exit(NULL);
+   }
+}
+
+static ssize_t
+Recv(sockinfo_t *sockinfo, void *buf, size_t len, int flags) 
+{
+int readbytes=0;
+
+	if (sockinfo->ssl_active == TRUE) {
+#ifdef USE_SSL
+		readbytes=SSL_read(sockinfo->ssl,buf,len);
+//		fprintf(stderr,"SSL read bytes %d\n",readbytes);
+#endif
+	}
+	else {
+		readbytes=recv(sockinfo->sockfd,buf,len,flags);
+	}
+//	for (int i=0; i < readbytes; i++) {
+//		fprintf(stderr,"%X ",((char *)buf)[i]);
+//	}
+//	fprintf(stderr,"\n");
+	return(readbytes);
 }
 
 void
@@ -782,6 +850,98 @@ docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 	free(ptr);
 }
 
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 	CAPABILITIES
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+static void 
+docmd_capabilities(server_cb_inf *inf)
+{
+char *buf;
+int buflen=0;
+
+	buflen=strlen(capability_capalist);
+	buflen+=strlen(capability_version);
+	buflen+=strlen(capability_reader);
+	buflen+=strlen(capability_post);
+//	buflen+=strlen(capability_hdr);
+//	buflen+=strlen(capability_ihave);
+	buflen+=strlen(capability_list);
+	buflen+=strlen(capability_over);
+	buflen+=strlen(capability_modereader);
+//	buflen+=strlen(capability_newnews);
+#ifdef USE_SSL
+	if (inf->sockinf->ssl_active != TRUE) {      //SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {    //Connector supports STARTTLS
+			buflen+=strlen(capability_starttls);
+		}
+	}
+#endif
+	buflen+=strlen(capability_end);
+	buflen++;  // '\0'
+	if ((buf = (char *) calloc(buflen, sizeof(char))) == NULL) {
+		perror("malloc");
+		DO_SYSL("memory low. killing child process.")
+		kill_thread(inf);
+		/* NOTREACHED */
+	}
+	strcpy(buf,capability_capalist);
+	strcat(buf,capability_version);
+	strcat(buf,capability_reader);
+	strcat(buf,capability_post);
+//	strcat(buf,capability_hdr);
+//	strcat(buf,capability_ihave);
+	strcat(buf,capability_list);
+	strcat(buf,capability_over);
+	strcat(buf,capability_modereader);
+//	strcat(buf,capability_newnews);
+#ifdef USE_SSL
+	if (inf->sockinf->ssl_active != TRUE) {      //SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {    //Connector supports STARTTLS
+			strcat(buf,capability_starttls);
+		}
+	}
+#endif
+	strcat(buf,capability_end);
+	ToSend(buf, strlen(buf), inf);
+	free(buf);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 	STARTTLS
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+static void 
+docmd_starttls(server_cb_inf *inf)
+{
+#ifdef USE_SSL
+	if (inf->sockinf->ssl_active != TRUE) {		//SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {		//Connector supports STARTTLS
+//			fprintf(stderr,"STARTTLS starting\n");
+			Send(inf->sockinf,starttls_neg, strlen(starttls_neg));		//Send message immediately before SSL negotiation!
+			inf->sockinf->ssl=SSL_new(inf->sockinf->connectorinfo->ctx);
+			if(!SSL_set_fd(inf->sockinf->ssl,inf->sockinf->sockfd)) {
+				fprintf(stderr,"Error creating SSL session!!\n");
+				ERR_print_errors_fp(stderr);
+//				kill_thread(&inf);
+			} else {
+				if (SSL_accept(inf->sockinf->ssl) <=0) {
+					fprintf(stderr,"Error negotiating SSL session!!\n");
+					ERR_print_errors_fp(stderr);
+//					kill_thread(&inf);
+				} else {
+//					fprintf(stderr,"STARTTLS negotiation successfull!\n");
+					inf->sockinf->ssl_active=TRUE;	//STARTTLS negotiation successfull
+				}
+			}
+		} else {		//Connector doesnt support STARTTLS
+			ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
+		}
+	} else {		//SSL already active
+		ToSend(starttls_notallowed, strlen(starttls_notallowed), inf);
+	}
+#endif
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	POST
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -923,7 +1083,8 @@ docmd_post(server_cb_inf *inf)
 	time_t ltime;
 	charstack_t *stackp = NULL;
 	
-	Send(inf->sockinf->sockfd, postok, strlen(postok));
+//	Send(inf->sockinf->sockfd, postok, strlen(postok));
+	Send(inf->sockinf, postok, strlen(postok));
 
 	{
 		size_t recv_bytes = 0;
@@ -967,7 +1128,8 @@ docmd_post(server_cb_inf *inf)
 				 * big.
 				 */
 				if (max_post_size - recv_bytes <= 1) {
-					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
+//					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
+					Send(inf->sockinf, post_too_big, strlen(post_too_big));
 					fprintf(stderr, "Posting is larger than allowed max (%i Bytes) "
 						"in docmd_post()\n", max_post_size);
 					DO_SYSL("posting from client larger than allowed max. value. "
@@ -978,7 +1140,10 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 						
-				recv_ret = recv(inf->sockinf->sockfd,
+//				recv_ret = recv(inf->sockinf->sockfd,
+//						buf + recv_bytes,
+//						max_post_size - recv_bytes - 1, 0);
+				recv_ret = Recv(inf->sockinf,
 						buf + recv_bytes,
 						max_post_size - recv_bytes - 1, 0);
 				if ((int)recv_ret == -1) {
@@ -1437,13 +1602,17 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
-		Send(inf->sockinf->sockfd, quitstring, strlen(quitstring));
+		Send(inf->sockinf, quitstring, strlen(quitstring));
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
 		docmd_authinfo_user(recvbuf, inf);
 	} else if (QUESTION("authinfo pass ", 14)) {
 		docmd_authinfo_pass(recvbuf, inf);
+	} else if (QUESTION("capabilities", 12)) {
+		docmd_capabilities(inf);
+	} else if (QUESTION("starttls", 8)) {
+		docmd_starttls(inf);
 	}
 	
 	/* COMMANDS THAT NEED AUTHENTICATION */
@@ -1506,6 +1675,7 @@ do_server(void *socket_info_ptr)
 	server_cb_inf inf;
 	extern short be_verbose;
 	int i;
+	char *conn_logstr = NULL;
 	
 	/* This is _SERV_-inf */
 	bzero(&servinf, sizeof(serverinfo_t));
@@ -1517,7 +1687,35 @@ do_server(void *socket_info_ptr)
 	
 	db_open_connection(&inf);
 
-	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
+#ifdef USE_SSL
+	if (sockinf->connectorinfo->enable_ssl == TRUE) {
+		sockinf->ssl=SSL_new(sockinf->connectorinfo->ctx);
+		if(!SSL_set_fd(sockinf->ssl,sockinf->sockfd)) {
+			fprintf(stderr,"Error creating SSL session!!\n");
+			ERR_print_errors_fp(stderr);
+			FFLUSH
+			kill_thread(&inf);
+		} else {
+			if (SSL_accept(sockinf->ssl) <=0) {
+				fprintf(stderr,"Error negotiating SSL session!!\n");
+				ERR_print_errors_fp(stderr);
+				FFLUSH
+				kill_thread(&inf);
+			}
+			char port_s[6];
+			sprintf(port_s,"%d",sockinf->connectorinfo->port);
+			conn_logstr = str_concat("Created SSL connection from ", sockinf->ip, " Connector:", port_s, NULL);
+			DO_SYSL(conn_logstr);
+			fprintf(stderr,"%s\n",conn_logstr);
+			FFLUSH
+			free(conn_logstr);
+			sockinf->ssl_active=TRUE;
+		}
+	}
+#endif
+
+//	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
+	Send(sockinf, welcomestring, strlen(welcomestring));
 	
 	if(use_auth==1) {
 		servinf.auth_is_there=0;
@@ -1534,12 +1732,13 @@ do_server(void *socket_info_ptr)
 		if (len == MAX_CMDLEN)
 			kill_thread(&inf);
 		/* 2. receive byte-wise */
-		if (recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0) <= 0) {
+//		if (recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0) <= 0) {
+		if (Recv(sockinf, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0) <= 0) {
 			/* kill connection in problem case */
 			kill_thread(&inf);
 			/* NOTREACHED */
 		}
-		if (strstr(recvbuf, "\r\n") != NULL) {
+		if ((strstr(recvbuf, "\r\n") != NULL) || (strstr(recvbuf, "\n")) != NULL) {		//OpenSSL s_client sends only \n 0x0A (LF)
 			if (be_verbose) {
 				if (strncasecmp(recvbuf, "authinfo pass", 13) == 0) {
 					fprintf(stderr, "client sent 'authinfo pass 'xxxxx'\n");
@@ -1553,7 +1752,7 @@ do_server(void *socket_info_ptr)
 			/* make the buffer more secure before going on */
 			/* 1. remove trailing \r\n by replacing \r with \0 */
 			for (i = (strlen(recvbuf) - 1); i > 0; i--) {
-				if (recvbuf[i] == '\r') {
+				if ((recvbuf[i] == '\r') || (recvbuf[i] == '\n')) {
 					recvbuf[i] = '\0';
 					i = 0; /* = break */
 				}
@@ -1564,9 +1763,12 @@ do_server(void *socket_info_ptr)
 			/* now proceed */
 			do_command(sec_cmd, &inf);
 			db_secure_sqlbuffer_free(sec_cmd);
-			Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
-			free(servinf.curstring);
-			servinf.curstring=NULL;
+//			Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
+			if (servinf.curstring != NULL) {
+				Send(sockinf, servinf.curstring, strlen(servinf.curstring));
+				free(servinf.curstring);
+				servinf.curstring=NULL;
+			}
 			len=0;
 		} else {
 			len = strlen(recvbuf);
@@ -1591,14 +1793,41 @@ kill_thread(server_cb_inf *inf)
 	
 	
 	/* Log the ended connection */
-	conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, NULL, NULL, NULL);
+	char port_s[6];
+	sprintf(port_s,"%d",inf->sockinf->connectorinfo->port);
+#ifdef USE_SSL
+	if (inf->sockinf->ssl_active==TRUE) {
+		conn_logstr = str_concat("Closed SSL connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+	} else {
+		conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+	}
+#else
+	conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+#endif
+
 	if (conn_logstr) {
 		DO_SYSL(conn_logstr)
+		fprintf(stderr,"%s\n",conn_logstr);
+		FFLUSH
 		free(conn_logstr);
 	}
 	
 	/* close db connection */
 	db_close_connection(inf);
+
+#ifdef USE_SSL
+	if (inf->sockinf->ssl_active==TRUE) {
+		if (inf->sockinf->ssl) {
+			fprintf(stderr, "Try Shutdown client connection closed.\n");
+			SSL_shutdown(inf->sockinf->ssl);
+			fprintf(stderr, "Shutdown client connection closed.\n");
+			SSL_free(inf->sockinf->ssl);
+			fprintf(stderr, "Free client connection closed.\n");
+		} else
+			fprintf(stderr, "SSL is NULL - client connection closed.\n");
+		inf->sockinf->ssl_active=FALSE;
+	}
+#endif
 	
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);

@@ -26,6 +26,9 @@ extern int size_sockinfo_t;
 extern int daemon_mode;
 extern short global_mode;
 
+extern sig_atomic_t rec_sighup;    //SIGHUP has been sent to process - global.c
+extern sig_atomic_t rec_sigterm;   //SIGTERM (KILL) has been sent to process - global.c
+
 /* need this global for server.c */
 struct sockaddr_in sa;
 struct sockaddr_in6 sa6;
@@ -67,6 +70,7 @@ main(int argc, char *argv[])
 #endif
 	pthread_t th1;
 	sockinfo_t *sockinf;
+	struct sigaction sig_a;
 	
 	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
@@ -83,19 +87,30 @@ main(int argc, char *argv[])
 	bzero(&sa, sizeof(sa));
 	bzero(&sa6, sizeof(sa6));
 
-	basic_setup_server();
-	
-#ifndef __WIN32__
-	/* signal handling */
-	if (signal(SIGINT, sig_handler) == SIG_ERR) {
-		perror("signal");
-		exit(ERR_EXIT);
-	}
-	if (signal(SIGTERM, sig_handler) == SIG_ERR) {
-		perror("signal");
-		exit(ERR_EXIT);
-	}
+#ifdef USE_SSL
+	OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS | OPENSSL_INIT_NO_LOAD_CONFIG, NULL);
 #endif
+
+	basic_setup_server();		/*parse configuration file and install socket listener in config.y*/
+	
+	/* signal handling - for all signals*/
+	memset(&sig_a,0,sizeof(sig_a));
+	sig_a.sa_sigaction=&signal_action_handler;
+	sig_a.sa_flags=SA_SIGINFO;
+	for (i=1; i < 32; i++) {
+		if ((i != SIGKILL) && (i != SIGSTOP))     //Handler except SIGKILL and SIGSTOP
+			sigaction(i,&sig_a,NULL);        		//Handler for all other signals 
+	}
+
+//	if (signal(SIGINT, sig_handler) == SIG_ERR) {
+//		perror("signal");
+//		exit(ERR_EXIT);
+//	}
+//	if (signal(SIGTERM, sig_handler) == SIG_ERR) {
+//		perror("signal");
+//		exit(ERR_EXIT);
+//	}
+
 	/* 41 - 5a = upper case -> + 0x20 = lower case */
 	for (i = 0; i < 256; i++) {
 		if (i >= 0x41 && i <= 0x5a)
@@ -107,21 +122,24 @@ main(int argc, char *argv[])
 /* GLOBAL INIT */
 	/* simple but stable and useful ;-) */
 	if (argc > 1) {
-#ifndef __WIN32__ /* lol */
 		if (strncmp(argv[1], "-d", 2) == 0) { /* daemon mode */
 			if ((pid = fork()) < 0) {
-         			fprintf(stderr, "cannot fork().\n");
-        	 		return ERR_EXIT;
-      			} else if (pid) { /* parent */
+        		fprintf(stderr, "cannot fork().\n");
+        	 	return ERR_EXIT;
+      	} else if (pid) { /* parent */
 				return OK_EXIT;
-	      		}
+	      }
 			daemon_mode = 1;
-	      		setsid();
-	      		chdir("/");
-	      		umask(077);
-	      		DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
-		}
+	     	setsid();
+	     	chdir("/");
+	     	umask(077);
+			close(0);      // Close stdin
+#ifndef DEBUG
+			close(1);      // Close stdout
+			close(2);      // Close stderr
 #endif
+	     	DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
+		}
 	}
 	
 #ifndef __WIN32__ /* some *nix security */
@@ -201,6 +219,8 @@ main(int argc, char *argv[])
 					
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
+					sockinf->ssl_active=FALSE;
+					sockinf->connectorinfo=(sockinfo + i)->connectorinfo;
 					
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {
 						DO_SYSL("pthread_create() returned != 0")
@@ -211,7 +231,7 @@ main(int argc, char *argv[])
 				}
 			}
 		}
-	} while (1);
+	} while (rec_sigterm == 0);
 	
 	return 0;
 }
