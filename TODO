@@ -7,9 +7,6 @@ desirable features are missing, such as a support for encrypted
 and integrity-checked connections.
 
 Major:
-- add TLS support, cf. https://tools.ietf.org/html/rfc4642 (check for newer
-  version of this RFC!)
-  ==> One needs to implement the CAPABILITIES command first!
 - harden sqlite3/MySQL-related code w.r.t. SQL injections
 
 Minor:
