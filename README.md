@@ -18,7 +18,7 @@ This server is tailored for workgroups, where users trust each other and where n
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
 
-##### Current Development Branch
+##### Git Access / Current Development Branch
 - The current version of the development code is available [here](https://github.com/cdpxe/WendzelNNTPd).
 
 
