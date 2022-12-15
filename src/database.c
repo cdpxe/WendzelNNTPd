@@ -121,16 +121,17 @@ get_uniqnum(void)
 	}
 	if (!(fp=fopen(MSGID_FILE, "rb+"))) {
 		id = 0;
+		fprintf(stderr, "creating " MSGID_FILE ".\n");
 		fp = fopen(MSGID_FILE, "wb+");
 		if(!fp) {
-            DO_SYSL("Unable to create file " MSGID_FILE)
-            free(buf);
+			DO_SYSL("Unable to create file " MSGID_FILE)
+			free(buf);
 			return NULL;
 		}
 	} else {
 		if(!fread(&id, sizeof(long long), 1, fp)) {
 			fclose(fp);
-            DO_SYSL("Unable to read file " MSGID_FILE)
+			DO_SYSL("Unable to read file " MSGID_FILE)
 			free(buf);
 			return NULL;
 		}
