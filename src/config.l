@@ -50,6 +50,11 @@ client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
 change-gid                          return TOK_CHANGEGID;
 hash-salt                           return TOK_HASHSALT;
+use-tls                             return TOK_USE_TLS;
+tls-port                            return TOK_TLS_PORT;
+tls-ca-file                         return TOK_TLS_CA_FILE;
+tls-cert-file                       return TOK_TLS_CERT_FILE;
+tls-key-file                        return TOK_TLS_KEY_FILE;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */

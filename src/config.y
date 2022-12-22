@@ -49,6 +49,12 @@ char *hash_salt = "default-hash-salt-0_----3331";
 #define	LF_SPEC_IP	0x02
 int listenflag = 0;
 
+unsigned short use_tls = 0;	/* do we use TLS at all? */
+int tls_port = DEFAULT_TLS_PORT;
+char *tls_ca_file = NULL;
+char *tls_cert_file = NULL;
+char *tls_key_file = NULL;
+
 void
 yyerror(const char *str)
 {
@@ -152,6 +158,15 @@ basic_setup_server(void)
 			err(1, "Please specify a 'database-port' in your config file.\n");
 		}
 	}
+
+  /* we need at minimum these 3 files if we want to use TLS */
+  if (use_tls) {
+    if (!tls_ca_file || !tls_cert_file || !tls_key_file) {
+			DO_SYSL("You need to specify CA file, server cert and server key files to use TLS. Exiting.");
+			fprintf(stderr, "You need to specify CA file, server cert and server key files to use TLS. Exiting.\n");
+		  exit(ERR_EXIT);
+    }
+  }
 }
 
 %}
@@ -174,13 +189,18 @@ basic_setup_server(void)
 %token TOK_DB_PASS
 %token TOK_DB_PORT
 %token TOK_HASHSALT
+%token TOK_USE_TLS
+%token TOK_TLS_PORT
+%token TOK_TLS_CA_FILE
+%token TOK_TLS_CERT_FILE
+%token TOK_TLS_KEY_FILE
 %token TOK_EOF
 
 %%
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -402,6 +422,59 @@ hashSalt:
 		if (!(hash_salt = strdup(yytext))) {
 			DO_SYSL("strdup() error (hash_salt)")
 			err(1, "strdup() error (hash_salt)");
+		}
+	}
+
+useTLS:
+	TOK_USE_TLS
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			use_tls=1;
+    }
+	};
+
+tlsPort:
+	TOK_TLS_PORT TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      tls_port = atoi(yytext);
+      if (!tls_port) {
+        fprintf(stderr, "TLS Port '%s' is not valid.\n", yytext);
+        exit(1);
+			}
+		}
+	};
+
+tlsCAFile:
+	TOK_TLS_CA_FILE TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_ca_file = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-ca-file)")
+        err(1, "strdup() error (tls-ca-file)");
+      }
+		}
+	}
+
+tlsCertFile:
+	TOK_TLS_CERT_FILE TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_cert_file = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-cert-file)")
+        err(1, "strdup() error (tls-cert-file)");
+      }
+		}
+	}
+
+tlsKeyFile:
+	TOK_TLS_KEY_FILE TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_key_file = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-key-file)")
+        err(1, "strdup() error (tls-key-file)");
+      }
 		}
 	}
 

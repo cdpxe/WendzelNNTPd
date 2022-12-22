@@ -390,15 +390,15 @@ rm -f temp temp.c
 ###############
 
 #out "checking for openssl..."
-#	openssl -v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
-#
-#out "checking for libssl..."
-#cat << EOF >temp.c
-##include <openssl/ssl.h>
-#int main(){SSL_library_init();return 0;}
-#EOF
-#gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
-#rm -f temp temp.c
+#openssl	-v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
+
+out "checking for libgnutls..."
+cat << EOF >temp.c
+#include <gnutls/gnutls.h>
+int main(){gnutls_global_init();return 0;}
+EOF
+gcc -o temp temp.c -lgnutls 2>&1; check "yes" "no" "You need libngutls."
+rm -f temp temp.c
 
 ############# rc.d script ADJUSTMENT ##########
 
@@ -460,6 +460,7 @@ else
 fi
 
 echo "LIBMHASH=-lmhash">> $MAKEFILE_INC
+echo "LIBGNUTLS=-lgnutls">> $MAKEFILE_INC
 
 echo "TABCPATH=$TABCPATH">> $MAKEFILE_INC
 echo "ORDER=-DORDER=$ORDER">> $MAKEFILE_INC

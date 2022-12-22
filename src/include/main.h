@@ -152,6 +152,8 @@
 
 #define DEFAULTPORT		119
 
+#define DEFAULT_TLS_PORT 563
+
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
 
@@ -246,6 +248,7 @@ typedef struct {
 
 typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
+	int		tls_is_there;	/* do we have active TLS encryption? */
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
 	
@@ -321,6 +324,10 @@ void Recv(int sockfd, char *buf, int len);
 void *do_server(void *);
 void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
+
+/* tls.c */
+int tls_init();
+int tls_close();
 
 /* db_abstraction.c */
 void db_open_connection(server_cb_inf *);

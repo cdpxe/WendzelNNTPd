@@ -32,6 +32,7 @@ extern char lowercase[256];
 extern int daemon_mode;		/* main.c */
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
+extern unsigned short use_tls; /* config.y */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	NNTP Messages 
@@ -72,6 +73,7 @@ char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				"Lines:\r\n"
 				"Xref:full\r\n"
 				".\r\n";
+char capabilites_string[]=    "101 capability list follows\r\n";
 char welcomestring[]=         "200 WendzelNNTPd " WELCOMEVERSION " ready (posting ok).\r\n";
 char mode_reader_ok[]=        "200 hello, you can post\r\n";
 char quitstring[]=            "205 closing connection - goodbye!\r\n";
@@ -84,6 +86,7 @@ char xover[]=                 "224 overview information follows\r\n";
 char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
+char tls_ok[]=                "382 continue with TLS negotiation\r\n";
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -94,11 +97,13 @@ char hdrerror_newsgroup[]=    "441 'newsgroups' line needed or incorrect.\r\n";
 char posterr_posttoobig[]=    "441 posting too huge.\r\n";
 char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in which posting is not permitted).\r\n";
 char auth_req[]=              "480 authentication required.\r\n";
+char tls_req[]=              "483 TLS encryption required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 program error, function not performed\r\n";
 char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
+char tls_error[]=             "580 can not initiate TLS negotiation\r\n";
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
@@ -114,6 +119,8 @@ static void docmd_listgroup(char *, server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
+static void docmd_mode_reader(server_cb_inf *);
+static void docmd_capabilites(server_cb_inf *);
 
 /* this function returns a command line argv[]. counting (=num) starts
  * by 0 */
@@ -216,6 +223,78 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 #else
 	strftime(tbuf, 39, "%a, %d %b %Y %H:%M:%S %z", localtime(&ltime));
 #endif
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	CAPABILITES
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+static void
+docmd_capabilites(server_cb_inf *inf)
+{
+	char cap_nntp_version[]="VERSION 2\r\n";
+
+	char cap_authinfo[]="AUTHINFO\r\n";
+	char cap_list[]="LIST\r\n";
+	char cap_mode_reader[]="MODE-READER\r\n";
+	char cap_post[]="POST\r\n";
+	char cap_starttls[]="STARTTLS\r\n";
+
+	/* XOVER and XHDR can not be advertized via CAPABILITES */
+
+	ToSend(capabilites_string, strlen(capabilites_string), inf);
+
+	/* VERSION MUST be first line */
+	ToSend(cap_nntp_version, strlen(cap_nntp_version), inf);
+
+	ToSend(cap_authinfo, strlen(cap_authinfo), inf);
+	ToSend(cap_list, strlen(cap_post), inf);
+
+	/* MODE READER can NOT be switched when TLS active */
+	if (!inf->servinf->tls_is_there) {
+		ToSend(cap_mode_reader, strlen(cap_mode_reader), inf);
+	}
+
+	ToSend(cap_post, strlen(cap_post), inf);
+
+	/* STARTTLS only if not already on TLS */
+	if (!inf->servinf->tls_is_there) {
+		ToSend(cap_starttls, strlen(cap_starttls), inf);
+	}
+
+	ToSend(period_end, strlen(period_end), inf);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	STARTTLS
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+static void
+docmd_starttls(server_cb_inf *inf)
+{
+
+	if (inf->servinf->tls_is_there) {
+		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
+	} else {
+		ToSend(tls_ok, strlen(tls_ok), inf);
+		inf->servinf->tls_is_there = 1;
+		//ToSend(tls_error, strlen(tls_error), inf);
+	}
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MODE READER
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+static void
+docmd_mode_reader(server_cb_inf *inf)
+{
+	/* MODE READER must NOT be available on TLS connections */
+	if (inf->servinf->tls_is_there) {
+		ToSend(unknown_cmd, strlen(unknown_cmd), inf);
+	} else {
+		ToSend(mode_reader_ok, strlen(mode_reader_ok), inf);
+	}
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1444,7 +1523,11 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		docmd_authinfo_user(recvbuf, inf);
 	} else if (QUESTION("authinfo pass ", 14)) {
 		docmd_authinfo_pass(recvbuf, inf);
-	}
+	} else if (QUESTION("capabilites", 11)) {
+    docmd_capabilites(inf);
+	} else if (QUESTION("starttls", 8)) {
+    docmd_starttls(inf);
+  }
 	
 	/* COMMANDS THAT NEED AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
@@ -1471,7 +1554,7 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		|| QUESTION_AUTH("body", 4) || QUESTION_AUTH("stat", 4)) {
 		docmd_article(recvbuf, inf);
 	} else if (QUESTION_AUTH("mode reader", 11)) {
-		ToSend(mode_reader_ok, strlen(mode_reader_ok), inf);
+		docmd_mode_reader(inf);
 	} else if (QUESTION_AUTH("post", 4)) {
 		docmd_post(inf);
 	} else if (QUESTION_AUTH("date", 4)) {
@@ -1525,6 +1608,10 @@ do_server(void *socket_info_ptr)
 		servinf.auth_is_there=1;
 	}
 	
+  /* start with TLS disabled */
+  /* XXX: when on TLS Port 563: set to 1 */
+  servinf.tls_is_there=0;
+
 	while(1) {
 		if (len == 0)
 			bzero(recvbuf, MAX_CMDLEN);

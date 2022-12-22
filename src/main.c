@@ -26,6 +26,8 @@ extern int size_sockinfo_t;
 extern int daemon_mode;
 extern short global_mode;
 
+extern unsigned short use_tls; /* config.y */
+
 /* need this global for server.c */
 struct sockaddr_in sa;
 struct sockaddr_in6 sa6;
@@ -84,7 +86,14 @@ main(int argc, char *argv[])
 	bzero(&sa6, sizeof(sa6));
 
 	basic_setup_server();
-	
+
+	if (use_tls == 1) {
+		if (tls_init() == FALSE) {
+			DO_SYSL("TLS init error");
+			exit(ERR_EXIT);
+		}
+	}
+
 #ifndef __WIN32__
 	/* signal handling */
 	if (signal(SIGINT, sig_handler) == SIG_ERR) {
