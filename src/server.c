@@ -87,7 +87,7 @@ char xover[]=                 "224 overview information follows\r\n";
 char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
-char tls_ok[]=                "382 continue with TLS negotiation\r\n";
+char tls_connect[]=           "382 continue with TLS negotiation\r\n";
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -103,7 +103,7 @@ char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 program error, function not performed\r\n";
-char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
+char post_too_big[]=          "503 posting size too big (administratively prohibited)\r\n";
 char tls_error[]=             "580 can not initiate TLS negotiation\r\n";
 char period_end[]=            ".\r\n";
 
@@ -121,7 +121,7 @@ static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
 static void docmd_mode_reader(server_cb_inf *);
-static void docmd_capabilites(server_cb_inf *);
+static void docmd_capabilities(server_cb_inf *);
 static unsigned short check_tls_mandatory(server_cb_inf *);
 
 /* this function returns a command line argv[]. counting (=num) starts
@@ -244,7 +244,7 @@ check_tls_mandatory(server_cb_inf *inf)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 static void
-docmd_capabilites(server_cb_inf *inf)
+docmd_capabilities(server_cb_inf *inf)
 {
 	char cap_nntp_version[]="VERSION 2\r\n";
 
@@ -286,13 +286,16 @@ docmd_capabilites(server_cb_inf *inf)
 static void
 docmd_starttls(server_cb_inf *inf)
 {
-
 	if (inf->servinf->tls_is_there) {
 		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 	} else {
-		ToSend(tls_ok, strlen(tls_ok), inf);
-		inf->servinf->tls_is_there = 1;
-		//ToSend(tls_error, strlen(tls_error), inf);
+    /* we need Send here as ToSend does not send it out immediatlely */
+		Send(inf->sockinf->sockfd, tls_connect, strlen(tls_connect));
+    if (tls_session_init(&inf->servinf->tls_session, inf->sockinf->sockfd)) {
+		  inf->servinf->tls_is_there = 1;
+    } else {
+		  ToSend(tls_error, strlen(tls_error), inf);
+    }
 	}
 }
 
@@ -1541,8 +1544,8 @@ do_command(char *recvbuf, server_cb_inf *inf)
     if (check_tls_mandatory(inf)) {
 		  docmd_authinfo_pass(recvbuf, inf);
     }
-	} else if (QUESTION("capabilites", 11)) {
-    docmd_capabilites(inf);
+	} else if (QUESTION("capabilities", 12)) {
+    docmd_capabilities(inf);
 	} else if (QUESTION("starttls", 8)) {
     docmd_starttls(inf);
   }

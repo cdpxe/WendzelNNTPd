@@ -88,7 +88,7 @@ main(int argc, char *argv[])
 	basic_setup_server();
 
 	if (use_tls == 1) {
-		if (tls_init() == FALSE) {
+		if (tls_global_init() == FALSE) {
 			DO_SYSL("TLS init error");
 			exit(ERR_EXIT);
 		}

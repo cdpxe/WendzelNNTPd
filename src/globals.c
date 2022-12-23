@@ -26,6 +26,7 @@ short global_mode = MODE_PROCESS; /* don't change default value */
 
 extern int use_tls; /* config.y */
 extern gnutls_certificate_credentials_t x509_credentials; /* tls.c */
+extern gnutls_priority_t tls_cipher_priorities; /* tls.c */
 
 /* sig_handler for win32 too since I sometimes call it in code and
  * not only from outside.
@@ -35,6 +36,7 @@ sig_handler(int signr)
 {
   if (use_tls) {
     gnutls_certificate_free_credentials(x509_credentials);
+    gnutls_priority_deinit(tls_cipher_priorities);
     gnutls_global_deinit();
 	  DO_SYSL("TLS shut down")
   }

@@ -252,6 +252,7 @@ typedef struct {
 typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
 	int		tls_is_there;	/* do we have active TLS encryption? */
+  gnutls_session_t tls_session; /* saves the current TLS session */
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
 	
@@ -329,8 +330,9 @@ void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
 
 /* tls.c */
-int tls_init();
-int tls_close();
+int tls_global_init();
+int tls_session_init(gnutls_session_t *session, int sockfd);
+void tls_session_close(gnutls_session_t session);
 
 /* db_abstraction.c */
 void db_open_connection(server_cb_inf *);
