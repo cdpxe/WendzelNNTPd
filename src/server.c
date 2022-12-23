@@ -88,6 +88,7 @@ char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
 char tls_connect[]=           "382 continue with TLS negotiation\r\n";
+char tls_failed[]=            "400 Connection closing due to lack of security\r\n";
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -1674,13 +1675,19 @@ do_server(void *socket_info_ptr)
     }
 
     /* switch to TLS in server code, must be done outside docmd_ */
+    static unsigned short tls_switch_fails = 0;
     if (inf.servinf->switch_to_tls) {
         if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
           inf.servinf->switch_to_tls = 0;
 		      inf.servinf->tls_is_there = 1;
       } else {
         inf.servinf->switch_to_tls = 0;
-        Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
+        if (++tls_switch_fails < 3) {
+          Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
+        } else {
+          Send(inf.sockinf->sockfd, tls_failed, strlen(tls_failed));
+          kill_thread(&inf);
+        }
       }
     }
 

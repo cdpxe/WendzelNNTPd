@@ -58,7 +58,6 @@ tls-cert-file                       return TOK_TLS_CERT_FILE;
 tls-key-file                        return TOK_TLS_KEY_FILE;
 tls-crl-file                        return TOK_TLS_CRL_FILE;
 tls-ciper-priority                  return TOK_TLS_CIPHER_PRIO;
-tls-versions                        return TOK_TLS_VERSIONS;
 tls-mutual-auth                     return TOK_TLS_MUTUAL_AUTH;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */

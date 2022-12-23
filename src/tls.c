@@ -27,8 +27,6 @@ extern char *tls_cert_file; /* config.y */
 extern char *tls_key_file; /* config.y */
 extern char *tls_crl_file; /* config.y */
 extern char *tls_ciper_prio; /* config.y */
-extern char *tls_enabled_versions; /* config.y */
-extern const char default_tls_versions[]; /* config.y */
 // extern const char default_cipher_prio[];
 
 gnutls_certificate_credentials_t x509_credentials;
@@ -99,46 +97,6 @@ tls_global_init()
     return FALSE;
   }
 #endif
-
-  /* enable only specified TLS versions */
-  /* must be done befor the prio string */
-  if (!tls_enabled_versions) {
-    if (!(tls_enabled_versions = strdup(default_tls_versions))) {
-      DO_SYSL("strdup() error while getting default TLS enabled version")
-    }
-  }
-  if (tls_enabled_versions) {
-    /* disable all if we want to use custom versions */
-    gnutls_protocol_set_enabled(GNUTLS_TLS1_0, 0);
-    gnutls_protocol_set_enabled(GNUTLS_TLS1_1, 0);
-    gnutls_protocol_set_enabled(GNUTLS_TLS1_2, 0);
-    gnutls_protocol_set_enabled(GNUTLS_TLS1_3, 0);
-
-    char delimeter[] = ":";
-    char *ptr;
-
-    ptr = strtok(tls_enabled_versions, delimeter);
-
-    while (ptr != NULL) {
-      if (strncasecmp(ptr, "TLS1.0", 6) == 0) {
-        gnutls_protocol_set_enabled(GNUTLS_TLS1_0, 1);
-        DO_SYSL("Enabled TLS 1.0 - NOT RECOMMENDED");
-      } else if (strncasecmp(ptr, "TLS1.1", 6) == 0) {
-        gnutls_protocol_set_enabled(GNUTLS_TLS1_1, 1);
-        DO_SYSL("Enabled TLS 1.1 - NOT RECOMMENDED");
-      } else if (strncasecmp(ptr, "TLS1.2", 6) == 0) {
-        gnutls_protocol_set_enabled(GNUTLS_TLS1_2, 1);
-        DO_SYSL("Enabled TLS 1.2");
-      } else if (strncasecmp(ptr, "TLS1.3", 6) == 0) {
-        gnutls_protocol_set_enabled(GNUTLS_TLS1_3, 1);
-        DO_SYSL("Enabled TLS 1.3");
-      } else {
-        fprintf(stderr, "Unknown TLS version %s\n", ptr);
-        DO_SYSL("Unknown TLS version in tls-versions");
-      }
-      ptr = strtok(NULL, delimeter);
-    }
-  }
 
   return_code = gnutls_priority_init(&tls_cipher_priorities, NULL, NULL);
   if (return_code != GNUTLS_E_SUCCESS) {

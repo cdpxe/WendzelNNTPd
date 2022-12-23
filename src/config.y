@@ -56,10 +56,8 @@ char *tls_ca_file = NULL;
 char *tls_cert_file = NULL;
 char *tls_key_file = NULL;
 char *tls_crl_file = NULL;
-char *tls_enabled_versions = NULL;
 char *tls_cipher_prio = NULL;
 
-const char default_tls_versions[] = "TLS1.2:TLS1.3";
 // const char default_cipher_prio[] = "SECURE192";
 
 unsigned short tls_is_mandatory = 0; /* force TLS on commands */
@@ -211,7 +209,6 @@ basic_setup_server(void)
 %token TOK_TLS_CERT_FILE
 %token TOK_TLS_KEY_FILE
 %token TOK_TLS_CRL_FILE
-%token TOK_TLS_VERSIONS
 %token TOK_TLS_CIPHER_PRIO
 %token TOK_TLS_MUTUAL_AUTH
 %token TOK_EOF
@@ -220,7 +217,7 @@ basic_setup_server(void)
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsVersions | tlsCipherPrio | tlsMutualAuth | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsCipherPrio | tlsMutualAuth | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -517,17 +514,6 @@ tlsCrlFile:
       if (!(tls_crl_file = strdup(yytext))) {
         DO_SYSL("strdup() error (tls-crl-file)")
         err(1, "strdup() error (tls-crl-file)");
-      }
-		}
-	}
-
-tlsVersions:
-	TOK_TLS_VERSIONS TOK_NAME
-	{
-		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_enabled_versions = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-versions)")
-        err(1, "strdup() error (tls-versions)");
       }
 		}
 	}
