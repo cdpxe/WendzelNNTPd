@@ -62,6 +62,6 @@ tls-mutual-auth                     return TOK_TLS_MUTUAL_AUTH;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */
-[a-zA-Z0-9\.\:\\\/\-\_]+            return TOK_NAME;
+[a-zA-Z0-9\.\:\\\/\-\_!+\%,]+       return TOK_NAME;
 \0                                  return TOK_EOF;
 %%

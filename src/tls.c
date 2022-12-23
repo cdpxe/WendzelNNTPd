@@ -26,8 +26,7 @@ extern char *tls_ca_file; /* config.y */
 extern char *tls_cert_file; /* config.y */
 extern char *tls_key_file; /* config.y */
 extern char *tls_crl_file; /* config.y */
-extern char *tls_ciper_prio; /* config.y */
-// extern const char default_cipher_prio[];
+extern char *tls_cipher_prio; /* config.y */
 
 static gnutls_certificate_credentials_t x509_credentials;
 static gnutls_priority_t tls_cipher_priorities;
@@ -97,11 +96,12 @@ tls_global_init()
   }
 #endif
 
-  return_code = gnutls_priority_init(&tls_cipher_priorities, NULL, NULL);
+  const char *err;
+  return_code = gnutls_priority_init(&tls_cipher_priorities, tls_cipher_prio, &err);
   if (return_code != GNUTLS_E_SUCCESS) {
     DO_SYSL("TLS not initialized, could not set cipher priorities");
 
-    fprintf(stderr, "TLS not initialized, could not set cipher prioritires\n");
+    fprintf(stderr, "TLS not initialized, could not set cipher prioritires (at %s)\n", err);
     fprintf(stderr, "%s\n", gnutls_strerror(return_code));
     return FALSE;
   }

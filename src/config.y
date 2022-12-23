@@ -58,8 +58,6 @@ char *tls_key_file = NULL;
 char *tls_crl_file = NULL;
 char *tls_cipher_prio = NULL;
 
-// const char default_cipher_prio[] = "SECURE192";
-
 unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
