@@ -29,9 +29,8 @@ extern char *tls_crl_file; /* config.y */
 extern char *tls_ciper_prio; /* config.y */
 // extern const char default_cipher_prio[];
 
-gnutls_certificate_credentials_t x509_credentials;
-gnutls_priority_t tls_cipher_priorities;
-
+static gnutls_certificate_credentials_t x509_credentials;
+static gnutls_priority_t tls_cipher_priorities;
 
 int
 tls_global_init()
@@ -110,6 +109,15 @@ tls_global_init()
 
   DO_SYSL("TLS initialized");
   return TRUE;
+}
+
+void
+tls_global_close()
+{
+    gnutls_certificate_free_credentials(x509_credentials);
+    gnutls_priority_deinit(tls_cipher_priorities);
+    gnutls_global_deinit();
+    DO_SYSL("TLS shut down")
 }
 
 int

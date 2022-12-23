@@ -332,6 +332,7 @@ void nntp_localtime_to_str(char [40], time_t);
 
 /* tls.c */
 int tls_global_init();
+void tls_global_close();
 int tls_session_init(gnutls_session_t *session, int sockfd);
 void tls_session_close(gnutls_session_t session);
 
