@@ -1677,9 +1677,13 @@ do_server(void *socket_info_ptr)
     /* switch to TLS in server code, must be done outside docmd_ */
     static unsigned short tls_switch_fails = 0;
     if (inf.servinf->switch_to_tls) {
-        if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
-          inf.servinf->switch_to_tls = 0;
-		      inf.servinf->tls_is_there = 1;
+      if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
+        inf.servinf->switch_to_tls = 0;
+        inf.servinf->tls_is_there = 1;
+#ifdef DEBUG
+        fprintf(stderr, "client switched to TLS.\n");
+        FFLUSH
+#endif
       } else {
         inf.servinf->switch_to_tls = 0;
         if (++tls_switch_fails < 3) {
