@@ -33,6 +33,7 @@ extern int daemon_mode;		/* main.c */
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
 extern unsigned short use_tls; /* config.y */
+extern unsigned short tls_is_mandatory; /* config.y */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	NNTP Messages 
@@ -97,7 +98,7 @@ char hdrerror_newsgroup[]=    "441 'newsgroups' line needed or incorrect.\r\n";
 char posterr_posttoobig[]=    "441 posting too huge.\r\n";
 char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in which posting is not permitted).\r\n";
 char auth_req[]=              "480 authentication required.\r\n";
-char tls_req[]=              "483 TLS encryption required.\r\n";
+char tls_req[]=               "483 TLS encryption required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
@@ -121,6 +122,7 @@ static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
 static void docmd_mode_reader(server_cb_inf *);
 static void docmd_capabilites(server_cb_inf *);
+static unsigned short check_tls_mandatory(server_cb_inf *);
 
 /* this function returns a command line argv[]. counting (=num) starts
  * by 0 */
@@ -225,6 +227,18 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 #endif
 }
 
+static unsigned short
+check_tls_mandatory(server_cb_inf *inf)
+{
+  if (use_tls) {
+    if (!inf->servinf->tls_is_there && tls_is_mandatory) {
+			ToSend(tls_req, strlen(tls_req), inf);
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	CAPABILITES
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -235,7 +249,7 @@ docmd_capabilites(server_cb_inf *inf)
 	char cap_nntp_version[]="VERSION 2\r\n";
 
 	char cap_authinfo[]="AUTHINFO\r\n";
-	char cap_list[]="LIST\r\n";
+	char cap_list[]="LIST NEWSGROUPS OVERVIEW.FMT\r\n";
 	char cap_mode_reader[]="MODE-READER\r\n";
 	char cap_post[]="POST\r\n";
 	char cap_starttls[]="STARTTLS\r\n";
@@ -248,7 +262,7 @@ docmd_capabilites(server_cb_inf *inf)
 	ToSend(cap_nntp_version, strlen(cap_nntp_version), inf);
 
 	ToSend(cap_authinfo, strlen(cap_authinfo), inf);
-	ToSend(cap_list, strlen(cap_post), inf);
+	ToSend(cap_list, strlen(cap_list), inf);
 
 	/* MODE READER can NOT be switched when TLS active */
 	if (!inf->servinf->tls_is_there) {
@@ -1520,9 +1534,13 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
-		docmd_authinfo_user(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_authinfo_user(recvbuf, inf);
+    }
 	} else if (QUESTION("authinfo pass ", 14)) {
-		docmd_authinfo_pass(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_authinfo_pass(recvbuf, inf);
+    }
 	} else if (QUESTION("capabilites", 11)) {
     docmd_capabilites(inf);
 	} else if (QUESTION("starttls", 8)) {
@@ -1533,30 +1551,48 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	
 	else if (QUESTION_AUTH("list newsgroups", 15)) {
-		docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS);
+    if (check_tls_mandatory(inf)) {
+		  docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS);
+    }
 	} else if (QUESTION_AUTH("list overview.fmt", 17)) {
-		ToSend(list_overview_fmt_info, strlen(list_overview_fmt_info), inf);
+		  ToSend(list_overview_fmt_info, strlen(list_overview_fmt_info), inf);
 	} else if (QUESTION_AUTH("listgroup", 9)) {
-		docmd_listgroup(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_listgroup(recvbuf, inf);
+    }
 	} else if (QUESTION_AUTH("list", 4)) {
-		docmd_list(recvbuf, inf, CMDTYP_LIST);
+    if (check_tls_mandatory(inf)) {
+		  docmd_list(recvbuf, inf, CMDTYP_LIST);
+    }
 	} else if (QUESTION_AUTH("xgtitle", 7)) {
-		docmd_list(recvbuf, inf, CMDTYP_XGTITLE);
+    if (check_tls_mandatory(inf)) {
+		  docmd_list(recvbuf, inf, CMDTYP_XGTITLE);
+    }
 	} else if (QUESTION_AUTH("help", 4)) {
 		ToSend(helpstring, strlen(helpstring), inf);
 	} else if (QUESTION_AUTH("group", 5)) {
-		docmd_group(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_group(recvbuf, inf);
+    }
 	} else if (QUESTION_AUTH("xover", 5)) {
-		docmd_xover(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_xover(recvbuf, inf);
+    }
 	} else if (QUESTION_AUTH("xhdr", 4)) {
-		docmd_xhdr(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_xhdr(recvbuf, inf);
+    }
 	} else if (QUESTION_AUTH("article", 7) || QUESTION_AUTH("head", 4)
 		|| QUESTION_AUTH("body", 4) || QUESTION_AUTH("stat", 4)) {
-		docmd_article(recvbuf, inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_article(recvbuf, inf);
+    }
 	} else if (QUESTION_AUTH("mode reader", 11)) {
 		docmd_mode_reader(inf);
 	} else if (QUESTION_AUTH("post", 4)) {
-		docmd_post(inf);
+    if (check_tls_mandatory(inf)) {
+		  docmd_post(inf);
+    }
 	} else if (QUESTION_AUTH("date", 4)) {
 		docmd_date(inf);
 	} else if (QUESTION_AUTH("NEWNEWS", 7)) {

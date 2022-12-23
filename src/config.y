@@ -50,10 +50,19 @@ char *hash_salt = "default-hash-salt-0_----3331";
 int listenflag = 0;
 
 unsigned short use_tls = 0;	/* do we use TLS at all? */
+unsigned short tls_mutual_auth = 0; /* check client cert */
 int tls_port = DEFAULT_TLS_PORT;
 char *tls_ca_file = NULL;
 char *tls_cert_file = NULL;
 char *tls_key_file = NULL;
+char *tls_crl_file = NULL;
+char *tls_enabled_versions = NULL;
+char *tls_cipher_prio = NULL;
+
+const char default_tls_versions[] = "TLS1.2:TLS1.3";
+// const char default_cipher_prio[] = "SECURE192";
+
+unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
 yyerror(const char *str)
@@ -166,7 +175,13 @@ basic_setup_server(void)
 			fprintf(stderr, "You need to specify CA file, server cert and server key files to use TLS. Exiting.\n");
 		  exit(ERR_EXIT);
     }
+    if (tls_port < 0) {
+			DO_SYSL("Use of extra TLS port is disabled in config, will only support STARTTLS.");
+			fprintf(stderr, "Use of extra TLS port is disabled in config, will only support STARTTLS.\n");
+    }
+
   }
+
 }
 
 %}
@@ -190,17 +205,22 @@ basic_setup_server(void)
 %token TOK_DB_PORT
 %token TOK_HASHSALT
 %token TOK_USE_TLS
+%token TOK_TLS_MANDATORY
 %token TOK_TLS_PORT
 %token TOK_TLS_CA_FILE
 %token TOK_TLS_CERT_FILE
 %token TOK_TLS_KEY_FILE
+%token TOK_TLS_CRL_FILE
+%token TOK_TLS_VERSIONS
+%token TOK_TLS_CIPHER_PRIO
+%token TOK_TLS_MUTUAL_AUTH
 %token TOK_EOF
 
 %%
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsVersions | tlsCipherPrio | tlsMutualAuth | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -433,12 +453,24 @@ useTLS:
     }
 	};
 
+tlsMandatory:
+	TOK_TLS_MANDATORY
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      tls_is_mandatory = 1;
+		}
+	}
+
 tlsPort:
 	TOK_TLS_PORT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
       tls_port = atoi(yytext);
       if (!tls_port) {
+        fprintf(stderr, "TLS Port '%s' is not valid.\n", yytext);
+        exit(1);
+			}
+      if (tls_port > 65535) {
         fprintf(stderr, "TLS Port '%s' is not valid.\n", yytext);
         exit(1);
 			}
@@ -475,6 +507,47 @@ tlsKeyFile:
         DO_SYSL("strdup() error (tls-key-file)")
         err(1, "strdup() error (tls-key-file)");
       }
+		}
+	}
+
+tlsCrlFile:
+	TOK_TLS_CRL_FILE TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_crl_file = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-crl-file)")
+        err(1, "strdup() error (tls-crl-file)");
+      }
+		}
+	}
+
+tlsVersions:
+	TOK_TLS_VERSIONS TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_enabled_versions = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-versions)")
+        err(1, "strdup() error (tls-versions)");
+      }
+		}
+	}
+
+tlsCipherPrio:
+	TOK_TLS_CIPHER_PRIO TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      if (!(tls_cipher_prio = strdup(yytext))) {
+        DO_SYSL("strdup() error (tls-cipher-prio)")
+        err(1, "strdup() error (tls-cipher-prio)");
+      }
+		}
+	}
+
+tlsMutualAuth:
+	TOK_TLS_MUTUAL_AUTH
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+      tls_mutual_auth = 1;
 		}
 	}
 

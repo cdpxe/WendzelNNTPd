@@ -82,6 +82,9 @@
 	#include <mysql/mysql.h>
 #endif
 
+/* GnuTLS */
+#include <gnutls/gnutls.h>
+
 /* Own files */
 #include "wendzelnntpdpath.h"
 
@@ -483,4 +486,3 @@ short acl_check_user_group(server_cb_inf *, char *, char *);
 
 /* hash.c */
 char *get_sha256_hash_from_str(char *, char *);
-
