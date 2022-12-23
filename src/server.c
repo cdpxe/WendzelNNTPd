@@ -109,6 +109,7 @@ char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
 static void Send(int, char *, int);
+static void TlsSend(gnutls_session_t, const char *, int);
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -177,6 +178,19 @@ Send(int lsockfd, char *str, int len)
 			DO_SYSL("send() returned <0 -- killing connection.")
 		} else {
 			perror("send");
+		}
+		pthread_exit(NULL);
+	}
+}
+
+static void
+TlsSend(gnutls_session_t session, const char *str, int len)
+{
+	if(gnutls_record_send(session, str, len)<0) {
+		if (daemon_mode) {
+			DO_SYSL("gnutls_record_send() returned <0 -- killing connection.")
+		} else {
+			perror("gnutls_record_send");
 		}
 		pthread_exit(NULL);
 	}
@@ -289,15 +303,11 @@ docmd_starttls(server_cb_inf *inf)
 	if (inf->servinf->tls_is_there) {
 		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 	} else {
-    /* we need Send here as ToSend does not send it out immediatlely */
-		Send(inf->sockinf->sockfd, tls_connect, strlen(tls_connect));
-    if (tls_session_init(&inf->servinf->tls_session, inf->sockinf->sockfd)) {
-		  inf->servinf->tls_is_there = 1;
-    } else {
-		  ToSend(tls_error, strlen(tls_error), inf);
-    }
+		ToSend(tls_connect, strlen(tls_connect), inf);
+    inf->servinf->switch_to_tls = 1;
 	}
 }
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	MODE READER
@@ -1649,22 +1659,46 @@ do_server(void *socket_info_ptr)
 	
   /* start with TLS disabled */
   /* XXX: when on TLS Port 563: set to 1 */
-  servinf.tls_is_there=0;
+  servinf.switch_to_tls=0;
 
 	while(1) {
-		if (len == 0)
+		if (len == 0) {
 			bzero(recvbuf, MAX_CMDLEN);
+    }
+
 		/* receive only one byte each time; not good for performance but allows to deal
 		 * with crappy clients who send multiple requests within one request. */
 		/* 1. kill connection if the client sends more bytes than allowed */
-		if (len == MAX_CMDLEN)
+		if (len == MAX_CMDLEN) {
 			kill_thread(&inf);
+    }
+
+    /* switch to TLS in server code, must be done outside docmd_ */
+    if (inf.servinf->switch_to_tls) {
+        if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
+          inf.servinf->switch_to_tls = 0;
+		      inf.servinf->tls_is_there = 1;
+      } else {
+        inf.servinf->switch_to_tls = 0;
+        Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
+      }
+    }
+
 		/* 2. receive byte-wise */
-		if (recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0) <= 0) {
+    ssize_t return_val = -1;
+    if (inf.servinf->tls_is_there) {
+      do {
+        return_val = gnutls_record_recv(inf.servinf->tls_session, recvbuf+len, 1);
+      } while (return_val == GNUTLS_E_AGAIN || return_val == GNUTLS_E_INTERRUPTED);
+    } else {
+		  return_val = recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0);
+    }
+    if (return_val <= 0) {
 			/* kill connection in problem case */
 			kill_thread(&inf);
 			/* NOTREACHED */
 		}
+
 		if (strstr(recvbuf, "\r\n") != NULL) {
 			if (be_verbose) {
 				if (strncasecmp(recvbuf, "authinfo pass", 13) == 0) {
@@ -1690,12 +1724,19 @@ do_server(void *socket_info_ptr)
 			/* now proceed */
 			do_command(sec_cmd, &inf);
 			db_secure_sqlbuffer_free(sec_cmd);
-			Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
+
+      if (inf.servinf->tls_is_there) {
+        TlsSend(inf.servinf->tls_session, servinf.curstring, strlen(servinf.curstring));
+      } else {
+			  Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
+      }
+
 			free(servinf.curstring);
 			servinf.curstring=NULL;
+
 			len=0;
 		} else {
-			len = strlen(recvbuf);
+		  len = strlen(recvbuf);
 		}
 	}
 	/* NOTREACHED */

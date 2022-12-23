@@ -252,6 +252,7 @@ typedef struct {
 typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
 	int		tls_is_there;	/* do we have active TLS encryption? */
+  int   switch_to_tls; /* started migration to TLS */
   gnutls_session_t tls_session; /* saves the current TLS session */
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
