@@ -1650,17 +1650,24 @@ do_server(void *socket_info_ptr)
 	
 	db_open_connection(&inf);
 
-	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
-	
+  if (inf.sockinf->is_tls) {
+    if (!tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
+      DO_SYSL("Could not init TLS session. Exiting.");
+      fprintf(stderr, "Could not init TLS session. Exiting\n");
+      kill_thread(&inf);
+    } else {
+      inf.servinf->tls_is_there = 1;
+      TlsSend(inf.servinf->tls_session, welcomestring, strlen(welcomestring));
+    }
+  } else {
+	  Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
+	}
+
 	if(use_auth==1) {
 		servinf.auth_is_there=0;
 	} else {
 		servinf.auth_is_there=1;
 	}
-	
-  /* start with TLS disabled */
-  /* XXX: when on TLS Port 563: set to 1 */
-  servinf.switch_to_tls=0;
 
 	while(1) {
 		if (len == 0) {
@@ -1680,6 +1687,24 @@ do_server(void *socket_info_ptr)
       if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
         inf.servinf->switch_to_tls = 0;
         inf.servinf->tls_is_there = 1;
+
+        /* Reset all data of the user when switchting to TLS (RFC 4642 requires this) */
+        if (inf.servinf->selected_group) {
+          free(inf.servinf->selected_group);
+          inf.servinf->selected_group = NULL;
+        }
+        if (inf.servinf->selected_article) {
+          free(inf.servinf->selected_article);
+          inf.servinf->selected_article = NULL;
+        }
+        if (inf.servinf->cur_auth_user) {
+          free(inf.servinf->cur_auth_user);
+          inf.servinf->cur_auth_user = NULL;
+        }
+        if (inf.servinf->cur_auth_pass) {
+          free(inf.servinf->cur_auth_pass);
+          inf.servinf->cur_auth_pass = NULL;
+        }
 #ifdef DEBUG
         fprintf(stderr, "client switched to TLS.\n");
         FFLUSH

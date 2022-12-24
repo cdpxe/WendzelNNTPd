@@ -244,6 +244,7 @@
 typedef struct {
 	int		sockfd;
 	int		family;
+  int   is_tls;
 	struct sockaddr_in  sa;
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];

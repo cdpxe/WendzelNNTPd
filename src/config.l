@@ -52,7 +52,7 @@ change-gid                          return TOK_CHANGEGID;
 hash-salt                           return TOK_HASHSALT;
 use-tls                             return TOK_USE_TLS;
 tls-is-mandatory                    return TOK_TLS_MANDATORY;
-tls-port                            return TOK_TLS_PORT;
+tls-port                            return TOK_IS_TLS_PORT;
 tls-ca-file                         return TOK_TLS_CA_FILE;
 tls-cert-file                       return TOK_TLS_CERT_FILE;
 tls-key-file                        return TOK_TLS_KEY_FILE;

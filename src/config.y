@@ -49,9 +49,9 @@ char *hash_salt = "default-hash-salt-0_----3331";
 #define	LF_SPEC_IP	0x02
 int listenflag = 0;
 
+int is_tls_port = 0;
 unsigned short use_tls = 0;	/* do we use TLS at all? */
 unsigned short tls_mutual_auth = 0; /* check client cert */
-int tls_port = DEFAULT_TLS_PORT;
 char *tls_ca_file = NULL;
 char *tls_cert_file = NULL;
 char *tls_key_file = NULL;
@@ -171,13 +171,7 @@ basic_setup_server(void)
 			fprintf(stderr, "You need to specify CA file, server cert and server key files to use TLS. Exiting.\n");
 		  exit(ERR_EXIT);
     }
-    if (tls_port < 0) {
-			DO_SYSL("Use of extra TLS port is disabled in config, will only support STARTTLS.");
-			fprintf(stderr, "Use of extra TLS port is disabled in config, will only support STARTTLS.\n");
-    }
-
   }
-
 }
 
 %}
@@ -202,7 +196,7 @@ basic_setup_server(void)
 %token TOK_HASHSALT
 %token TOK_USE_TLS
 %token TOK_TLS_MANDATORY
-%token TOK_TLS_PORT
+%token TOK_IS_TLS_PORT
 %token TOK_TLS_CA_FILE
 %token TOK_TLS_CERT_FILE
 %token TOK_TLS_KEY_FILE
@@ -262,6 +256,7 @@ usePort:
 				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
 				exit(1);
 			}
+      is_tls_port = 0;
 		}
 	};
 
@@ -344,6 +339,9 @@ listenonSpec:  /* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
+        if (is_tls_port) {
+          (sockinfo+size)->is_tls = 1;
+        }
 				peak = max((sockinfo + size)->sockfd, peak);
 				(sockinfo + size)->family=AF_INET;
 #ifndef __WIN32__ /* IPv6-ready systems */
@@ -368,6 +366,9 @@ listenonSpec:  /* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
+        if (is_tls_port) {
+          (sockinfo+size)->is_tls = 1;
+        }
 				peak = max((sockinfo+size)->sockfd, peak);
 				(sockinfo + size)->family = AF_INET6;
 #endif
@@ -457,20 +458,12 @@ tlsMandatory:
 	}
 
 tlsPort:
-	TOK_TLS_PORT TOK_NAME
+	TOK_IS_TLS_PORT
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      tls_port = atoi(yytext);
-      if (!tls_port) {
-        fprintf(stderr, "TLS Port '%s' is not valid.\n", yytext);
-        exit(1);
-			}
-      if (tls_port > 65535) {
-        fprintf(stderr, "TLS Port '%s' is not valid.\n", yytext);
-        exit(1);
-			}
+      is_tls_port = 1;
 		}
-	};
+	}
 
 tlsCAFile:
 	TOK_TLS_CA_FILE TOK_NAME

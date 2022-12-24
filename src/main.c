@@ -207,6 +207,7 @@ main(int argc, char *argv[])
 					sockinf->family = SWITCHIP(i, FAM_4, FAM_6);
 					memcpy(&sockinf->sa, &sa, sizeof(sa));
 					memcpy(&sockinf->sa6, &sa6, sizeof(sa6));
+          sockinf->is_tls = (sockinfo+i)->is_tls;
 					
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));

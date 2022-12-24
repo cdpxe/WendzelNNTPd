@@ -21,7 +21,6 @@
 
 extern unsigned short use_tls; /* config.y */
 extern unsigned short tls_mutual_auth; /* config.y */
-extern int tls_port; /* config.y */
 extern char *tls_ca_file; /* config.y */
 extern char *tls_cert_file; /* config.y */
 extern char *tls_key_file; /* config.y */
@@ -106,7 +105,6 @@ tls_global_init()
     return FALSE;
   }
 
-
   DO_SYSL("TLS initialized");
   return TRUE;
 }
@@ -152,8 +150,12 @@ tls_session_init(gnutls_session_t *session, int sockfd)
     return FALSE;
   }
 
-  /* XXX mutual TLS here */
-  gnutls_certificate_server_set_request(*session, GNUTLS_CERT_IGNORE);
+  if (tls_mutual_auth) {
+    gnutls_certificate_server_set_request(*session, GNUTLS_CERT_REQUIRE);
+  } else {
+    gnutls_certificate_server_set_request(*session, GNUTLS_CERT_IGNORE);
+  }
+
   gnutls_handshake_set_timeout(*session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
 
   gnutls_transport_set_int(*session, sockfd);
