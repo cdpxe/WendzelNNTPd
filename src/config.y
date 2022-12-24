@@ -339,9 +339,7 @@ listenonSpec:  /* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-        if (is_tls_port) {
-          (sockinfo+size)->is_tls = 1;
-        }
+        (sockinfo + size)->is_tls = is_tls_port;
 				peak = max((sockinfo + size)->sockfd, peak);
 				(sockinfo + size)->family=AF_INET;
 #ifndef __WIN32__ /* IPv6-ready systems */
@@ -366,9 +364,7 @@ listenonSpec:  /* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-        if (is_tls_port) {
-          (sockinfo+size)->is_tls = 1;
-        }
+        (sockinfo + size)->is_tls = is_tls_port;
 				peak = max((sockinfo+size)->sockfd, peak);
 				(sockinfo + size)->family = AF_INET6;
 #endif

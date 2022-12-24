@@ -205,9 +205,9 @@ main(int argc, char *argv[])
 					CALLOC(sockinf, (sockinfo_t *), 1, sizeof(sockinfo_t))
 					sockinf->sockfd = connfd;
 					sockinf->family = SWITCHIP(i, FAM_4, FAM_6);
+          sockinf->is_tls = (sockinfo+i)->is_tls;
 					memcpy(&sockinf->sa, &sa, sizeof(sa));
 					memcpy(&sockinf->sa6, &sa6, sizeof(sa6));
-          sockinf->is_tls = (sockinfo+i)->is_tls;
 					
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
