@@ -26,6 +26,7 @@ extern char *tls_cert_file; /* config.y */
 extern char *tls_key_file; /* config.y */
 extern char *tls_crl_file; /* config.y */
 extern char *tls_cipher_prio; /* config.y */
+extern char *tls_cipher_prio_tls13; /* config.y */
 
 static SSL_CTX *context;
 
@@ -39,23 +40,25 @@ static SSL_CTX *context;
 		return FALSE; \
 	}
 
-#define CHECK_ONE(cmd)	\
+#define CHECK_CTX(cmd)	\
 	return_code = cmd; \
 	if (return_code != 1) { \
 		DO_SYSL("TLS not initialized, error in") \
 		DO_SYSL(#cmd) \
 		fprintf(stderr, "TLS not initialized, %s error\n", #cmd); \
-		fprintf(stderr, "%i\n", SSL_get_error((const SSL*) context, return_code)); \
+		ERR_print_errors_fp(stderr); \
 		return FALSE; \
 	}
 
 int
 tls_global_init()
 {
+  ERR_load_crypto_strings();
+  SSL_load_error_strings();
+
 	int return_code;
 	const SSL_METHOD *method;
 	method = TLS_server_method();
-
 	context = SSL_CTX_new(method);
 	if (!context) {
 		DO_SYSL("TLS not initialized, error in SSL_CTX_new()")
@@ -63,10 +66,17 @@ tls_global_init()
 		return FALSE;
 	}
 
-	CHECK_ONE(SSL_CTX_load_verify_locations(context, tls_ca_file, NULL))
-	CHECK_ONE(SSL_CTX_use_certificate_file(context, tls_cert_file, SSL_FILETYPE_PEM))
-	CHECK_ONE(SSL_CTX_use_PrivateKey_file(context, tls_key_file, SSL_FILETYPE_PEM))
-	//CHECK_ONE(SSL_CTX_check_private_key(context))
+	CHECK_CTX(SSL_CTX_load_verify_locations(context, tls_ca_file, NULL))
+	CHECK_CTX(SSL_CTX_use_certificate_file(context, tls_cert_file, SSL_FILETYPE_PEM))
+	CHECK_CTX(SSL_CTX_use_PrivateKey_file(context, tls_key_file, SSL_FILETYPE_PEM))
+	//CHECK_CTX(SSL_CTX_check_private_key(context))
+
+	if (tls_cipher_prio) {
+		CHECK_CTX(SSL_CTX_set_cipher_list(context, tls_cipher_prio));
+	}
+	if (tls_cipher_prio_tls13) {
+		CHECK_CTX(SSL_CTX_set_ciphersuites(context, tls_cipher_prio_tls13));
+	}
 
 	if (tls_mutual_auth) {
 		SSL_CTX_set_verify(context, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);

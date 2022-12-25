@@ -57,6 +57,7 @@ char *tls_cert_file = NULL;
 char *tls_key_file = NULL;
 char *tls_crl_file = NULL;
 char *tls_cipher_prio = NULL;
+char *tls_cipher_prio_tls13 = NULL; /* Open SSL only */
 unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
@@ -201,6 +202,7 @@ basic_setup_server(void)
 %token TOK_TLS_KEY_FILE
 %token TOK_TLS_CRL_FILE
 %token TOK_TLS_CIPHER_PRIO
+%token TOK_TLS_CIPHER_PRIO_TLS13
 %token TOK_TLS_MUTUAL_AUTH
 %token TOK_EOF
 
@@ -208,7 +210,7 @@ basic_setup_server(void)
 
 commands: /**/ | commands command;
 
-command:	beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsCipherPrio | tlsMutualAuth | eof;
+command:	beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsCipherPrio | tlsCipherPrio13 | tlsMutualAuth | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -511,6 +513,17 @@ tlsCipherPrio:
 			if (!(tls_cipher_prio = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-cipher-prio)")
 				err(1, "strdup() error (tls-cipher-prio)");
+			}
+		}
+	}
+
+tlsCipherPrio13:
+	TOK_TLS_CIPHER_PRIO_TLS13 TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (!(tls_cipher_prio_tls13 = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-cipher-prio-tls13)")
+				err(1, "strdup() error (tls-cipher-prio-tls13)");
 			}
 		}
 	}

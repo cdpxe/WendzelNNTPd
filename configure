@@ -479,7 +479,7 @@ if [ "$GNUTLS" = "NO" ]; then
 	echo "GNUTLSLIB=">> $MAKEFILE_INC
 	ADD_CFLAGS=`echo $ADD_CFLAGS " -DNOGNUTLS "`
 	echo "OPENSSLOBJ=libssl.o">> $MAKEFILE_INC
-	echo "OPENSSLLIB=-lssl">> $MAKEFILE_INC
+	echo "OPENSSLLIB=-lssl -lcrypto">> $MAKEFILE_INC
 else
 	echo "GNUTLSOBJ=gnutls.o">> $MAKEFILE_INC
 	echo "GNUTLSLIB=-lgnutls">> $MAKEFILE_INC

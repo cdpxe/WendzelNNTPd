@@ -208,11 +208,18 @@ TlsSend(gnutls_session_t session, const char *str, int len)
 static void
 TlsSend(SSL *session, const char *str, int len)
 {
-	if (SSL_write(session, str, len)<0) {
+	int return_code;
+	return_code = SSL_write(session, str, len);
+	if (return_code <= 0) {
 		if (daemon_mode) {
-			DO_SYSL("SSL_write() returned <0 -- killing connection.")
+			DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
 		} else {
-			perror("SSL_write");
+			DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
+			int err = SSL_get_error(session, return_code);
+			if (err == SSL_ERROR_SSL) {
+				fprintf(stderr, "SSL error: ");
+				ERR_print_errors_fp(stderr);
+			}
 		}
 		pthread_exit(NULL);
 	}
