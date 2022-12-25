@@ -244,7 +244,7 @@
 typedef struct {
 	int		sockfd;
 	int		family;
-  int   is_tls;
+	int		is_tls;
 	struct sockaddr_in  sa;
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
@@ -253,8 +253,8 @@ typedef struct {
 typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
 	int		tls_is_there;	/* do we have active TLS encryption? */
-  int   switch_to_tls; /* started migration to TLS */
-  gnutls_session_t tls_session; /* saves the current TLS session */
+	int	 switch_to_tls; /* started migration to TLS */
+	gnutls_session_t tls_session; /* saves the current TLS session */
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
 	

@@ -12,11 +12,11 @@
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.	If not, see <http://www.gnu.org/licenses/>.
  */
  
 #include "main.h"
@@ -57,19 +57,18 @@ char *tls_cert_file = NULL;
 char *tls_key_file = NULL;
 char *tls_crl_file = NULL;
 char *tls_cipher_prio = NULL;
-
 unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
 yyerror(const char *str)
 {
-   fprintf(stderr, "error: %s\n", str);
+	 fprintf(stderr, "error: %s\n", str);
 }
 
 int
 yywrap()
 {
-   return 1;
+	 return 1;
 }
 
 /* Wendzelnntpadm: set the global dbase value */
@@ -78,10 +77,10 @@ basic_setup_admtool()
 {
 	extern short parser_mode;
 	FILE *fp;
-	
+
 	/* define the special parser mode */
 	parser_mode = PARSER_MODE_ADMTOOL;
-	
+
 	close(0);
 	if ((fp = fopen(CONFIGFILE, "r")) == NULL) {
 		perror("Unable to open " CONFIGFILE);
@@ -92,7 +91,7 @@ basic_setup_admtool()
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
 	}
-	
+
 	/* find 'database-engine' string */
 	yyparse();
 	fclose(fp);
@@ -116,9 +115,9 @@ basic_setup_server(void)
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
 	}
-	
+
 	FD_ZERO(&fds);
-	
+
 #ifdef __WIN32__
 	/* init damn winsock */
 	if (WSAStartup(0x101, &wsa_dat) != 0) {
@@ -127,11 +126,11 @@ basic_setup_server(void)
 		exit(1);
 	}
 #endif
-	
+
 	yyparse();
-	
+
 	/* check if all needed values are included in the config struct */
-	 
+
 	if(!sockinfo) {
 		fprintf(stderr, "There are no sockets to use!\n"
 				"Use the 'listen' command in the config file to fix this.\n");
@@ -149,7 +148,7 @@ basic_setup_server(void)
 			err(1, "Need username, password and server for accessing database");
 		}
 	}
-	
+
 	/* If no port was set: use the default port */
 	if (db_port == 0) {
 		switch (dbase) {
@@ -164,14 +163,14 @@ basic_setup_server(void)
 		}
 	}
 
-  /* we need at minimum these 3 files if we want to use TLS */
-  if (use_tls) {
-    if (!tls_ca_file || !tls_cert_file || !tls_key_file) {
+	/* we need at minimum these 3 files if we want to use TLS */
+	if (use_tls) {
+		if (!tls_ca_file || !tls_cert_file || !tls_key_file) {
 			DO_SYSL("You need to specify CA file, server cert and server key files to use TLS. Exiting.");
 			fprintf(stderr, "You need to specify CA file, server cert and server key files to use TLS. Exiting.\n");
-		  exit(ERR_EXIT);
-    }
-  }
+			exit(ERR_EXIT);
+		}
+	}
 }
 
 %}
@@ -209,7 +208,7 @@ basic_setup_server(void)
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsCipherPrio | tlsMutualAuth | eof;
+command:	beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | useTLS | tlsMandatory | tlsPort | tlsCAFile | tlsCertFile | tlsKeyFile | tlsCrlFile | tlsCipherPrio | tlsMutualAuth | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -256,7 +255,7 @@ usePort:
 				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
 				exit(1);
 			}
-      is_tls_port = 0;
+			is_tls_port = 0;
 		}
 	};
 
@@ -275,7 +274,7 @@ maxPostSize:
 	};
 
 
-listenonSpec:  /* done */
+listenonSpec:	/* done */
 	TOK_LISTEN_ON TOK_NAME
 	{
 		int size=0;
@@ -284,12 +283,12 @@ listenonSpec:  /* done */
 		struct sockaddr_in sa;
 		struct sockaddr_in6 sa6;
 		char *yytext_ = NULL;
-		
+
 		if (parser_mode == PARSER_MODE_SERVER) {
 
 			CALLOC(yytext_, (char *), strlen(yytext) + 1, sizeof(char))
 			strncpy(yytext_, yytext, strlen(yytext));
-		
+
 			if (listenflag == LF_ANY_IP) {
 				fprintf(stderr,
 					"error: you have to choose between ANY IP address or some specific\n"
@@ -297,7 +296,7 @@ listenonSpec:  /* done */
 				exit(0);
 			}
 			listenflag = LF_SPEC_IP;
-		
+
 			if (!sockinfo) {
 				CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
 			} else {
@@ -307,7 +306,7 @@ listenonSpec:  /* done */
 					exit(ERR_EXIT);
 				}
 			}
-		
+
 			bzero(&sa, sizeof(sa));
 			bzero(&sa6, sizeof(sa6));
 #ifdef __WIN32__ /* lol */
@@ -321,25 +320,25 @@ listenonSpec:  /* done */
 				sa.sin_port = htons(port);
 				sa.sin_family = AF_INET;
 				salen = sizeof(struct sockaddr_in);
-			
+
 				if (((sockinfo+size)->sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-			
+
 				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa, salen) < 0) {
 					perror("bind");
 					fprintf(stderr, "bind() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				if (listen((sockinfo + size)->sockfd, 5) < 0) {
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-        (sockinfo + size)->is_tls = is_tls_port;
+				(sockinfo + size)->is_tls = is_tls_port;
 				peak = max((sockinfo + size)->sockfd, peak);
 				(sockinfo + size)->family=AF_INET;
 #ifndef __WIN32__ /* IPv6-ready systems */
@@ -347,24 +346,24 @@ listenonSpec:  /* done */
 				sa6.sin6_port = htons(port);
 				sa6.sin6_family = AF_INET6;
 				sa6len = sizeof(struct sockaddr_in6);
-			
+
 				if (((sockinfo + size)->sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {
 					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-			
+
 				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {
 					fprintf(stderr, "bind() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				if (listen((sockinfo + size)->sockfd, 5) < 0) {
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-        (sockinfo + size)->is_tls = is_tls_port;
+				(sockinfo + size)->is_tls = is_tls_port;
 				peak = max((sockinfo+size)->sockfd, peak);
 				(sockinfo + size)->family = AF_INET6;
 #endif
@@ -442,14 +441,14 @@ useTLS:
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			use_tls=1;
-    }
+		}
 	};
 
 tlsMandatory:
 	TOK_TLS_MANDATORY
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      tls_is_mandatory = 1;
+			tls_is_mandatory = 1;
 		}
 	}
 
@@ -457,7 +456,7 @@ tlsPort:
 	TOK_IS_TLS_PORT
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      is_tls_port = 1;
+			is_tls_port = 1;
 		}
 	}
 
@@ -465,10 +464,10 @@ tlsCAFile:
 	TOK_TLS_CA_FILE TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_ca_file = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-ca-file)")
-        err(1, "strdup() error (tls-ca-file)");
-      }
+			if (!(tls_ca_file = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-ca-file)")
+				err(1, "strdup() error (tls-ca-file)");
+			}
 		}
 	}
 
@@ -476,10 +475,10 @@ tlsCertFile:
 	TOK_TLS_CERT_FILE TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_cert_file = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-cert-file)")
-        err(1, "strdup() error (tls-cert-file)");
-      }
+			if (!(tls_cert_file = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-cert-file)")
+				err(1, "strdup() error (tls-cert-file)");
+			}
 		}
 	}
 
@@ -487,10 +486,10 @@ tlsKeyFile:
 	TOK_TLS_KEY_FILE TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_key_file = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-key-file)")
-        err(1, "strdup() error (tls-key-file)");
-      }
+			if (!(tls_key_file = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-key-file)")
+				err(1, "strdup() error (tls-key-file)");
+			}
 		}
 	}
 
@@ -498,10 +497,10 @@ tlsCrlFile:
 	TOK_TLS_CRL_FILE TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_crl_file = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-crl-file)")
-        err(1, "strdup() error (tls-crl-file)");
-      }
+			if (!(tls_crl_file = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-crl-file)")
+				err(1, "strdup() error (tls-crl-file)");
+			}
 		}
 	}
 
@@ -509,10 +508,10 @@ tlsCipherPrio:
 	TOK_TLS_CIPHER_PRIO TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      if (!(tls_cipher_prio = strdup(yytext))) {
-        DO_SYSL("strdup() error (tls-cipher-prio)")
-        err(1, "strdup() error (tls-cipher-prio)");
-      }
+			if (!(tls_cipher_prio = strdup(yytext))) {
+				DO_SYSL("strdup() error (tls-cipher-prio)")
+				err(1, "strdup() error (tls-cipher-prio)");
+			}
 		}
 	}
 
@@ -520,7 +519,7 @@ tlsMutualAuth:
 	TOK_TLS_MUTUAL_AUTH
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-      tls_mutual_auth = 1;
+			tls_mutual_auth = 1;
 		}
 	}
 

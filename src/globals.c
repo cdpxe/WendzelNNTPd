@@ -32,9 +32,9 @@ extern int use_tls; /* config.y */
 void
 sig_handler(int signr)
 {
-  if (use_tls) {
-    tls_global_close();
-  }
+	if (use_tls) {
+		tls_global_close();
+	}
 
 	DO_SYSL("----clean exit after signal.----")
 	exit(ERR_EXIT);

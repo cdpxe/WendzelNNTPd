@@ -10,11 +10,11 @@
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.	If not, see <http://www.gnu.org/licenses/>.
  */
  
 #include "main.h"
@@ -43,9 +43,9 @@ static void
 usage_(void)
 {
 	fprintf(stderr, "WendzelNNTPd accepts the following *exclusive* parameters:\n"
-					"-d     run WendzelNNTPd in daemon mode\n"
-					"-h     print help\n"
-					"-v     print the version and exit\n");
+					"-d		 run WendzelNNTPd in daemon mode\n"
+					"-h		 print help\n"
+					"-v		 print the version and exit\n");
 }
 
 static void
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 #endif
 	pthread_t th1;
 	sockinfo_t *sockinf;
-	
+
 	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
 			welcome_(0);
@@ -119,27 +119,27 @@ main(int argc, char *argv[])
 #ifndef __WIN32__ /* lol */
 		if (strncmp(argv[1], "-d", 2) == 0) { /* daemon mode */
 			if ((pid = fork()) < 0) {
-         			fprintf(stderr, "cannot fork().\n");
-        	 		return ERR_EXIT;
-      			} else if (pid) { /* parent */
+				 			fprintf(stderr, "cannot fork().\n");
+					 		return ERR_EXIT;
+						} else if (pid) { /* parent */
 				return OK_EXIT;
-	      		}
+						}
 			daemon_mode = 1;
-	      		setsid();
-	      		chdir("/");
-	      		umask(077);
-	      		DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
+						setsid();
+						chdir("/");
+						umask(077);
+						DO_SYSL("----WendzelNNTPd is running in daemon mode now----")
 		}
 #endif
 	}
-	
+
 #ifndef __WIN32__ /* some *nix security */
 	umask(077);
 #endif
-	
+
 	check_db();
 	welcome_(1);
-	
+
 /* SOCKET MAINLOOP */
 	/* from now on: db abstraction in thread mode.
 	 * this means no exit(ERR_EXIT) is used. instead only
@@ -198,31 +198,31 @@ main(int argc, char *argv[])
 					}
 					strncpy(conn_logstr + strlen(new_conn_prefix), (sockinfo+i)->ip,
 						strlen((sockinfo+i)->ip));
-					
+
 					DO_SYSL(conn_logstr)
-					
+
 					/* After Logging: The real stuff */
 					CALLOC(sockinf, (sockinfo_t *), 1, sizeof(sockinfo_t))
 					sockinf->sockfd = connfd;
 					sockinf->family = SWITCHIP(i, FAM_4, FAM_6);
-          sockinf->is_tls = (sockinfo+i)->is_tls;
+					sockinf->is_tls = (sockinfo+i)->is_tls;
 					memcpy(&sockinf->sa, &sa, sizeof(sa));
 					memcpy(&sockinf->sa6, &sa6, sizeof(sa6));
-					
+
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
-					
+
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {
 						DO_SYSL("pthread_create() returned != 0")
 						free(sockinf);
 					}
-					
+
 					/* don't free() sockinf here since the thread does it itself */
 				}
 			}
 		}
 	} while (1);
-	
+
 	return 0;
 }
 
