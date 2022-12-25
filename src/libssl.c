@@ -53,8 +53,8 @@ static SSL_CTX *context;
 int
 tls_global_init()
 {
-  ERR_load_crypto_strings();
-  SSL_load_error_strings();
+	ERR_load_crypto_strings();
+	SSL_load_error_strings();
 
 	int return_code;
 	const SSL_METHOD *method;

@@ -104,7 +104,12 @@ main(int argc, char *argv[])
 		perror("signal");
 		exit(ERR_EXIT);
 	}
+#ifndef NOOPENSSL
+	/* SSL_write() may caus a SIGPIPE, ignore it */
+	signal(SIGPIPE, SIG_IGN);
 #endif
+#endif
+
 	/* 41 - 5a = upper case -> + 0x20 = lower case */
 	for (i = 0; i < 256; i++) {
 		if (i >= 0x41 && i <= 0x5a)
