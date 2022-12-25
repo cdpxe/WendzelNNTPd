@@ -1803,6 +1803,11 @@ kill_thread(server_cb_inf *inf)
 	/* close db connection */
 	db_close_connection(inf);
 	
+
+  /* shutdown TLS */
+  if (inf->servinf->tls_is_there) {
+    tls_session_close(inf->servinf->tls_session);
+  }
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);
 #else
