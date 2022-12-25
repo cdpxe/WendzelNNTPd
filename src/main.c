@@ -105,7 +105,7 @@ main(int argc, char *argv[])
 		exit(ERR_EXIT);
 	}
 #ifndef NOOPENSSL
-	/* SSL_write() may caus a SIGPIPE, ignore it */
+	/* SSL_write() may cause a SIGPIPE, ignore it */
 	signal(SIGPIPE, SIG_IGN);
 #endif
 #endif
