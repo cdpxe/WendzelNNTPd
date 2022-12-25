@@ -89,19 +89,20 @@ tls_global_init()
 void
 tls_global_close()
 {
-		gnutls_certificate_free_credentials(x509_credentials);
-		gnutls_priority_deinit(tls_cipher_priorities);
-		gnutls_global_deinit();
+	gnutls_certificate_free_credentials(x509_credentials);
+	gnutls_priority_deinit(tls_cipher_priorities);
+	gnutls_global_deinit();
 
-		DO_SYSL("TLS shutdown")
+	DO_SYSL("TLS shutdown")
 }
 
 int
 tls_session_init(gnutls_session_t *session, int sockfd)
 {
+
 	int return_code;
 
-	CHECK(gnutls_init(session, GNUTLS_SERVER))
+	CHECK(gnutls_init(session, GNUTLS_SERVER | GNUTLS_NO_SIGNAL))
 	CHECK(gnutls_priority_set(*session, tls_cipher_priorities))
 	CHECK(gnutls_credentials_set(*session, GNUTLS_CRD_CERTIFICATE, x509_credentials))
 
@@ -142,5 +143,6 @@ tls_session_close(gnutls_session_t session)
 	} while (return_code == GNUTLS_E_AGAIN || return_code == GNUTLS_E_INTERRUPTED);
 
 	gnutls_deinit(session);
+
 	DO_SYSL("TLS session shutdown")
 }

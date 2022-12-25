@@ -125,16 +125,21 @@ if [ "$1" != "" ]; then
 	echo
 	echo "2) Databases (options to disable support at compile-time):"
 	echo
-	echo "MYSQL=NO - Disables support for MySQL if you do not wish to"
-	echo "           install mysqlclient and mysql development libraries"
-	echo "           or if you do not wish to have WendzelNNTPd contain"
-	echo "           any support for MySQL (use: 'MYSQL=NO ./configure')."
-	echo "SQLITE   - Disables support for SQLITE if you do not wish to"
-	echo "           install sqlite development libraries or if you do"
-	echo "           not wish to have WendzelNNTPd contain any support"
-	echo "           for SQLite (use: 'SQLITE=NO ./configure')."
+	echo "MYSQL=NO  - Disables support for MySQL if you do not wish to"
+	echo "            install mysqlclient and mysql development libraries"
+	echo "            or if you do not wish to have WendzelNNTPd contain"
+	echo "            any support for MySQL (use: 'MYSQL=NO ./configure')."
+	echo "SQLITE=NO - Disables support for SQLITE if you do not wish to"
+	echo "            install sqlite development libraries or if you do"
+	echo "            not wish to have WendzelNNTPd contain any support"
+	echo "            for SQLite (use: 'SQLITE=NO ./configure')."
 	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE but not"
 	echo "both as least one database is required to operate WendzelNNTPd."
+	echo
+	echo "3) TLS support (GnuTLS is default, you can switch to OpenSSL)"
+	echo
+	echo "GNUTLS=NO - Disabled suport for GnuTLS, use OpenSSL/libssl instead"
+	echo
 	exit 1
 fi
 
@@ -387,18 +392,28 @@ fi
 rm -f temp temp.c
 
 
-###############
+################
+# TLS
+################
 
-#out "checking for openssl..."
-#openssl	-v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
-
-out "checking for libgnutls..."
-cat << EOF >temp.c
+if [ "$GNUTLS" = "NO" ]; then
+	out "configuring with OpenSSL instead of GnuTLS..."; echo
+	out "checking for libssl..."
+	cat << EOF >temp.c
+#include <openssl/ssl.h>
+int main(){SSL_library_init();return 0;}
+EOF
+	gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+	rm -f temp temp.c
+else
+	out "checking for libgnutls..."
+	cat << EOF >temp.c
 #include <gnutls/gnutls.h>
 int main(){gnutls_global_init();return 0;}
 EOF
-gcc -o temp temp.c -lgnutls 2>&1; check "yes" "no" "You need libngutls."
-rm -f temp temp.c
+	gcc -o temp temp.c -lgnutls 2>&1; check "yes" "no" "You need libngutls."
+	rm -f temp temp.c
+fi
 
 ############# rc.d script ADJUSTMENT ##########
 
@@ -459,8 +474,21 @@ else
 	echo 'SQLITEOBJ=db_sqlite3.o'>> $MAKEFILE_INC
 fi
 
+if [ "$GNUTLS" = "NO" ]; then
+	echo "GNUTLSOBJ=">> $MAKEFILE_INC
+	echo "GNUTLSLIB=">> $MAKEFILE_INC
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DNOGNUTLS "`
+	echo "OPENSSLOBJ=libssl.o">> $MAKEFILE_INC
+	echo "OPENSSLLIB=-lssl">> $MAKEFILE_INC
+else
+	echo "GNUTLSOBJ=gnutls.o">> $MAKEFILE_INC
+	echo "GNUTLSLIB=-lgnutls">> $MAKEFILE_INC
+	echo "OPENSSLOBJ=">> $MAKEFILE_INC
+	echo "OPENSSLLIB=">> $MAKEFILE_INC
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DNOOPENSSL "`
+fi
+
 echo "LIBMHASH=-lmhash">> $MAKEFILE_INC
-echo "LIBGNUTLS=-lgnutls">> $MAKEFILE_INC
 
 echo "TABCPATH=$TABCPATH">> $MAKEFILE_INC
 echo "ORDER=-DORDER=$ORDER">> $MAKEFILE_INC

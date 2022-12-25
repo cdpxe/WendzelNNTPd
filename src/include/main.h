@@ -83,7 +83,15 @@
 #endif
 
 /* GnuTLS */
-#include <gnutls/gnutls.h>
+#ifndef NOGNUTLS
+  #include <gnutls/gnutls.h>
+#endif
+
+/* OpenSSL */
+#ifndef NOOPENSSL
+ #include <openssl/ssl.h>
+ #include <openssl/err.h>
+#endif
 
 /* Own files */
 #include "wendzelnntpdpath.h"
@@ -254,7 +262,12 @@ typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
 	int		tls_is_there;	/* do we have active TLS encryption? */
 	int	 switch_to_tls; /* started migration to TLS */
+#ifndef NOGNUTLS
 	gnutls_session_t tls_session; /* saves the current TLS session */
+#endif
+#ifndef NOOPENSSL
+	SSL *tls_session; /* saves the current OpenSSL session */
+#endif
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
 	
@@ -331,11 +344,21 @@ void *do_server(void *);
 void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
 
-/* tls.c */
+/* gnutls.c and libssl.c */
 int tls_global_init();
 void tls_global_close();
+
+/* gnutls.c */
+#ifndef NOGNUTLS
 int tls_session_init(gnutls_session_t *session, int sockfd);
 void tls_session_close(gnutls_session_t session);
+#endif
+
+/* libssl.c */
+#ifndef NOOPENSSL
+int tls_session_init(SSL **session, int sockfd);
+void tls_session_close(SSL *session);
+#endif
 
 /* db_abstraction.c */
 void db_open_connection(server_cb_inf *);

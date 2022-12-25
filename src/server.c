@@ -110,7 +110,12 @@ char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
 static void Send(int, char *, int);
+#ifndef NOGNUTLS
 static void TlsSend(gnutls_session_t, const char *, int);
+#endif
+#ifndef NOOPENSSL
+static void TlsSend(SSL *, const char *, int);
+#endif
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -184,6 +189,7 @@ Send(int lsockfd, char *str, int len)
 	}
 }
 
+#ifndef NOGNUTLS
 static void
 TlsSend(gnutls_session_t session, const char *str, int len)
 {
@@ -196,6 +202,22 @@ TlsSend(gnutls_session_t session, const char *str, int len)
 		pthread_exit(NULL);
 	}
 }
+#endif
+
+#ifndef NOOPENSSL
+static void
+TlsSend(SSL *session, const char *str, int len)
+{
+	if (SSL_write(session, str, len)<0) {
+		if (daemon_mode) {
+			DO_SYSL("SSL_write() returned <0 -- killing connection.")
+		} else {
+			perror("SSL_write");
+		}
+		pthread_exit(NULL);
+	}
+}
+#endif
 
 void
 ToSend(char *str, int len, server_cb_inf *inf)
@@ -1544,7 +1566,11 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
-		Send(inf->sockinf->sockfd, quitstring, strlen(quitstring));
+		if (inf->servinf->tls_is_there) {
+			TlsSend(inf->servinf->tls_session, quitstring, strlen(quitstring));
+		} else {
+			Send(inf->sockinf->sockfd, quitstring, strlen(quitstring));
+		}
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
@@ -1684,8 +1710,15 @@ do_server(void *socket_info_ptr)
 		/* switch to TLS in server code, must be done outside docmd_ */
 		static unsigned short tls_switch_fails = 0;
 		if (inf.servinf->switch_to_tls) {
-			if (tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
-				inf.servinf->switch_to_tls = 0;
+			inf.servinf->switch_to_tls = 0;
+			if (!tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
+				if (++tls_switch_fails < 3) {
+					Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
+				} else {
+					Send(inf.sockinf->sockfd, tls_failed, strlen(tls_failed));
+					kill_thread(&inf);
+				}
+			} else {
 				inf.servinf->tls_is_there = 1;
 
 				/* Reset all data of the user when switchting to TLS (RFC 4642 requires this) */
@@ -1709,23 +1742,20 @@ do_server(void *socket_info_ptr)
 				fprintf(stderr, "client switched to TLS.\n");
 				FFLUSH
 #endif
-			} else {
-				inf.servinf->switch_to_tls = 0;
-				if (++tls_switch_fails < 3) {
-					Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
-				} else {
-					Send(inf.sockinf->sockfd, tls_failed, strlen(tls_failed));
-					kill_thread(&inf);
-				}
 			}
 		}
 
 		/* 2. receive byte-wise */
 		ssize_t return_val = -1;
 		if (inf.servinf->tls_is_there) {
+#ifndef NOGNUTLS
 			do {
 				return_val = gnutls_record_recv(inf.servinf->tls_session, recvbuf+len, 1);
 			} while (return_val == GNUTLS_E_AGAIN || return_val == GNUTLS_E_INTERRUPTED);
+#endif
+#ifndef NOOPENSSL
+				return_val = SSL_read(inf.servinf->tls_session, recvbuf+len, 1);
+#endif
 		} else {
 			return_val = recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0);
 		}
@@ -1803,11 +1833,11 @@ kill_thread(server_cb_inf *inf)
 	/* close db connection */
 	db_close_connection(inf);
 
-
 	/* shutdown TLS */
 	if (inf->servinf->tls_is_there) {
 		tls_session_close(inf->servinf->tls_session);
 	}
+
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);
 #else
