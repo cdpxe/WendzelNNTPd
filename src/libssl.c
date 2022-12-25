@@ -52,7 +52,7 @@ static SSL_CTX *context;
 int
 tls_global_init()
 {
-  int return_code;
+	int return_code;
 	const SSL_METHOD *method;
 	method = TLS_server_method();
 
@@ -63,8 +63,16 @@ tls_global_init()
 		return FALSE;
 	}
 
-  CHECK_ONE(SSL_CTX_use_certificate_file(context, tls_cert_file, SSL_FILETYPE_PEM))
-  CHECK_ONE(SSL_CTX_use_PrivateKey_file(context, tls_key_file, SSL_FILETYPE_PEM))
+	CHECK_ONE(SSL_CTX_load_verify_locations(context, tls_ca_file, NULL))
+	CHECK_ONE(SSL_CTX_use_certificate_file(context, tls_cert_file, SSL_FILETYPE_PEM))
+	CHECK_ONE(SSL_CTX_use_PrivateKey_file(context, tls_key_file, SSL_FILETYPE_PEM))
+	//CHECK_ONE(SSL_CTX_check_private_key(context))
+
+	if (tls_mutual_auth) {
+		SSL_CTX_set_verify(context, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
+	} else {
+		SSL_CTX_set_verify(context, SSL_VERIFY_NONE, NULL);
+	}
 
 	DO_SYSL("TLS initialized");
 	return TRUE;
@@ -81,14 +89,14 @@ tls_global_close()
 int
 tls_session_init(SSL **session, int sockfd)
 {
-  int return_code;
+	int return_code;
 
 	*session = SSL_new(context);
-  if (!*session) {
+	if (!*session) {
 		DO_SYSL("TLS not initialized, error in SSL_new()")
 		fprintf(stderr, "TLS not initialized, SSL_new() error\n");
-    return FALSE;
-  }
+		return FALSE;
+	}
 
 	CHECK(SSL_set_fd(*session, sockfd))
 	CHECK(SSL_accept(*session))
