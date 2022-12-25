@@ -75,7 +75,11 @@ tls_global_init()
 		CHECK_CTX(SSL_CTX_set_cipher_list(context, tls_cipher_prio));
 	}
 	if (tls_cipher_prio_tls13) {
-		CHECK_CTX(SSL_CTX_set_ciphersuites(context, tls_cipher_prio_tls13));
+		if (strncmp("NULL", tls_cipher_prio_tls13, strlen(tls_cipher_prio_tls13)) == 0) {
+			SSL_CTX_set_max_proto_version(context, TLS1_2_VERSION);
+		} else {
+			CHECK_CTX(SSL_CTX_set_ciphersuites(context, tls_cipher_prio_tls13));
+		}
 	}
 
 	if (tls_mutual_auth) {
