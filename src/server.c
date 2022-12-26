@@ -32,8 +32,10 @@ extern char lowercase[256];
 extern int daemon_mode;		/* main.c */
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
+#ifndef NOTLS
 extern unsigned short use_tls; /* config.y */
 extern unsigned short tls_is_mandatory; /* config.y */
+#endif
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	NNTP Messages
@@ -53,7 +55,9 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "\tmode reader (always returns 200)\r\n"
                                  "\tpost\r\n"
                                  "\tquit\r\n"
+#ifndef NOTLS
                                  "\tstarttls\r\n"
+#endif
                                  "\tstat [number|<message-id>]\r\n"
                                  "\txhdr <from|date|newsgroups|subject|lines> <number[-[endnum]]|msgid>\r\n"
 				"\txover <from[-[to]]>\r\n"
@@ -89,8 +93,10 @@ char xover[]=                 "224 overview information follows\r\n";
 char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
+#ifndef NOTLS
 char tls_connect[]=           "382 continue with TLS negotiation\r\n";
 char tls_failed[]=            "400 Connection closing due to lack of security\r\n";
+#endif
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -101,13 +107,17 @@ char hdrerror_newsgroup[]=    "441 'newsgroups' line needed or incorrect.\r\n";
 char posterr_posttoobig[]=    "441 posting too huge.\r\n";
 char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in which posting is not permitted).\r\n";
 char auth_req[]=              "480 authentication required.\r\n";
+#ifndef NOTLS
 char tls_req[]=               "483 TLS encryption required.\r\n";
+#endif
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 program error, function not performed\r\n";
 char post_too_big[]=          "503 posting size too big (administratively prohibited)\r\n";
+#ifndef NOTLS
 char tls_error[]=             "580 can not initiate TLS negotiation\r\n";
+#endif
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
@@ -126,7 +136,6 @@ static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
 static void docmd_mode_reader(server_cb_inf *);
 static void docmd_capabilities(server_cb_inf *);
-static unsigned short check_tls_mandatory(server_cb_inf *);
 
 /* this function returns a command line argv[]. counting (=num) starts
  * by 0 */
@@ -176,6 +185,7 @@ get_slinearg(char *cmdstring, int num)
 static void
 Send(server_cb_inf *inf, char *str, int len)
 {
+#ifndef NOTLS
 	if (inf->servinf->tls_is_there) {
 #ifndef NOGNUTLS
 		if(gnutls_record_send(inf->servinf->tls_session, str, len)<0) {
@@ -205,6 +215,7 @@ Send(server_cb_inf *inf, char *str, int len)
 		}
 #endif
 	} else {
+#endif
 		if(send(inf->sockinf->sockfd, str, len, MSG_NOSIGNAL)<0) {
 			if (daemon_mode) {
 				DO_SYSL("send() returned <0 -- killing connection.")
@@ -213,7 +224,9 @@ Send(server_cb_inf *inf, char *str, int len)
 			}
 			pthread_exit(NULL);
 		}
+#ifndef NOTLS
 	}
+#endif
 }
 
 void
@@ -250,6 +263,7 @@ int
 Receive(server_cb_inf *inf, char *str, int len)
 {
 	int recv_bytes = -1;
+#ifndef NOTLS
 	if (inf->servinf->tls_is_there) {
 #ifndef NOGNUTLS
 		do {
@@ -260,8 +274,11 @@ Receive(server_cb_inf *inf, char *str, int len)
 		recv_bytes = SSL_read(inf->servinf->tls_session, str, len);
 #endif
 	} else {
+#endif
 		recv_bytes = recv(inf->sockinf->sockfd, str, len, 0);
+#ifndef NOTLS
 	}
+#endif
 
 	return recv_bytes;
 }
@@ -281,18 +298,6 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 #endif
 }
 
-static unsigned short
-check_tls_mandatory(server_cb_inf *inf)
-{
-	if (use_tls) {
-		if (!inf->servinf->tls_is_there && tls_is_mandatory) {
-			ToSend(tls_req, strlen(tls_req), inf);
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	CAPABILITES
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -306,7 +311,9 @@ docmd_capabilities(server_cb_inf *inf)
 	char cap_list[]="LIST NEWSGROUPS OVERVIEW.FMT\r\n";
 	char cap_mode_reader[]="MODE-READER\r\n";
 	char cap_post[]="POST\r\n";
+#ifndef NOTLS
 	char cap_starttls[]="STARTTLS\r\n";
+#endif
 
 	/* XOVER and XHDR can not be advertized via CAPABILITES */
 
@@ -318,21 +325,28 @@ docmd_capabilities(server_cb_inf *inf)
 	ToSend(cap_authinfo, strlen(cap_authinfo), inf);
 	ToSend(cap_list, strlen(cap_list), inf);
 
+#ifndef NOTLS
 	/* MODE READER can NOT be switched when TLS active */
 	if (!inf->servinf->tls_is_there) {
+#endif
 		ToSend(cap_mode_reader, strlen(cap_mode_reader), inf);
+#ifndef NOTLS
 	}
+#endif
 
 	ToSend(cap_post, strlen(cap_post), inf);
 
+#ifndef NOTLS
 	/* STARTTLS only if not already on TLS */
 	if (!inf->servinf->tls_is_there) {
 		ToSend(cap_starttls, strlen(cap_starttls), inf);
 	}
+#endif
 
 	ToSend(period_end, strlen(period_end), inf);
 }
 
+#ifndef NOTLS
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	STARTTLS
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -347,6 +361,7 @@ docmd_starttls(server_cb_inf *inf)
 		inf->servinf->switch_to_tls = 1;
 	}
 }
+#endif
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -356,12 +371,16 @@ docmd_starttls(server_cb_inf *inf)
 static void
 docmd_mode_reader(server_cb_inf *inf)
 {
+#ifndef NOTLS
 	/* MODE READER must NOT be available on TLS connections */
 	if (inf->servinf->tls_is_there) {
 		ToSend(unknown_cmd, strlen(unknown_cmd), inf);
 	} else {
+#endif
 		ToSend(mode_reader_ok, strlen(mode_reader_ok), inf);
+#ifndef NOTLS
 	}
+#endif
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1578,6 +1597,17 @@ do_command(char *recvbuf, server_cb_inf *inf)
 #define QUESTION(cmd, len)	strncasecmp(recvbuf, cmd, len)==0
 #define QUESTION_AUTH(cmd, len)	( (inf->servinf->auth_is_there || use_auth == 0) && strncasecmp(recvbuf, cmd, len)==0)
 
+#ifndef NOTLS
+#define CHECK_MANDATORY_TLS(cmd) \
+	if (use_tls && !inf->servinf->tls_is_there && tls_is_mandatory) { \
+		ToSend(tls_req, strlen(tls_req), inf); \
+	} else { \
+    (cmd); \
+  }
+#else
+#define CHECK_MANDATORY_TLS(cmd) (cmd);
+#endif
+
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
@@ -1585,65 +1615,45 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_authinfo_user(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_authinfo_user(recvbuf, inf))
 	} else if (QUESTION("authinfo pass ", 14)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_authinfo_pass(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_authinfo_pass(recvbuf, inf))
 	} else if (QUESTION("capabilities", 12)) {
 		docmd_capabilities(inf);
+#ifndef NOTLS
 	} else if (QUESTION("starttls", 8)) {
 		docmd_starttls(inf);
+#endif
 	}
 
 	/* COMMANDS THAT NEED AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 
 	else if (QUESTION_AUTH("list newsgroups", 15)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS);
-		}
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS))
 	} else if (QUESTION_AUTH("list overview.fmt", 17)) {
-			ToSend(list_overview_fmt_info, strlen(list_overview_fmt_info), inf);
+		ToSend(list_overview_fmt_info, strlen(list_overview_fmt_info), inf);
 	} else if (QUESTION_AUTH("listgroup", 9)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_listgroup(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_listgroup(recvbuf, inf))
 	} else if (QUESTION_AUTH("list", 4)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_list(recvbuf, inf, CMDTYP_LIST);
-		}
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_LIST))
 	} else if (QUESTION_AUTH("xgtitle", 7)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_list(recvbuf, inf, CMDTYP_XGTITLE);
-		}
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_XGTITLE))
 	} else if (QUESTION_AUTH("help", 4)) {
 		ToSend(helpstring, strlen(helpstring), inf);
 	} else if (QUESTION_AUTH("group", 5)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_group(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_group(recvbuf, inf))
 	} else if (QUESTION_AUTH("xover", 5)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_xover(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_xover(recvbuf, inf))
 	} else if (QUESTION_AUTH("xhdr", 4)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_xhdr(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_xhdr(recvbuf, inf))
 	} else if (QUESTION_AUTH("article", 7) || QUESTION_AUTH("head", 4)
 		|| QUESTION_AUTH("body", 4) || QUESTION_AUTH("stat", 4)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_article(recvbuf, inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_article(recvbuf, inf))
 	} else if (QUESTION_AUTH("mode reader", 11)) {
 		docmd_mode_reader(inf);
 	} else if (QUESTION_AUTH("post", 4)) {
-		if (check_tls_mandatory(inf)) {
-			docmd_post(inf);
-		}
+		CHECK_MANDATORY_TLS(docmd_post(inf))
 	} else if (QUESTION_AUTH("date", 4)) {
 		docmd_date(inf);
 	} else if (QUESTION_AUTH("NEWNEWS", 7)) {
@@ -1687,6 +1697,7 @@ do_server(void *socket_info_ptr)
 
 	db_open_connection(&inf);
 
+#ifndef NOTLS
 	if (inf.sockinf->is_tls) {
 		if (!tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
 			DO_SYSL("Could not init TLS session. Exiting.");
@@ -1694,11 +1705,11 @@ do_server(void *socket_info_ptr)
 			kill_thread(&inf);
 		} else {
 			inf.servinf->tls_is_there = 1;
-			Send(&inf, welcomestring, strlen(welcomestring));
 		}
-	} else {
-		Send(&inf, welcomestring, strlen(welcomestring));
 	}
+#endif
+
+	Send(&inf, welcomestring, strlen(welcomestring));
 
 	if(use_auth==1) {
 		servinf.auth_is_there=0;
@@ -1718,6 +1729,7 @@ do_server(void *socket_info_ptr)
 			kill_thread(&inf);
 		}
 
+#ifndef NOTLS
 		/* switch to TLS in server code, must be done outside docmd_ */
 		static unsigned short tls_switch_fails = 0;
 		if (inf.servinf->switch_to_tls) {
@@ -1755,6 +1767,7 @@ do_server(void *socket_info_ptr)
 #endif
 			}
 		}
+#endif
 
 		/* 2. receive byte-wise */
 		int return_val = -1;
@@ -1829,10 +1842,12 @@ kill_thread(server_cb_inf *inf)
 	/* close db connection */
 	db_close_connection(inf);
 
+#ifndef NOTLS
 	/* shutdown TLS */
 	if (inf->servinf->tls_is_there) {
 		tls_session_close(inf->servinf->tls_session);
 	}
+#endif
 
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);

@@ -49,6 +49,7 @@ char *hash_salt = "default-hash-salt-0_----3331";
 #define	LF_SPEC_IP	0x02
 int listenflag = 0;
 
+#ifndef NOTLS
 int is_tls_port = 0;
 unsigned short use_tls = 0;	/* do we use TLS at all? */
 unsigned short tls_mutual_auth = 0; /* check client cert */
@@ -59,6 +60,7 @@ char *tls_crl_file = NULL;
 char *tls_cipher_prio = NULL;
 char *tls_cipher_prio_tls13 = NULL; /* Open SSL only */
 unsigned short tls_is_mandatory = 0; /* force TLS on commands */
+#endif
 
 void
 yyerror(const char *str)
@@ -164,6 +166,7 @@ basic_setup_server(void)
 		}
 	}
 
+#ifndef NOTLS
 	/* we need at minimum these 3 files if we want to use TLS */
 	if (use_tls) {
 		if (!tls_ca_file || !tls_cert_file || !tls_key_file) {
@@ -172,6 +175,7 @@ basic_setup_server(void)
 			exit(ERR_EXIT);
 		}
 	}
+#endif
 }
 
 %}
@@ -257,7 +261,9 @@ usePort:
 				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
 				exit(1);
 			}
+#ifndef NOTLS
 			is_tls_port = 0;
+#endif
 		}
 	};
 
@@ -340,7 +346,9 @@ listenonSpec:	/* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
+#ifndef NOTLS
 				(sockinfo + size)->is_tls = is_tls_port;
+#endif
 				peak = max((sockinfo + size)->sockfd, peak);
 				(sockinfo + size)->family=AF_INET;
 #ifndef __WIN32__ /* IPv6-ready systems */
@@ -365,7 +373,9 @@ listenonSpec:	/* done */
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
+#ifndef NOTLS
 				(sockinfo + size)->is_tls = is_tls_port;
+#endif
 				peak = max((sockinfo+size)->sockfd, peak);
 				(sockinfo + size)->family = AF_INET6;
 #endif
@@ -441,99 +451,119 @@ hashSalt:
 useTLS:
 	TOK_USE_TLS
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			use_tls=1;
 		}
+#endif
 	};
 
 tlsMandatory:
 	TOK_TLS_MANDATORY
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			tls_is_mandatory = 1;
 		}
+#endif
 	}
 
 tlsPort:
 	TOK_IS_TLS_PORT
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			is_tls_port = 1;
 		}
+#endif
 	}
 
 tlsCAFile:
 	TOK_TLS_CA_FILE TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_ca_file = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-ca-file)")
 				err(1, "strdup() error (tls-ca-file)");
 			}
 		}
+#endif
 	}
 
 tlsCertFile:
 	TOK_TLS_CERT_FILE TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_cert_file = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-cert-file)")
 				err(1, "strdup() error (tls-cert-file)");
 			}
 		}
+#endif
 	}
 
 tlsKeyFile:
 	TOK_TLS_KEY_FILE TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_key_file = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-key-file)")
 				err(1, "strdup() error (tls-key-file)");
 			}
 		}
+#endif
 	}
 
 tlsCrlFile:
 	TOK_TLS_CRL_FILE TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_crl_file = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-crl-file)")
 				err(1, "strdup() error (tls-crl-file)");
 			}
 		}
+#endif
 	}
 
 tlsCipherPrio:
 	TOK_TLS_CIPHER_PRIO TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_cipher_prio = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-cipher-prio)")
 				err(1, "strdup() error (tls-cipher-prio)");
 			}
 		}
+#endif
 	}
 
 tlsCipherPrio13:
 	TOK_TLS_CIPHER_PRIO_TLS13 TOK_NAME
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (!(tls_cipher_prio_tls13 = strdup(yytext))) {
 				DO_SYSL("strdup() error (tls-cipher-prio-tls13)")
 				err(1, "strdup() error (tls-cipher-prio-tls13)");
 			}
 		}
+#endif
 	}
 
 tlsMutualAuth:
 	TOK_TLS_MUTUAL_AUTH
 	{
+#ifndef NOTLS
 		if (parser_mode == PARSER_MODE_SERVER) {
 			tls_mutual_auth = 1;
 		}
+#endif
 	}
 
 eof:

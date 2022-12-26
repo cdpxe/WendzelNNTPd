@@ -26,7 +26,9 @@ extern int size_sockinfo_t;
 extern int daemon_mode;
 extern short global_mode;
 
+#ifndef NOTLS
 extern unsigned short use_tls; /* config.y */
+#endif
 
 /* need this global for server.c */
 struct sockaddr_in sa;
@@ -87,12 +89,14 @@ main(int argc, char *argv[])
 
 	basic_setup_server();
 
+#ifndef NOTLS
 	if (use_tls == 1) {
 		if (tls_global_init() == FALSE) {
 			DO_SYSL("TLS init error");
 			exit(ERR_EXIT);
 		}
 	}
+#endif
 
 #ifndef __WIN32__
 	/* signal handling */
@@ -104,9 +108,11 @@ main(int argc, char *argv[])
 		perror("signal");
 		exit(ERR_EXIT);
 	}
+#ifndef NOTLS
 #ifndef NOOPENSSL
 	/* SSL_write() may cause a SIGPIPE, ignore it */
 	signal(SIGPIPE, SIG_IGN);
+#endif
 #endif
 #endif
 
@@ -210,7 +216,9 @@ main(int argc, char *argv[])
 					CALLOC(sockinf, (sockinfo_t *), 1, sizeof(sockinfo_t))
 					sockinf->sockfd = connfd;
 					sockinf->family = SWITCHIP(i, FAM_4, FAM_6);
+#ifndef NOTLS
 					sockinf->is_tls = (sockinfo+i)->is_tls;
+#endif
 					memcpy(&sockinf->sa, &sa, sizeof(sa));
 					memcpy(&sockinf->sa6, &sa6, sizeof(sa6));
 

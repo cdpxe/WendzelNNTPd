@@ -82,6 +82,7 @@
 	#include <mysql/mysql.h>
 #endif
 
+#ifndef NOTLS
 /* GnuTLS */
 #ifndef NOGNUTLS
   #include <gnutls/gnutls.h>
@@ -91,6 +92,7 @@
 #ifndef NOOPENSSL
  #include <openssl/ssl.h>
  #include <openssl/err.h>
+#endif
 #endif
 
 /* Own files */
@@ -163,7 +165,9 @@
 
 #define DEFAULTPORT		119
 
+#ifndef NOTLS
 #define DEFAULT_TLS_PORT	563
+#endif
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -252,7 +256,9 @@
 typedef struct {
 	int		sockfd;
 	int		family;
+#ifndef NOTLS
 	int		is_tls;
+#endif
 	struct sockaddr_in  sa;
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
@@ -260,6 +266,7 @@ typedef struct {
 
 typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
+#ifndef NOTLS
 	int		tls_is_there;	/* do we have active TLS encryption? */
 	int	 switch_to_tls; /* started migration to TLS */
 #ifndef NOGNUTLS
@@ -267,6 +274,7 @@ typedef struct {
 #endif
 #ifndef NOOPENSSL
 	SSL *tls_session; /* saves the current OpenSSL session */
+#endif
 #endif
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
@@ -344,6 +352,7 @@ void *do_server(void *);
 void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
 
+#ifndef NOTLS
 /* gnutls.c and libssl.c */
 int tls_global_init();
 void tls_global_close();
@@ -358,6 +367,7 @@ void tls_session_close(gnutls_session_t session);
 #ifndef NOOPENSSL
 int tls_session_init(SSL **session, int sockfd);
 void tls_session_close(SSL *session);
+#endif
 #endif
 
 /* db_abstraction.c */

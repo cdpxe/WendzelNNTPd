@@ -24,7 +24,9 @@ int daemon_mode = 0;
 int size_sockinfo_t = 0;
 short global_mode = MODE_PROCESS; /* don't change default value */
 
+#ifndef NOTLS
 extern int use_tls; /* config.y */
+#endif
 
 /* sig_handler for win32 too since I sometimes call it in code and
  * not only from outside.
@@ -32,9 +34,11 @@ extern int use_tls; /* config.y */
 void
 sig_handler(int signr)
 {
+#ifndef NOTLS
 	if (use_tls) {
 		tls_global_close();
 	}
+#endif
 
 	DO_SYSL("----clean exit after signal.----")
 	exit(ERR_EXIT);
