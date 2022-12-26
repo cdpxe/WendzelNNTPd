@@ -11,6 +11,10 @@ Major:
   version of this RFC!)
   ==> One needs to implement the CAPABILITIES command first!
 - harden MySQL-related code w.r.t. SQL injections
+- add alias `wnntpd` or rename server entirely (keep WendzelNNTPd as some
+  alias in that case) to reflect the future of the server as one being de-
+  veloped by several people.
+- enable sync w/ other NNTP servers
 
 Minor:
 - replace hash(salt,username,password) w/ hash(salt,rand(),password).
