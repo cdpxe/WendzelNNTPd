@@ -136,12 +136,13 @@ if [ "$1" != "" ]; then
 	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE but not"
 	echo "both as least one database is required to operate WendzelNNTPd."
 	echo
-	echo "3) TLS support (GnuTLS is default, you can switch to OpenSSL)"
+	echo "3) TLS support (off by default)"
 	echo
-	echo "GNUTLS=NO - Disabled suport for GnuTLS, use OpenSSL/libssl instead"
+	echo "TLS=YES   - Enable TLS support"
+	echo "            Can be disabled use if you can't install"
+	echo "            OpenSSL or GnuTLS"
 	echo
-	echo "TLS=NO    - Disabled entire TLS support, use if you can't install"
-	echo "            any of the two TLS libraries"
+	echo "GNUTLS=NO - Disable support for GnuTLS, use OpenSSL instead"
 	echo
 	exit 1
 fi
@@ -399,7 +400,7 @@ rm -f temp temp.c
 # TLS
 ################
 
-if [ "$TLS" = "NO" ]; then
+if [ "$TLS" != "YES" ]; then
   out "configuring without TLS support..."; echo
 else
 	if [ "$GNUTLS" = "NO" ]; then
@@ -481,7 +482,7 @@ else
 	echo 'SQLITEOBJ=db_sqlite3.o'>> $MAKEFILE_INC
 fi
 
-if [ "$TLS" = "NO" ]; then
+if [ "$TLS" != "YES" ]; then
 	echo "GNUTLSOBJ=">> $MAKEFILE_INC
 	echo "GNUTLSLIB=">> $MAKEFILE_INC
 	echo "OPENSSLOBJ=">> $MAKEFILE_INC
