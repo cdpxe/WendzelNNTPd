@@ -1124,7 +1124,7 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 
-        recv_ret = Receive(inf, buf + recv_bytes, max_post_size - recv_bytes - 1);
+				recv_ret = Receive(inf, buf + recv_bytes, max_post_size - recv_bytes - 1);
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");
@@ -1758,7 +1758,7 @@ do_server(void *socket_info_ptr)
 
 		/* 2. receive byte-wise */
 		int return_val = -1;
-    return_val = Receive(&inf, recvbuf+len, 1);
+		return_val = Receive(&inf, recvbuf+len, 1);
 		if (return_val <= 0) {
 			/* kill connection in problem case */
 			kill_thread(&inf);
