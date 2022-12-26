@@ -110,7 +110,7 @@ cat $CWD/doinst.sh > $PKG/install/doinst.sh
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/
 cp -vr docs/docs $PKG/usr/doc/$PRGNAM-$VERSION/
 cp -v docs/docs.pdf $PKG/usr/doc/$PRGNAM-$VERSION/docs.pdf
-cp -v AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PRGNAM-$VERSION/
+cp -v AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql $PKG/usr/doc/$PRGNAM-$VERSION/
 chmod -R 0644 $PKG/usr/doc/$PRGNAM-$VERSION/*
 chmod +x $PKG/usr/doc/$PRGNAM-$VERSION/docs # the docs subdir must be +x
 

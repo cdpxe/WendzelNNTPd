@@ -24,7 +24,7 @@ GDBON=-ggdb -g #-lefence
 BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 
 # The list of documentation files we wish to install
-DOCFILES_TO_INST=AUTHOR CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
+DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
 
 all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
