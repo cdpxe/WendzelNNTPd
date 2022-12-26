@@ -112,6 +112,7 @@ char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
 static void Send(server_cb_inf *, char *, int);
+static int Receive(server_cb_inf *, char *, int);
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -243,6 +244,26 @@ ToSend(char *str, int len, server_cb_inf *inf)
 		strncpy(inf->servinf->curstring + curlen, str, len);
 		inf->servinf->curstring[curlen+len]='\0';
 	}
+}
+
+int
+Receive(server_cb_inf *inf, char *str, int len)
+{
+	int recv_bytes = -1;
+	if (inf->servinf->tls_is_there) {
+#ifndef NOGNUTLS
+		do {
+			recv_bytes = gnutls_record_recv(inf->servinf->tls_session, str, len);
+		} while (recv_bytes == GNUTLS_E_AGAIN || recv_bytes == GNUTLS_E_INTERRUPTED);
+#endif
+#ifndef NOOPENSSL
+		recv_bytes = SSL_read(inf->servinf->tls_session, str, len);
+#endif
+	} else {
+		recv_bytes = recv(inf->sockinf->sockfd, str, len, 0);
+	}
+
+	return recv_bytes;
 }
 
 void
@@ -1103,20 +1124,7 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 
-				if (inf->servinf->tls_is_there) {
-#ifndef NOGNUTLS
-					do {
-						recv_ret = gnutls_record_recv(inf->servinf->tls_session, buf + recv_bytes, max_post_size - recv_bytes - 1);
-					} while (recv_ret == GNUTLS_E_AGAIN || recv_ret == GNUTLS_E_INTERRUPTED);
-#endif
-#ifndef NOOPENSSL
-					recv_ret = SSL_read(inf->servinf->tls_session, buf + recv_bytes, max_post_size - recv_bytes - 1);
-#endif
-				} else {
-					recv_ret = recv(inf->sockinf->sockfd,
-							buf + recv_bytes,
-							max_post_size - recv_bytes - 1, 0);
-				}
+        recv_ret = Receive(inf, buf + recv_bytes, max_post_size - recv_bytes - 1);
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");
@@ -1749,19 +1757,8 @@ do_server(void *socket_info_ptr)
 		}
 
 		/* 2. receive byte-wise */
-		ssize_t return_val = -1;
-		if (inf.servinf->tls_is_there) {
-#ifndef NOGNUTLS
-			do {
-				return_val = gnutls_record_recv(inf.servinf->tls_session, recvbuf+len, 1);
-			} while (return_val == GNUTLS_E_AGAIN || return_val == GNUTLS_E_INTERRUPTED);
-#endif
-#ifndef NOOPENSSL
-				return_val = SSL_read(inf.servinf->tls_session, recvbuf+len, 1);
-#endif
-		} else {
-			return_val = recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0);
-		}
+		int return_val = -1;
+    return_val = Receive(&inf, recvbuf+len, 1);
 		if (return_val <= 0) {
 			/* kill connection in problem case */
 			kill_thread(&inf);
