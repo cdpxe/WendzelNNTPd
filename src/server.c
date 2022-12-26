@@ -111,13 +111,7 @@ char tls_error[]=             "580 can not initiate TLS negotiation\r\n";
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
-static void Send(int, char *, int);
-#ifndef NOGNUTLS
-static void TlsSend(gnutls_session_t, const char *, int);
-#endif
-#ifndef NOOPENSSL
-static void TlsSend(SSL *, const char *, int);
-#endif
+static void Send(server_cb_inf *, char *, int);
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -179,54 +173,47 @@ get_slinearg(char *cmdstring, int num)
 }
 
 static void
-Send(int lsockfd, char *str, int len)
+Send(server_cb_inf *inf, char *str, int len)
 {
-	if(send(lsockfd, str, len, MSG_NOSIGNAL)<0) {
-		if (daemon_mode) {
-			DO_SYSL("send() returned <0 -- killing connection.")
-		} else {
-			perror("send");
-		}
-		pthread_exit(NULL);
-	}
-}
-
+	if (inf->servinf->tls_is_there) {
 #ifndef NOGNUTLS
-static void
-TlsSend(gnutls_session_t session, const char *str, int len)
-{
-	if(gnutls_record_send(session, str, len)<0) {
-		if (daemon_mode) {
-			DO_SYSL("gnutls_record_send() returned <0 -- killing connection.")
-		} else {
-			perror("gnutls_record_send");
-		}
-		pthread_exit(NULL);
-	}
-}
-#endif
-
-#ifndef NOOPENSSL
-static void
-TlsSend(SSL *session, const char *str, int len)
-{
-	int return_code;
-	return_code = SSL_write(session, str, len);
-	if (return_code <= 0) {
-		if (daemon_mode) {
-			DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
-		} else {
-			DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
-			int err = SSL_get_error(session, return_code);
-			if (err == SSL_ERROR_SSL) {
-				fprintf(stderr, "SSL error: ");
-				ERR_print_errors_fp(stderr);
+		if(gnutls_record_send(inf->servinf->tls_session, str, len)<0) {
+			if (daemon_mode) {
+				DO_SYSL("gnutls_record_send() returned <0 -- killing connection.")
+			} else {
+				perror("gnutls_record_send");
 			}
+			pthread_exit(NULL);
 		}
-		pthread_exit(NULL);
+#endif
+#ifndef NOOPENSSL
+		int return_code;
+		return_code = SSL_write(inf->servinf->tls_session, str, len);
+		if (return_code <= 0) {
+			if (daemon_mode) {
+				DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
+			} else {
+				DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
+				int err = SSL_get_error(inf->servinf->tls_session, return_code);
+				if (err == SSL_ERROR_SSL) {
+					fprintf(stderr, "SSL error: ");
+					ERR_print_errors_fp(stderr);
+				}
+			}
+			pthread_exit(NULL);
+		}
+#endif
+	} else {
+		if(send(inf->sockinf->sockfd, str, len, MSG_NOSIGNAL)<0) {
+			if (daemon_mode) {
+				DO_SYSL("send() returned <0 -- killing connection.")
+			} else {
+				perror("send");
+			}
+			pthread_exit(NULL);
+		}
 	}
 }
-#endif
 
 void
 ToSend(char *str, int len, server_cb_inf *inf)
@@ -1061,11 +1048,7 @@ docmd_post(server_cb_inf *inf)
 	time_t ltime;
 	charstack_t *stackp = NULL;
 
-	if (inf->servinf->tls_is_there) {
-		TlsSend(inf->servinf->tls_session, postok, strlen(postok));
-	} else {
-		Send(inf->sockinf->sockfd, postok, strlen(postok));
-	}
+	Send(inf, postok, strlen(postok));
 
 	{
 		size_t recv_bytes = 0;
@@ -1109,11 +1092,7 @@ docmd_post(server_cb_inf *inf)
 				 * big.
 				 */
 				if (max_post_size - recv_bytes <= 1) {
-				if (inf->servinf->tls_is_there) {
-					TlsSend(inf->servinf->tls_session, post_too_big, strlen(post_too_big));
-				} else {
-					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
-				}
+					Send(inf, post_too_big, strlen(post_too_big));
 					fprintf(stderr, "Posting is larger than allowed max (%i Bytes) "
 						"in docmd_post()\n", max_post_size);
 					DO_SYSL("posting from client larger than allowed max. value. "
@@ -1453,8 +1432,8 @@ docmd_post(server_cb_inf *inf)
 		}
 		/* now also get the domain name */
 #ifdef __WIN32__ /* ... but not on Win32 */
-       fqdn[strlen(fqdn)] = '.';
-       strncpy(fqdn + strlen(fqdn), "win32", strlen("win32"));
+		fqdn[strlen(fqdn)] = '.';
+		strncpy(fqdn + strlen(fqdn), "win32", strlen("win32"));
 #else /* okay, here we really get the domain name */
 		if (getdomainname(domainname, 127) == 0 && strncmp(domainname, "(none)", 6) != 0) {
 			fqdn[strlen(fqdn)] = '.';
@@ -1594,11 +1573,7 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
-		if (inf->servinf->tls_is_there) {
-			TlsSend(inf->servinf->tls_session, quitstring, strlen(quitstring));
-		} else {
-			Send(inf->sockinf->sockfd, quitstring, strlen(quitstring));
-		}
+	  Send(inf, quitstring, strlen(quitstring));
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
@@ -1711,10 +1686,10 @@ do_server(void *socket_info_ptr)
 			kill_thread(&inf);
 		} else {
 			inf.servinf->tls_is_there = 1;
-			TlsSend(inf.servinf->tls_session, welcomestring, strlen(welcomestring));
+			Send(&inf, welcomestring, strlen(welcomestring));
 		}
 	} else {
-		Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
+		Send(&inf, welcomestring, strlen(welcomestring));
 	}
 
 	if(use_auth==1) {
@@ -1741,9 +1716,9 @@ do_server(void *socket_info_ptr)
 			inf.servinf->switch_to_tls = 0;
 			if (!tls_session_init(&inf.servinf->tls_session, inf.sockinf->sockfd)) {
 				if (++tls_switch_fails < 3) {
-					Send(inf.sockinf->sockfd, tls_error, strlen(tls_error));
+					Send(&inf, tls_error, strlen(tls_error));
 				} else {
-					Send(inf.sockinf->sockfd, tls_failed, strlen(tls_failed));
+					Send(&inf, tls_failed, strlen(tls_failed));
 					kill_thread(&inf);
 				}
 			} else {
@@ -1819,11 +1794,7 @@ do_server(void *socket_info_ptr)
 			do_command(sec_cmd, &inf);
 			db_secure_sqlbuffer_free(sec_cmd);
 
-			if (inf.servinf->tls_is_there) {
-				TlsSend(inf.servinf->tls_session, servinf.curstring, strlen(servinf.curstring));
-			} else {
-				Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
-			}
+			Send(&inf, servinf.curstring, strlen(servinf.curstring));
 
 			free(servinf.curstring);
 			servinf.curstring=NULL;
