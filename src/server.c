@@ -1061,7 +1061,11 @@ docmd_post(server_cb_inf *inf)
 	time_t ltime;
 	charstack_t *stackp = NULL;
 
-	Send(inf->sockinf->sockfd, postok, strlen(postok));
+	if (inf->servinf->tls_is_there) {
+		TlsSend(inf->servinf->tls_session, postok, strlen(postok));
+	} else {
+		Send(inf->sockinf->sockfd, postok, strlen(postok));
+	}
 
 	{
 		size_t recv_bytes = 0;
@@ -1105,7 +1109,11 @@ docmd_post(server_cb_inf *inf)
 				 * big.
 				 */
 				if (max_post_size - recv_bytes <= 1) {
+				if (inf->servinf->tls_is_there) {
+					TlsSend(inf->servinf->tls_session, post_too_big, strlen(post_too_big));
+				} else {
 					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
+				}
 					fprintf(stderr, "Posting is larger than allowed max (%i Bytes) "
 						"in docmd_post()\n", max_post_size);
 					DO_SYSL("posting from client larger than allowed max. value. "
@@ -1116,9 +1124,20 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 
-				recv_ret = recv(inf->sockinf->sockfd,
-						buf + recv_bytes,
-						max_post_size - recv_bytes - 1, 0);
+				if (inf->servinf->tls_is_there) {
+#ifndef NOGNUTLS
+					do {
+						recv_ret = gnutls_record_recv(inf->servinf->tls_session, buf + recv_bytes, max_post_size - recv_bytes - 1);
+					} while (recv_ret == GNUTLS_E_AGAIN || recv_ret == GNUTLS_E_INTERRUPTED);
+#endif
+#ifndef NOOPENSSL
+					recv_ret = SSL_read(inf->servinf->tls_session, buf + recv_bytes, max_post_size - recv_bytes - 1);
+#endif
+				} else {
+					recv_ret = recv(inf->sockinf->sockfd,
+							buf + recv_bytes,
+							max_post_size - recv_bytes - 1, 0);
+				}
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");
