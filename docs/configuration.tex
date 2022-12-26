@@ -99,9 +99,137 @@ If you have any problems running WendzelNNTPd or if you simply want more informa
 verbose-mode
 \end{verbatim}
 
-\section{Security Settings}
+\section{Transport Layer Security (TLS)}
 
-Please note that WendzelNNTPd does not support SSL/TLS!
+WendzelNNTPd has optional support for TLS. It needs to be enabled it installation/upgrade (see above).
+
+~
+
+The default TLS library is \textbf{GnuTLS}, at installation time \textbf{OpenSSL} can be chosen as alternative. The functionality of both TLS library differs in only one feature (Certificate Revocation Lists).
+
+\subsection{Enabling TLS support}
+
+If TLS support has been compiled into WendzelNNTPd, it must also be enabled in the configuration file. As minimum configuration settings the CA file, the server certificate and the private key of the server certificate must be set.
+
+\begin{verbatim}
+; activate TLS
+;use-tls
+
+; minimum requirements to use TLS
+; set the Certificate Authority, server certificate and server key
+;tls-ca-file /usr/local/etc/ssl/ca-root.pem
+;tls-cert-file /usr/local/etc/ssl/server-cert.pem
+;tls-key-file /usr/local/etc/ssl/server-key.pem
+\end{verbatim}
+
+This configuration enables \textbf{only} the usage of \textbf{STARTTLS} as NNTP command, ne extra network port will be opened.
+
+\subsection{Setting the separate TLS Port}
+
+The separate TLS port (default is \textbf{port 563}) and the listen address can be configured with a block similar to the normal NNTP port. Multiple blocks are possible, you can configure different TLS ports on different network interfaces.
+
+\begin{verbatim}
+; TLS port, defaults to 563, and TLS listen addresses
+; activate usage of TLS with "tls-port" as option in next line after port number
+;port 563
+;tls-port
+;listen 127.0.0.1
+\end{verbatim}
+
+\subsection{Mandatory TLS}
+
+By default, WendzelNNTPd uses TLS only as optional feature, enabling the user to continue without encryption. By uncommenting \textbf{tls-is-mandatory}, all commands with user data will be denied with error code \textbf{483} if used without an active TLS connection.
+
+\begin{verbatim}
+; set TLS to be optional or mandatory
+;tls-is-mandatory
+\end{verbatim}
+
+\subsection{Mutual TLS (Client Certificates)}
+
+As an additional security feature, WendzelNNTPd can be configured to request a TLS certificate from the client, which needs to be issued by the CA. This ``mutual TLS authentication'' can be enabled by uncommenting \textbf{tls-mutual-auth}, connection attempts without a client certificate will be then denied.
+
+\begin{verbatim}
+; enable mutual TLS, force check of a client certificate
+; use of TLS is forced for all commands working with user data
+;tls-mutual-auth
+\end{verbatim}
+
+\subsection{Custom Certificate Revocation List}
+
+In addition to the client certificate check, the usage of a custom Certificate Revocation List (CRL) can be enabled by setting \textbf{tls-crl-file} to the file generated when revoking certificates. This enables further control of client certificates. i.e. in case a user leaves the company or organization.
+
+~
+
+\textbf{Please Note:} This works currently only for \textbf{GnuTLS}
+
+\begin{verbatim}
+; custom Certificate Revocation List
+; Note: currently only works for GnuTLS
+;tls-crl-file /usr/local/etc/ssl/crl.pem
+\end{verbatim}
+
+\subsection{Optional TLS ciper list}
+
+It may become handy to enable or disable TLS versions or specific ciphers in case of newly discovered security problems. WendzelNNTPd supports custom the cipher lists of both TLS libraries.
+
+\subsubsection{GnuTLS}
+
+For GnuTLS, set the option \textbf{tls-cipher-priority}. A detailed description if the list can be found at the GnuTLS web site:
+
+\textit{https://gnutls.org/manual/html\_node/Priority-Strings.html}
+
+
+\begin{verbatim}
+; for GnuTLS this is a list according to
+; https://gnutls.org/manual/html_node/Priority-Strings.html
+;tls-cipher-priority SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC
+\end{verbatim}
+
+\textbf{Please note}: Not setting these values enables the defaults for your distribution.
+
+\subsubsection{OpenSSL}
+
+The cipher configuration for OpenSSL needs two options, one for TLSv1.2 and one for TLSv1.3. Both strings are handled inside libssl in different ways, so exposing them as two options is the easiest way to set them.
+
+~
+
+For TLSv1.2 use the option \textbf{tls-cipher-priority} and set the string according to values found at a generating site like:
+
+\textit{https://ssl-config.mozilla.org}
+
+\begin{verbatim}
+; for OpenSSL we need two options, they are separate internally
+; this is for TLS (up to) 1.2, configure with i.e.
+; https://ssl-config.mozilla.org
+;tls-cipher-priority ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128...
+; TLS 1.2 can be disabled by setting the available ciphers to NULL
+;tls-cipher-priority NULL
+\end{verbatim}
+
+For TLSv1.3, use the option \textbf{tls-cipher-priority-tls13}.
+OpenSSL currently only supports these 5 ciphers in TLS 1.3, you may remove one or more from the list if required.
+
+\begin{itemize}
+	\itemsep0em
+	\item TLS\_AES\_256\_GCM\_SHA384
+	\item TLS\_CHACHA20\_POLY1305\_SHA256
+	\item TLS\_AES\_128\_GCM\_SHA256
+	\item TLS\_AES\_128\_CCM\_8\_SHA256
+	\item TLS\_AES\_128\_CCM\_SHA256
+\end{itemize}
+
+
+\begin{verbatim}
+; this is for TLS 1.3 only, set available ciphers
+;tls-cipher-priority-tls13 TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_AES_128_CCM_8_SHA256:TLS_AES_128_CCM_SHA256
+; TLS 1.3 can be disabled by setting the available ciphers to NULL
+;tls-cipher-priority-tls13 NULL
+\end{verbatim}
+
+\textbf{Please note}: Not setting these values enables the defaults for your distribution.
+
+\section{Security Settings}
 
 \subsection{Authentication and Access Control Lists (ACL)}
 
