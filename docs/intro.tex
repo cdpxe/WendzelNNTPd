@@ -18,7 +18,7 @@ WendzelNNTPd contains different security features, the most important features a
 
 Another feature are so-called ``invisible newsgroups'': If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case he knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
 
-However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. Also, WendzelNNTPd does not support TLS (not even SSL)!
+However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password.
 
 \subsection{Auto-prevention of double-postings}
 
