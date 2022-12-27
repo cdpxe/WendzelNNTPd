@@ -2,7 +2,6 @@ set timeout 2
 
 send_user "=== Test for mandatory TLS on non-encrypted NNTP port ===\n"
 
-#spawn openssl s_client -verify_quiet -quiet -crlf -connect localhost:563
 spawn telnet localhost 119
 
 # startup greeting banner
