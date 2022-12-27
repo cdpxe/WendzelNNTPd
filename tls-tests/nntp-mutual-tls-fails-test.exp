@@ -1,0 +1,15 @@
+set timeout 2
+
+send_user "=== Test with active TLS via extra port, with mutual TLS but without client certificate ===\n"
+
+spawn openssl s_client -verify_quiet -quiet -crlf -connect localhost:563
+#spawn telnet localhost 119
+expect {
+  eof {
+    send_user "== OpenSSL failed to start, that's ok ==\n"
+  }
+  timeout { send_user "\nError, the connection to WendzelNNTPd should fail\n"; exit 1 }
+}
+
+# all checks OK
+send_user "== All checks succeeded ==\n"
