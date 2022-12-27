@@ -1,13 +1,16 @@
 set timeout 2
 
-send_user "=== Test with active SSL via extra port ===\n"
+send_user "=== Test with activated TLS via STARTTLS ===\n"
 
-spawn openssl s_client -verify_quiet -quiet -crlf -connect localhost:563
+spawn openssl s_client -verify_quiet -quiet -crlf -starttls nntp -connect localhost:119
 #spawn telnet localhost 119
 
 # startup greeting banner
-send_user "== Checking for startup banner ==\n"
-expect -re "200 WendzelNNTPd.*"
+send_user "== Checking for startup info about switching to TLS ==\n"
+expect {
+  timeout { send_user "\nError while getting STARTTLS startup message\n"; exit 1 }
+  -re "382*"
+}
 
 # check for help
 send_user "== Checking for help command ==\n"
