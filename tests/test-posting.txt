@@ -1,8 +1,0 @@
-POST
-From: max-muster@abc.com
-Newsgroups: alt.wendzelnntpd.test
-Subject: Test
-
-This is a simple test.
-.
-
