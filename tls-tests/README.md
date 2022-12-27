@@ -99,7 +99,7 @@ Now stop the server process and copy the second config file to the default locat
 cp wendzelnntpd-mutual-tls.conf /usr/local/etc/wendzelnntpd.conf
 ```
 
-And start the server again and run the test scrip:
+Start the server again and run the test scrip:
 ```
 expect nntp-mutual-tls-fails-test.exp
 expect nntp-mutual-tls-test.exp
