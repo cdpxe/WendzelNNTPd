@@ -2,7 +2,7 @@
 
 **WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/*BSD/*nix), supports IPv4 and IPv6, AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
 
-This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks TLS support and strong hardening.
+This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks strong hardening.
 
 ## Download
 
@@ -35,7 +35,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Database abstraction layer (supports SQLite3 and MySQL)
 * Supports NNTP authentication (AUTHINFO USER/PASS)
 * Supports advanced Access Control Lists (ACL) and Role-based Access Control (RBAC)
-* Supports TLS encryption (STARTTLS and separate TLS-port, using GnuTLS or OpenSSL)
+* Supports TLS encryption (STARTTLS and separate TLS port, using GnuTLS or OpenSSL)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
