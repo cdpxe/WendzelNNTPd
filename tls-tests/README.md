@@ -53,7 +53,7 @@ cp ca-root.pem cert-pub.pem cert-key.pem /usr/local/etc/ssl/
 Now copy the first config file to the default location:
 
 ```
-cp wendzelnntpd-tls.conf /usr/local/etc/wendzelnntpd.conf
+cp wendzelnntpd-mandatory-tls.conf /usr/local/etc/wendzelnntpd.conf
 ```
 
 And run the server, i.e. via startup-script or in a separate shell.
