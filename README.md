@@ -35,6 +35,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Database abstraction layer (supports SQLite3 and MySQL)
 * Supports NNTP authentication (AUTHINFO USER/PASS)
 * Supports advanced Access Control Lists (ACL) and Role-based Access Control (RBAC)
+* Supports TLS encryption (STARTTLS and separate TLS-port, using GnuTLS or OpenSSL)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
