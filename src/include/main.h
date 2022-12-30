@@ -183,6 +183,18 @@
 #define ARTCLTYP_NUMBER		0x02
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
 
+/* Config-Option openssl-verifyclient */
+#define VERIFY_NONE 0x00
+#define VERIFY_OPTIONAL 0x01
+#define VERIFY_REQUIRE 0x02
+#define VERIFY_UNDEV 0xFF
+
+/* Config-Option openssl-CRLcheck*/
+#define CRL_NONE 0x00
+#define CRL_LEAF 0x01
+#define CRL_CHAIN 0x02
+#define CRL_UNDEV 0xFF
+
 #define PR_STRING		"WendzelNNTPd: "
 #define PROMPT(x)		printf(PR_STRING x "\n")
 
@@ -250,6 +262,15 @@ typedef struct {
    int      tlsversion_min,tlsversion_max;
    char     *server_cert_file;
    char     *server_key_file;
+	uint8_t	server_cipher_preference;
+	uint8_t	verify_client;
+	uint8_t	verify_depth;
+	uint8_t 	CN_authentication;
+	char 		*CRL_path;
+	char 		*CRL_file;
+	uint8_t 	CRL_check;
+	char 		*CA_path;
+	char 		*CA_file;
 #ifdef USE_SSL
 	SSL_CTX	*ctx;
 #endif

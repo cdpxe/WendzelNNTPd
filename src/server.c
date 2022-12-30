@@ -871,9 +871,13 @@ int buflen=0;
 	buflen+=strlen(capability_modereader);
 //	buflen+=strlen(capability_newnews);
 #ifdef USE_SSL
-	if (inf->sockinf->ssl_active != TRUE) {      //SSL not active
-		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {    //Connector supports STARTTLS
-			buflen+=strlen(capability_starttls);
+	if (inf->sockinf->ssl_active != TRUE) {      								//SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {    	//Connector supports STARTTLS
+//			fprintf(stderr,"use_auth=%d auth_is_there=%d\n",use_auth,inf->servinf->auth_is_there);
+			if (((use_auth == 1) && (inf->servinf->auth_is_there == 0)) 	//User not already authenticated - not allowed by RFC4642
+				|| (use_auth == 0)) {													//no auth in use
+				buflen+=strlen(capability_starttls);
+			}
 		}
 	}
 #endif
@@ -896,9 +900,12 @@ int buflen=0;
 	strcat(buf,capability_modereader);
 //	strcat(buf,capability_newnews);
 #ifdef USE_SSL
-	if (inf->sockinf->ssl_active != TRUE) {      //SSL not active
-		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {    //Connector supports STARTTLS
-			strcat(buf,capability_starttls);
+	if (inf->sockinf->ssl_active != TRUE) {     									 //SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) { 	   //Connector supports STARTTLS
+			if (((use_auth == 1) && (inf->servinf->auth_is_there == 0)) 	//User not already authenticated - not allowed by RFC4642
+				|| (use_auth == 0)) {													//no auth in use
+				strcat(buf,capability_starttls);
+			}
 		}
 	}
 #endif
@@ -914,24 +921,29 @@ static void
 docmd_starttls(server_cb_inf *inf)
 {
 #ifdef USE_SSL
-	if (inf->sockinf->ssl_active != TRUE) {		//SSL not active
-		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {		//Connector supports STARTTLS
-//			fprintf(stderr,"STARTTLS starting\n");
-			Send(inf->sockinf,starttls_neg, strlen(starttls_neg));		//Send message immediately before SSL negotiation!
-			inf->sockinf->ssl=SSL_new(inf->sockinf->connectorinfo->ctx);
-			if(!SSL_set_fd(inf->sockinf->ssl,inf->sockinf->sockfd)) {
-				fprintf(stderr,"Error creating SSL session!!\n");
-				ERR_print_errors_fp(stderr);
-//				kill_thread(&inf);
-			} else {
-				if (SSL_accept(inf->sockinf->ssl) <=0) {
-					fprintf(stderr,"Error negotiating SSL session!!\n");
+	if (inf->sockinf->ssl_active != TRUE) {										//SSL not active
+		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {			//Connector supports STARTTLS
+			if (((use_auth == 1) && (inf->servinf->auth_is_there == 0)) 	//User not already authenticated - not allowed by RFC4642
+				|| (use_auth == 0)) {													//no auth in use
+//				fprintf(stderr,"STARTTLS starting\n");
+				Send(inf->sockinf,starttls_neg, strlen(starttls_neg));			//Send message immediately before SSL negotiation!
+				inf->sockinf->ssl=SSL_new(inf->sockinf->connectorinfo->ctx);
+				if(!SSL_set_fd(inf->sockinf->ssl,inf->sockinf->sockfd)) {
+					fprintf(stderr,"Error creating SSL session!!\n");
 					ERR_print_errors_fp(stderr);
 //					kill_thread(&inf);
 				} else {
-//					fprintf(stderr,"STARTTLS negotiation successfull!\n");
-					inf->sockinf->ssl_active=TRUE;	//STARTTLS negotiation successfull
+					if (SSL_accept(inf->sockinf->ssl) <=0) {
+						fprintf(stderr,"Error negotiating SSL session!!\n");
+						ERR_print_errors_fp(stderr);
+//						kill_thread(&inf);
+					} else {
+//						fprintf(stderr,"STARTTLS negotiation successfull!\n");
+						inf->sockinf->ssl_active=TRUE;	//STARTTLS negotiation successfull
+					}
 				}
+			} else {		// STARTTLS not allowed after user authentication
+				ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 			}
 		} else {		//Connector doesnt support STARTTLS
 			ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);

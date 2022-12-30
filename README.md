@@ -40,6 +40,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * It is open + free software! :)
 * TLS server authentication and data encryption
 * Supports NNTPS ans SNNTP with TLS 1.0-1.3 based on OpenSSL 1.1.1 and above
+* Support for client certificate verification and CRL checks
 
 ## Website
 

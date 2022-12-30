@@ -267,6 +267,15 @@ struct sockaddr_in6 sa6;
 %token TOK_SSL_VERSION
 %token TOK_SSL_CERT
 %token TOK_SSL_KEY
+%token TOK_SSL_CIPHERS_PREF
+%token TOK_SSL_VERIFY
+%token TOK_SSL_VERIFY_DEPTH
+%token TOK_SSL_CN_AUTH
+%token TOK_SSL_CRL_PATH
+%token TOK_SSL_CRL_FILE
+%token TOK_SSL_CRL_CHECK
+%token TOK_SSL_CA_PATH
+%token TOK_SSL_CA_FILE
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -280,7 +289,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableSSL | enableSTARTTLS | SSLCiphers | SSLVersion | SSLCert | SSLKey ;
+connectorCmd:  usePort | listenonSpec | enableSSL | enableSTARTTLS | SSLCiphers | SSLVersion | SSLCert | SSLKey | SSLCipherPref | SSLVerify | SSLVerifyDepth | SSLCNAuth | SSLCRLPath | SSLCRLFile | SSLCRLCheck | SSLCAPath | SSLCAFile ;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -289,20 +298,29 @@ connectorBegin:
 			CALLOC(connectorinfo, (connectorinfo_t *), 1, sizeof(connectorinfo_t));
 			connectorinfo->port=0;
 			connectorinfo->listen=NULL;
-			connectorinfo->enable_ssl=FALSE;
-			connectorinfo->enable_starttls=FALSE;
+			connectorinfo->enable_ssl=FALSE;							// TRUE, FALSE
+			connectorinfo->enable_starttls=FALSE;					// TRUE, FALSE
 			connectorinfo->ciphers=NULL;
 #ifdef USE_SSL
-			connectorinfo->tlsversion_min=TLS1_VERSION;			//SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
-			connectorinfo->tlsversion_max=TLS1_3_VERSION;		//SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
+			connectorinfo->tlsversion_min=TLS1_VERSION;			// SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
+			connectorinfo->tlsversion_max=TLS1_3_VERSION;		// SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
 #else
 			connectorinfo->tlsversion_min=0;
 			connectorinfo->tlsversion_max=0;
 #endif
 			connectorinfo->server_cert_file=NULL;
 			connectorinfo->server_key_file=NULL;
+			connectorinfo->server_cipher_preference=FALSE;		// TRUE, FALSE
+			connectorinfo->verify_client=VERIFY_UNDEV;				// VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
+			connectorinfo->verify_depth=10;
+			connectorinfo->CN_authentication=FALSE;				// TRUE, FALSE
+			connectorinfo->CRL_path=NULL;
+			connectorinfo->CRL_file=NULL;
+			connectorinfo->CRL_check=CRL_UNDEV;						// CRL_NONE, CRL_LEAF, CRL_CHAIN
+			connectorinfo->CA_path=NULL;
+			connectorinfo->CA_file=NULL;
+//      	fprintf(stderr,"Connector Begin\n");
 		}
-      fprintf(stderr,"Connector Begin\n");
 	};
 
 connectorEnd:
@@ -346,10 +364,80 @@ connectorEnd:
 								ERR_print_errors_fp(stderr);
 								exit(ERR_EXIT);
 							}
-							if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,connectorinfo->ciphers)) {
-        						fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+							// verify private key with certificate
+							if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
+        						fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
 								ERR_print_errors_fp(stderr);
 								exit(ERR_EXIT);
+							}
+							if (connectorinfo->ciphers != NULL)
+								if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,connectorinfo->ciphers)) {
+        							fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+									ERR_print_errors_fp(stderr);
+									exit(ERR_EXIT);
+								}
+							if (connectorinfo->server_cipher_preference == TRUE) 			// User server Cipher order
+								if(!SSL_CTX_set_options(connectorinfo->ctx, SSL_OP_CIPHER_SERVER_PREFERENCE)){
+        							fprintf(stderr,"Error setting option SSL_OP_CIPHER_SERVER_PREFERENCE in SSL Context!\n");
+									ERR_print_errors_fp(stderr);
+									exit(ERR_EXIT);
+								}
+							if (connectorinfo->verify_client != VERIFY_UNDEV) {			//Verify option
+								switch (connectorinfo->verify_client) {
+									case VERIFY_OPTIONAL : SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER, NULL);
+																  fprintf(stderr,"VERIFY_OPTIONAL\n");
+																  break;
+									case VERIFY_REQUIRE  : SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT | SSL_VERIFY_CLIENT_ONCE, NULL);
+																  fprintf(stderr,"VERIFY_REQUIRE\n");
+																  break;
+									case VERIFY_NONE     : 
+									default					: connectorinfo->verify_client=VERIFY_NONE;
+																  SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
+																  fprintf(stderr,"VERIFY_NONE\n");
+																  break;
+								}
+								SSL_CTX_set_verify_depth(connectorinfo->ctx, connectorinfo->verify_depth);		//Verify depth
+							}
+							if ((connectorinfo->verify_client != VERIFY_UNDEV) && (connectorinfo->verify_client != VERIFY_NONE)) {		//Load CA Cert for verify
+								if ((connectorinfo->CA_file != NULL) || (connectorinfo->CA_path != NULL)) {
+									if (!SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->CA_file, connectorinfo->CA_path)){
+        								fprintf(stderr,"Error setting verify location in SSL Context!\n");
+										ERR_print_errors_fp(stderr);
+										exit(ERR_EXIT);
+									} else {																	// Certificates in Verify location loaded OK
+										STACK_OF(X509_NAME) *cert_names=SSL_CTX_get_client_CA_list(connectorinfo->ctx);		//Send List of CA-Names to Client
+										if (cert_names != NULL) {
+											if (connectorinfo->CA_path != NULL)
+												SSL_add_dir_cert_subjects_to_stack(cert_names,connectorinfo->CA_path);
+											if (connectorinfo->CA_file != NULL)
+												SSL_add_file_cert_subjects_to_stack(cert_names,connectorinfo->CA_file);
+										}
+									}
+								}
+							}
+							if ((connectorinfo->CRL_check == CRL_LEAF) || (connectorinfo->CRL_check == CRL_CHAIN)) {	//CRL check
+								X509_VERIFY_PARAM *param=X509_VERIFY_PARAM_new();
+								switch (connectorinfo->CRL_check) {
+									case CRL_LEAF	: X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_CRL_CHECK);
+														  break;
+									case CRL_CHAIN	: X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL| X509_V_FLAG_TRUSTED_FIRST); 
+														  break;
+								}
+								SSL_CTX_set1_param(connectorinfo->ctx,param);
+								X509_VERIFY_PARAM_free(param);
+
+								if ((connectorinfo->CRL_file != NULL) || (connectorinfo->CRL_path != NULL)) {	//Load CRL File or Path
+									X509_STORE *cert_store=SSL_CTX_get_cert_store(connectorinfo->ctx);
+									if (cert_store != NULL) {																	// Load Store from Context
+										if (!X509_STORE_load_locations(cert_store,connectorinfo->CRL_file,connectorinfo->CRL_path)) {
+        									fprintf(stderr,"Error setting CRL location in SSL Context!\n");
+											ERR_print_errors_fp(stderr);
+											exit(ERR_EXIT);
+										}
+									} else {
+        								fprintf(stderr,"X509_STORE could not be loaded from SSL Context!\n");
+									}
+								}
 							}
 							start_listener();																																
 #endif
@@ -368,7 +456,7 @@ connectorEnd:
 			else {
         		fprintf(stderr,"Listen was not defined in connector!\n");
 			}
-        	fprintf(stderr,"Connector End\n");
+//        	fprintf(stderr,"Connector End\n");
 		}
 	};
 
@@ -377,8 +465,8 @@ enableSSL:
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			connectorinfo->enable_ssl=TRUE;
+//        	fprintf(stderr,"Enable SSL\n");
 		}
-        	fprintf(stderr,"Enable SSL\n");
 	};
 
 enableSTARTTLS:
@@ -386,8 +474,8 @@ enableSTARTTLS:
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			connectorinfo->enable_starttls=TRUE;
+//        	fprintf(stderr,"Enable STARTTLS\n");
 		}
-        	fprintf(stderr,"Enable STARTTLS\n");
 	};
 
 SSLCiphers:
@@ -396,16 +484,14 @@ SSLCiphers:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
 			strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
+//        	fprintf(stderr,"TLS Ciphers String: %s\n",yytext);
 		}
-        	fprintf(stderr,"TLS Ciphers String: %s\n",yytext);
 	};
 
 SSLVersion:
 	TOK_SSL_VERSION TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-//			CALLOC(connectorinfo->tlsversion, (char *), strlen(yytext) + 1, sizeof(char));
-//			strncpy(connectorinfo->tlsversion, yytext, strlen(yytext));
 #ifdef USE_SSL
 			int max=0,min=0;
 			sscanf(yytext,"1.%d-1.%d",&min,&max);
@@ -442,28 +528,138 @@ SSLVersion:
 			}
 #endif
 		}
-        	fprintf(stderr,"TLS Version String: %s %d-%d\n",yytext,connectorinfo->tlsversion_min,connectorinfo->tlsversion_max);
+//        	fprintf(stderr,"TLS Version String: %s %d-%d\n",yytext,connectorinfo->tlsversion_min,connectorinfo->tlsversion_max);
 	};
 
 SSLCert:
 	TOK_SSL_CERT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			CALLOC(connectorinfo->server_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
-			strncpy(connectorinfo->server_cert_file, yytext, strlen(yytext));
+			if (connectorinfo->server_cert_file == NULL)	{
+				CALLOC(connectorinfo->server_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->server_cert_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-servercertificate statement in connector");
+			}
 		}
-        	fprintf(stderr,"TLS Certificate File: %s\n",yytext);
 	};
 
 SSLKey:
 	TOK_SSL_KEY TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			CALLOC(connectorinfo->server_key_file, (char *), strlen(yytext) + 1, sizeof(char));
-			strncpy(connectorinfo->server_key_file, yytext, strlen(yytext));
+			if (connectorinfo->server_key_file == NULL)	{
+				CALLOC(connectorinfo->server_key_file, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->server_key_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-serverkey statement in connector");
+			}
 		}
-        	fprintf(stderr,"TLS Key File: %s\n",yytext);
 	};
+
+SSLCipherPref:
+	TOK_SSL_CIPHERS_PREF
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			connectorinfo->server_cipher_preference=TRUE;
+		}
+	};
+
+SSLVerify:
+	TOK_SSL_VERIFY TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->verify_client == VERIFY_UNDEV)	{		// First in connector
+				if (strncmp(yytext,"none",4) == 0) {						// NONE
+					connectorinfo->verify_client=VERIFY_NONE;
+				} else if (strncmp(yytext,"optional",8) == 0) {			//OPTIONAL
+					connectorinfo->verify_client=VERIFY_OPTIONAL;
+				} else if (strncmp(yytext,"require",7) == 0) {			//REQUIRE
+					connectorinfo->verify_client=VERIFY_REQUIRE;
+				} else {
+					DO_SYSL("Config-File: openssl-verifyclient must be [none | optional | require]. Ignoring");
+				}
+			} else {
+				DO_SYSL("Config-File: More than one openssl-verifyclient statement in connector");
+			}
+		}
+	};
+
+SSLVerifyDepth:
+   TOK_SSL_VERIFY_DEPTH TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         connectorinfo->verify_depth = atoi(yytext);
+			if (connectorinfo->verify_depth > 128) {
+				DO_SYSL("Config-File: openssl-verifydepth too large [0-128]. Ignoring - using Default (10)");
+				connectorinfo->verify_depth=10;
+         }
+      }
+   };
+
+SSLCNAuth:
+   TOK_SSL_CN_AUTH
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         connectorinfo->CN_authentication=TRUE;
+      }
+   };
+
+SSLCRLPath:
+   TOK_SSL_CRL_PATH TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         CALLOC(connectorinfo->CRL_path, (char *), strlen(yytext) + 1, sizeof(char));
+         strncpy(connectorinfo->CRL_path, yytext, strlen(yytext));
+      }
+   };
+
+SSLCRLFile:
+   TOK_SSL_CRL_FILE TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         CALLOC(connectorinfo->CRL_file, (char *), strlen(yytext) + 1, sizeof(char));
+         strncpy(connectorinfo->CRL_file, yytext, strlen(yytext));
+      }
+   };
+
+SSLCRLCheck:
+   TOK_SSL_CRL_CHECK TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         if (connectorinfo->CRL_check == CRL_UNDEV)  {     			// First in connector
+            if (strncmp(yytext,"none",4) == 0) {                  // NONE
+               connectorinfo->CRL_check=CRL_NONE;
+            } else if (strncmp(yytext,"leaf",4) == 0) {       		// LEAF
+               connectorinfo->CRL_check=CRL_LEAF;
+            } else if (strncmp(yytext,"chain",5) == 0) {        	// CHAIN
+               connectorinfo->CRL_check=CRL_CHAIN;
+            } else {
+               DO_SYSL("Config-File: openssl-CRLcheck must be [none | leaf | chain]. Ignoring");
+            }
+         } else {
+            DO_SYSL("Config-File: More than one openssl-CRLcheck statement in connector");
+         }
+      }
+   };
+
+SSLCAPath:
+   TOK_SSL_CA_PATH TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         CALLOC(connectorinfo->CA_path, (char *), strlen(yytext) + 1, sizeof(char));
+         strncpy(connectorinfo->CA_path, yytext, strlen(yytext));
+      }
+   };
+
+SSLCAFile:
+   TOK_SSL_CA_FILE TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+         CALLOC(connectorinfo->CA_file, (char *), strlen(yytext) + 1, sizeof(char));
+         strncpy(connectorinfo->CA_file, yytext, strlen(yytext));
+      }
+   };
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -505,12 +701,17 @@ usePort:
 	TOK_PORT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			connectorinfo->port = atoi(yytext);
-			if (!connectorinfo->port) {
-				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
+			if (connectorinfo->port == 0) {
+				connectorinfo->port = atoi(yytext);
+				if (!connectorinfo->port) {
+					fprintf(stderr, "Port '%s' is not a valid port.\n", yytext);
+					exit(1);
+				}
+//        		fprintf(stderr,"Port: %d\n",connectorinfo->port);
+			}else {																		//more than one port definition in connector
+				fprintf(stderr, "More than one port statement in connector\n" );
 				exit(1);
 			}
-        	fprintf(stderr,"Port: %d\n",connectorinfo->port);
 		}
 	};
 
@@ -529,116 +730,20 @@ maxPostSize:
 	};
 
 
-listenonSpec:  /* done */
+listenonSpec:  
 	TOK_LISTEN_ON TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			CALLOC(connectorinfo->listen, (char *), strlen(yytext) + 1, sizeof(char));
-			strncpy(connectorinfo->listen, yytext, strlen(yytext));
+			if (connectorinfo->listen == NULL) {
+				CALLOC(connectorinfo->listen, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->listen, yytext, strlen(yytext));
+//		      fprintf(stderr,"Listen on: %s\n",yytext);
+			} else {
+				fprintf(stderr, "More than one listen statement in connector\n" );
+				exit(1);
+			}
 		}
-        	fprintf(stderr,"Listen on: %s\n",yytext);
 	};
-
-//listenonSpec:  /* done */
-//	TOK_LISTEN_ON TOK_NAME
-//	{
-//		int size=0;
-//		int salen, sa6len;
-//		int yup=1;
-//		struct sockaddr_in sa;
-//		struct sockaddr_in6 sa6;
-//		char *yytext_ = NULL;
-//		
-//		if (parser_mode == PARSER_MODE_SERVER) {
-//
-//			CALLOC(yytext_, (char *), strlen(yytext) + 1, sizeof(char))
-//			strncpy(yytext_, yytext, strlen(yytext));
-//		
-//			if (listenflag == LF_ANY_IP) {
-//				fprintf(stderr,
-//					"error: you have to choose between ANY IP address or some specific\n"
-//					"IP address but you cannot use both features at the same time.\n");
-//				exit(0);
-//			}
-//			listenflag = LF_SPEC_IP;
-//		
-//			if (!sockinfo) {
-//				CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
-//			} else {
-//				size = size_sockinfo_t;
-//				if ((sockinfo=realloc(sockinfo, (size + 1) * sizeof(sockinfo_t))) == NULL) {
-//					fprintf(stderr, "cannot allocate memory.\n");
-//					exit(ERR_EXIT);
-//				}
-//			}
-//		
-//			bzero(&sa, sizeof(sa));
-//			bzero(&sa6, sizeof(sa6));
-//#ifdef __WIN32__ /* lol */
-//			sa.sin_addr.s_addr = inet_addr(yytext);
-//			/* Warning: This 32bit only! */
-//			if (sa.sin_addr.s_addr != 0xffffffff)
-//#else
-//			if (inet_pton(AF_INET, yytext_, &sa.sin_addr))
-//#endif
-//			{
-//				sa.sin_port = htons(port);
-//				sa.sin_family = AF_INET;
-//				salen = sizeof(struct sockaddr_in);
-//			
-//				if (((sockinfo+size)->sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-//					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//			
-//				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-//			
-//				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa, salen) < 0) {
-//					perror("bind");
-//					fprintf(stderr, "bind() for %s failed.\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//			
-//				if (listen((sockinfo + size)->sockfd, 5) < 0) {
-//					fprintf(stderr, "listen() for %s failed.\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//				peak = max((sockinfo + size)->sockfd, peak);
-//				(sockinfo + size)->family=AF_INET;
-//#ifndef __WIN32__ /* IPv6-ready systems */
-//			} else if (inet_pton(AF_INET6, yytext_, &sa6.sin6_addr)) {
-//				sa6.sin6_port = htons(port);
-//				sa6.sin6_family = AF_INET6;
-//				sa6len = sizeof(struct sockaddr_in6);
-//			
-//				if (((sockinfo + size)->sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {
-//					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//			
-//				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-//			
-//				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {
-//					fprintf(stderr, "bind() for %s failed.\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//			
-//				if (listen((sockinfo + size)->sockfd, 5) < 0) {
-//					fprintf(stderr, "listen() for %s failed.\n", yytext_);
-//					exit(ERR_EXIT);
-//				}
-//				peak = max((sockinfo+size)->sockfd, peak);
-//				(sockinfo + size)->family = AF_INET6;
-//#endif
-//			} else {
-//				fprintf(stderr, "Invalid address: %s\n", yytext_);
-//				exit(ERR_EXIT);
-//			}
-//			free(yytext_);
-//			size_sockinfo_t++;
-//		}
-//	};
-
 
 dbEngine:
 	TOK_DB_ENGINE TOK_NAME

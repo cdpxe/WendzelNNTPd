@@ -50,14 +50,23 @@ client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
 change-gid                          return TOK_CHANGEGID;
 hash-salt                           return TOK_HASHSALT;
-\<connector\>			    return TOK_CONN_BEGIN;
-enable-ssl			    return TOK_SSL;
-enable-starttls			    return TOK_STARTTLS;
-openssl-ciphers			    return TOK_SSL_CIPHERS;
-openssl-tlsversion		    return TOK_SSL_VERSION;
-openssl-servercertificate	    return TOK_SSL_CERT;
-openssl-serverkey		    return TOK_SSL_KEY;
-\<\/connector\>			    return TOK_CONN_END;
+\<connector\>			  					return TOK_CONN_BEGIN;
+enable-ssl			    					return TOK_SSL;
+enable-starttls			    			return TOK_STARTTLS;
+openssl-ciphers			    			return TOK_SSL_CIPHERS;
+openssl-tlsversion		    			return TOK_SSL_VERSION;
+openssl-servercertificate	    		return TOK_SSL_CERT;
+openssl-serverkey		    				return TOK_SSL_KEY;
+openssl-server-cipher-preference		return TOK_SSL_CIPHERS_PREF;
+openssl-verifyclient						return TOK_SSL_VERIFY;
+openssl-verifydepth						return TOK_SSL_VERIFY_DEPTH;
+openssl-CNauthentication				return TOK_SSL_CN_AUTH;
+openssl-CRLpath							return TOK_SSL_CRL_PATH;
+openssl-CRLfile							return TOK_SSL_CRL_FILE;
+openssl-CRLcheck							return TOK_SSL_CRL_CHECK;
+openssl-CApath								return TOK_SSL_CA_PATH;
+openssl-CAfile								return TOK_SSL_CA_FILE;
+\<\/connector\>			    			return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */
