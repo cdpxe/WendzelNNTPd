@@ -89,9 +89,9 @@ db_mysql_close_connection(server_cb_inf *inf)
 }
 
 /* ***** AUTHINFO PASS ***** */
-
+// useronly==TRUE  -> unly check uername for x509 authentication
 void
-db_mysql_authinfo_check(server_cb_inf *inf)
+db_mysql_authinfo_check(server_cb_inf *inf, uint8_t useronly)
 {
 	MYSQL_ROW  row;
 	MYSQL_RES  *res;
@@ -102,8 +102,17 @@ db_mysql_authinfo_check(server_cb_inf *inf)
 	/* now check if combination of user+pass is valid */
 	len = strlen(inf->servinf->cur_auth_user) + strlen(inf->servinf->cur_auth_pass) + 0xff;
 	CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
-	snprintf(sql_cmd, len - 1, "select * from users where name='%s' and password='%s';",
-		inf->servinf->cur_auth_user, inf->servinf->cur_auth_pass);
+	if (useronly == TRUE) {					// X509 authenticated user check
+		len = strlen(inf->servinf->cur_auth_user) +  0xff;
+		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+		snprintf(sql_cmd, len - 1, "select * from users where name='%s';",
+			inf->servinf->cur_auth_user);
+	} else {										// normal user/pass authentication
+		len = strlen(inf->servinf->cur_auth_user) + strlen(inf->servinf->cur_auth_pass) + 0xff;
+		CALLOC_Thread(inf, sql_cmd, (char *), len, sizeof(char))
+		snprintf(sql_cmd, len - 1, "select * from users where name='%s' and password='%s';",
+			inf->servinf->cur_auth_user, inf->servinf->cur_auth_pass);
+	}
 	if (mysql_real_query(inf->servinf->myhndl, sql_cmd, strlen(sql_cmd)) != 0) {
 		MYSQL_CHK_ERR("mysql_real_query error")
 	}

@@ -106,7 +106,7 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.1.4-unstable"
+#define VERSION			"2.1.4-TLS-Grill"
 #define RELEASENAME		"'St.-Peter-Ording'" /* should not include white-spaces! */
 
 #ifndef BUILD /* Win32 */
@@ -374,7 +374,7 @@ void db_close_connection(server_cb_inf *);
 char *db_secure_sqlbuffer(server_cb_inf *, char *);
 void db_secure_sqlbuffer_free(char *);
 short db_acl_check_user_group(server_cb_inf *, char *, char *);
-void db_authinfo_check(server_cb_inf *);
+void db_authinfo_check(server_cb_inf *, uint8_t);
 void db_list(server_cb_inf *, int, char *);
 void db_xhdr(server_cb_inf *, short, int, char *, u_int32_t,
 	u_int32_t);
@@ -415,7 +415,7 @@ void db_sqlite3_open_connection(server_cb_inf *);
 void db_sqlite3_close_connection(server_cb_inf *);
 void sqlite3_secexec(server_cb_inf *, char *,
 	int (*)(void *, int, char **, char **), void *);
-void db_sqlite3_authinfo_check(server_cb_inf *);
+void db_sqlite3_authinfo_check(server_cb_inf *, uint8_t);
 void db_sqlite3_list(server_cb_inf *, int, char *);
 void db_sqlite3_xhdr(server_cb_inf *, short, int, char *, u_int32_t,
 	u_int32_t);
@@ -457,7 +457,7 @@ void db_sqlite3_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 #ifndef NOMYSQL
 void db_mysql_open_connection(server_cb_inf *);
 void db_mysql_close_connection(server_cb_inf *);
-void db_mysql_authinfo_check(server_cb_inf *);
+void db_mysql_authinfo_check(server_cb_inf *, uint8_t);
 u_int32_t db_mysql_get_high_value(server_cb_inf *, char *);
 int db_mysql_chk_if_msgid_exists(server_cb_inf *, char *, char *);
 void db_mysql_chk_newsgroup_posting_allowed(server_cb_inf *);

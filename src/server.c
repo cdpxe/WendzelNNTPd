@@ -132,6 +132,7 @@ static void docmd_article(char *, server_cb_inf *);
 static void docmd_group(char *, server_cb_inf *);
 static void docmd_listgroup(char *, server_cb_inf *);
 static void docmd_capabilities(server_cb_inf *);
+static uint8_t set_auth_user_to_cn(server_cb_inf *);
 static void docmd_starttls(server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
@@ -339,7 +340,7 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 		inf->servinf->cur_auth_pass = pass_hash;
 		
 		/* do the whole authentication check on DB */
-		db_authinfo_check(inf);
+		db_authinfo_check(inf,FALSE);
 		
 		if(inf->servinf->auth_is_there==0) {
 			ToSend(auth_reject, strlen(auth_reject), inf);
@@ -914,6 +915,51 @@ int buflen=0;
 	free(buf);
 }
 
+
+/*
+	set inf->servinf->cur_auth_user to first CN of Client Certificate Subject
+*/
+static uint8_t
+set_auth_user_to_cn(server_cb_inf *inf)
+{
+X509 *client_cert;
+X509_NAME *client_subject;
+int lastpos=-1;
+X509_NAME_ENTRY *entry;
+ASN1_STRING *e_value;
+unsigned char *str_value;
+uint8_t ret_val=ERR_RETURN;
+char *logline;
+
+	if (SSL_get_verify_result(inf->sockinf->ssl) == X509_V_OK) {		// Verification active and OK
+		client_cert=SSL_get_peer_certificate(inf->sockinf->ssl);
+		if (client_cert != NULL) {                                     //Client presented Cert for authentication
+			client_subject=X509_get_subject_name(client_cert);
+			if (client_subject != NULL) {                               //Client Certificate Subject
+				while ((lastpos = X509_NAME_get_index_by_NID(client_subject, NID_commonName, lastpos)) != -1) {		//all CNs
+					if ((entry=X509_NAME_get_entry(client_subject, lastpos)) != NULL) {
+						e_value=X509_NAME_ENTRY_get_data(entry);
+						if (ASN1_STRING_to_UTF8(&str_value,e_value) > 0) {
+							if (inf->servinf->cur_auth_user != NULL)			//should not happen - prevent memory leak
+								free(inf->servinf->cur_auth_user);
+							inf->servinf->cur_auth_user=strdup((char *)str_value);
+							CALLOC_Thread(inf, logline, (char *), strlen(inf->servinf->cur_auth_user)+ 0x1f, sizeof(char))
+							sprintf(logline,"Client Certificate found - CN=%s",inf->servinf->cur_auth_user);
+							DO_SYSL(logline);
+							fprintf(stderr,"%s\n",logline);
+							free(logline);
+							OPENSSL_free(str_value);
+							ret_val=OK_RETURN;
+							break;														// only use first valid CN
+						}
+					}
+				}
+			}
+		}
+	}
+	return(ret_val);
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	STARTTLS
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -931,15 +977,20 @@ docmd_starttls(server_cb_inf *inf)
 				if(!SSL_set_fd(inf->sockinf->ssl,inf->sockinf->sockfd)) {
 					fprintf(stderr,"Error creating SSL session!!\n");
 					ERR_print_errors_fp(stderr);
-//					kill_thread(&inf);
 				} else {
 					if (SSL_accept(inf->sockinf->ssl) <=0) {
 						fprintf(stderr,"Error negotiating SSL session!!\n");
 						ERR_print_errors_fp(stderr);
-//						kill_thread(&inf);
 					} else {
 //						fprintf(stderr,"STARTTLS negotiation successfull!\n");
 						inf->sockinf->ssl_active=TRUE;	//STARTTLS negotiation successfull
+						if ((inf->sockinf->connectorinfo->CN_authentication == TRUE) && (use_auth==1) && 	//Client Cert Authentication enabled
+							((inf->sockinf->connectorinfo->verify_client == VERIFY_OPTIONAL) || 
+							(inf->sockinf->connectorinfo->verify_client == VERIFY_REQUIRE) )) {     
+							if (set_auth_user_to_cn(inf) == OK_RETURN)
+							 	/* check if user exists in DB */
+								db_authinfo_check(inf,TRUE);	
+						}
 					}
 				}
 			} else {		// STARTTLS not allowed after user authentication
@@ -1699,6 +1750,12 @@ do_server(void *socket_info_ptr)
 	
 	db_open_connection(&inf);
 
+	if(use_auth==1) {
+		servinf.auth_is_there=0;
+	} else {
+		servinf.auth_is_there=1;
+	}
+	
 #ifdef USE_SSL
 	if (sockinf->connectorinfo->enable_ssl == TRUE) {
 		sockinf->ssl=SSL_new(sockinf->connectorinfo->ctx);
@@ -1722,18 +1779,18 @@ do_server(void *socket_info_ptr)
 			FFLUSH
 			free(conn_logstr);
 			sockinf->ssl_active=TRUE;
+			if ((sockinf->connectorinfo->CN_authentication == TRUE) && (use_auth==1) && 	//Client Cert Authentication enabled
+				((sockinf->connectorinfo->verify_client == VERIFY_OPTIONAL) || 
+				(sockinf->connectorinfo->verify_client == VERIFY_REQUIRE) )) {     
+				if (set_auth_user_to_cn(&inf) == OK_RETURN)
+			 			/* check if user exists in DB */
+						db_authinfo_check(&inf,TRUE);	
+			}	
 		}
 	}
 #endif
 
-//	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
 	Send(sockinf, welcomestring, strlen(welcomestring));
-	
-	if(use_auth==1) {
-		servinf.auth_is_there=0;
-	} else {
-		servinf.auth_is_there=1;
-	}
 	
 	while(1) {
 		if (len == 0)

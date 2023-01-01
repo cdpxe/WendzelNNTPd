@@ -23,18 +23,19 @@
 
 extern unsigned short dbase;	/* from config.y */
 
+// useronly==TRUE  -> unly check uername for x509 authentication
 void
-db_authinfo_check(server_cb_inf *inf)
+db_authinfo_check(server_cb_inf *inf, uint8_t useronly)
 {
 	switch (dbase) {
 #ifndef NOSQLITE
 	case DBASE_SQLITE3:
-		db_sqlite3_authinfo_check(inf);
+		db_sqlite3_authinfo_check(inf,useronly);
 		break;
 #endif
 #ifndef NOMYSQL
 	case DBASE_MYSQL:
-		db_mysql_authinfo_check(inf);
+		db_mysql_authinfo_check(inf,useronly);
 		break;
 #endif
 	default:
