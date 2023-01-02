@@ -18,7 +18,9 @@ WendzelNNTPd contains different security features, the most important features a
 
 Another feature are so-called ``invisible newsgroups'': If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case he knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
 
-However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. Also, WendzelNNTPd does not support TLS (not even SSL)!
+However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. 
+
+WendzelNNTPd supports TLSv1.0 to TLSv1.3 for securing connections from client to server. The server is authenticated to the client by certificate. The server can be configured to request a certificate from client for authentication. The client certificate can be validated to several Certification Authorities (CA). CommonName (CN) in subject of the client certificate can be used for user authentication in NNTP. For validation of certificates checking of CRL is supported.
 
 \subsection{Auto-prevention of double-postings}
 
@@ -30,7 +32,7 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 
 \subsection{Why this is not a perfect Usenet server}
 
-WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100\% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
+WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100\% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers.
 
 \section{Contribute}
 

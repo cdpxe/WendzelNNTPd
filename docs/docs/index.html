@@ -232,7 +232,10 @@ WendzelNNTPd contains different security features, the most important features a
 Another feature are so-called &ldquo;invisible newsgroups&rdquo;: If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case he knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
 
 <P>
-However, <SPAN  CLASS="textbf">please note</SPAN> that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. Also, WendzelNNTPd does not support TLS (not even SSL)!
+However, <SPAN  CLASS="textbf">please note</SPAN> that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. 
+
+<P>
+WendzelNNTPd supports TLSv1.0 to TLSv1.3 for securing connections from client to server. The server is authenticated to the client by certificate. The server can be configured to request a certificate from client for authentication. The client certificate can be validated to several Certification Authorities (CA). CommonName (CN) in subject of the client certificate can be used for user authentication in NNTP. For validation of certificates checking of CRL is supported.
 
 <P>
 
@@ -259,7 +262,7 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 </H2>
 
 <P>
-WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100% compatible with the NNTP matching in commands like &ldquo;XGTITLE&rdquo;. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
+WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100% compatible with the NNTP matching in commands like &ldquo;XGTITLE&rdquo;. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers.
 
 <P>
 
@@ -281,7 +284,7 @@ The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria 
 
 <P>
 
-<H1><A NAME="SECTION00300000000000000000"></A><A NAME="97"></A>
+<H1><A NAME="SECTION00300000000000000000"></A><A NAME="99"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Installation
 </H1>
@@ -297,7 +300,7 @@ This chapter provides a guide on how to install WendzelNNTPd 2.x.
 
 <P>
 To install WendzelNNTPd from source you need to download the provided archive file (e.g. wendzelnntpd-2.0.0.tar.gz) file.<A NAME="tex2html2"
-  HREF="footnode.html#foot131"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
+  HREF="footnode.html#foot136"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -309,6 +312,12 @@ $ ./configure
 
 <P>
 <SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT MySQL or WITHOUT SQlite support</SPAN>, then run <SPAN  CLASS="textbf">MYSQL=NO ./configure</SPAN> or <SPAN  CLASS="textbf">SQLITE=NO ./configure</SPAN>, respectively.
+
+<P>
+&nbsp;
+
+<P>
+<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT TLS support</SPAN>, then run <SPAN  CLASS="textbf">TLS=NO ./configure</SPAN>.
 
 <P>
 &nbsp;
@@ -337,7 +346,7 @@ $ sudo make install
 </PRE>
 
 <P>
-<SPAN  CLASS="textbf">Please Note (Upgrades):</SPAN> Run <SPAN  CLASS="textbf">sudo make upgrade</SPAN> instead of <SPAN  CLASS="textbf">sudo make install</SPAN> for an upgrade. Please cf. Section&nbsp;<A HREF="#Ch:Upgrade"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>.
+<SPAN  CLASS="textbf">Please Note (Upgrades):</SPAN> Run <SPAN  CLASS="textbf">sudo make upgrade</SPAN> instead of <SPAN  CLASS="textbf">sudo make install</SPAN> for an upgrade. Please cf. Section&nbsp;<A HREF="#Ch:Upgrade">5</A>.
 
 <P>
 <SPAN  CLASS="textbf">Please Note (MySQL):</SPAN> <SPAN  CLASS="textit">If you plan to run MySQL</SPAN>, then no database was set up during 'make install'. Please refer to chapter 3 (configuration) to learn how to generate the MySQL database.
@@ -371,7 +380,7 @@ Not supported.
 
 <P>
 
-<H1><A NAME="SECTION00400000000000000000"></A><A NAME="178"></A>
+<H1><A NAME="SECTION00400000000000000000"></A><A NAME="187"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Configuration
 </H1>
@@ -479,19 +488,24 @@ Bye
 
 <P>
 Now you should specify the IP addresse(s) (IPv4 or IPv6) for WendzelNNTPd to accept connections on and the TCP port (the default NNTP port is 119) to run on.
+WendzelNNTPd defines <SPAN  CLASS="textbf">conectors</SPAN> in configuration file.
+Each connector defines one port and one listen IP (or all interface IP).
+The connectors are activated top down.
+So place the specific IP before an all interface IP if you share the port number.
 
 <P>
 <PRE>
-; You have to specify the port _before_ using the 'listen' command!
-port	119
-; network addresses to listen on
-listen	127.0.0.1
-listen	::1
-listen	192.168.0.1
+; You need to specify a connector for each port WendzelNNTPd should
+; listen on.
+&lt;connector&gt;
+   port   119
+   listen 0.0.0.0
+&lt;/connector&gt;
+&lt;connector&gt;
+   port   119
+   listen ::1
+&lt;/connector&gt;
 </PRE>
-
-<P>
-You <SPAN  CLASS="textit">could</SPAN> also use different ports for each IP address by placing a <SPAN  CLASS="textbf">port</SPAN> command right before each <SPAN  CLASS="textbf">listen</SPAN> command but this is not recommended.
 
 <P>
 
@@ -533,7 +547,98 @@ verbose-mode
 </H1>
 
 <P>
-Please note that WendzelNNTPd does not support SSL/TLS!
+WendzelNNTPd supports TLS Version 1.0 to 1.3.
+TLS settings can be defined for each connector independently.
+To place the certificates following folders have been created in the configuration directory by installation script:
+<PRE>
+   ssl.ca          # CA certificates for client certificate validation
+   ssl.crl         # CRL of CA certificates
+   ssl.crt         # Server Certificates
+   ssl.key         # Server Keys (not public readable)
+</PRE>
+
+<P>
+Following options can be defined in each connector:
+<PRE>
+; You need to specify a connector for each port WendzelNNTPd should
+; listen on.
+&lt;connector&gt;
+;    Initially enable TLS on connector - denies session without TLS
+   enable-ssl
+;    Enable STARTTLS in connection
+   enable-starttls
+;    Set available ciphers on server - see cipher string from OpenSSL
+   openssl-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+;    Set available TLS versions
+   openssl-tlsversion "1.0-1.3"
+;    Server certificate
+   openssl-servercertificate "/usr/local/etc/ssl.crt/server.crt"
+;    Key for Server certificate
+   openssl-serverkey "/usr/local/etc/ssl.key/server.key"
+;    Force server cipher order
+   openssl-server-cipher-preference
+;    Request client authentication by certificate
+;    openssl-verifyclient [ none | optional | require ]
+   openssl-verifyclient optional
+;    Specify nuber of CA levels to verify eg. 0==selfsignes Certs only
+   openssl-verifydepth 5
+;    Path for CA certificates used to verify client certificates
+;    Use c_rehash &lt;Path&gt; to build required hashes for certificates!
+   openssl-CApath "/usr/local/etc/ssl.ca"
+;    File that holds all CA certificates used to verify client certificates
+   openssl-CAfile "/usr/local/etc/ssl.ca/cacert.pem"
+;    Use first CN in Subject of client certificate to authenticate NNTP user
+   openssl-CNauthentication
+;    Enable CRL-checking on client certificates
+;    openssl-CRLcheck [ none | leaf | chain ]
+   openssl-CRLcheck leaf
+;    Specify path that holds CRL vertificates
+;    Use c_rehash &lt;Path&gt; to build required hashes for certificates!
+   openssl-CRLpath "/usr/local/etc/ssl.crl"
+;    File that holds all CRL certificates used for checking
+   openssl-CRLfile "/usr/local/etc/ssl.crl/cacert.crl"
+;    Set port to listen on
+   port    119
+;    Set IPv4 od IPv6 to use with connector
+   listen  0.0.0.0
+;&lt;/connector&gt;
+</PRE>
+
+<P>
+<SPAN  CLASS="textbf">enable-ssl</SPAN> enables TLS on the connector.
+TLS has to be negotiated on session setup.
+No sessions without TLS are permitted.
+At least <SPAN  CLASS="textbf">openssl-servercertificate</SPAN> and <SPAN  CLASS="textbf">openssl-serverkey</SPAN> must be specified.
+<SPAN  CLASS="textbf">enable-ssl</SPAN> supersedes <SPAN  CLASS="textbf">enable-starttls</SPAN> if defined in same connector.
+
+<P>
+&nbsp;
+
+<P>
+<SPAN  CLASS="textbf">enable-starttls</SPAN> activates STARTTLS on connector.
+TLS can be negotiated during session with <SPAN  CLASS="textit">STARTTLS</SPAN> command. 
+Encrypted and unencrypted sessions are supported on the same connector.
+At least <SPAN  CLASS="textbf">openssl-servercertificate</SPAN> and <SPAN  CLASS="textbf">openssl-serverkey</SPAN> must be specified.
+
+<P>
+&nbsp;
+
+<P>
+Certificates in <SPAN  CLASS="textbf">openssl-CApath</SPAN> and <SPAN  CLASS="textbf">openssl-CRLpath</SPAN> must have symbolic links named with their hash values. 
+Use <SPAN  CLASS="textit">c_rehash <SPAN CLASS="MATH"><IMG
+ WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&lt;$"></SPAN>dir<SPAN CLASS="MATH"><IMG
+ WIDTH="19" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$&gt;$"></SPAN></SPAN> shipped with OpenSSL to create the links.
+
+<P>
+&nbsp;
+
+<P>
+<SPAN  CLASS="textbf">openssl-CNauthentication</SPAN> uses the first CommonName (CN) in subject to authenticate the client. If CN is found in usertable, the session is put to authenticated state.
+<SPAN  CLASS="textbf">use-authentication</SPAN> should be activated in configuration file.
 
 <P>
 
@@ -603,14 +708,14 @@ WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please
 
 <P>
 
-<H1><A NAME="SECTION00500000000000000000"></A><A NAME="322"></A>
+<H1><A NAME="SECTION00500000000000000000"></A><A NAME="365"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A NAME="SECTION00510000000000000000"></A><A NAME="324"></A>
+<H1><A NAME="SECTION00510000000000000000"></A><A NAME="367"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -630,7 +735,7 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A NAME="SECTION00520000000000000000"></A><A NAME="331"></A><A NAME="332"></A>
+<H1><A NAME="SECTION00520000000000000000"></A><A NAME="374"></A><A NAME="375"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1146,7 +1251,7 @@ As mentioned above, you as the maintainer of the usenet server can safe time by 
 <P>
 If you want to give all developers access to the group &ldquo;project-x.news&rdquo;, you also do not have to connect every developer with the project. Instead, you just connect the rule with the newsgroup, what is one command instead of <SPAN CLASS="MATH"><IMG
  WIDTH="15" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
- SRC="img1.png"
+ SRC="img3.png"
  ALT="$n$"></SPAN> commands. Of course, this time saving concept also works if you want to delete a user.
 
 <P>
@@ -1161,7 +1266,7 @@ Besides the already mentioned authentication, ACL and RBAC features, the securit
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <TT>nmap</TT> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A NAME="SECTION00600000000000000000"></A><A NAME="590"></A><A NAME="Ch:Upgrade"></A>
+<H1><A NAME="SECTION00600000000000000000"></A><A NAME="633"></A><A NAME="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Upgrading
 </H1>
@@ -1173,7 +1278,7 @@ Please also note that WendzelNNTPd can be easily identified due to its welcoming
 </H1>
 
 <P>
-Same as upgrading from v.2.0.x to v.2.0.y, see Section <A HREF="#20xto20y"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>.
+Same as upgrading from v.2.0.x to v.2.0.y, see Section <A HREF="#20xto20y">5.3</A>.
 
 <P>
 &nbsp;
@@ -1370,20 +1475,20 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you ma
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#178"><SPAN CLASS="arabic">3</SPAN></A>
+<DD><A HREF="docs.html#187"><SPAN CLASS="arabic">3</SPAN></A>
 <DT><STRONG>Installation</STRONG>
-<DD><A HREF="docs.html#97"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#99"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Introduction</STRONG>
 <DD><A HREF="docs.html#43"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#332"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#375"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#322"><SPAN CLASS="arabic">4</SPAN></A>
- | <A HREF="docs.html#324"><SPAN CLASS="arabic">1</SPAN></A>
+<DD><A HREF="docs.html#365"><SPAN CLASS="arabic">4</SPAN></A>
+ | <A HREF="docs.html#367"><SPAN CLASS="arabic">1</SPAN></A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#331"><SPAN CLASS="arabic">2</SPAN></A>
+<DD><A HREF="docs.html#374"><SPAN CLASS="arabic">2</SPAN></A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#590"><SPAN CLASS="arabic">5</SPAN></A>
+<DD><A HREF="docs.html#633"><SPAN CLASS="arabic">5</SPAN></A>
 
 </DL>
 
@@ -1407,7 +1512,7 @@ Mathematics Department, Macquarie University, Sydney.
 The command line arguments were: <BR>
  <STRONG>latex2html</STRONG> <TT>-show_section_numbers -local_icons -split 2 docs.tex</TT>
 <P>
-The translation was initiated on 2021-04-17
+The translation was initiated on 2023-01-02
 <BR><HR>
 <!--Table of Child-Links-->
 <A NAME="CHILD_LINKS"></A>

@@ -98,6 +98,10 @@ wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o ha
 
 install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(FAKECDIR) ]; then install -d -m 0755 $(FAKECDIR); fi
+	if [ ! -d $(FAKECDIR)/ssl.key ]; then install -d -m 0700 $(FAKECDIR)/ssl.key; fi
+	if [ ! -d $(FAKECDIR)/ssl.crt ]; then install -d -m 0755 $(FAKECDIR)/ssl.crt; fi
+	if [ ! -d $(FAKECDIR)/ssl.ca ]; then install -d -m 0755 $(FAKECDIR)/ssl.ca; fi
+	if [ ! -d $(FAKECDIR)/ssl.crl ]; then install -d -m 0755 $(FAKECDIR)/ssl.crl; fi
 	if [ ! -d $(DESTDIR)/sbin ]; then install -d -m 0755 $(DESTDIR)/sbin; fi
 	if [ ! -d $(DESTDIR)/share ]; then install -d -m 0755 $(DESTDIR)/share; fi
 	if [ ! -d $(DESTDIR)/share/doc ]; then install -d -m 0755 $(DESTDIR)/share/doc; fi

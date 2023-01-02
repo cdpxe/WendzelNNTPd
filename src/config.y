@@ -385,15 +385,15 @@ connectorEnd:
 							if (connectorinfo->verify_client != VERIFY_UNDEV) {			//Verify option
 								switch (connectorinfo->verify_client) {
 									case VERIFY_OPTIONAL : SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER, NULL);
-																  fprintf(stderr,"VERIFY_OPTIONAL\n");
+//																  fprintf(stderr,"VERIFY_OPTIONAL\n");
 																  break;
 									case VERIFY_REQUIRE  : SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT | SSL_VERIFY_CLIENT_ONCE, NULL);
-																  fprintf(stderr,"VERIFY_REQUIRE\n");
+//																  fprintf(stderr,"VERIFY_REQUIRE\n");
 																  break;
 									case VERIFY_NONE     : 
 									default					: connectorinfo->verify_client=VERIFY_NONE;
 																  SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
-																  fprintf(stderr,"VERIFY_NONE\n");
+//																  fprintf(stderr,"VERIFY_NONE\n");
 																  break;
 								}
 								SSL_CTX_set_verify_depth(connectorinfo->ctx, connectorinfo->verify_depth);		//Verify depth

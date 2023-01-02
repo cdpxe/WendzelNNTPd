@@ -66,17 +66,23 @@ Bye
 \section{Network Settings}
 
 Now you should specify the IP addresse(s) (IPv4 or IPv6) for WendzelNNTPd to accept connections on and the TCP port (the default NNTP port is 119) to run on.
+WendzelNNTPd defines \textbf{conectors} in configuration file.
+Each connector defines one port and one listen IP (or all interface IP).
+The connectors are activated top down.
+So place the specific IP before an all interface IP if you share the port number.
 
 \begin{verbatim}
-; You have to specify the port _before_ using the 'listen' command!
-port	119
-; network addresses to listen on
-listen	127.0.0.1
-listen	::1
-listen	192.168.0.1
+; You need to specify a connector for each port WendzelNNTPd should
+; listen on.
+<connector>
+   port   119
+   listen 0.0.0.0
+</connector>
+<connector>
+   port   119
+   listen ::1
+</connector>
 \end{verbatim}
-
-You \textit{could} also use different ports for each IP address by placing a \textbf{port} command right before each \textbf{listen} command but this is not recommended.
 
 \section{Setting the Allowed Size of Postings}
 
@@ -101,7 +107,84 @@ verbose-mode
 
 \section{Security Settings}
 
-Please note that WendzelNNTPd does not support SSL/TLS!
+WendzelNNTPd supports TLS Version 1.0 to 1.3.
+TLS settings can be defined for each connector independently.
+To place the certificates following folders have been created in the configuration directory by installation script:
+\begin{verbatim}
+   ssl.ca          # CA certificates for client certificate validation
+   ssl.crl         # CRL of CA certificates
+   ssl.crt         # Server Certificates
+   ssl.key         # Server Keys (not public readable)   
+\end{verbatim}
+
+Following options can be defined in each connector:
+\begin{verbatim}
+; You need to specify a connector for each port WendzelNNTPd should
+; listen on.
+<connector>
+;    Initially enable TLS on connector - denies session without TLS
+   enable-ssl
+;    Enable STARTTLS in connection
+   enable-starttls
+;    Set available ciphers on server - see cipher string from OpenSSL
+   openssl-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+;    Set available TLS versions
+   openssl-tlsversion "1.0-1.3"
+;    Server certificate
+   openssl-servercertificate "/usr/local/etc/ssl.crt/server.crt"
+;    Key for Server certificate
+   openssl-serverkey "/usr/local/etc/ssl.key/server.key"
+;    Force server cipher order
+   openssl-server-cipher-preference
+;    Request client authentication by certificate
+;    openssl-verifyclient [ none | optional | require ]
+   openssl-verifyclient optional
+;    Specify nuber of CA levels to verify eg. 0==selfsignes Certs only
+   openssl-verifydepth 5
+;    Path for CA certificates used to verify client certificates
+;    Use c_rehash <Path> to build required hashes for certificates!
+   openssl-CApath "/usr/local/etc/ssl.ca"
+;    File that holds all CA certificates used to verify client certificates
+   openssl-CAfile "/usr/local/etc/ssl.ca/cacert.pem"
+;    Use first CN in Subject of client certificate to authenticate NNTP user
+   openssl-CNauthentication
+;    Enable CRL-checking on client certificates
+;    openssl-CRLcheck [ none | leaf | chain ]
+   openssl-CRLcheck leaf
+;    Specify path that holds CRL vertificates
+;    Use c_rehash <Path> to build required hashes for certificates!
+   openssl-CRLpath "/usr/local/etc/ssl.crl"
+;    File that holds all CRL certificates used for checking
+   openssl-CRLfile "/usr/local/etc/ssl.crl/cacert.crl"
+;    Set port to listen on
+   port    119
+;    Set IPv4 od IPv6 to use with connector
+   listen  0.0.0.0
+;</connector>
+\end{verbatim}
+
+\textbf{enable-ssl} enables TLS on the connector.
+TLS has to be negotiated on session setup.
+No sessions without TLS are permitted.
+At least \textbf{openssl-servercertificate} and \textbf{openssl-serverkey} must be specified.
+\textbf{enable-ssl} supersedes \textbf{enable-starttls} if defined in same connector.
+
+~
+
+\textbf{enable-starttls} activates STARTTLS on connector.
+TLS can be negotiated during session with \textit{STARTTLS} command. 
+Encrypted and unencrypted sessions are supported on the same connector.
+At least \textbf{openssl-servercertificate} and \textbf{openssl-serverkey} must be specified.
+
+~
+
+Certificates in \textbf{openssl-CApath} and \textbf{openssl-CRLpath} must have symbolic links named with their hash values. 
+Use \textit{c\_rehash $<$dir$>$} shipped with OpenSSL to create the links.
+
+~
+
+\textbf{openssl-CNauthentication} uses the first CommonName (CN) in subject to authenticate the client. If CN is found in usertable, the session is put to authenticated state.
+\textbf{use-authentication} should be activated in configuration file.
 
 \subsection{Authentication and Access Control Lists (ACL)}
 
