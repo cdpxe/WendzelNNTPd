@@ -1753,14 +1753,6 @@ do_server(void *socket_info_ptr)
 					free(inf.servinf->selected_article);
 					inf.servinf->selected_article = NULL;
 				}
-				if (inf.servinf->cur_auth_user) {
-					free(inf.servinf->cur_auth_user);
-					inf.servinf->cur_auth_user = NULL;
-				}
-				if (inf.servinf->cur_auth_pass) {
-					free(inf.servinf->cur_auth_pass);
-					inf.servinf->cur_auth_pass = NULL;
-				}
 #ifdef DEBUG
 				fprintf(stderr, "client switched to TLS.\n");
 				FFLUSH
