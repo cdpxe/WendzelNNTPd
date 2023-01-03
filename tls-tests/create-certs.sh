@@ -2,11 +2,12 @@
 
 # create CA
 openssl req \
+  -x509 \
   -new \
   -newkey rsa:2048 \
-  -days 365 \
+  -days 3650 \
   -nodes \
-  -x509 \
+  -extensions v3_ca \
   -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
   -keyout "ca-key.pem" \
   -out "ca-root.pem"
