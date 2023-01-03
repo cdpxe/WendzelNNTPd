@@ -337,8 +337,8 @@ docmd_capabilities(server_cb_inf *inf)
 	ToSend(cap_post, strlen(cap_post), inf);
 
 #ifndef NOTLS
-	/* STARTTLS only if not already on TLS */
-	if (!inf->servinf->tls_is_there) {
+	/* STARTTLS only if not already on TLS and not authenticated */
+	if (!inf->servinf->tls_is_there && !inf->servinf->auth_is_there) {
 		ToSend(cap_starttls, strlen(cap_starttls), inf);
 	}
 #endif
@@ -354,7 +354,7 @@ docmd_capabilities(server_cb_inf *inf)
 static void
 docmd_starttls(server_cb_inf *inf)
 {
-	if (inf->servinf->tls_is_there) {
+	if (inf->servinf->tls_is_there || inf->servinf->auth_is_there) {
 		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 	} else {
 		ToSend(tls_connect, strlen(tls_connect), inf);
