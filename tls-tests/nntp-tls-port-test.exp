@@ -24,13 +24,13 @@ send_user "== Checking for capabilities command, no STARTTLS allowed ==\n"
 send "capabilities\n"
 expect {
   -re "101.*" { set outcome $expect_out(0,string) }
-  timeout { send_user "\nError while getting capabilites\n"; exit 1 }
+  timeout { send_user "\nError while getting capabilities\n"; exit 1 }
 }
 
 foreach line [ split $outcome "\r\n"] {
   set found [regexp {STARTTLS} $line match STARTTLS]
   if {$found == 1} {
-    send_user "\nError: STARTTLS in capabilites\n"
+    send_user "\nError: STARTTLS in capabilities\n"
     exit 1
   }
 }

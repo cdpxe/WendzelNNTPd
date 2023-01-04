@@ -80,7 +80,7 @@ char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				"Lines:\r\n"
 				"Xref:full\r\n"
 				".\r\n";
-char capabilites_string[]=    "101 capability list follows\r\n";
+char capabilities_string[]=   "101 capability list follows\r\n";
 char welcomestring[]=         "200 WendzelNNTPd " WELCOMEVERSION " ready (posting ok).\r\n";
 char mode_reader_ok[]=        "200 hello, you can post\r\n";
 char quitstring[]=            "205 closing connection - goodbye!\r\n";
@@ -299,7 +299,7 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	CAPABILITES
+	CAPABILITIES
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 static void
@@ -315,9 +315,9 @@ docmd_capabilities(server_cb_inf *inf)
 	char cap_starttls[]="STARTTLS\r\n";
 #endif
 
-	/* XOVER and XHDR can not be advertized via CAPABILITES */
+	/* XOVER and XHDR can not be advertized via CAPABILITIES */
 
-	ToSend(capabilites_string, strlen(capabilites_string), inf);
+	ToSend(capabilities_string, strlen(capabilities_string), inf);
 
 	/* VERSION MUST be first line */
 	ToSend(cap_nntp_version, strlen(cap_nntp_version), inf);

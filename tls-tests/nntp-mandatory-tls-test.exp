@@ -20,7 +20,7 @@ expect {
 send_user "== Checking for capabilities command, STARTTLS must be there ==\n"
 send "capabilities\n"
 expect {
-  timeout { send_user "\nError while getting capabilites\n"; exit 1 }
+  timeout { send_user "\nError while getting capabilities\n"; exit 1 }
   -re "101.*STARTTLS"
 }
 
