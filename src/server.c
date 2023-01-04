@@ -1711,11 +1711,7 @@ do_server(void *socket_info_ptr)
 
 	Send(&inf, welcomestring, strlen(welcomestring));
 
-	if(use_auth==1) {
-		servinf.auth_is_there=0;
-	} else {
-		servinf.auth_is_there=1;
-	}
+	servinf.auth_is_there=0;
 
 	while(1) {
 		if (len == 0) {
