@@ -122,7 +122,7 @@ tls_session_init(gnutls_session_t *session, int sockfd)
 	if (return_code < 0) {
 		DO_SYSL("TLS session not initialized, error during handshake");
 
-		fprintf(stderr, "TLS sessionnot initialized, error during handshake\n");
+		fprintf(stderr, "TLS session not initialized, error during handshake\n");
 		fprintf(stderr, "%s\n", gnutls_strerror(return_code));
 
 		gnutls_deinit(*session);

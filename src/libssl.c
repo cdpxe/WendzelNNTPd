@@ -107,8 +107,8 @@ tls_session_init(SSL **session, int sockfd)
 
 	*session = SSL_new(context);
 	if (!*session) {
-		DO_SYSL("TLS not initialized, error in SSL_new()")
-		fprintf(stderr, "TLS not initialized, SSL_new() error\n");
+		DO_SYSL("TLS session not initialized, error in SSL_new()")
+		fprintf(stderr, "TLS session not initialized, SSL_new() error\n");
 		return FALSE;
 	}
 
