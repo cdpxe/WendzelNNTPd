@@ -1,3 +1,11 @@
 Makefile.inc
 scripts/startup/init.d_script
 test.man
+*.o
+bin/wendzelnntpadm
+bin/wendzelnntpd
+config.output
+config.tab.c
+config.tab.h
+lex.yy.c
+
