@@ -61,7 +61,7 @@ check_db(void)
 		exit(ERR_EXIT);
 		break;
 	}
-	if (be_verbose)
+	if (be_verbose) {
 	    printf("Database check %s: Success.\n",
 		(dbase == DBASE_SQLITE3 ? "Sqlite3" : (dbase == DBASE_MYSQL ? "MySQL" : "PostgreSQL")));
 	}
