@@ -111,7 +111,7 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.1.4-unstable"
+#define VERSION			"current-DEV-unstable"
 #define RELEASENAME		"'St.-Peter-Ording'" /* should not include white-spaces! */
 
 #ifndef BUILD /* Win32 */
