@@ -2,7 +2,7 @@
 
 **WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/*BSD/*nix), supports IPv4 and IPv6, AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
 
-This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks TLS support and strong hardening.
+This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks TLS support (under development, see below) and strong hardening.
 
 ## Download
 
@@ -28,7 +28,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
 * Conservative design philosophy:
-   * Tiny (around 7,800 Lines of Code), to limit potential (security) flaws.
+   * Tiny (less than 10,000 Lines of Code), to limit potential (security) flaws, including optional features that can be deactivated at compile time.
    * Do not implement unnecessary features.
    * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
@@ -38,6 +38,11 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
+
+#### Features Under Development/Call for Testing
+
+* The main branch currently provides experimental support for **PostgreSQL** backends (thx to Christian Barthel for the patch!).
+* Two **NNTPS/TLS** branches are available (thx to Mr. Dunsky and Mr. Grill!)
 
 ## Website
 
