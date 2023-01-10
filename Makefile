@@ -27,9 +27,9 @@ BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
 
-all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) globals.o
+all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) globals.o
 	expr `cat build` \+ 1 >build
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) charstack.o libfunc.o $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
 	#strip bin/wendzelnntpd
 
 lexyacc : lex.yy.o config.tab.o
@@ -66,6 +66,9 @@ db_abstraction.o : $(SRC)/db_abstraction.c $(HEADERS)
 db_sqlite3.o : $(SRC)/db_sqlite3.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
 
+db_postgres.o : $(SRC)/db_postgres.c $(HEADERS)
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+
 db_mysql.o : $(SRC)/db_mysql.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
 
@@ -90,8 +93,8 @@ cdpnntpadm.o : $(SRC)/cdpnntpadm.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) \
 	-DTHIS_TOOLNAME=\"wendzelnntpd\" -c $<
 
-wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(LIBDIRS) $(SOLNETLIBS) $(CCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
+wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(CCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
 	#strip bin/wendzelnntpadm
 
 # misc targets
@@ -183,4 +186,3 @@ man_wendzelnntpd :
 man_wendzelnntpadm :
 	groff -Tascii -man wendzelnntpadm.8  > test.man
 	man -l test.man
-
