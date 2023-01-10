@@ -3,17 +3,17 @@
  *
  * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,7 +55,7 @@
 #include <sys/stat.h> /* umask() */
 
 #ifdef __svr4__
-   #include <strings.h>	
+   #include <strings.h>
 #endif
 #ifndef __WIN32__
    #include <netdb.h>
@@ -68,7 +68,7 @@
 
 /* precondition */
 
-#if defined(NOSQLITE) && defined(NOMYSQL)
+#if defined(NOSQLITE) && defined(NOMYSQL) && defined(POSTGRES)
 	#error "You need at least one database but excluded MySQL *and* SQlite support!"
 #endif
 
@@ -80,6 +80,11 @@
 /* MySQL */
 #ifndef NOMYSQL
 	#include <mysql/mysql.h>
+#endif
+
+/* Postgres */
+#ifndef NOPOSTGRES
+	#include <libpq-fe.h>
 #endif
 
 /* Own files */
@@ -161,7 +166,7 @@
 #define DBASE_NONE		0
 #define DBASE_SQLITE3		1
 #define DBASE_MYSQL		2
-/*#define DBASE_POSTGRES		3*/
+#define DBASE_POSTGRES		3
 
 #define XHDR_FROM		0x01
 #define XHDR_DATE		0x02
@@ -248,33 +253,37 @@ typedef struct {
 	int		auth_is_there;	/* is the client already authenticated? */
 	char		*cur_auth_user;
 	char		*cur_auth_pass;
-	
+
 	char		*selected_group;
 	char		*selected_article;
-	
+
 	char		*curstring;
-	
+
 	/* for POST */
 	char		*chkname;
 	int		found_group;
-	
+
 	/* for ARTICLE */
 	int		found_article;
-	
+
 	/* for LIST NEWSGROUPS/XGTITLE in Sqlite3 */
 	char		*wildmat;
-	
+
 	/* gerneral purpose */
 	int		counter;
-	
+
 	/* SQLite stuff */
 #ifndef NOSQLITE
 	sqlite3		*db;
 	char		*sqlite_err_msg;
 #endif
-#ifndef NOMYSQL	
+#ifndef NOMYSQL
 	/* MySQL stuff */
 	MYSQL		*myhndl;
+#endif
+#ifndef NOPOSTGRES
+	/* PostgreSQL stuff */
+	PGconn		*pgconn;
 #endif
 } serverinfo_t;
 
@@ -450,6 +459,50 @@ void db_mysql_acl_role_connect_user(server_cb_inf *, char *, char *);
 void db_mysql_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 #endif
 
+/* db_postgres.c */
+#ifndef NOPOSTGRES
+void db_postgres_backend_terminate(server_cb_inf *inf, int code);
+void db_postgres_set_secure_searchpath(server_cb_inf *inf);
+void db_postgres_open_connection(server_cb_inf *);
+void db_postgres_close_connection(server_cb_inf *);
+void db_postgres_authinfo_check(server_cb_inf *);
+u_int32_t db_postgres_get_high_value(server_cb_inf *, char *);
+int db_postgres_chk_if_msgid_exists(server_cb_inf *, char *, char *);
+void db_postgres_chk_newsgroup_posting_allowed(server_cb_inf *);
+void db_postgres_chk_newsgroup_existence(server_cb_inf *);
+void db_postgres_create_newsgroup(server_cb_inf *, char *, char);
+void db_postgres_delete_newsgroup(server_cb_inf *, char *);
+void db_postgres_modify_newsgroup(server_cb_inf *, char *, char);
+void db_postgres_list(server_cb_inf *, int, char *);
+void db_postgres_xhdr(server_cb_inf *, short, int, char *, u_int32_t,
+		u_int32_t);
+void db_postgres_article(server_cb_inf *, int, char *);
+void db_postgres_group(server_cb_inf *, char *);
+void db_postgres_listgroup(server_cb_inf *, char *);
+void db_postgres_xover(server_cb_inf *, u_int32_t, u_int32_t);
+void db_postgres_post_insert_into_postings(server_cb_inf *, char *,
+	time_t, char *, char *, char *, int , char *);
+void db_postgres_post_update_high_value(server_cb_inf *, u_int32_t,
+	char *);
+void db_postgres_post_insert_into_ngposts(server_cb_inf *, char *,
+	char *, u_int32_t);
+void db_postgres_list_users(server_cb_inf *);
+void db_postgres_chk_user_existence(server_cb_inf *);
+void db_postgres_chk_role_existence(server_cb_inf *);
+void db_postgres_add_user(server_cb_inf *, char *, char *);
+void db_postgres_del_user(server_cb_inf *, char *);
+void db_postgres_acl_add_user(server_cb_inf *, char *, char *);
+void db_postgres_acl_del_user(server_cb_inf *, char *, char *);
+short db_postgres_acl_check_user_group(server_cb_inf *, char *, char *);
+void db_postgres_list_acl_tables(server_cb_inf *);
+void db_postgres_chk_role_existence(server_cb_inf *);
+void db_postgres_acl_add_role(server_cb_inf *, char *);
+void db_postgres_acl_del_role(server_cb_inf *, char *);
+void db_postgres_acl_role_connect_group(server_cb_inf *, char *, char *);
+void db_postgres_acl_role_disconnect_group(server_cb_inf *, char *, char *);
+void db_postgres_acl_role_connect_user(server_cb_inf *, char *, char *);
+void db_postgres_acl_role_disconnect_user(server_cb_inf *, char *, char *);
+#endif
 
 /* log.c */
 void onxxdebug(char *str);
@@ -476,4 +529,3 @@ short acl_check_user_group(server_cb_inf *, char *, char *);
 
 /* hash.c */
 char *get_sha256_hash_from_str(char *, char *);
-

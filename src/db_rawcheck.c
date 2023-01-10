@@ -2,17 +2,17 @@
  * WendzelNNTPd is distributed under the following license:
  *
  * Copyright (c) 2007-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,19 +26,19 @@
 #include "main.h"
 
 extern unsigned short dbase;	/* from config.y */
-extern short be_verbose;	
+extern short be_verbose;
 
 /* the DB connection should work fine if we'll receive no error here ... */
 void
 check_db(void)
 {
 	server_cb_inf inf;
-	
+
 	if (!(inf.servinf = (serverinfo_t *) calloc(1, sizeof(serverinfo_t)))) {
 		fprintf(stderr, "Unable to allocate memory");
 		exit(ERR_EXIT);
 	}
-	
+
 	/* Make sure we have a database engine */
 	switch (dbase) {
 	case DBASE_NONE:
@@ -51,6 +51,7 @@ check_db(void)
 		break;
 	case DBASE_SQLITE3:
 	case DBASE_MYSQL:
+	case DBASE_POSTGRES:
 		db_open_connection(&inf);
 		db_close_connection(&inf);
 		break;
@@ -61,8 +62,7 @@ check_db(void)
 		break;
 	}
 	if (be_verbose)
-		printf("Database check %s: Success.\n",
-			(dbase == DBASE_SQLITE3 ? "Sqlite3" : "MySQL"));
+	    printf("Database check %s: Success.\n",
+		(dbase == DBASE_SQLITE3 ? "Sqlite3" : (dbase == DBASE_MYSQL ? "MySQL" : "PostgreSQL")));
+	}
 }
-
-

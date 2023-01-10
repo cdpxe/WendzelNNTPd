@@ -4,21 +4,21 @@
  * WendzelNNTPd is distributed under the following license:
  *
  * Copyright (c) 2004-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "main.h"
 
 extern char *yytext;
@@ -67,10 +67,10 @@ basic_setup_admtool()
 {
 	extern short parser_mode;
 	FILE *fp;
-	
+
 	/* define the special parser mode */
 	parser_mode = PARSER_MODE_ADMTOOL;
-	
+
 	close(0);
 	if ((fp = fopen(CONFIGFILE, "r")) == NULL) {
 		perror("Unable to open " CONFIGFILE);
@@ -81,7 +81,7 @@ basic_setup_admtool()
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
 	}
-	
+
 	/* find 'database-engine' string */
 	yyparse();
 	fclose(fp);
@@ -105,9 +105,9 @@ basic_setup_server(void)
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
 	}
-	
+
 	FD_ZERO(&fds);
-	
+
 #ifdef __WIN32__
 	/* init damn winsock */
 	if (WSAStartup(0x101, &wsa_dat) != 0) {
@@ -116,11 +116,11 @@ basic_setup_server(void)
 		exit(1);
 	}
 #endif
-	
+
 	yyparse();
-	
+
 	/* check if all needed values are included in the config struct */
-	 
+
 	if(!sockinfo) {
 		fprintf(stderr, "There are no sockets to use!\n"
 				"Use the 'listen' command in the config file to fix this.\n");
@@ -131,14 +131,14 @@ basic_setup_server(void)
 #endif
 
 	/* Check database information */
-	/* MySQL needs user+pass+server */
-	if (dbase == DBASE_MYSQL) {
+	/* MySQL/Postgres needs user+pass+server */
+	if (dbase == DBASE_MYSQL || dbase == DBASE_POSTGRES) {
 		if (!db_server || !db_user | !db_pass) {
 			DO_SYSL("You need to specify a database server, username and password. Exiting.")
 			err(1, "Need username, password and server for accessing database");
 		}
 	}
-	
+
 	/* If no port was set: use the default port */
 	if (db_port == 0) {
 		switch (dbase) {
@@ -147,6 +147,9 @@ basic_setup_server(void)
 			break;
 		case DBASE_MYSQL:
 			db_port = 3306;
+			break;
+		case DBASE_POSTGRES:
+			db_port = 5432;
 			break;
 		default:
 			err(1, "Please specify a 'database-port' in your config file.\n");
@@ -254,12 +257,12 @@ listenonSpec:  /* done */
 		struct sockaddr_in sa;
 		struct sockaddr_in6 sa6;
 		char *yytext_ = NULL;
-		
+
 		if (parser_mode == PARSER_MODE_SERVER) {
 
 			CALLOC(yytext_, (char *), strlen(yytext) + 1, sizeof(char))
 			strncpy(yytext_, yytext, strlen(yytext));
-		
+
 			if (listenflag == LF_ANY_IP) {
 				fprintf(stderr,
 					"error: you have to choose between ANY IP address or some specific\n"
@@ -267,7 +270,7 @@ listenonSpec:  /* done */
 				exit(0);
 			}
 			listenflag = LF_SPEC_IP;
-		
+
 			if (!sockinfo) {
 				CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
 			} else {
@@ -277,7 +280,7 @@ listenonSpec:  /* done */
 					exit(ERR_EXIT);
 				}
 			}
-		
+
 			bzero(&sa, sizeof(sa));
 			bzero(&sa6, sizeof(sa6));
 #ifdef __WIN32__ /* lol */
@@ -291,20 +294,20 @@ listenonSpec:  /* done */
 				sa.sin_port = htons(port);
 				sa.sin_family = AF_INET;
 				salen = sizeof(struct sockaddr_in);
-			
+
 				if (((sockinfo+size)->sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-			
+
 				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa, salen) < 0) {
 					perror("bind");
 					fprintf(stderr, "bind() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				if (listen((sockinfo + size)->sockfd, 5) < 0) {
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
@@ -316,19 +319,19 @@ listenonSpec:  /* done */
 				sa6.sin6_port = htons(port);
 				sa6.sin6_family = AF_INET6;
 				sa6len = sizeof(struct sockaddr_in6);
-			
+
 				if (((sockinfo + size)->sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {
 					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-			
+
 				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {
 					fprintf(stderr, "bind() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
 				}
-			
+
 				if (listen((sockinfo + size)->sockfd, 5) < 0) {
 					fprintf(stderr, "listen() for %s failed.\n", yytext_);
 					exit(ERR_EXIT);
@@ -353,6 +356,8 @@ dbEngine:
 			dbase = DBASE_SQLITE3;
 		} else if (strncmp("mysql", yytext, strlen(yytext)) == 0) {
 			dbase = DBASE_MYSQL;
+		} else if (strncmp("postgres", yytext, strlen(yytext)) == 0) {
+			dbase = DBASE_POSTGRES;
 		} else {
 			fprintf(stderr, "Database engine %s not supported.\n", yytext);
 			DO_SYSL("Unknown database engine specified in config file")
@@ -411,4 +416,3 @@ eof:
 	};
 
 %%
-
