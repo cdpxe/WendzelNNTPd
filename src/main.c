@@ -2,21 +2,21 @@
  * WendzelNNTPd is distributed under the following license:
  *
  * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "main.h"
 
 #define RCVBUFSIZ	512 /* including CR-LF */ + 1 /* \0 */
@@ -67,7 +67,7 @@ main(int argc, char *argv[])
 #endif
 	pthread_t th1;
 	sockinfo_t *sockinf;
-	
+
 	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
 			welcome_(0);
@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 	bzero(&sa6, sizeof(sa6));
 
 	basic_setup_server();
-	
+
 #ifndef __WIN32__
 	/* signal handling */
 	if (signal(SIGINT, sig_handler) == SIG_ERR) {
@@ -123,14 +123,14 @@ main(int argc, char *argv[])
 		}
 #endif
 	}
-	
+
 #ifndef __WIN32__ /* some *nix security */
 	umask(077);
 #endif
-	
+
 	check_db();
 	welcome_(1);
-	
+
 /* SOCKET MAINLOOP */
 	/* from now on: db abstraction in thread mode.
 	 * this means no exit(ERR_EXIT) is used. instead only
@@ -189,30 +189,29 @@ main(int argc, char *argv[])
 					}
 					strncpy(conn_logstr + strlen(new_conn_prefix), (sockinfo+i)->ip,
 						strlen((sockinfo+i)->ip));
-					
+
 					DO_SYSL(conn_logstr)
-					
+
 					/* After Logging: The real stuff */
 					CALLOC(sockinf, (sockinfo_t *), 1, sizeof(sockinfo_t))
 					sockinf->sockfd = connfd;
 					sockinf->family = SWITCHIP(i, FAM_4, FAM_6);
 					memcpy(&sockinf->sa, &sa, sizeof(sa));
 					memcpy(&sockinf->sa6, &sa6, sizeof(sa6));
-					
+
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
-					
+
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {
 						DO_SYSL("pthread_create() returned != 0")
 						free(sockinf);
 					}
-					
+
 					/* don't free() sockinf here since the thread does it itself */
 				}
 			}
 		}
 	} while (1);
-	
+
 	return 0;
 }
-

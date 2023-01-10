@@ -2,17 +2,17 @@
  * WendzelNNTPadm is distributed under the following license:
  *
  * Copyright (c) 2004-2010 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -184,10 +184,10 @@ main(int argc, char *argv[])
 	int len_argvs;
 	server_cb_inf *inf;
 	int i = 0; /* multi-purpose counter */
-	
+
 	/* detect the database engine */
 	basic_setup_admtool();
-	
+
 	if (!(inf = (server_cb_inf *) calloc(1, sizeof(server_cb_inf)))) {
 		fprintf(stderr, "Unable to allocate memory");
 		exit(ERR_EXIT);
@@ -202,7 +202,7 @@ main(int argc, char *argv[])
 			|| (strcmp(argv[1], "listusers") == 0)
 			|| (strcmp(argv[1], "listacl") == 0))))
 			usage();
-	
+
 	db_open_connection(inf);
 
 	if (strcmp(argv[1], "addgroup") == 0)
@@ -241,7 +241,7 @@ main(int argc, char *argv[])
 		fprintf(stderr, "Invalid mode: %s'.\n", argv[1]);
 		exit(ERR_EXIT);
 	}
-	
+
 	/* check lengths */
 	switch (mode) {
 	case MOD_LISTACL:
@@ -268,21 +268,21 @@ main(int argc, char *argv[])
 			}
 			break;
 		}
-	
+
 		/* a 2nd (or 3rd) parameter is needed */
 		len_argvs = strlen(argv[2]);
 		if (argc > 3)
 			len_argvs += strlen(argv[3]);
 		if (argc > 4)
 			len_argvs += strlen(argv[4]);
-		
+
 		if (len_argvs > (BUFSIZE - 0xff)) {
 			fprintf(stderr, "Error: newsgroup name or username or both name"
 					"is/are too long.\n");
 			exit(ERR_EXIT);
 		}
-	}	
-	
+	}
+
 	switch (mode) {
 	case MOD_NGCREATE:
 		if (argc < 4)
@@ -338,14 +338,14 @@ main(int argc, char *argv[])
 			pass[strlen(pass) - 1] = '\0'; /* remove \n */
 #endif
 		}
-		
+
 		for (i = 0; i < strlen(argv[2]); i++) {
 		    if (isalnum(argv[2][i]) == 0) {
 			fprintf(stderr, "The username must consist of alphanumeric letters only.\n");
 			exit(ERR_EXIT);
 		    }
 		}
-		
+
 		if (strlen(argv[2]) > 100) {
 			printf("username too long (max. 100 chars).\n");
 			exit(ERR_EXIT);
@@ -359,7 +359,7 @@ main(int argc, char *argv[])
 			printf("password too long (max. 100 chars).\n");
 			exit(ERR_EXIT);
 		}
-		
+
 		exit_if_user_exists(inf, argv[2]);
 		pass_hash = get_sha256_hash_from_str(argv[2], pass);
 		if (!pass_hash) {
@@ -375,7 +375,7 @@ main(int argc, char *argv[])
 		 * that simultaneously!
 		 */
 		db_add_user(inf, argv[2], pass_hash);
-		
+
 		/* bzero the pass just to clean up the mem */
 		memset(pass, 0x0, strlen(pass));
 		memset(pass_hash, 0x0, strlen(pass_hash));
@@ -437,4 +437,3 @@ main(int argc, char *argv[])
 	printf("done.\n");
 	return 0;
 }
-

@@ -15,7 +15,7 @@ CREATE TABLE newsgroups (
    INDEX(`name`),
    PRIMARY KEY(`id`)
  ) ENGINE=INNODB;
- 
+
 CREATE TABLE postings (
    `msgid` VARCHAR(196),
    `date` INTEGER,
@@ -70,7 +70,7 @@ CREATE TABLE users2roles (
    FOREIGN KEY `FK_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
    FOREIGN KEY `FK_rle` (`role`) REFERENCES `roles` (`role`) ON DELETE CASCADE
  ) ENGINE=INNODB;
- 
+
 -- User 2 Newsgroup
 CREATE TABLE acl_users (
    `username` VARCHAR(50),
@@ -81,7 +81,7 @@ CREATE TABLE acl_users (
    FOREIGN KEY `FK_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
    FOREIGN KEY `FK_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE
  ) ENGINE=INNODB;
- 
+
 -- Roles 2 Newsgroup
 CREATE TABLE acl_roles (
    `role` VARCHAR(50),
@@ -95,4 +95,3 @@ CREATE TABLE acl_roles (
 
 -- Check:
 -- SELECT * FROM users2roles ur,acl_roles aclr WHERE ur.username='swendzel' AND ur.role=aclr.role AND aclr.ng='alt.katze';
-

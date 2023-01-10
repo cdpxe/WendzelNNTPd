@@ -2,21 +2,21 @@
  * WendzelNNTPd is distributed under the following license:
  *
  * Copyright (c) 2004-2017 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "main.h"
 #include <stdarg.h>
 
@@ -79,10 +79,10 @@ logstr(char *file, int line, char *func_name, char *str)
 	char *buf;
 	char tbuf[42] = {'\0'};
 	extern short be_verbose;
-	
+
 	ltime = time(NULL);
 	strftime(tbuf, 41, "%a, %d %b %Y %H:%M:%S", localtime(&ltime));
-	
+
 	len = strlen(tbuf) + strlen(file) + strlen(func_name)
 		+ strlen(str) + 0x7f;
 	if (!(buf = (char *)calloc(len, sizeof(char)))) {
@@ -93,7 +93,7 @@ logstr(char *file, int line, char *func_name, char *str)
 	/* If we run in verbose mode: output everything to stderr too. */
 	if (be_verbose)
 		fprintf(stderr, "%s", buf);
-	
+
 	if (chk_file_sec(LOGFILE) == INSECURE_RETURN) {
 		/* do nothing here -> this could lead to a while(1)! */
 #ifndef __WIN32__
@@ -108,10 +108,10 @@ logstr(char *file, int line, char *func_name, char *str)
 		fwrite(buf, strlen(buf), 1, fp);
 		fclose(fp);
 	}
-	
+
 #ifndef __WIN32__ /* *nix like systems */
 	syslog(LOG_DAEMON|LOG_NEWS|LOG_NOTICE, "%s:%i: %s", file, line, str);
 #endif
-	
+
 	free(buf);
 }

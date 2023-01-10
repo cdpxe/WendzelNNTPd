@@ -3,17 +3,17 @@
  *
  * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * https://www.wendzel.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,7 +34,7 @@ extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	NNTP Messages 
+	NNTP Messages
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 char helpstring[]=            "100 help text follows\r\n"
                                  "--\r\n"
@@ -125,9 +125,9 @@ get_slinearg(char *cmdstring, int num)
 	char *tmp;
 	int len;
 	int cnt;
-		
+
 	cnt = 0;
-	
+
 	for (ptr = cmdstring; ptr[0] != '\0'; ptr++) {
 		if (ptr[0] != ' ' && ptr[0] != '\r') {
 			if (cnt == num) {
@@ -154,7 +154,7 @@ get_slinearg(char *cmdstring, int num)
 				if (ptr[0] == '\0')
 					return NULL;
 			}
-			cnt++;			
+			cnt++;
 		}
 	}
 	return NULL;
@@ -225,13 +225,13 @@ nntp_localtime_to_str(char tbuf[40], time_t ltime)
 /* Do not check if a user really exists in docmd_authinfo_user because this would make it
  * easier for attackers to get access!
  */
-  
+
 static void
 docmd_authinfo_user(char *cmdstring, server_cb_inf *inf)
 {
 	char need_more_inf[]="381 More authentication information required.\r\n";
 	char *user;
-	
+
 	inf->servinf->auth_is_there=0;
 	if (!(user = get_slinearg(cmdstring, 2))) {
 		ToSend(parameter_miss, strlen(parameter_miss), inf);
@@ -239,7 +239,7 @@ docmd_authinfo_user(char *cmdstring, server_cb_inf *inf)
 	}
 	if (inf->servinf->cur_auth_user)
 		free(inf->servinf->cur_auth_user);
-	
+
 	inf->servinf->cur_auth_user = user;
 	ToSend(need_more_inf, strlen(need_more_inf), inf);
 }
@@ -249,10 +249,10 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 {
 	char need_more_inf[]="381 More authentication information required.\r\n";
 	char auth_accept[]="281 Authentication accepted.\r\n";
-	char auth_reject[]="482 Authentication rejected.\r\n";	
+	char auth_reject[]="482 Authentication rejected.\r\n";
 	char *pass, *pass_hash = NULL;
 	char *log_str = NULL;
-	
+
 	inf->servinf->auth_is_there=0;
 
 	if (inf->servinf->cur_auth_user) {
@@ -269,16 +269,16 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 			return;
 		}
 		inf->servinf->cur_auth_pass = pass_hash;
-		
+
 		/* do the whole authentication check on DB */
 		db_authinfo_check(inf);
-		
+
 		if(inf->servinf->auth_is_there==0) {
 			ToSend(auth_reject, strlen(auth_reject), inf);
 			log_str = str_concat("Authentication REJECTED for user ",
 						inf->servinf->cur_auth_user,
 						" from IP ", inf->sockinf->ip, NULL);
-						
+
 		} else {
 			ToSend(auth_accept, strlen(auth_accept), inf);
 			log_str = str_concat("Authentication accepted for user ",
@@ -289,7 +289,7 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 			DO_SYSL(log_str)
 			free(log_str);
 		}
-			
+
 		/* delete the username to prevent password brute-force attacks */
 		if (use_acl != 1) {
 			free(inf->servinf->cur_auth_user); /* do this for security reasons! */
@@ -315,7 +315,7 @@ docmd_date(server_cb_inf *inf)
 {
 	char datestr[50]={'\0'};
 	time_t ltime;
-	
+
 	ltime = time(NULL);
 	strftime(datestr, sizeof(datestr), "111 %Y%m%d%H%M%S\r\n", localtime(&ltime));
 	ToSend(datestr, strlen(datestr), inf);
@@ -330,7 +330,7 @@ static void
 docmd_list(char *cmdstring, server_cb_inf *inf, int cmdtyp)
 {
 	char *wildmat = NULL;
-	
+
 	switch (cmdtyp) {
 	case CMDTYP_LIST:
 		ToSend(list, strlen(list), inf);
@@ -380,16 +380,16 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 	u_int32_t REALmax;
 	char *ptr;
 	short xhdr_part;
-	
+
 	/* if (no newsgroup is selected) -> return a 412 error */
 	if (inf->servinf->selected_group == NULL) {
 		ToSend(nogroupselected, strlen(nogroupselected), inf);
 		return;
 	}
-	
-	/* get the REALmax value (max-num in the newsgroups table) */	
+
+	/* get the REALmax value (max-num in the newsgroups table) */
 	REALmax = db_get_high_value(inf, inf->servinf->selected_group);
-	
+
 	/* get the command */
 	ptr = get_slinearg(cmdstring, 1);
 	if (!ptr) {
@@ -420,7 +420,7 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 		return;
 	}
 	free(ptr);
-	
+
 	/* get the min + max values */
 	ptr = get_slinearg(cmdstring, 2);
 	if (ptr == NULL) { /* no value is given by the client => use current article */
@@ -437,12 +437,12 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 			req_message_id = 1;
 		} else {
 			char *range_ptr = ptr;
-			
+
 			req_message_id = 0;
 			min = atoi(range_ptr);
 			max = min; /* This is correct; if we find a '-',
 			* we will change it in a moment */
-			
+
 			/* check for the '-' character */
 			while (range_ptr[0] != '\0' && max != REALmax) {
 				if(range_ptr[0] == '-') {
@@ -480,10 +480,10 @@ docmd_xhdr(char *cmdstring, server_cb_inf *inf)
 		ToSend(noarticleselected, strlen(noarticleselected), inf);
 		return;
 	}
-	
+
 	/* now send the list */
 	ToSend(xhdr, strlen(xhdr), inf);
-	
+
 	/* now let the DB to the Scheissjob :-) */
 	db_xhdr(inf, req_message_id, xhdr_part, ptr, min, max);
 	if (ptr)
@@ -508,16 +508,16 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 	u_int32_t min, max;
 	u_int32_t REALmax;
 	char *ptr;
-	
+
 	/* if (no newsgroup is selected) -> return a 412 error */
 	if (inf->servinf->selected_group == NULL) {
 		ToSend(nogroupselected, strlen(nogroupselected), inf);
 		return;
 	}
-	
-	/* get the REALmax value (max-num in the newsgroups table) */	
+
+	/* get the REALmax value (max-num in the newsgroups table) */
 	REALmax = db_get_high_value(inf, inf->servinf->selected_group);
-	
+
 	/* get the min + max values */
 	ptr = get_slinearg(cmdstring, 1);
 	if (ptr == NULL) { /* no value is given by the client => use current article */
@@ -529,15 +529,15 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 		max = min;
 	} else { /* at least a min-value is given */
 		char *ptr_orig = ptr;
-		
+
 		min = atoi(ptr); /* atoi(), by definition, detects no errors, e.g. maybe
 				  * we convert a string like 'cat' to some number here, but
 				  * then we simply cannot return the posting as it will not
 				  * exist. Some plausibility checks are done later in this
 				  * function. */
-				  
+
 		max = min; /* This is correct. If we find a '-', we will change it in a moment */
-		
+
 		/* check for the '-' character. */
 		while (ptr[0] != '\0' && max != REALmax) {
 			if (ptr[0] == '-') { /* all articles from min to the end */
@@ -555,10 +555,10 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 				}
 			}
 		}
-		
+
 		free(ptr_orig);
 	}
-	
+
 	onxxdebugm("%s%i%s%i%s%i%s",
 	           "min: ", min, " max: ", max, " REALmax: ", REALmax, "\n");
 
@@ -575,7 +575,7 @@ docmd_xover(char *cmdstring, server_cb_inf *inf)
 
 	/* now send the list */
 	ToSend(xover, strlen(xover), inf);
-	
+
 	db_xover(inf, min, max);
 	ToSend(period_end, strlen(period_end), inf);
 }
@@ -591,15 +591,15 @@ docmd_article(char *cmdstring, server_cb_inf *inf)
 	char *param;
 	int i;
 	int found=0;
-	
+
 	/* the cb func will set this to '1' if we found an article */
 	inf->servinf->found_article = 0;
-	
+
 	if (cmdstring[0]=='A' || cmdstring[0]=='a') inf->cmdtype = CMDTYP_ARTICLE;
 	else if(cmdstring[0]=='H' || cmdstring[0]=='h') inf->cmdtype = CMDTYP_HEAD;
 	else if(cmdstring[0]=='B' || cmdstring[0]=='b') inf->cmdtype = CMDTYP_BODY;
 	else if(cmdstring[0]=='S' || cmdstring[0]=='s') inf->cmdtype = CMDTYP_STAT;
-	
+
 	/* if(no newsgroup is selected) -> return a 412 error */
 	if(inf->servinf->selected_group == NULL) {
 		ToSend(nogroupselected, strlen(nogroupselected), inf);
@@ -637,14 +637,14 @@ docmd_article(char *cmdstring, server_cb_inf *inf)
 			return;
 		}
 		param[i+1] = '\0';
-		
+
 		db_article(inf, type, param);
 		break;
-	
+
 	case ARTCLTYP_NUMBER:
 		db_article(inf, type, param);
 		break;
-						
+
 	case ARTCLTYP_CURRENT:
 		/* first check whether an article is selected */
 		if (inf->servinf->selected_article == NULL) {
@@ -657,7 +657,7 @@ docmd_article(char *cmdstring, server_cb_inf *inf)
 
 	if (param) /* can be NULL due to ARTCLTYP_CURRENT case */
 		free(param);
-	
+
 	/* if this is still zero, no cb function was called -> no article was found */
 	if (inf->servinf->found_article == 0) {
 		ToSend(nosucharticle, strlen(nosucharticle), inf);
@@ -671,7 +671,7 @@ docmd_article(char *cmdstring, server_cb_inf *inf)
 /* From RFC 977:
    * If an invalid group is specified, the
    previously selected group and article remain selected. CHK
-   
+
    * If an empty
    newsgroup is selected, the "current article pointer" is in an
    indeterminate state and should not be used.
@@ -682,18 +682,18 @@ docmd_group(char *cmdstring, server_cb_inf *inf)
 {
 	char *ptr;
 	int old_foundgroup = inf->servinf->found_group;
-	
+
 	ptr = get_slinearg(cmdstring, 1);
 	if (!ptr) {
 		ToSend(parameter_miss, strlen(parameter_miss), inf);
 		return; /* let him try again */
 	}
-	
+
 	/* Check newsgroup existence here */
 	inf->servinf->chkname = ptr;
 	inf->servinf->found_group = 0;
 	db_check_newsgroup_existence(inf);
-	
+
 	/* if the group was not found (=the cb function was not called) ... */
 	if (inf->servinf->found_group == 0) {
 		/* send "no such group" */
@@ -704,7 +704,7 @@ docmd_group(char *cmdstring, server_cb_inf *inf)
 		/* Return here and leave the selected_{group,article} untouched -> RFC 977 */
 		return;
 	}
-	
+
 	if (use_auth && use_acl) {
 		/* If the user is not allowed to access this group: shadow the group! */
 		if (acl_check_user_group(inf, inf->servinf->cur_auth_user, ptr) == FALSE) {
@@ -713,7 +713,7 @@ docmd_group(char *cmdstring, server_cb_inf *inf)
 			return;
 		}
 	}
-	db_group(inf, ptr);	
+	db_group(inf, ptr);
 	free(ptr);
 }
 
@@ -725,7 +725,7 @@ static void
 docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 {
 	char *ptr;
-	
+
 	ptr = get_slinearg(cmdstring, 1);
 	/* If no argv was given, we need a currently selected group */
 	if (ptr == NULL) {
@@ -742,11 +742,11 @@ docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 		}
 	} else {
 		int old_foundgroup = inf->servinf->found_group;
-		
+
 		/* Check newsgroup existence */
 		inf->servinf->chkname = ptr;
 		db_check_newsgroup_existence(inf);
-	
+
 		/* if the group was not found ... */
 		if (inf->servinf->found_group == 0) {
 			/* send "no such group" */
@@ -755,7 +755,7 @@ docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 			ToSend(nosuchgroup, strlen(nosuchgroup), inf);
 			return;
 		}
-		
+
 		/* Okay, group exists; make it the currently selected group (RFC need!) */
 		if (inf->servinf->selected_group)
 			free(inf->servinf->selected_group);
@@ -768,7 +768,7 @@ docmd_listgroup(char *cmdstring, server_cb_inf *inf)
 		}
 	}
 
-	/* does the user (still) has access to the group? */	
+	/* does the user (still) has access to the group? */
 	if (use_auth && use_acl) {
 		/* If the user is not allowed to access this group: shadow the group! */
 		if (acl_check_user_group(inf, inf->servinf->cur_auth_user, ptr) == FALSE) {
@@ -800,7 +800,7 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	#define DOMAIN_NAME "[a-zA-Z0-9.-]+"
 	#define EMAIL_NAME "[a-zA-Z0-9._+-]+"
 	int correctline=FALSE;
-	
+
 	/* Newsgroups: */
 	if (wnntpd_rx_contain("^[nN][eE][wW][sS][gG][rR][oO][uU][pP][sS]: [a-zA-Z0-9.-]+(,[a-zA-Z0-9.-]+)*\r\n", header) == 0)
 		correctline=TRUE;
@@ -826,7 +826,7 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	if (wnntpd_rx_contain("^[sS][uU][bB][jJ][eE][cC][tT]: [^\r\n\t]*\r\n", header) == 0)
 		correctline=TRUE;
 	SEND_441ERR(hdrerror_subject)
-	
+
 	return TRUE;
 }
 
@@ -839,16 +839,16 @@ docmd_post_chk_ng_name_correctness(char *ngstrp_in, server_cb_inf *inf)
 #ifndef __WIN32__
 	char *saveptr; /* both for strtok_r() */
 #endif
-	
+
 	/* work only with a copy of the string because we need the original later */
 	ngstrp = strdup(ngstrp_in);
 	if (!ngstrp) {
 		DO_SYSL("Not enough mem for strdup() in docmd_post_chk_ng_name_correctness()")
 		return FALSE;
 	}
-	
+
 	/* get the first newsgroup + check if all newsgroups exists */
-	for (newsgroup = 
+	for (newsgroup =
 #ifndef __WIN32__
 	strtok_r(ngstrp, sep, &saveptr)
 #else
@@ -877,7 +877,7 @@ docmd_post_chk_ng_name_correctness(char *ngstrp_in, server_cb_inf *inf)
 
 		/* 3. reset for next group */
 		inf->servinf->found_group = 0;
-		
+
 		/* get the next group */
 #ifndef __WIN32__
 		newsgroup = strtok_r(NULL, sep, &saveptr);
@@ -922,7 +922,7 @@ docmd_post(server_cb_inf *inf)
 	int linecount=0;
 	time_t ltime;
 	charstack_t *stackp = NULL;
-	
+
 	Send(inf->sockinf->sockfd, postok, strlen(postok));
 
 	{
@@ -931,7 +931,7 @@ docmd_post(server_cb_inf *inf)
 		fd_set fds_post;
 		int peak = 0;
 		struct timeval tv;
-		
+
 		if ((buf = (char *) calloc(max_post_size, sizeof(char))) == NULL) {
 			perror("malloc");
 			DO_SYSL("memory low. killing child process.")
@@ -941,11 +941,11 @@ docmd_post(server_cb_inf *inf)
 		while (!finished) {
 			bzero(&tv, sizeof(struct timeval));
 			tv.tv_sec = 1;
-	
+
 			FD_ZERO(&fds_post);
 			FD_SET(inf->sockinf->sockfd, &fds_post);
 			peak = inf->sockinf->sockfd;
-			
+
 			if (select(peak + 1, &fds_post, NULL, NULL, &tv) == -1) {
 				if (errno == EINTR) {
 					continue;
@@ -960,7 +960,7 @@ docmd_post(server_cb_inf *inf)
 				ssize_t recv_ret;
 				u_int32_t offset;
 				char *haystack_ptr;
-				
+
 				/* check if already the max. number of allowed bytes
 				 * were received. As FD_ISSET() returned true, there
 				 * are bytes left nevertheless, i.e. posting is too
@@ -977,7 +977,7 @@ docmd_post(server_cb_inf *inf)
 					kill_thread(inf);
 					/* NOTREACHED */
 				}
-						
+
 				recv_ret = recv(inf->sockinf->sockfd,
 						buf + recv_bytes,
 						max_post_size - recv_bytes - 1, 0);
@@ -997,7 +997,7 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 				recv_bytes += recv_ret;
-				
+
 				/* BEGIN: check whether \r\n.\r\n is included */
 				/* 1) calculate where we need to look within the
 				 *    buf[fer] */
@@ -1019,14 +1019,14 @@ docmd_post(server_cb_inf *inf)
 					finished = 1;
 				}
 				/* END: Check for \r\n.\r\n */
-				
+
 			}
 		}
 	}
-	
+
 	/*onxxdebugm("%s%s%s", "buffer: '", buf, "'\n");*/
 	/*fprintf(stderr, "buffer: '%s'\n", buf);*/
-	
+
 	/*
 	 * create a buffer called 'header' that only contains the header part of 'buf'
 	 */
@@ -1052,7 +1052,7 @@ docmd_post(server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	
+
 	body = strstr(buf, "\r\n\r\n") + 4;
 	if (body[0] == '\0') {
 		free(buf);
@@ -1060,21 +1060,21 @@ docmd_post(server_cb_inf *inf)
 		ToSend(progerr503, sizeof(progerr503), inf);
 		return;
 	}
-	
+
 	/*
 	 * different header checks
 	 */
-	
+
 	if (docmd_post_chk_required_hdr_lines(header, inf) == FALSE) {
 		free(buf);
 		free(header);
 		return;
 	}
-	
+
 	/*
 	 * Check if the newsgroup-names are valid
 	 */
-	
+
 	/* get the newsgroups-string value (func is NOT case sensitive) */
 	if (!(ngstrp = CDP_return_linevalue(header, "Newsgroups:"))) {
 		free(buf);
@@ -1088,11 +1088,11 @@ docmd_post(server_cb_inf *inf)
 		free(header);
 		return;
 	}
-	
+
 	/*
 	 * Generate a Message ID
 	 */
-	
+
 	/* get a uniq number */
 	if (!(newid = get_uniqnum())) {
 		DO_SYSL("I/O error in file DB -> can't create a new msg-id. Terminating child connection.")
@@ -1102,7 +1102,7 @@ docmd_post(server_cb_inf *inf)
 		/* NOTREACHED */
 	}
 	/*printf("new uniq-id: %s\n", newid);*/
-	
+
 
 	/* If the admin wants no anonymous message IDs: Find out hostname or use IP */
 	if (anonym_message_ids == 0) {
@@ -1146,8 +1146,8 @@ docmd_post(server_cb_inf *inf)
 				sizeof(inf->sockinf->sa6.sin6_addr), AF_INET6);
 	#endif
 		}
-	
-		if(!hostinfo) {	
+
+		if(!hostinfo) {
 			/* Hostname is not present. Use "addr" instead! */
 			len=MAX_IDNUM_LEN+3+strlen(addr) + 1;
 			if (!(message_id = (char *) calloc(len, sizeof(char)))) {
@@ -1185,12 +1185,12 @@ docmd_post(server_cb_inf *inf)
 	}
 	/* Free the newly created Message-ID since we finally built the message_id */
 	free(newid);
-	
+
 	/*
 	 * Manipulate the Header (Do not trust the Message-ID, Line-Count and Date
 	 * sent by the Client)
 	 */
-	
+
 	/* if there is a message ID, remove it (new is inserted by the write_posting() func */
 	if ((ptr = strstr(buf, "\r\n\r\n")) == 0) {
 		DO_SYSL("(internal) parsing error #1")
@@ -1200,7 +1200,7 @@ docmd_post(server_cb_inf *inf)
 		/* NOTREACHED */
 	}
 	len = ptr - buf;
-	
+
 	/* Remove 'Message-ID/Date/Lines';
 	   Note: header is != NULL here. Otherwise function would have terminated earlier */
 	for (e = 0; remove_lines[e] != NULL;  e++) {
@@ -1226,7 +1226,7 @@ docmd_post(server_cb_inf *inf)
 			}
 		}
 	}
-	
+
 	/*
 	 * Post it!
 	 */
@@ -1234,7 +1234,7 @@ docmd_post(server_cb_inf *inf)
 	/*
 	 * add message in the Postings table
 	 */
-	
+
 	/* Get the current time */
 	ltime = time(NULL);
 	if (ltime == (time_t) - 1) {
@@ -1244,9 +1244,9 @@ docmd_post(server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	
+
 	nntp_localtime_to_str(tbuf, ltime);
-	
+
 	/* Get the # of lines */
 	if ((ptr=strstr(buf, "\r\n\r\n"))==NULL) {
 		DO_SYSL("posting aborted (no end of header found, client sent garbage).")
@@ -1255,7 +1255,7 @@ docmd_post(server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	
+
 	{
 		/* WendzelNNTPd-2.0.1:
 		 * strlen(ptr) takes multiple seconds if posting >100k!
@@ -1270,7 +1270,7 @@ docmd_post(server_cb_inf *inf)
 			}
 		}
 	}
-	
+
 	/* now, with the new values, generate the new part of the header ... */
 	if (!(add_to_hdr = (char *) calloc(0x7ff + strlen(message_id) + 2*127 /* 127 chars for
 			the hostname + 127 chars for the domain name /should/ be enough */
@@ -1281,14 +1281,14 @@ docmd_post(server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
-	
+
 	{
 		/* Try to set the FQDN here */
 		char hostname[128] = { '\0' };
 		char domainname[128] = { '\0' };
 		char fqdn[256] = { '\0' };
 		char unknown[] = "unknown\0";
-	
+
 		if (gethostname(hostname, 127) == 0) {
 			strncpy(fqdn, hostname, strlen(hostname));
 		} else {
@@ -1301,7 +1301,7 @@ docmd_post(server_cb_inf *inf)
 #else /* okay, here we really get the domain name */
 		if (getdomainname(domainname, 127) == 0 && strncmp(domainname, "(none)", 6) != 0) {
 			fqdn[strlen(fqdn)] = '.';
-			strncpy(fqdn + strlen(fqdn), domainname, 127);		
+			strncpy(fqdn + strlen(fqdn), domainname, 127);
 		} else {
 			fqdn[strlen(fqdn)] = '.';
 			strncpy(fqdn + strlen(fqdn), unknown, strlen(unknown));
@@ -1312,14 +1312,14 @@ docmd_post(server_cb_inf *inf)
 			"Path: %s\r\nMessage-ID: %s\r\nDate: %s\r\nLines: %i\r\nX-WendzelNNTPdBodysize: %u\r\n",
 			fqdn, message_id, tbuf, linecount, (unsigned int)strlen(body));
 	}
-	
+
 	/*
 	 * add the posting to the database
 	 */
-	
+
 	subj = CDP_return_linevalue(header, "Subject:");
 	from = CDP_return_linevalue(header, "From:");
-	
+
 	/* ... and make the header complete */
 	strcat(add_to_hdr, header);
 	free(header);
@@ -1328,22 +1328,22 @@ docmd_post(server_cb_inf *inf)
 	 * is part of 'buf'! */
 	filebackend_savebody(message_id, body);
 	free(buf);
-	
+
 	/* SQL safe execution of the user submitted buffer parts */
-	{	
+	{
 		char *from_sec,
 		     *subj_sec;
-	
+
 		from_sec = db_secure_sqlbuffer(inf, from);
 		subj_sec = db_secure_sqlbuffer(inf, subj);
-	
+
 		db_post_insert_into_postings(inf, message_id, ltime, from_sec,
 			ngstrp, subj_sec, linecount, add_to_hdr);
-	
+
 		db_secure_sqlbuffer_free(from_sec);
 		db_secure_sqlbuffer_free(subj_sec);
 	}
-	
+
 	free(from);
 	free(subj);
 	free(add_to_hdr);
@@ -1357,16 +1357,16 @@ docmd_post(server_cb_inf *inf)
 #else
 	newsgroup = strtok(ngstrp, sep);
 #endif
-	
+
 	if (!(stackp = (charstack_t *) calloc(1, sizeof(charstack_t)))) {
 		DO_SYSL("Not enough mem -- posting aborted.")
 		kill_thread(inf);
 		/* NOTREACHED */
 	}
 	stackp->state = STACK_EMPTY;
-	
+
 	while (newsgroup != NULL) {
-	
+
 		if ((use_auth && use_acl) &&
 		   (acl_check_user_group(inf, inf->servinf->cur_auth_user, newsgroup) == FALSE)) {
 			char err_msg[512] = {'\0'};
@@ -1375,7 +1375,7 @@ docmd_post(server_cb_inf *inf)
 				"Skipping this entry.", inf->servinf->cur_auth_user, newsgroup);
 			DO_SYSL(err_msg);
 		} else {
-	
+
 			cur_high = db_get_high_value(inf, newsgroup);
 			if (cur_high > 0x7ffffffe) { /* :-) */
 				DO_SYSL("Warning: This server only can handle 0x7fffffff "
@@ -1383,9 +1383,9 @@ docmd_post(server_cb_inf *inf)
 				DO_SYSL("Warning: Article limit exeeded.")
 				kill_thread(inf);
 				/* NOTREACHED */
-				
+
 			}
-		
+
 			// Only do INSERT, if this 'newsgroup' name occurs the first time in this posting
 			// since a 'Newsgroups: my.group,my.group' (a double post) would lead to a doubled
 			// msgid in the table, what sqlite3 will not accept since this is the primary key!
@@ -1394,7 +1394,7 @@ docmd_post(server_cb_inf *inf)
 				db_post_insert_into_ngposts(inf, message_id, newsgroup, cur_high + 1);
 				/* update high value */
 				db_post_update_high_value(inf, cur_high + 1, newsgroup);
-				
+
 				if (charstack_push_on(stackp, newsgroup) != OK_RETURN) {
 					DO_SYSL("charstack_push_on() returned an error. This can lead to a closed "
 						"client connection if one newsgroup was selected multiple times "
@@ -1413,12 +1413,12 @@ docmd_post(server_cb_inf *inf)
 		newsgroup = strtok(NULL, sep);
 #endif
 	}
-	
+
 	charstack_free(stackp);
 	/* don't free() 'ngstrp' earlier since strtok(NULL, ...) uses the
 	 * address of it! */
 	free(ngstrp);
-	
+
 	ToSend(postdone, strlen(postdone), inf);
 	free(message_id);
 }
@@ -1433,7 +1433,7 @@ do_command(char *recvbuf, server_cb_inf *inf)
 
 #define QUESTION(cmd, len)	strncasecmp(recvbuf, cmd, len)==0
 #define QUESTION_AUTH(cmd, len)	( (inf->servinf->auth_is_there || use_auth == 0) && strncasecmp(recvbuf, cmd, len)==0)
-	
+
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
@@ -1445,10 +1445,10 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	} else if (QUESTION("authinfo pass ", 14)) {
 		docmd_authinfo_pass(recvbuf, inf);
 	}
-	
+
 	/* COMMANDS THAT NEED AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
-	
+
 	else if (QUESTION_AUTH("list newsgroups", 15)) {
 		docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS);
 	} else if (QUESTION_AUTH("list overview.fmt", 17)) {
@@ -1506,7 +1506,7 @@ do_server(void *socket_info_ptr)
 	server_cb_inf inf;
 	extern short be_verbose;
 	int i;
-	
+
 	/* This is _SERV_-inf */
 	bzero(&servinf, sizeof(serverinfo_t));
 	/* This is _SOCK_-inf */
@@ -1514,17 +1514,17 @@ do_server(void *socket_info_ptr)
 	/* This is 'inf' containing everything */
 	inf.sockinf = sockinf;
 	inf.servinf = &servinf;
-	
+
 	db_open_connection(&inf);
 
 	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
-	
+
 	if(use_auth==1) {
 		servinf.auth_is_there=0;
 	} else {
 		servinf.auth_is_there=1;
 	}
-	
+
 	while(1) {
 		if (len == 0)
 			bzero(recvbuf, MAX_CMDLEN);
@@ -1549,7 +1549,7 @@ do_server(void *socket_info_ptr)
 					fprintf(stderr, "client sent '%s'\n", recvbuf);
 				}
 			}
-			
+
 			/* make the buffer more secure before going on */
 			/* 1. remove trailing \r\n by replacing \r with \0 */
 			for (i = (strlen(recvbuf) - 1); i > 0; i--) {
@@ -1560,7 +1560,7 @@ do_server(void *socket_info_ptr)
 			}
 			/* 2. run db-library security functions */
 			sec_cmd = db_secure_sqlbuffer(&inf, recvbuf);
-			
+
 			/* now proceed */
 			do_command(sec_cmd, &inf);
 			db_secure_sqlbuffer_free(sec_cmd);
@@ -1588,18 +1588,18 @@ kill_thread(server_cb_inf *inf)
 	// because the function can run kill_thread() on error what could result in a recursive calling
 	// what again could result in a DoS!
 	// => run only 'send()' here.
-	
-	
+
+
 	/* Log the ended connection */
 	conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, NULL, NULL, NULL);
 	if (conn_logstr) {
 		DO_SYSL(conn_logstr)
 		free(conn_logstr);
 	}
-	
+
 	/* close db connection */
 	db_close_connection(inf);
-	
+
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);
 #else
@@ -1620,4 +1620,3 @@ kill_thread(server_cb_inf *inf)
 	pthread_detach(pthread_self());
 	pthread_exit(NULL);
 }
-
