@@ -12,6 +12,7 @@ x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
  - Finalize experimental postgres support.
 	- Excessive testing of all functionality and debugging.
 	- SQL hardening.
+	- Update documentation: how to setup PostgreSQL for NNTPd?
  - Add TLS support by merging best of the two TLS branches into the
    main branch.
  - Add support to sync with usenet servers, incl. non-WendzelNNTPd
