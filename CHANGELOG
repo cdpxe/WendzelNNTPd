@@ -20,6 +20,9 @@ x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
 ADDED FEATURES:
  - Added Postgres database support (experimental), thanks to Christian
    Barthel for providing a massive patch!
+ - Added option to store unique message ID and message body in the DB
+   (postgres only), thanks to Christian Barthel for providing the
+   patch!
  - Finally, the "posting allowed" flag is considered in POST.
 FIXES:
  - Fixed some memory leaks during postings that would occur on rather
