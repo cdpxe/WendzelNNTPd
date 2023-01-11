@@ -28,7 +28,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
 * Conservative design philosophy:
-   * Tiny (less than 10,000 Lines of Code), to limit potential (security) flaws, including optional features that can be deactivated at compile time.
+   * Tiny (approx. 10,000 Lines of Code), to limit potential (security) flaws, including optional features that can be deactivated at compile time.
    * Do not implement unnecessary features.
    * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
