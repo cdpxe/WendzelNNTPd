@@ -38,6 +38,8 @@ unsigned short use_acl = 0;	/* do we use access control lists? */
 unsigned short be_verbose = 0;	/* for debugging reasons */
 unsigned short anonym_message_ids = 0; /* if eq 1: do not set IP or hostname within message IDs */
 unsigned short dbase = DBASE_NONE;/* specifies the database engine to use */
+unsigned short message_body_in_db = 0; /* load/store the body from/into DB */
+unsigned short message_count_in_db = 0; /* load/store message counter from/into DB */
 
 char *db_server = NULL;
 char *db_user = NULL;
@@ -176,6 +178,8 @@ basic_setup_server(void)
 %token TOK_DB_USER
 %token TOK_DB_PASS
 %token TOK_DB_PORT
+%token TOK_MESSAGE_COUNT_IN_DB
+%token TOK_MESSAGE_BODY_IN_DB
 %token TOK_HASHSALT
 %token TOK_EOF
 
@@ -183,7 +187,7 @@ basic_setup_server(void)
 
 commands: /**/ | commands command;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | eof;
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -218,6 +222,32 @@ useACL:
 				exit(1);
 			}
 			use_acl=1;
+		}
+	}
+
+messageBodyInDb:
+	TOK_MESSAGE_BODY_IN_DB
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+		    if (dbase != DBASE_POSTGRES) {
+			fprintf(stderr, "Storing message body within the"
+				" database is only supported for Postgres.\n");
+			exit(1);
+		    }
+		    message_body_in_db = 1;
+		}
+	}
+
+messageCountInDb:
+	TOK_MESSAGE_COUNT_IN_DB
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+		    if (dbase != DBASE_POSTGRES) {
+			fprintf(stderr, "Storing next-message ID within the"
+				" database is only supported for Postgres.\n");
+			exit(1);
+		    }
+		    message_count_in_db = 1;
 		}
 	}
 

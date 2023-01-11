@@ -41,6 +41,8 @@ database-password                   return TOK_DB_PASS;
 database-port                       return TOK_DB_PORT;
 use-authentication                  return TOK_USE_AUTH;
 use-acl                             return TOK_USE_ACL;
+message-body-in-db                  return TOK_MESSAGE_BODY_IN_DB;
+message-count-in-db                 return TOK_MESSAGE_COUNT_IN_DB;
 enable-anonym-mids                  return TOK_ANONYM_MIDS;
 listen                              return TOK_LISTEN_ON;
 port                                return TOK_PORT;

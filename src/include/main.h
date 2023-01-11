@@ -371,6 +371,9 @@ void db_acl_role_connect_group(server_cb_inf *, char *, char *);
 void db_acl_role_disconnect_group(server_cb_inf *, char *, char *);
 void db_acl_role_disconnect_user(server_cb_inf *, char *, char *);
 void db_acl_role_connect_user(server_cb_inf *, char *, char *);
+void db_store_message_body(server_cb_inf *, char *, char *);
+char*  db_load_message_body(server_cb_inf *, char *);
+char*  db_get_uniqnum(server_cb_inf *inf);
 
 /* db_sqlite3.c */
 #ifndef NOSQLITE
@@ -502,6 +505,9 @@ void db_postgres_acl_role_connect_group(server_cb_inf *, char *, char *);
 void db_postgres_acl_role_disconnect_group(server_cb_inf *, char *, char *);
 void db_postgres_acl_role_connect_user(server_cb_inf *, char *, char *);
 void db_postgres_acl_role_disconnect_user(server_cb_inf *, char *, char *);
+void db_postgres_store_message_body(server_cb_inf *, char *, char *);
+char* db_postgres_load_message_body(server_cb_inf *, char *);
+char*  db_postgres_get_uniqnum(server_cb_inf *inf);
 #endif
 
 /* log.c */

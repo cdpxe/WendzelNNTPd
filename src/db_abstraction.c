@@ -951,3 +951,54 @@ db_close_connection(server_cb_inf *inf)
 		exit(ERR_EXIT);
 	}
 }
+
+void
+db_store_message_body(server_cb_inf *inf, char *message_id, char *body)
+{
+	switch (dbase) {
+#ifndef NOPOSTGRES
+	case DBASE_POSTGRES:
+		db_postgres_store_message_body(inf, message_id, body);
+		break;
+#endif
+	default:
+		fprintf(stderr, "NOT IMPLEMENTED: db_store_message_body; dbase=%i\n",
+			dbase);
+		DO_SYSL("NOT IMPLEMENTED; TODO!")
+		exit(ERR_EXIT);
+	}
+}
+
+char*
+db_load_message_body(server_cb_inf *inf, char *message_id)
+{
+	switch (dbase) {
+#ifndef NOPOSTGRES
+	case DBASE_POSTGRES:
+		return db_postgres_load_message_body(inf, message_id);
+		break;
+#endif
+	default:
+		fprintf(stderr, "NOT IMPLEMENTED: db_load_message_body; dbase=%i\n",
+			dbase);
+		DO_SYSL("NOT IMPLEMENTED; TODO!")
+		exit(ERR_EXIT);
+	}
+}
+
+char*
+db_get_uniqnum(server_cb_inf *inf)
+{
+	switch (dbase) {
+#ifndef NOPOSTGRES
+	case DBASE_POSTGRES:
+		return db_postgres_get_uniqnum(inf);
+		break;
+#endif
+	default:
+		fprintf(stderr, "NOT IMPLEMENTED: db_get_uniqnum; dbase=%i\n",
+			dbase);
+		DO_SYSL("NOT IMPLEMENTED; TODO!")
+		exit(ERR_EXIT);
+	}
+}

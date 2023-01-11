@@ -32,7 +32,8 @@ extern char lowercase[256];
 extern int daemon_mode;		/* main.c */
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
-
+extern unsigned short message_body_in_db; /* config.y */
+extern unsigned short message_count_in_db; /* config.y */
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	NNTP Messages
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -1094,7 +1095,12 @@ docmd_post(server_cb_inf *inf)
 	 */
 
 	/* get a uniq number */
-	if (!(newid = get_uniqnum())) {
+	if (message_count_in_db != 0) {
+	    newid = db_get_uniqnum(inf);
+	} else {
+	    newid = get_uniqnum();
+	}
+	if (!newid) {
 		DO_SYSL("I/O error in file DB -> can't create a new msg-id. Terminating child connection.")
 		free(buf);
 		free(header);
@@ -1326,7 +1332,11 @@ docmd_post(server_cb_inf *inf)
 
 	/* ALERT: this is the last occurrence of body; don't free it, since it
 	 * is part of 'buf'! */
-	filebackend_savebody(message_id, body);
+	if (message_body_in_db) {
+	    db_store_message_body(inf, message_id, body);
+	} else {
+	    filebackend_savebody(message_id, body);
+	}
 	free(buf);
 
 	/* SQL safe execution of the user submitted buffer parts */

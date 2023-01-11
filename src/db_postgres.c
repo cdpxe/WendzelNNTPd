@@ -28,6 +28,7 @@
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
 extern unsigned short be_verbose; /* config.y */
+extern short message_body_in_db;  /* config.y */
 extern short global_mode; /* global.c */
 
 extern char period_end[];
@@ -763,7 +764,12 @@ db_postgres_article(server_cb_inf *inf,
 
 	    /* send the body, if needed */
 	    if (inf->cmdtype == CMDTYP_ARTICLE || inf->cmdtype == CMDTYP_BODY) {
-		char *msgbody = filebackend_retrbody(msgid);
+		char *msgbody;
+		if (message_body_in_db) {
+		    msgbody = db_load_message_body(inf, msgid);
+		} else {
+		    msgbody = filebackend_retrbody(msgid);
+		}
 		if (msgbody != NULL) {
 		    ToSend(msgbody, strlen(msgbody), inf);
 		    free(msgbody);
@@ -1724,4 +1730,123 @@ db_postgres_acl_del_user(server_cb_inf *inf, char *username, char *newsgroup)
 	    db_postgres_backend_terminate(inf, 1);
 	}
 	PQclear(res);
+}
+
+
+void
+db_postgres_store_message_body(server_cb_inf *inf, char *message_id, char *body)
+{
+	char *sql_cmd = "insert into body (msgid, content) values ($1,$2);";
+	PGconn *conn = inf->servinf->pgconn;
+
+	const char *const paramValues[] = { message_id, body };
+	const int paramLengths[] = { strlen(paramValues[0]), strlen(paramValues[1])};
+	const int paramFormats[] = {0,0};
+	int resultFormat = 0;
+
+
+	PGresult *res = PQexecParams(conn,
+				     sql_cmd, 2, NULL,
+				     paramValues, paramLengths,
+				     paramFormats, resultFormat);
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+	    fprintf(stderr, "Postgres command error: %s. %s\n",
+		    sql_cmd, PQerrorMessage(conn));
+	    DO_SYSL("Postgres command error");
+	    PQclear(res);
+	    db_postgres_backend_terminate(inf, 1);
+	}
+	PQclear(res);
+}
+
+char*
+db_postgres_load_message_body(server_cb_inf *inf, char *message_id)
+{
+	char *sql_cmd =
+	    "select octet_length(content), content from body where msgid = $1";
+	PGconn *conn = inf->servinf->pgconn;
+
+	const char *const paramValues[] = { message_id };
+	const int paramLengths[] = { strlen(paramValues[0]) };
+	const int paramFormats[] = {0};
+	int resultFormat = 0;
+
+
+	PGresult *res = PQexecParams(conn,
+				     sql_cmd, 1, NULL,
+				     paramValues, paramLengths,
+				     paramFormats, resultFormat);
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+	    fprintf(stderr, "Postgres command error: %s. %s\n",
+		    sql_cmd, PQerrorMessage(conn));
+	    DO_SYSL("Postgres command error");
+	    PQclear(res);
+	    db_postgres_backend_terminate(inf, 1);
+	}
+
+	if (PQntuples(res) <= 0) {
+	    PQclear(res);
+	    return NULL;
+	}
+
+	assert (PQntuples(res) == 1); /* msgid is a primary key */
+
+	unsigned int octet = atoi(PQgetvalue(res, 0, 0));
+	char *body = PQgetvalue(res, 0, 1);
+
+	if (body == NULL) {
+	    PQclear(res);
+	    return NULL;
+	}
+
+	char *dup_s = strndup(body, octet);
+
+	if (be_verbose) {
+	    fprintf(stderr, "octent length / strlen: %u/%lu Bytes at (%p)\n",
+		    octet, strlen(body), body);
+	}
+	PQclear(res);
+	return dup_s;
+}
+
+char*
+db_postgres_get_uniqnum(server_cb_inf *inf)
+{
+	char *sql_cmd = "select nextval('nntp_next_msg_id')";
+	PGconn *conn = inf->servinf->pgconn;
+
+	if (be_verbose) {
+	    fprintf(stderr, "fetch new number\n");
+	}
+
+	PGresult *res = PQexec(conn, sql_cmd);
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+	    fprintf(stderr, "Postgres command error: %s. %s\n",
+		    sql_cmd, PQerrorMessage(conn));
+	    DO_SYSL("Postgres command error");
+	    PQclear(res);
+	    db_postgres_backend_terminate(inf, 1);
+	}
+
+	if (PQntuples(res) != 1) {
+	    fprintf(stderr,
+		    "Postgres command error (assert: row count = 1): %s. %s\n",
+		    sql_cmd, PQerrorMessage(conn));
+	    DO_SYSL("Postgres command error");
+	    PQclear(res);
+	    db_postgres_backend_terminate(inf, 1);
+	}
+
+	char *buf;
+	if (!(buf = (char *) calloc(MAX_IDNUM_LEN + 1, sizeof(char)))) {
+		DO_SYSL("Not enough memory!")
+		return NULL;
+	}
+	snprintf(buf, MAX_IDNUM_LEN, "<cdp%s@", PQgetvalue(res, 0, 0));
+	if (be_verbose) {
+	    fprintf(stderr, "allocated new number: %s\n", PQgetvalue(res, 0, 0));
+	}
+	PQclear(res);
+	return buf;
 }

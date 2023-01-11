@@ -43,6 +43,7 @@
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
 extern short global_mode; /* global.c */
+extern short message_body_in_db;  /* config.y */
 
 extern char progerr503[];
 extern char period_end[];
@@ -641,7 +642,12 @@ db_mysql_article(server_cb_inf *inf,
 
 		/* send the body, if needed */
 		if (inf->cmdtype == CMDTYP_ARTICLE || inf->cmdtype == CMDTYP_BODY) {
-			char *msgbody = filebackend_retrbody(msgid);
+			char *msgbody;
+			if (message_body_in_db) {
+				msgbody = db_load_message_body(inf, msgid);
+			} else {
+				msgbody = filebackend_retrbody(msgid);
+			}
 			if (msgbody != NULL) {
 				ToSend(msgbody, strlen(msgbody), inf);
 				free(msgbody);

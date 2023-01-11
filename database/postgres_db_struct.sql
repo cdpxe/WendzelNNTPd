@@ -2,8 +2,12 @@
 -- create database manually
 -- CREATE DATABASE wendzelnntpd owner :owner;
 
+-- Used, when setting ‘message-count-in-db’ is active:
+CREATE SEQUENCE nntp_next_msg_id INCREMENT BY 1;
+
 -- MsgID-Len is always 196 here
 -- NG-Name-Len is always 196
+
 CREATE TABLE newsgroups (
    id SERIAL PRIMARY KEY ,
    "name" VARCHAR(196) unique,
@@ -20,6 +24,25 @@ CREATE TABLE postings (
    lines VARCHAR(10),
    header VARCHAR(20000)
  );
+
+-- Used, when setting ‘message-body-in-db’ is active:
+-- Index and tsvector() creation must be specified manually
+-- because it depends on the language(s) which are used:
+-- See also: https://www.postgresql.org/docs/current/textsearch.html
+CREATE TABLE body (
+  msgid VARCHAR(196) PRIMARY KEY,
+  content text
+  -- Option 1: Add preprocessed column:
+  -- , GENERATED ALWAYS AS (to_tsvector('english', event_narrative)
+  -- Or by ALTER TABLE command:
+  -- ALTER TABLE body ADD COLUMN ts tsvector
+  --   GENERATED ALWAYS AS ((to_tsvector(‘english’), body)) STORED;
+
+  -- Option 2: Add index:
+  -- Consider also creating an index:
+  --  CREATE INDEX ts_body_idx ON body USING GIN (to_tsvector('english', body));
+
+);
 
 CREATE TABLE ngposts (
    msgid VARCHAR(196) REFERENCES postings (msgid) ON DELETE CASCADE,
