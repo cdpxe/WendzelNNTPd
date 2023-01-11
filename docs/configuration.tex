@@ -12,7 +12,7 @@ The first and most important step is to choose a database engine. You can use ei
 
 \subsection{Modifying wendzelnntpd.conf}
 
-In the configuration file you will find a line called \textbf{database-engine}. You can choose to use either MySQL or SQLite as the backend storage system by appending either \textbf{sqlite} or \textbf{mysql}.
+In the configuration file you will find a line called \textbf{database-engine}. You can choose to use either MySQL or SQLite as the backend storage system by appending either \textbf{sqlite} or \textbf{mysql}. Experimental support for PostgreSQL can be activiated with \textbf{postgres}.
 
 \begin{verbatim}
 database-engine mysql
@@ -61,6 +61,17 @@ mysql> source mysql\_db\_struct.sql
 ...
 mysql> quit
 Bye
+\end{verbatim}
+
+
+\subsubsection{PostgreSQL}
+Similarly to MySQL, there is a SQL script file (\txtit{postgres\_db\_struct.sql}) to create the WendzelNNTPd database. Create and setup a new database (and an corresponding user) and use the \texttt{psql(1)} command line client to load table and function definitions:
+
+\begin{verbatim}
+$ psql --username USER -W wendzelnntpd
+wendzelnntpd=> begin;
+wendzelnntpd=> \i database/postgres_db_struct.sql
+wendzelnntpd=> commit; quit;
 \end{verbatim}
 
 \section{Network Settings}

@@ -27,6 +27,7 @@
 
 extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
+extern unsigned short be_verbose; /* config.y */
 extern short global_mode; /* global.c */
 
 extern char period_end[];
@@ -62,7 +63,7 @@ db_postgres_open_connection(server_cb_inf *inf)
 			  NULL, NULL, "wendzelnntpd", db_user, db_pass)) == NULL) {
 		DO_SYSL("Postgres Init Error! Unable to connect.")
 		fprintf(stderr,
-			"Postgres Init Error! Unable to connect.");
+			"Postgres Init Error! Unable to connect.\n");
 		db_postgres_backend_terminate(inf, 1);
 	}
 
@@ -75,10 +76,10 @@ db_postgres_open_connection(server_cb_inf *inf)
 	case CONNECTION_BAD:
 	default:
 	    PQfinish(inf->servinf->pgconn);
-	    fprintf(stderr, "db_postgres: failed to connect");
-	    DO_SYSL("postgres connect error. Check your database configuration. ");
+	    fprintf(stderr, "db_postgres: failed to connect\n");
+	    DO_SYSL("postgres connect error. Check your database configuration.");
 	    fprintf(stderr,
-		    "postgres connect error. Check your database configuration. ");
+		    "postgres connect error. Check your database configuration.\n");
 	    db_postgres_backend_terminate(inf, 1);
 	    break;
 	}
@@ -181,9 +182,9 @@ db_postgres_list(server_cb_inf *inf, int cmdtyp, char *wildmat)
 
 	    if (global_mode == MODE_THREAD && use_auth && use_acl) {
 		assert(0);
-		/* XXX to be implemented: check if user can see the newsgroup */
-		// if (db_postgres_acl_check_user_group(inf, inf->servinf->cur_auth_user, row[1]) == FALSE)
-		// { continue ; }
+		/* TODO (to be implemented): check if user can see the newsgroup */
+		if (db_postgres_acl_check_user_group(inf, inf->servinf->cur_auth_user, PQgetvalue(res, i, 1)) == FALSE)
+		{ continue; }
 	    }
 
 	    switch (cmdtyp) {
@@ -233,16 +234,20 @@ db_postgres_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 	snprintf(buf_line, 128-1, "%d", linecount);
 
 
-	fprintf(stderr, "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-		message_id, buf, from, ngstrpb, subj, buf_line, add_to_hdr);
-	fprintf(stderr, "%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n",
-		strlen(message_id),
-		strlen(buf),
-		strlen(from),
-		strlen(ngstrpb),
-		strlen(subj),
-		strlen(buf_line),
-		strlen(add_to_hdr));
+	if (be_verbose) {
+	    fprintf(stderr, "--- Dump Message ---\n");
+	    fprintf(stderr, "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+		    message_id, buf, from, ngstrpb, subj, buf_line, add_to_hdr);
+	    fprintf(stderr, "%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n",
+		    strlen(message_id),
+		    strlen(buf),
+		    strlen(from),
+		    strlen(ngstrpb),
+		    strlen(subj),
+		    strlen(buf_line),
+		    strlen(add_to_hdr));
+	    fprintf(stderr, "--- Message End ---\n");
+	}
 
 	const char *const paramValues[] = {
 	    message_id,
