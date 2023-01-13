@@ -42,7 +42,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 #### Features Under Development/Call for Testing
 
 * The main branch currently provides experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!).
-* Two **NNTPS/TLS** branches are available (thx to Mr. Dunsky and Mr. Grill!)
+* Two independent and experimental **NNTPS/TLS** branches are available for testing (thx to Mr. Dunsky and Mr. Grill!)
 
 ## Website
 
