@@ -412,8 +412,10 @@ if [ "$USE_SSL" = "YES" ]; then
 
    out "checking for libssl..."
    cat << EOF >temp.c
+#define OPENSSL_API_COMPAT 0x10101000L
+#define OPENSSL_CONFIGURED_API 0x30000000L
 #include <openssl/ssl.h>
-int main(){SSL_library_init();return 0;}
+int main(){OPENSSL_init_ssl(OPENSSL_INIT_ENGINE_ALL_BUILTIN,NULL);return 0;}
 EOF
    gcc -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
    if [ "$?" = "0" ]; then

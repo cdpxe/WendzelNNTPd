@@ -248,6 +248,9 @@
 #endif
 
 #ifdef USE_SSL
+	#define OPENSSL_API_COMPAT 0x10101000L		//OpenSSL min Version 1.1.1
+	#define OPENSSL_CONFIGURED_API 0x30000000L	
+	#define OPENSSL_NO_DEPRECATED					//don't use deprecated before 1.1.1
 	#include <openssl/ssl.h>
 	#include <openssl/err.h>
 #endif

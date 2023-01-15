@@ -1,6 +1,19 @@
 WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
+2.1.4-TLS-Grill "St. Peter-Ording" : t.b.d.
+***TODO***:
+ - Check functioning of "posting (not) allowed" flag on MySQL database.
+ - Excessive testing of the POST function because of the removed
+   memory leaks.
+ADDED FEATURES:
+ - New configuration file with dedicated connectors
+ - TLS 1.0-1.3 with native connectors and STARTTLS
+FIXES:
+ - Signal handler was improved. Some uncaught signals killed the server
+MISC:
+ - Installed atomic switches for SIGTERM and SIGHUP. It is now a 
+   statefull kill. SIGHUP can be used to signal conditions in future.
 
 2.1.4-UNSTABLE "St. Peter-Ording" : t.b.d.
 ***TODO***:

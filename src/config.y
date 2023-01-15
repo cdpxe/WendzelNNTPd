@@ -218,6 +218,7 @@ struct sockaddr_in6 sa6;
 		}
 
 		setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
+		setsockopt((sockinfo + size)->sockfd, IPPROTO_IPV6, IPV6_V6ONLY, &yup, sizeof(yup));	//Do not bind IPv4 port with IPv6
 
 		if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {				//Socket bind
 			perror("bind");

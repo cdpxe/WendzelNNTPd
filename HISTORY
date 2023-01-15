@@ -1,5 +1,7 @@
 WendzelNNTPd History:
 ---------------------
+15-Jan-2023 - Change behaviort of IPv6 "listen ::" in connector.
+              It is now IPV6-Only!
 30-Dez-2022 - Implemented Client certificate verify and CRL checks!
 04-Dez-2022 - Implemented TLS, improve signal handler!
 18-Oct-2021 - 17 years of WendzelNNTPd!
