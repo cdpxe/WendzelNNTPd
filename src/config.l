@@ -54,6 +54,7 @@ hash-salt                           return TOK_HASHSALT;
 enable-ssl			    					return TOK_SSL;
 enable-starttls			    			return TOK_STARTTLS;
 openssl-ciphers			    			return TOK_SSL_CIPHERS;
+openssl-cipher-suites			 		return TOK_SSL_CIPHER_SUITES;
 openssl-tlsversion		    			return TOK_SSL_VERSION;
 openssl-servercertificate	    		return TOK_SSL_CERT;
 openssl-serverkey		    				return TOK_SSL_KEY;

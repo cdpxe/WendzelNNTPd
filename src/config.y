@@ -265,6 +265,7 @@ struct sockaddr_in6 sa6;
 %token TOK_SSL
 %token TOK_STARTTLS
 %token TOK_SSL_CIPHERS
+%token TOK_SSL_CIPHER_SUITES;
 %token TOK_SSL_VERSION
 %token TOK_SSL_CERT
 %token TOK_SSL_KEY
@@ -290,7 +291,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableSSL | enableSTARTTLS | SSLCiphers | SSLVersion | SSLCert | SSLKey | SSLCipherPref | SSLVerify | SSLVerifyDepth | SSLCNAuth | SSLCRLPath | SSLCRLFile | SSLCRLCheck | SSLCAPath | SSLCAFile ;
+connectorCmd:  usePort | listenonSpec | enableSSL | enableSTARTTLS | SSLCiphers | SSLCipherSuites | SSLVersion | SSLCert | SSLKey | SSLCipherPref | SSLVerify | SSLVerifyDepth | SSLCNAuth | SSLCRLPath | SSLCRLFile | SSLCRLCheck | SSLCAPath | SSLCAFile ;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -301,7 +302,8 @@ connectorBegin:
 			connectorinfo->listen=NULL;
 			connectorinfo->enable_ssl=FALSE;							// TRUE, FALSE
 			connectorinfo->enable_starttls=FALSE;					// TRUE, FALSE
-			connectorinfo->ciphers=NULL;
+			connectorinfo->ciphers=NULL;								// Cipher TLS1.0 - 1.2
+			connectorinfo->cipher_suites=NULL;						// Cipher Suites TLS1.3
 #ifdef USE_SSL
 			connectorinfo->tlsversion_min=TLS1_VERSION;			// SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
 			connectorinfo->tlsversion_max=TLS1_3_VERSION;		// SSL3_VERSION, TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION
@@ -374,6 +376,12 @@ connectorEnd:
 							if (connectorinfo->ciphers != NULL)
 								if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,connectorinfo->ciphers)) {
         							fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+									ERR_print_errors_fp(stderr);
+									exit(ERR_EXIT);
+								}
+							if (connectorinfo->cipher_suites != NULL)
+								if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,connectorinfo->cipher_suites)) {
+        							fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
 									ERR_print_errors_fp(stderr);
 									exit(ERR_EXIT);
 								}
@@ -483,9 +491,27 @@ SSLCiphers:
 	TOK_SSL_CIPHERS TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
-			strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
-//        	fprintf(stderr,"TLS Ciphers String: %s\n",yytext);
+			if (connectorinfo->ciphers == NULL) {			//Ciphers have not been defined in connector
+				CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
+			} else {													//Cipher already defined in connector
+				DO_SYSL("Ciphers already defined in Connector - ignoring");
+				fprintf(stderr,"Ciphers already defined in Connector - ignoring: %s \n",yytext);
+			}
+		}
+	};
+
+SSLCipherSuites:
+	TOK_SSL_CIPHER_SUITES TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->cipher_suites == NULL) {			//Cipher suites have not been defined in connector
+				CALLOC(connectorinfo->cipher_suites, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->cipher_suites, yytext, strlen(yytext));
+			} else {														//Cipher suites already defined in connector
+				DO_SYSL("TLS1.3 Cipher suites already defined in Connector - ignoring");
+				fprintf(stderr,"TLS1.3 Cipher suites already defined in Connector - ignoring: %s \n",yytext);
+			}
 		}
 	};
 
@@ -511,7 +537,7 @@ SSLVersion:
 				case 3 : connectorinfo->tlsversion_min=TLS1_3_VERSION;
 							break;
 				default : connectorinfo->tlsversion_min=TLS1_VERSION;
-							 fprintf(stderr,"Error TLS Version String \"%s\"! Min could not be recognized - setting default TLS1.0!",yytext);
+							 fprintf(stderr,"Error TLS Version String \"%s\"! Min could not be recognized - setting default TLS1.0!\n",yytext);
 							 break;
 			}
 			switch (max) {

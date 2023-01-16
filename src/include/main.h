@@ -262,6 +262,7 @@ typedef struct {
    uint8_t     enable_ssl;
    uint8_t     enable_starttls;
    char     *ciphers;
+   char		*cipher_suites;
    int      tlsversion_min,tlsversion_max;
    char     *server_cert_file;
    char     *server_key_file;

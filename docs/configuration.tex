@@ -126,8 +126,10 @@ Following options can be defined in each connector:
    enable-ssl
 ;    Enable STARTTLS in connection
    enable-starttls
-;    Set available ciphers on server - see cipher string from OpenSSL
+;    Set available ciphers for TLS1.0 to 1.2 - see cipher string from OpenSSL
    openssl-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+;    Set available cipher suites for TLS1.3
+  openssl-cipher-suites "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384"
 ;    Set available TLS versions
    openssl-tlsversion "1.0-1.3"
 ;    Server certificate
