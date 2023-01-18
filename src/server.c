@@ -204,7 +204,6 @@ Send(server_cb_inf *inf, char *str, int len)
 			if (daemon_mode) {
 				DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
 			} else {
-				DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
 				int err = SSL_get_error(inf->servinf->tls_session, return_code);
 				if (err == SSL_ERROR_SSL) {
 					fprintf(stderr, "SSL error: ");
