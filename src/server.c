@@ -188,7 +188,11 @@ Send(server_cb_inf *inf, char *str, int len)
 #ifndef NOTLS
 	if (inf->servinf->tls_is_there) {
 #ifndef NOGNUTLS
-		if(gnutls_record_send(inf->servinf->tls_session, str, len)<0) {
+		ssize_t return_code;
+		do {
+			return_code = gnutls_record_send(inf->servinf->tls_session, str, len);
+		} while (recv_bytes == GNUTLS_E_AGAIN || recv_bytes == GNUTLS_E_INTERRUPTED);
+		if (return_code < 0) {
 			if (daemon_mode) {
 				DO_SYSL("gnutls_record_send() returned <0 -- killing connection.")
 			} else {
