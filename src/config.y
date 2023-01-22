@@ -118,7 +118,11 @@ basic_setup_server(void)
 	}
 #endif
 	
-	yyparse();
+	if (yyparse() != 0){		//Error parsing config file
+		DO_SYSL("Error parsing config file!");
+	   fprintf(stderr,"Error parsing config file!\n");
+		exit(ERR_EXIT);
+	}	
 	
 	/* check if all needed values are included in the config struct */
 	 
@@ -267,6 +271,7 @@ struct sockaddr_in6 sa6;
 %token TOK_SSL_CIPHERS
 %token TOK_SSL_CIPHER_SUITES;
 %token TOK_SSL_VERSION
+%token TOK_SSL_VERSION_STRING;
 %token TOK_SSL_CERT
 %token TOK_SSL_KEY
 %token TOK_SSL_CIPHERS_PREF
@@ -446,6 +451,8 @@ connectorEnd:
 									} else {
         								fprintf(stderr,"X509_STORE could not be loaded from SSL Context!\n");
 									}
+								} else {						// CRL check active but no CRL locations specified - checks will always fail!
+									DO_SYSL("Config-File: CRL check activated but no CRL location defined! All checks will fail!");
 								}
 							}
 							start_listener();																																
@@ -516,11 +523,11 @@ SSLCipherSuites:
 	};
 
 SSLVersion:
-	TOK_SSL_VERSION TOK_NAME
+	TOK_SSL_VERSION TOK_SSL_VERSION_STRING
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 #ifdef USE_SSL
-			int max=0,min=0;
+			int max=3,min=0;
 			sscanf(yytext,"1.%d-1.%d",&min,&max);
 			if (max < min) {		//Switch Values
 				int tmp=max;
@@ -555,7 +562,7 @@ SSLVersion:
 			}
 #endif
 		}
-//        	fprintf(stderr,"TLS Version String: %s %d-%d\n",yytext,connectorinfo->tlsversion_min,connectorinfo->tlsversion_max);
+        	//fprintf(stderr,"TLS Version String: %s %d-%d\n",yytext,connectorinfo->tlsversion_min,connectorinfo->tlsversion_max);
 	};
 
 SSLCert:
@@ -636,8 +643,12 @@ SSLCRLPath:
    TOK_SSL_CRL_PATH TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
-         CALLOC(connectorinfo->CRL_path, (char *), strlen(yytext) + 1, sizeof(char));
-         strncpy(connectorinfo->CRL_path, yytext, strlen(yytext));
+			if (connectorinfo->CRL_path == NULL) {
+         	CALLOC(connectorinfo->CRL_path, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->CRL_path, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-CRLpath statement in connector. Ignoring");
+			}
       }
    };
 
@@ -645,8 +656,12 @@ SSLCRLFile:
    TOK_SSL_CRL_FILE TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
-         CALLOC(connectorinfo->CRL_file, (char *), strlen(yytext) + 1, sizeof(char));
-         strncpy(connectorinfo->CRL_file, yytext, strlen(yytext));
+			if (connectorinfo->CRL_file == NULL) {
+         	CALLOC(connectorinfo->CRL_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->CRL_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-CRLfile statement in connector. Ignoring");
+			}
       }
    };
 
@@ -674,8 +689,12 @@ SSLCAPath:
    TOK_SSL_CA_PATH TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
-         CALLOC(connectorinfo->CA_path, (char *), strlen(yytext) + 1, sizeof(char));
-         strncpy(connectorinfo->CA_path, yytext, strlen(yytext));
+			if (connectorinfo->CA_path == NULL) {
+         	CALLOC(connectorinfo->CA_path, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->CA_path, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-CApath statement in connector. Ignoring");
+			}
       }
    };
 
@@ -683,8 +702,12 @@ SSLCAFile:
    TOK_SSL_CA_FILE TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
-         CALLOC(connectorinfo->CA_file, (char *), strlen(yytext) + 1, sizeof(char));
-         strncpy(connectorinfo->CA_file, yytext, strlen(yytext));
+			if (connectorinfo->CA_file == NULL) {
+         	CALLOC(connectorinfo->CA_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->CA_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-CAfile statement in connector. Ignoring");
+			}
       }
    };
 

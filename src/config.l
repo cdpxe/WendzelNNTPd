@@ -56,6 +56,7 @@ enable-starttls			    			return TOK_STARTTLS;
 openssl-ciphers			    			return TOK_SSL_CIPHERS;
 openssl-cipher-suites			 		return TOK_SSL_CIPHER_SUITES;
 openssl-tlsversion		    			return TOK_SSL_VERSION;
+1\.[0-3]-1\.[0-3]							return TOK_SSL_VERSION_STRING;
 openssl-servercertificate	    		return TOK_SSL_CERT;
 openssl-serverkey		    				return TOK_SSL_KEY;
 openssl-server-cipher-preference		return TOK_SSL_CIPHERS_PREF;
