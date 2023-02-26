@@ -165,10 +165,6 @@
 
 #define DEFAULTPORT		119
 
-#ifndef NOTLS
-#define DEFAULT_TLS_PORT	563
-#endif
-
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
 
