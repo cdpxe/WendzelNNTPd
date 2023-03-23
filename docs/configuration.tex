@@ -68,19 +68,25 @@ Bye
 Now you should specify the IP addresse(s) (IPv4 or IPv6) for WendzelNNTPd to accept connections on and the TCP port (the default NNTP port is 119) to run on.
 WendzelNNTPd defines \textbf{conectors} in configuration file.
 Each connector defines one port and one listen IP (or all interface IP).
+Be careful by using all interface IP(v6) (0.0.0.0 or ::) in connectors.
+Within each IP-Version (IPv4 and IPv6) the ports may not overlap between the connectors.
+So if you define an all interface IP(v6) within a connector on a dedicated port you must not use any connector with the same port in the same IP-Version.
 The connectors are activated top down.
-So place the specific IP before an all interface IP if you share the port number.
 
 \begin{verbatim}
 ; You need to specify a connector for each port WendzelNNTPd should
 ; listen on.
+
+;all interface IPv4
 <connector>
    port   119
    listen 0.0.0.0
 </connector>
+
+;all interface IPv6
 <connector>
    port   119
-   listen ::1
+   listen ::
 </connector>
 \end{verbatim}
 
@@ -180,6 +186,73 @@ At least \textbf{openssl-servercertificate} and \textbf{openssl-serverkey} must 
 
 ~
 
+\textbf{openssl-ciphers} defines the Configuration-String for ciphers in TLS1.0 to TLS1.2.
+A detailed description of the string can be found in man pages of \textit{openssl-ciphers}.
+
+~
+
+\textbf{openssl-cipher-suites} defines the active Cipher-Suites for TLS1.3.
+
+~
+
+\textbf{openssl-tlsversion} defines possible TLS-versions to be negotiated by the client.
+The option must be in the following format: \texttt{openssl-tlsversion 1.[min]-1.[max]}
+
+~
+
+\textbf{openssl-servercertificate} defines the file with the server certificate in PEM format.
+
+~
+
+\textbf{openssl-serverkey} defines the associated private key for the server certificate in PEM format.
+
+~
+
+\textbf{openssl-server-cipher-preference} uses the server defined order of ciphers in TLS negotiation.
+
+~
+
+\textbf{openssl-verifyclient} defines the authentication method for the clients.
+Possible values are:
+\begin{itemize}
+	\item{none} - Certificate from the client is not requested and not needed. This is the \textbf{Default}.
+	\item{optional} - Certificate from the client is requested but not mandatory.
+	\item{require} - Certificate from the client is requested an mandatory.
+\end{itemize}
+Time values of the certificates are checked on validation.
+
+~
+
+\textbf{openssl-verifydepth} defines the length of the certificate chain that is searched in the trust store for client certificate verification. A value of 0 means that each client certificate needs to be in the trust store for successful authentication.
+
+~
+
+\textbf{openssl-CApath} directory where trusted certificates are stored. Each file contains one certificate in PEM format.
+
+~
+
+\textbf{openssl-CAfile} file where trusted certificates are stored. The file contains a sequence of certificates in PEM format.
+
+~
+
+\textbf{openssl-CRLcheck} defines how CRL-check on client certificates is performed.
+Possible values are:
+\begin{itemize}
+	\item{none} - No CRL-check is performed. This is the \textbf{Default}.
+	\item{leaf} - CRL check is performed for client certificate.
+	\item{chain} - CRL check is performed on whole chain of client certificate.
+\end{itemize}
+
+~
+
+\textbf{openssl-CRLpath} directory where CRL-certificates are stored. Each file contains one CRL-certificate in PEM format.
+
+~
+
+\textbf{openssl-CRLfile} file where CRL-certificates are stored. The file contains a sequence of CRL-certificates in PEM format.
+
+~
+
 Certificates in \textbf{openssl-CApath} and \textbf{openssl-CRLpath} must have symbolic links named with their hash values. 
 Use \textit{c\_rehash $<$dir$>$} shipped with OpenSSL to create the links.
 
@@ -187,6 +260,14 @@ Use \textit{c\_rehash $<$dir$>$} shipped with OpenSSL to create the links.
 
 \textbf{openssl-CNauthentication} uses the first CommonName (CN) in subject to authenticate the client. If CN is found in usertable, the session is put to authenticated state.
 \textbf{use-authentication} should be activated in configuration file.
+
+~
+
+\textbf{listen} defines the IP(v6) address to listen on. You can use any-IP(v6) address (0.0.0.0 or ::) to listen on all interfaces of the IP-version. Be aware that the listeners must not overlap within their IP-version.
+
+~
+
+\textbf{port} defines the port to listen on. If the port is below 1023 the the program must be run as root.
 
 \subsection{Authentication and Access Control Lists (ACL)}
 

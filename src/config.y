@@ -32,7 +32,6 @@ connectorinfo_t *connectorinfo = NULL;
 int peak = 0;
 //int port = DEFAULTPORT;
 int max_post_size = MAX_POSTSIZE_DEFAULT;
-fd_set fds;
 
 unsigned short use_auth = 0;	/* global var i check in server.c while socket-loop */
 unsigned short use_acl = 0;	/* do we use access control lists? */
@@ -106,8 +105,6 @@ basic_setup_server(void)
 				"file permissions for " CONFIGFILE "!\n");
 		exit(ERR_EXIT);
 	}
-	
-	FD_ZERO(&fds);
 	
 #ifdef __WIN32__
 	/* init damn winsock */

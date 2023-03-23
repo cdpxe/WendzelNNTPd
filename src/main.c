@@ -33,7 +33,7 @@ extern sig_atomic_t rec_sigterm;   //SIGTERM (KILL) has been sent to process - g
 struct sockaddr_in sa;
 struct sockaddr_in6 sa6;
 
-extern fd_set fds;
+// defined in config.y
 extern sockinfo_t *sockinfo;
 extern int peak;
 
@@ -71,6 +71,7 @@ main(int argc, char *argv[])
 	pthread_t th1;
 	sockinfo_t *sockinf;
 	struct sigaction sig_a;
+	fd_set fds;
 	
 	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
@@ -155,7 +156,7 @@ main(int argc, char *argv[])
 	 * threads are killed on err.
 	 */
 	global_mode = MODE_THREAD;
-
+	FD_ZERO(&fds);
 	do {
 		for (i = 0; i < size_sockinfo_t; i++) {
 			FD_SET((sockinfo+i)->sockfd, &fds);

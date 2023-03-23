@@ -1,5 +1,6 @@
 WendzelNNTPd History:
 ---------------------
+23-Mar-2023 - Update documentation and some small changes.
 22-Jan-2023 - Improved config file parsind and some defaults.
 16-Jan-2023 - Implemented Option "openssl-cipher-suites" to select
               TLS 1.3 cipher suites.

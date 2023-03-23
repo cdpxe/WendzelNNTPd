@@ -53,4 +53,4 @@ https://sourceforge.net/p/wendzelnntpd/discussion/general/
 
 ## Documentation
 
-The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
+The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/2.1.4-TLS-Grill/docs/docs.pdf).

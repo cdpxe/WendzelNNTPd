@@ -217,6 +217,7 @@ int sentbytes=0;
       } else {
          perror("send");
       }
+		pthread_detach(pthread_self());
       pthread_exit(NULL);
    }
 }
