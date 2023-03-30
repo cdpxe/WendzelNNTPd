@@ -86,7 +86,7 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
       case SIGUSR2 	: strcpy(sname,"SIGUSR2");
                        break;
       case SIGPIPE 	: strcpy(sname,"SIGPIPE");
-							  DO_SYSL("SIGNAL Client broken connection");				//Socket broken withour clean shutdown
+							  DO_SYSL("SIGNAL Client broken connection");				//Socket broken without clean shutdown
                        break;
       case SIGALRM 	: strcpy(sname,"SIGALRM");
                        break;

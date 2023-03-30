@@ -85,7 +85,7 @@ db_sqlite3_authinfo_checkpass_cb(void *infp, int argc, char **argv, char **ColNa
 	return 0;
 }
 
-// useronly==TRUE  -> unly check uername for x509 authentication
+// useronly==TRUE  -> only check uername for x509 authentication
 void
 db_sqlite3_authinfo_check(server_cb_inf *inf, uint8_t useronly)
 {

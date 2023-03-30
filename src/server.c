@@ -132,7 +132,9 @@ static void docmd_article(char *, server_cb_inf *);
 static void docmd_group(char *, server_cb_inf *);
 static void docmd_listgroup(char *, server_cb_inf *);
 static void docmd_capabilities(server_cb_inf *);
+#ifdef USE_SSL
 static uint8_t set_auth_user_to_cn(server_cb_inf *);
+#endif
 static void docmd_starttls(server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
@@ -920,16 +922,17 @@ int buflen=0;
 /*
 	set inf->servinf->cur_auth_user to first CN of Client Certificate Subject
 */
+#ifdef USE_SSL
 static uint8_t
 set_auth_user_to_cn(server_cb_inf *inf)
 {
+uint8_t ret_val=ERR_RETURN;
 X509 *client_cert;
 X509_NAME *client_subject;
 int lastpos=-1;
 X509_NAME_ENTRY *entry;
 ASN1_STRING *e_value;
 unsigned char *str_value;
-uint8_t ret_val=ERR_RETURN;
 char *logline;
 
 	if (SSL_get_verify_result(inf->sockinf->ssl) == X509_V_OK) {		// Verification active and OK
@@ -960,6 +963,7 @@ char *logline;
 	}
 	return(ret_val);
 }
+#endif
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  	STARTTLS
@@ -968,6 +972,8 @@ static void
 docmd_starttls(server_cb_inf *inf)
 {
 #ifdef USE_SSL
+	char *conn_logstr = NULL;
+
 	if (inf->sockinf->ssl_active != TRUE) {										//SSL not active
 		if (inf->sockinf->connectorinfo->enable_starttls == TRUE) {			//Connector supports STARTTLS
 			if (((use_auth == 1) && (inf->servinf->auth_is_there == 0)) 	//User not already authenticated - not allowed by RFC4642
@@ -983,7 +989,16 @@ docmd_starttls(server_cb_inf *inf)
 						fprintf(stderr,"Error negotiating SSL session!!\n");
 						ERR_print_errors_fp(stderr);
 					} else {
-//						fprintf(stderr,"STARTTLS negotiation successfull!\n");
+						
+						/* Log the started connection */
+						char conn_s[50];
+						sprintf(conn_s,"%s:%d",inf->sockinf->connectorinfo->listen,inf->sockinf->connectorinfo->port);
+						conn_logstr = str_concat("Negotiated SSL connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
+						DO_SYSL(conn_logstr);
+						fprintf(stderr,"%s\n",conn_logstr);
+						FFLUSH
+						free(conn_logstr);
+
 						inf->sockinf->ssl_active=TRUE;	//STARTTLS negotiation successfull
 						if ((inf->sockinf->connectorinfo->CN_authentication == TRUE) && (use_auth==1) && 	//Client Cert Authentication enabled
 							((inf->sockinf->connectorinfo->verify_client == VERIFY_OPTIONAL) || 
@@ -1739,7 +1754,6 @@ do_server(void *socket_info_ptr)
 	server_cb_inf inf;
 	extern short be_verbose;
 	int i;
-	char *conn_logstr = NULL;
 	
 	/* This is _SERV_-inf */
 	bzero(&servinf, sizeof(serverinfo_t));
@@ -1758,6 +1772,8 @@ do_server(void *socket_info_ptr)
 	}
 	
 #ifdef USE_SSL
+	char *conn_logstr = NULL;
+
 	if (sockinf->connectorinfo->enable_ssl == TRUE) {
 		sockinf->ssl=SSL_new(sockinf->connectorinfo->ctx);
 		if(!SSL_set_fd(sockinf->ssl,sockinf->sockfd)) {
@@ -1772,13 +1788,16 @@ do_server(void *socket_info_ptr)
 				FFLUSH
 				kill_thread(&inf);
 			}
-			char port_s[6];
-			sprintf(port_s,"%d",sockinf->connectorinfo->port);
-			conn_logstr = str_concat("Created SSL connection from ", sockinf->ip, " Connector:", port_s, NULL);
+
+			/* Log the started connection */
+			char conn_s[50];
+			sprintf(conn_s,"%s:%d",sockinf->connectorinfo->listen,sockinf->connectorinfo->port);
+			conn_logstr = str_concat("Created SSL connection from ", sockinf->ip, " Connector:", conn_s, NULL);
 			DO_SYSL(conn_logstr);
 			fprintf(stderr,"%s\n",conn_logstr);
 			FFLUSH
 			free(conn_logstr);
+
 			sockinf->ssl_active=TRUE;
 			if ((sockinf->connectorinfo->CN_authentication == TRUE) && (use_auth==1) && 	//Client Cert Authentication enabled
 				((sockinf->connectorinfo->verify_client == VERIFY_OPTIONAL) || 
@@ -1863,16 +1882,16 @@ kill_thread(server_cb_inf *inf)
 	
 	
 	/* Log the ended connection */
-	char port_s[6];
-	sprintf(port_s,"%d",inf->sockinf->connectorinfo->port);
+	char conn_s[50];
+	sprintf(conn_s,"%s:%d",inf->sockinf->connectorinfo->listen,inf->sockinf->connectorinfo->port);
 #ifdef USE_SSL
 	if (inf->sockinf->ssl_active==TRUE) {
-		conn_logstr = str_concat("Closed SSL connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+		conn_logstr = str_concat("Closed SSL connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
 	} else {
-		conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+		conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
 	}
 #else
-	conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", port_s, NULL);
+	conn_logstr = str_concat("Closed connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
 #endif
 
 	if (conn_logstr) {

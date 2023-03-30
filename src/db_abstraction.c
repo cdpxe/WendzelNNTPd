@@ -23,7 +23,7 @@
 
 extern unsigned short dbase;	/* from config.y */
 
-// useronly==TRUE  -> unly check uername for x509 authentication
+// useronly==TRUE  -> only check uername for x509 authentication
 void
 db_authinfo_check(server_cb_inf *inf, uint8_t useronly)
 {

@@ -89,7 +89,7 @@ db_mysql_close_connection(server_cb_inf *inf)
 }
 
 /* ***** AUTHINFO PASS ***** */
-// useronly==TRUE  -> unly check uername for x509 authentication
+// useronly==TRUE  -> only check uername for x509 authentication
 void
 db_mysql_authinfo_check(server_cb_inf *inf, uint8_t useronly)
 {

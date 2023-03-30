@@ -477,7 +477,11 @@ enableSSL:
 	TOK_SSL
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_SSL
 			connectorinfo->enable_ssl=TRUE;
+#else
+			connectorinfo->enable_ssl=FALSE;			//enabled on Connector but no SSL support
+#endif
 //        	fprintf(stderr,"Enable SSL\n");
 		}
 	};
@@ -486,7 +490,11 @@ enableSTARTTLS:
 	TOK_STARTTLS
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_SSL
 			connectorinfo->enable_starttls=TRUE;
+#else
+			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no SSL support
+#endif
 //        	fprintf(stderr,"Enable STARTTLS\n");
 		}
 	};
