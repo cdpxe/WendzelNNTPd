@@ -6,6 +6,7 @@ This server is tailored for workgroups, where users trust each other and where n
 
 ## Download
 
+##### [Github Repository / Current Development Branch](https://github.com/cdpxe/WendzelNNTPd)
 
 ##### Source
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
@@ -18,22 +19,19 @@ This server is tailored for workgroups, where users trust each other and where n
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
 
-##### Git Access / Current Development Branch
-- The current version of the development code is available [here](https://github.com/cdpxe/WendzelNNTPd).
-
 
 ## Features
 
 * Runs on Linux, OpenSolaris, *BSD
 * Supports IPv6
 * Conservative design philosophy:
-   * Tiny (around 7,800 Lines of Code), to reduce potential (security) flaws.
+   * Tiny (approx. 10,000 Lines of Code), to limit potential (security) flaws, including optional features that can be deactivated at compile time.
    * Do not implement unnecessary features.
    * Do not make things too complicated and check for compatibility with old newsreaders.
 * Written in C
 * Database abstraction layer (supports SQLite3 and MySQL)
 * Supports NNTP authentication (AUTHINFO USER/PASS)
-* Supports advanced ACL and role based access control (RBAC)
+* Supports advanced Access Control Lists (ACL) and Role-based Access Control (RBAC)
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
