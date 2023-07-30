@@ -283,6 +283,9 @@ db_mysql_get_high_value(server_cb_inf *inf, char *newsgroup)
 
 	if ((row = mysql_fetch_row(res)) != NULL) {
 		cur_high = atol(row[0]);
+	} else {
+		cur_high = 0;
+		DO_SYSL("Internal Error (mysql_fetch_row(res) in db_mysql.c/db_mysql_get_high_value()")
 	}
 	free(sql_cmd);
 	mysql_free_result(res);
