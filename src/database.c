@@ -164,10 +164,9 @@ filebackend_retrbody(char *message_id_in)
 	message_id++;
 	message_id[strlen(message_id)-1] = '\0';
 
-	
 	if (!(filename = (char *) calloc(strlen(SPOOLFOLDER) + 1 + strlen(message_id) + 1, sizeof(char)))) {
 		DO_SYSL("Not enough memory!")
-		free(message_id);
+		//free(message_id); //problematic
 		return NULL;
 	}
 	snprintf(filename, strlen(SPOOLFOLDER) + 1 + strlen(message_id) + 1, SPOOLFOLDER "/%s", message_id);
