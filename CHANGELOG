@@ -32,6 +32,10 @@ FIXES:
  - Make sure that Sqlite3 statements with quotes are double-escaped to
    prevent SQL injections.
  - Fix database check in src/include/main.h, thx to @Christian Barthel.
+ - Improved error handling in multiple locations.
+ - Tried clang instead of gcc, just for fun. Seems to work if you
+   just replace "gcc" with "clang" in Makefile.inc. Note that clang is
+   not officially supported.
 MISC:
  - Updated SBo script to work with v. 2.1.3; fixed bug that made
    /usr/doc/wendzelnntpd-$ver/docs inaccessible (+x permission was
