@@ -24,8 +24,10 @@ short
 acl_check_user_group(server_cb_inf *inf, char *user, char *group)
 {
 	if (user == NULL || group == NULL) {
-		printf("acl_check_user_group(): user=%p, group=%p\n", user, group);
-		DO_SYSL("Internal error: user==NULL OR group==NULL")
+#ifdef DEBUG
+		fprintf(stderr, "acl_check_user_group(): user=%p, group=%p\n", user, group);
+#endif
+		DO_SYSL("acl_check_user_group(): Internal error: user==NULL OR group==NULL")
 		return FALSE;
 	}
 	return db_acl_check_user_group(inf, user, group);
