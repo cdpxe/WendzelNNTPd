@@ -15,6 +15,8 @@ This server is tailored for workgroups, where users trust each other and where n
   - Slackware 14.2: [Slackbuilds.org Build Script](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/)
   - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (v. 2.1.3 -- tgz)
      - Installation via `installpkg (filename)`
+- *NetBSD*:
+  - Port for WendzelNNTPd on *pkgsrc*: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
 
