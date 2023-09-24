@@ -4,8 +4,9 @@ WendzelNNTPd ChangeLog:
 
 x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
  --- This is expected to become a new major release once the TODO
- --- tasks are finished in circa late 2023.
+ --- tasks are finished in circa mid-2024.
 ***TODO***:
+ - Check if sever still runs on Net/Open/FreeBSD.
  - Check functioning of "posting (not) allowed" flag on MySQL database.
  - Excessive testing of the POST function because of the removed
    memory leaks.
@@ -15,8 +16,8 @@ x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
 	- Update documentation: how to setup PostgreSQL for NNTPd?
  - Add TLS support by merging best of the two TLS branches into the
    main branch.
- - Add support to sync with usenet servers, incl. non-WendzelNNTPd
-   servers.
+ - (Maybe: Add support to sync with usenet servers, incl. non-WendzelNNTPd
+   servers.)
 ADDED FEATURES:
  - Added Postgres database support (experimental), thanks to Christian
    Barthel for providing a massive patch!
