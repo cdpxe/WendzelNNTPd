@@ -17,14 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* external global variables/functions used by both, main.c and cdpnntpadm.c but which both belong originally to main.c */
+/* External global variables/functions used by both, main.c and
+ * cdpnntpadm.c, but which originally belonged to main.c. */
 #include "main.h"
 
 int daemon_mode = 0;
 int size_sockinfo_t = 0;
 short global_mode = MODE_PROCESS; /* don't change default value */
 
-/* sig_handler for win32 too since I sometimes call it in code and
+/* sig_handler() for win32, too, since I sometimes call it in code and
  * not only from outside.
  */
 void
