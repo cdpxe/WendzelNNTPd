@@ -33,7 +33,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-VERSION="2.5 - Jan-10-2023"
+VERSION="2.6 - Sep-24-2023"
 
 MAKEFILE_INC="Makefile.inc"
 
@@ -135,7 +135,9 @@ if [ "$1" != "" ]; then
 	echo "              not wish to have WendzelNNTPd contain any support"
 	echo "              for SQLite (use: 'SQLITE=NO ./configure')."
 	echo "POSTGRES=NO - Disables support for PostgreSQL if you do not wish"
-	echo "              to install the related library."
+	echo "              to install the related library. [DEFAULT]"
+	echo "POSTGRES=YES- Enables PostgreSQL support."
+	echo
 	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE *or*"
 	echo "PostgreSQL but not all of them, i.e., at least one database is"
 	echo "required to operate WendzelNNTPd."
@@ -299,6 +301,12 @@ out "checking for bison..."; bison -V >/dev/null 2>&1; check "yes" "no" "You nee
 ################
 # Database stuff
 ################
+
+# The default setting is that POSTGRES must be activated excplicitly.
+# Thus, if not explicitly set to YES, use the value "NO".
+if [ "$POSTGRES" = "" ]; then
+	POSTGRES="NO"
+fi
 
 if [ "$SQLITE" = "NO" -a "$MYSQL" = "NO" -a "$POSTGRES" = "NO" ]; then
 	echo "error: you cannot deactivate support for MySQL, Postgres *and* SQlite as"
