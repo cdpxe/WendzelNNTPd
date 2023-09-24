@@ -18,6 +18,8 @@
  */
 
 #include "main.h"
+/* VERSION is defined by mhash.h (from libmhash) too */
+#undef VERSION
 #include <mhash.h>
 
 #define SHA256_LEN 64 /* 32 bytes * 8 bits = 256 bits;

@@ -37,6 +37,11 @@ FIXES:
    just replace "gcc" with "clang" in Makefile.inc. Note that clang is
    not officially supported.
 MISC:
+ - Apply NetBSD pkgsrc patch for err feature and for lexer/parser
+   functions from Michael Baeuerle; thx for that!
+   (reference: https://github.com/jgoerzen/libnbcompat)
+ - Apply NetBSD pkgsrc patch to handle VERSION macro definition that
+   is also introduced by libmash from Michael Baeuerle; thx for that!
  - Updated SBo script to work with v. 2.1.3; fixed bug that made
    /usr/doc/wendzelnntpd-$ver/docs inaccessible (+x permission was
    missing)

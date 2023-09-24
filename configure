@@ -224,7 +224,7 @@ int main() {
 	return 0;
 }
 EOF
-$COMPILER -o temp temp.c>/dev/null 2>&1; check "yes" "no" "You need libc."
+$COMPILER $ADD_LNKFLAGS -o temp temp.c>/dev/null 2>&1; check "yes" "no" "You need libc."
 rm -f temp temp.c
 
 
@@ -237,7 +237,7 @@ int main() {
         return 0;
 }
 EOF
-$COMPILER -o temp -fstack-protector temp.c>/dev/null 2>&1
+$COMPILER $ADD_LNKFLAGS -o temp -fstack-protector temp.c>/dev/null 2>&1
 if [ "$?" = "1" ]; then
 	echo "no (compiling without stack protection)"
 	STACK_PROT=""
@@ -263,7 +263,7 @@ int main() {
 	return 0;
 }
 EOF
-$COMPILER -o temp temp.c >/dev/null 2>&1; check "yes" "no" "You need strftime() and ltime()."
+$COMPILER $ADD_LNKFLAGS -o temp temp.c >/dev/null 2>&1; check "yes" "no" "You need strftime() and ltime()."
 rm -f temp temp.c
 
 ###############
@@ -282,7 +282,7 @@ int main() {
 	return 0;
 }
 EOF
-$COMPILER -o temp temp.c >/dev/null 2>&1
+$COMPILER $ADD_LNKFLAGS -o temp temp.c >/dev/null 2>&1
 if [ "$?" = "0" ]; then
 	echo "yes"
 else
@@ -326,7 +326,7 @@ int main() {
   return 0;
 }
 EOF
-	$COMPILER -o temp temp.c -lsqlite3 -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need libSQLite3 development files and library (or disable SQLite3 support, cf. ./configure --help)."
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lsqlite3 -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need libSQLite3 development files and library (or disable SQLite3 support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
@@ -350,7 +350,7 @@ int main() {
   return 0;
 }
 EOF
-	$COMPILER -o temp temp.c -lmysqlclient -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need the MySQL client library and their development files (or disable MySQL support, cf. ./configure --help)."
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lmysqlclient -I/usr/local/include -L/usr/local/lib >/dev/null 2>&1; check "yes" "no" "You need the MySQL client library and their development files (or disable MySQL support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
@@ -368,7 +368,7 @@ int main() {
   return 0;
 }
 EOF
-	$COMPILER -o temp temp.c -lpq -I/usr/local/include -L/usr/local/lib -I/usr/include/postgresql >/dev/null 2>&1; check "yes" "no" "You need the PostgreSQL library and their development files (or disable PostgreSQL support, cf. ./configure --help)."
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lpq -I/usr/local/include -L/usr/local/lib -I/usr/include/postgresql >/dev/null 2>&1; check "yes" "no" "You need the PostgreSQL library and their development files (or disable PostgreSQL support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
@@ -380,7 +380,7 @@ cat << EOF >temp.c
 #include <pthread.h>
 int main(){pthread_self();return 0;}
 EOF
-$COMPILER -o temp temp.c -lpthread >/dev/null 2>&1; check "yes" "no" "You need libpthread."
+$COMPILER $ADD_LNKFLAGS -o temp temp.c -lpthread >/dev/null 2>&1; check "yes" "no" "You need libpthread."
 rm -f temp temp.c
 
 ###############
@@ -389,7 +389,7 @@ cat << EOF >temp.c
 #include <mhash.h>
 int main(){MHASH td = mhash_init(MHASH_MD5);return 0;}
 EOF
-$COMPILER -I/usr/local/include/ -L/usr/local/lib/ -o temp temp.c  -lmhash >/dev/null 2>&1; check "yes" "no" "You need libmhash."
+$COMPILER $ADD_LNKFLAGS -I/usr/local/include/ -L/usr/local/lib/ -o temp temp.c  -lmhash >/dev/null 2>&1; check "yes" "no" "You need libmhash."
 rm -f temp temp.c
 
 ###############
@@ -398,7 +398,7 @@ cat << EOF >temp.c
 #include <mhash.h>
 int main(){MHASH td = mhash_init(MHASH_SHA256);return 0;}
 EOF
-$COMPILER -I/usr/local/include/ -L/usr/local/lib/ -o temp temp.c -lmhash >/dev/null 2>&1; check "yes" "no" "You need a version of libmhash that supports SHA-256."
+$COMPILER $ADD_LNKFLAGS -I/usr/local/include/ -L/usr/local/lib/ -o temp temp.c -lmhash >/dev/null 2>&1; check "yes" "no" "You need a version of libmhash that supports SHA-256."
 rm -f temp temp.c
 
 ###############
@@ -411,7 +411,7 @@ cat << EOF >temp.c
 #endif
 int main(){char *q = "test"; strndup(q, 1);return 0;}
 EOF
-$COMPILER -o temp temp.c >/dev/null 2>&1
+$COMPILER $ADD_LNKFLAGS -o temp temp.c >/dev/null 2>&1
 if [ "$?" = "0" ]; then
 	echo "yes"
 else
@@ -431,7 +431,7 @@ rm -f temp temp.c
 ##include <openssl/ssl.h>
 #int main(){SSL_library_init();return 0;}
 #EOF
-#$COMPILER -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+#$COMPILER $ADD_LNKFLAGS -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
 #rm -f temp temp.c
 
 ############# rc.d script ADJUSTMENT ##########
