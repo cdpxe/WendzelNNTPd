@@ -94,7 +94,7 @@ cdpnntpadm.o : $(SRC)/cdpnntpadm.c $(HEADERS)
 	-DTHIS_TOOLNAME=\"wendzelnntpd\" -c $<
 
 wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(CCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
 	#strip bin/wendzelnntpadm
 
 # misc targets

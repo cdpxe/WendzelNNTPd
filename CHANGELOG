@@ -37,6 +37,8 @@ FIXES:
  - Tried clang instead of gcc, just for fun. Seems to work if you
    just replace "gcc" with "clang" in Makefile.inc. Note that clang is
    not officially supported.
+ - Fix OpenBSD compiler error an use cc instead of gcc under Open/Net/
+   FreeBSD.
 MISC:
  - Apply NetBSD pkgsrc patch for err feature and for lexer/parser
    functions from Michael Baeuerle; thx for that!
