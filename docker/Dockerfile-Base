@@ -1,0 +1,4 @@
+FROM debian:stable-slim
+
+RUN apt-get update -y
+RUN apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat libmariadb-dev libmhash-dev make

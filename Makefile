@@ -186,3 +186,17 @@ man_wendzelnntpd :
 man_wendzelnntpadm :
 	groff -Tascii -man wendzelnntpadm.8  > test.man
 	man -l test.man
+
+docker-build-base:
+	docker build -f ./docker/Dockerfile-Base -t wendzelnntpd-base:latest .
+
+docker-build-app:
+	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
+
+docker-build: docker-build-base docker-build-app
+
+docker-run:
+	docker run --name wendzelnntpd --rm -it -p 119:119 -d wendzelnntpd:latest
+
+docker-stop:
+	docker stop wendzelnntpd
