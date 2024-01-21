@@ -7,16 +7,17 @@ desirable features are missing, such as a support for encrypted
 and integrity-checked connections.
 
 Major:
-- add TLS support, cf. https://tools.ietf.org/html/rfc4642 (check for newer
-  version of this RFC!)
-  ==> One needs to implement the CAPABILITIES command first!
-- harden MySQL-related code w.r.t. SQL injections
-- add alias `wnntpd` or rename server entirely (keep WendzelNNTPd as some
-  alias in that case) to reflect the future of the server as one being de-
-  veloped by several people.
+- add TLS support (merge best of the two TLS branches!)
+- store unique message ID and message body in the DB (this is available
+  only for the experimental postgres setup). 
 - enable sync w/ other NNTP servers
 
 Minor:
+- harden all SQL-related code w.r.t. SQL injections
+- Finalize experimental postgres support.
+	- Excessive testing of all functionality and debugging.
+	- SQL hardening.
+	- Update documentation: how to setup PostgreSQL for NNTPd?
 - replace hash(salt,username,password) w/ hash(salt,rand(),password).
 - unicode support (-> domains with special characters, e.g. ä,ö,ü in "From:")
 - documentation: How to delete old postings?
