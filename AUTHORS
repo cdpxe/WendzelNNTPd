@@ -7,6 +7,7 @@ Contributors:
   - **TODO** Christoph Grill: Added support for TLS (NNTPS/STARTTLS)
   - Christian Barthel: Postgres support (2023), currently experimental, and code clean-up
   - @deavmi: clean-up and fixes of the documentation (2018-2019)
+  - Sven Liebert: Docker support for development purposes
 
 Additional patches by:
   - Michael Baeuerle (NetBSD pkgsrc)
