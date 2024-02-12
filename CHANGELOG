@@ -4,7 +4,7 @@ WendzelNNTPd ChangeLog:
 
 x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
  --- This is expected to become a new major release once the TODO
- --- tasks are finished in circa mid-2024.
+ --- tasks are finished in circa mid/late-2024.
 ***TODO***:
  - Check if sever still runs on Net/Open/FreeBSD.
  - Check functioning of "posting (not) allowed" flag on MySQL database.
@@ -13,7 +13,7 @@ x.y.z-CURRENT-UNSTABLE "t.b.n." : t.b.d.
  - Add TLS support by merging best of the two TLS branches into the
    main branch.
 ADDED FEATURES:
- - Finally, the "posting allowed" flag is considered in POST.
+ - Finally, the "posting allowed" flag is considered in POST :)
  - EXPERIMENTAL:
    - EXP: Added Postgres database support (experimental), thanks to
      Christian Barthel for providing a massive patch!
@@ -29,13 +29,13 @@ FIXES:
    prevent SQL injections. *** security fix ***
  - Fix database check in src/include/main.h, thx to @Christian Barthel.
  - Improved error handling in multiple locations.
- - Fix OpenBSD compiler error an use cc instead of gcc under Open/Net/
+ - Fix OpenBSD compiler error and use cc instead of gcc under Open/Net/
    FreeBSD.
 MISC:
- - Apply NetBSD pkgsrc patch for err feature and for lexer/parser
+ - Applied NetBSD pkgsrc patch for err feature and for lexer/parser
    functions from Michael Baeuerle; thx for that!
    (reference: https://github.com/jgoerzen/libnbcompat)
- - Apply NetBSD pkgsrc patch to handle VERSION macro definition that
+ - Applied NetBSD pkgsrc patch to handle VERSION macro definition that
    is also introduced by libmash from Michael Baeuerle; thx for that!
  - Updated SBo script to work with v. 2.1.3; fixed bug that made
    /usr/doc/wendzelnntpd-$ver/docs inaccessible (+x permission was
@@ -45,7 +45,7 @@ MISC:
    with non-alphanumeric/./- letters.
  - Whitespacing cleanup (thanks to @Christian Barthel for providing a
    patch!)
- - configure script enhancements and cleanup (thanks to @Christian
+ - 'configure' script enhancements and cleanup (thanks to @Christian
    Barthel for providing a patch!)
  - Tried clang instead of gcc, just for fun. Seems to work if you
    just replace "gcc" with "clang" in Makefile.inc. Note that clang is
@@ -320,7 +320,7 @@ MISC:
 1.4.7-stable "Pluto" : 14-Aug-2012
  SELECTED BACKPORT FIXES FROM 2.0.x:
  - *** Fixed an important segfault in the posting buffer receive loop.
-   This bug additionally lead to corrupted postings (broken post-
+   This bug additionally led to corrupted postings (broken post-
    ing attachments). ***
  - Fixed two bugs for (at least unlikely) conditions. Thx to @rk
    for reporting these two bugs found by static analysis.
@@ -613,9 +613,9 @@ MISC:
  - changed to stable state
  - using ADDITIONAL FEATURES/FIXES/MISC tags from now on in the
    CHANGELOG file [added backwards while working on version 1.4.2]
- - remove patchlevel in version number since the 3rd num in the ver-
+ - removed patchlevel in version number since the 3rd num in the ver-
    sion number should be enough
- - use reentrant strtok_r() instead of strtok() in all Non-Win32 OSs
+ - use reentrant strtok_r() instead of strtok() in all Non-Win32 OSes
 
 1.0.0-beta8 "IKNZ knows best" release : 28-Jun-2007
  - set secure chmod for gui binary too and remove gui's install.sh be-
@@ -686,8 +686,8 @@ MISC:
 2007a-beta: 08-Jun-2007
  - this release is BETA-BETA-BETA!
  - renamed cdpNNTPd to WendzelNNTPd
- - rewrote the whole network child process modell to pthreads because
-   Win32 does not know about fork()... Windows sux so much.
+ - rewrote the whole network child process model to use pthreads
+   because Win32 does not know about fork()... Windows sux so much.
  - ported the whole code to Win32 (but without the IPv6 support)
  - kicked out the file backend and rewrote it. it is now based on
    SQLite3
@@ -698,7 +698,7 @@ MISC:
 0.1.10: 19-Feb-2006, 0 bugfixes, 0 security fixes
  - setting chmod 0600 for files created at runtime via database
    functions
- - improved syslog-logging while file I/O
+ - improved syslog-logging during file I/O
 
 0.1.9, 17-Feb-2006, 1 bugfix, 0 security fixes
  - included the libCDPstrings library directly in xyria
@@ -744,8 +744,8 @@ MISC:
 0.1.4-beta: 22.05.2005; 2667 loc
  - switched to beta state
  - tested it under solaris and linux (thanks to killerfox)
-   -> sparc seems to have some problems with the code but x86 is
-      supported very well
+   -> SUN Sparc seems to have some problems with the code but x86
+      is supported very well.
 
 ------- old alpha versions -------
 
@@ -797,7 +797,7 @@ MISC:
  - Headers without Message-ID field are now getting one
 
 0.0.4-alpha: 12.11.2004; 1374 loc
- - posting command is primary implemented.
+ - posting command is initially implemented.
  - added database.c to the project
  - added a function for writing posts to a file
  - added a function to get and set the message-ids
@@ -814,13 +814,13 @@ MISC:
  
 0.0.2-alpha: 19.10.2004; ~650 loc
  - forking childs
- - implemented 'quit' cmd and command-mainloop for childs
+ - implemented 'quit' cmd and command mainloop for childs
  - help command
  - welcome message (only posting allowed (200))
  - list command
 
 0.0.1-alpha: 18.10.2004; ~300 loc
- - basic configuration setup (ip's), basic flex+yacc stuff
+ - basic configuration setup (IPs), basic flex+yacc stuff
  - signal handling
  - socket init
  - most part of the mainloop implementation
