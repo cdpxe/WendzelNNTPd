@@ -20,6 +20,8 @@ ADDED FEATURES:
    - EXP: Added option to store unique message ID and message body in
      the DB (postgres only), thanks to Christian Barthel for providing
      the patch!
+   - EXP: Docker environment for development purposes was provided by
+     Sven Liebert (@SvenLie) -- thanks for that!
 FIXES:
  - Fixed some memory leaks during postings that would occur on rather
    rare errors.
@@ -51,6 +53,7 @@ MISC:
    just replace "gcc" with "clang" in Makefile.inc. Note that clang is
    not officially supported.
  - Fixed some typos in CHANGELOG and HISTORY files.
+ - Improved the documentation.
 
 2.1.3-stable "Friedrichroda" : 17-Apr-2021:
  As usual, every new release gets named after a nice travel location.

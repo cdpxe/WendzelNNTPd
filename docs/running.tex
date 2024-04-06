@@ -14,19 +14,19 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 
 \section{Stopping and Restarting the Service}\index{Stopping WendzelNNTPd}\index{Restarting WendzelNNTPd}
 
-The server can be stopped by killing its process:
+The server can be stopped by terminating its process:
 
 \begin{verbatim}
 $ pkill wendzelnntpd
 \end{verbatim}
 
-The server has a handler for the kill signal that allows to safely shutdown using \textbf{pkill} or \textbf{kill}.
+The server has a handler for the termination signal that allows to safely shutdown using \textbf{pkill} or \textbf{kill}.
 
-To restart the service, kill and start the service.
+To restart the service, terminate and start the service.
 
 \subsection{Automating Start, Stop, and Restart}
 
-The script \textbf{init.d\_script} in the directory \textit{scripts/startup} of the tarball can be used to start, restart, and stop WendzelNNTPd. It is a standard init.d script for Linux operating systems that can usually be copied to \textit{/etc/init.d} (it must be executable).
+The script \textbf{init.d\_script} in the directory \textit{scripts/startup} of the tarball can be used to start, restart, and stop WendzelNNTPd. It is a standard \textit{init.d} script for Linux operating systems that can usually be copied to \textit{/etc/init.d} (it must be executable).
 
 \begin{verbatim}
 $ cp scripts/startup/init.d_script /etc/init.d/wendzelnntpd
@@ -34,7 +34,6 @@ $ chmod +x /etc/init.d/wendzelnntpd
 \end{verbatim}
 
 \textbf{Note:} Please note that some operating systems use different directories than \textit{/etc/init.d} or other startup script formats. In such cases, the script works nevertheless but should simply be installed to \textit{/usr/local/sbin} instead.
-
 
 To start, stop, and restart WendzelNNTPd, the following commands can be used afterwards:
 
@@ -58,7 +57,7 @@ Stopping WendzelNNTPd ... done.
 
 \section{Administration Tool `wendzelnntpadm'}
 
-Use the command line tool \textbf{wendzelnntpadm} to configure user, role and newsgroup settings of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
+Use the command line tool \textbf{wendzelnntpadm} to configure users, roles and newsgroups of your WendzelNNTPd installation. To get an overview of supported commands, run ``wendzelnntpadm help'':
 
 \begin{verbatim}
 $ wendzelnntpadm help
@@ -105,7 +104,7 @@ Newsgroup my.cool.group does not exist. Creating new group.
 done.
 \end{verbatim}
 
-You can also change the ``posting allowed'' flag of a newsgroup but this takes currently no effect since WendzelNNTPd handles all newsgroups as newsgroups with posting allowed.
+You can also change the ``posting allowed'' flag of a newsgroup:
 
 \begin{verbatim}
 $ wendzelnntpadm modgroup my.cool.group y
@@ -135,7 +134,7 @@ The easiest way to give only some people access to your server is to create user
 
 \subsection{Listing Users (and Passwords)}
 
-This command always prints the password of the user too.
+This command always prints the (hashed) password of the users:
 
 \begin{verbatim}
 $ wendzelnntpadm listusers
@@ -184,13 +183,13 @@ Deleting user UserName2 from database ... done
 done.
 \end{verbatim}
 
-\section{Access Control List Administration (just in case, when the standard NNTP authentication is not enough)}
+\section{Access Control List Administration (in case the standard NNTP authentication is not enough)}
 
 Welcome to the advanced part of WendzelNNTPd. WendzelNNTPd includes a powerful role based access control system. You can either only use normal access control lists where you can configure which user will have access to which newsgroup. Or you can use the advanced role system: You can add users to roles (e.g. the user ``boss99'' to the role ``management'') and give a role access to a group (e.g. role ``management'' shall have access to ``discuss.management'').
 
 \textbf{Note:} Please note that you must activate the ACL feature in your configuration file to use it.
 
-\textbf{Note:} To see *ALL* data related to the ACL subsystem of your WendzelNNTPd installation, simply use ``wendzelnntpadm listacl''.
+\textbf{Note:} To see \textit{all} data related to the ACL subsystem of your WendzelNNTPd installation, simply use ``wendzelnntpadm listacl''.
 
 \subsection{Invisible Newsgroups}
 
@@ -198,7 +197,7 @@ WendzelNNTPd includes a feature called ``Invisible Newsgroups'' which means that
 
 \subsection{Simple Access Control}
 
-We should start with the simple access control where you can define which user should have access to which newsgroup.
+We start with the simple access control component where you can define which user will have access to which newsgroup.
 
 \subsubsection{Giving a user access to a newsgroup}
 
@@ -262,9 +261,9 @@ Newsgroup project-x.support does not exist. Creating new group.
 done.
 \end{verbatim}
 
-\subsubsection{Creating a Role}
+\subsubsection{Creating an ACL Role}
 
-Before you can add users to a role and before you can connect a role to a newsgroup, you have to create a role (you have to choose an ASCII name for it). In this example, the group is called ``project-x''.
+Before you can add users to a role and before you can connect a role to a newsgroup, you have to create an ACL \emph{role} (you have to choose an ASCII name for it). In this example, the group is called ``project-x''.
 
 \begin{verbatim}
 $ wendzelnntpadm addaclrole project-x
@@ -272,9 +271,9 @@ Role project-x does not exists: okay.
 done.
 \end{verbatim}
 
-\subsubsection{Deleting a Role}
+\subsubsection{Deleting an ACL Role}
 
-You can delete a role by using ``delaclrole'' instead of ``addaclrole'' like in the example above.
+You can delete an ACL role by using ``delaclrole'' instead of ``addaclrole'' like in the example above.
 
 \subsection{Connecting and Disconnecting Users with/from Roles}
 
@@ -282,7 +281,7 @@ To add (connect) or remove (disconnect) a user to/from a role, you need to use t
 
 \subsubsection{Connecting a User with a Role}
 
-The second parameter (``project-x'') is the role name and the third parameter (``developer1'') is the username. Here we add our 3 developer users from the example above to the group project-x:
+The second parameter (``project-x'') is the role name and the third parameter (``developer1'') is the username. Here we add our three developer users from the example above to the group project-x:
 
 \begin{verbatim}
 $ wendzelnntpadm roleuserconnect project-x developer1
@@ -333,11 +332,11 @@ Connecting role project-x with newsgroup project-x.support ... done
 done.
 \end{verbatim}
 
-\subsubsection{Disconnecting a Role from a Newsgroup}
+\subsubsection{Disconnecting a Role From a Newsgroup}
 
-This is done like in the example above but you have to use the command ``rolegroup\textbf{dis}connect'' instead of ``rolegroupconnect''.
+Disconnecting is done like in the example above but you have to use the command ``rolegroup\textbf{dis}connect'' instead of ``rolegroupconnect''.
 
-\subsection{Listing your whole ACL configuration again}
+\subsection{Listing Your Whole ACL Configuration Again}
 
 Like mentioned before, you can use the command ``listacl'' to list your whole ACL configuration (except the list of users that will be listed by the command ``listusers'').
 
@@ -368,13 +367,13 @@ done.
 
 \subsubsection{Saving time}
 
-As mentioned above, you as the maintainer of the usenet server can safe time by using roles. If you add a new developer to the system, and the developer should have access to the two groups ``project-x.discussion'' and ``project-x.support'', you do not have to assign the user to both (or even more) groups. Instead, you just add the user to the role ``project-x'' that is already connected to both groups.
+As mentioned above, you can safe time by using roles. For instance, if you add a new developer to the system, and the developer should have access to the two groups ``project-x.discussion'' and ``project-x.support'', you do not have to assign the user to both (or even more) groups by hand. Instead, you just add the user to the role ``project-x'' that is already connected to both groups.
 
-If you want to give all developers access to the group ``project-x.news'', you also do not have to connect every developer with the project. Instead, you just connect the rule with the newsgroup, what is one command instead of $n$ commands. Of course, this time saving concept also works if you want to delete a user.
+If you want to give all developers access to the group ``project-x.news'', you also do not have to connect every developer with the project. Instead, you just connect the role with the newsgroup, what is one command instead of $n$ commands. Of course, this time-saving concept also works if you want to delete a user.
 
 \section{Hardening}
 
-Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a chroot environment or letting it run under an unprivileged user account (the user then needs write access to /var/spool/news/wendzelnntpd and read access to (/usr/local)/etc/wendzelnntpd.conf). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are reserved. This means that the server should use a port >= 1024 if it is started by a non-root user. Note: Some Unix systems may have another privileged port configuration. 
+Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a \textit{chroot} environment or letting it run under an unprivileged user account (the user then needs write access to \emph{/var/spool/news/wendzelnntpd} and read access to (\emph{/usr/local)/etc/wendzelnntpd.conf}). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually\footnote{Some *nix-like systems may have a different range of privileged ports.} reserved. This means that the server should use a port $\geq$1024 if it is started by a non-root user.
 
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as \texttt{nmap} provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 

@@ -10,19 +10,21 @@ WendzelNNTPd uses the GPLv3 license.
 
 \subsection{Database Abstraction Layer}
 
-WendzelNNTPd contains a database abstraction layer. Currently supported database systems are SQlite3 and MySQL. New databases can be easily added.
+The server contains a database abstraction layer. Currently supported database systems are SQlite3 and MySQL (and experimental PostgreSQL support). New databases can be easily added.
 
 \subsection{Security}
 
 WendzelNNTPd contains different security features, the most important features are probably Access Control Lists (ACLs) and the Role Based Access Control (RBAC) system. ACL and RBAC are described in a own chapter. WendzelNNTPd was probably the first Usenet server with support for RBAC.
 
-Another feature are so-called ``invisible newsgroups'': If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case he knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
+Another feature that was introduced by WendzelNNTPd (and later adopted by other servers) are so-called ``invisible newsgroups'': If access control is activated, a user without permission to access the newsgroup will not be able to see the existence of the newsgroup. In case the user knows about the existence of the newsgroup nevertheless, he will not be able to post to or read from the newsgroup.
 
-However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. Also, WendzelNNTPd does not support TLS (not even SSL)!
+However, \textbf{please note} that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. 
+%
+Also, WendzelNNTPd does not support TLS (not even SSL)!
 
 \subsection{Auto-prevention of double-postings}
 
-In case a user sends a post to two equal newsgroups within one post command's ``Newsgroups:'' header tag, the server will add it only once to save memory on the server and the time of the readers.
+In case a user sends a posting that lists the same newsgroup multiple times within one post command's ``Newsgroups:'' header tag, the server will add it only once to that newsgroup to save memory on the server and the time of the readers.
 
 \subsection{IPv6}
 
@@ -30,17 +32,15 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 
 \subsection{Why this is not a perfect Usenet server}
 
-WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100\% compatible with the NNTP matching in commands like ``XGTITLE''. A 3rd aspect is that WendzelNNTPd cannot share messages with other NNTP servers. Finally, WendzelNNTPd lacks support for encrypted connections.
+WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100\% compatible with the NNTP matching in commands like ``XGTITLE''. Another limitation is that WendzelNNTPd cannot share messages with other NNTP servers. 
+%
+Finally, WendzelNNTPd lacks support for encrypted connections.
 
 \section{Contribute}
 
-See the ``CONTRIBUTE'' file in the tarball.
+See the \emph{CONTRIBUTE} file in the tarball.
 
 \section{History}
 
-The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarily fixed reported bugs and added minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the ``HISTORY'' file in the tarball.
-
-
-
-
+The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarily fixed reported bugs and added minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the \emph{HISTORY} file in the tarball. Fortunately, several people contributed to the code and documentation, see \emph{AUTHORS} file.
 

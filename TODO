@@ -11,6 +11,14 @@ Major:
 - store unique message ID and message body in the DB (this is available
   only for the experimental postgres setup). 
 - enable sync w/ other NNTP servers
+- *Hack*:
+  a) A gaming bot that constantly reads and replies to NNTP posts in a
+     certain newsgroup:
+  Add NNTP text adventure gaming engine with simple sample game so that
+  ppl can write text adventures that they can play over the network and
+  with their Usenet clients; savegames should be postings and each game
+  should be some newsgroup. Also this would allow coop txt gaming (i.e.
+  multiplayer online txt adv. gaming) :-)))
 
 Minor:
 - harden all SQL-related code w.r.t. SQL injections
