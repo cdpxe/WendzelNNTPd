@@ -270,7 +270,7 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 
 <P>
 WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100% compatible with the NNTP matching in commands like &ldquo;XGTITLE&rdquo;. Another limitation is that WendzelNNTPd cannot share messages with other NNTP servers. 
-Finally, WendzelNNTPd lacks support for encrypted connections.
+Finally, WendzelNNTPd lacks support for TLS encrypted connections.
 
 <P>
 
@@ -288,7 +288,7 @@ See the <SPAN  CLASS="textit">CONTRIBUTE</SPAN> file in the tarball.
 </H1>
 
 <P>
-The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarily fixed reported bugs and added minor features to keep the software alive, which is also planned for the next ten years. A detailed history can be found in the <SPAN  CLASS="textit">HISTORY</SPAN> file in the tarball. Fortunately, several people contributed to the code and documentation, see <SPAN  CLASS="textit">AUTHORS</SPAN> file.
+The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarily fixed reported bugs and added minor features but the software is still maintained and smaller advancements can still be expected. A detailed history can be found in the <SPAN  CLASS="textit">HISTORY</SPAN> file in the tarball. Fortunately, several people contributed to the code and documentation, see <SPAN  CLASS="textit">AUTHORS</SPAN> file.
 
 <H1><A ID="SECTION003000000000000000000"></A><A ID="98"></A>
 <BR>
@@ -306,7 +306,7 @@ This chapter provides a guide on how to install WendzelNNTPd 2.x.
 
 <P>
 To install WendzelNNTPd from source you need to download the provided archive file (e.g., <SPAN  CLASS="textit">wendzelnntpd-2.0.0.tar.gz</SPAN>) file.<A ID="tex2html2"
-  HREF="footnode.html#foot135"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
+  HREF="footnode.html#foot136"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -346,10 +346,10 @@ $ sudo make install
 </PRE>
 
 <P>
-<SPAN  CLASS="textbf">Please Note (Upgrades):</SPAN> Run <SPAN  CLASS="textbf">sudo make upgrade</SPAN> instead of <SPAN  CLASS="textbf">sudo make install</SPAN> for an upgrade. Please cf. Section&nbsp;<A HREF="#Ch:Upgrade">6</A>.
+<SPAN  CLASS="textbf">Please Note (Upgrades):</SPAN> Run <SPAN  CLASS="textbf">sudo make upgrade</SPAN> instead of <SPAN  CLASS="textbf">sudo make install</SPAN> for an upgrade. Please cf. Section&nbsp;<A HREF="#Ch:Upgrade">6</A> (Upgrading).
 
 <P>
-<SPAN  CLASS="textbf">Please Note (MySQL):</SPAN> <SPAN  CLASS="textit">If you plan to run MySQL</SPAN>, then no database was set up during 'make install'. Please refer to chapter 3 (configuration) to learn how to generate the MySQL database.
+<SPAN  CLASS="textbf">Please Note (MySQL):</SPAN> <SPAN  CLASS="textit">If you plan to run MySQL</SPAN>, then no database was set up during 'make install'. Please refer to Section&nbsp;<A HREF="#Ch:Config">3</A> (Basic Configuration) to learn how to generate the MySQL database.
 
 <P>
 
@@ -380,7 +380,7 @@ Not supported.
 
 <P>
 
-<H1><A ID="SECTION004000000000000000000"></A><A ID="182"></A>
+<H1><A ID="SECTION004000000000000000000"></A><A ID="183"></A><A ID="Ch:Config"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Basic Configuration
 </H1>
@@ -621,17 +621,17 @@ hash-salt 0.hG4//3baA-::_\
 
 <P>
 WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users. However, utilizing the username is less secure than having a completely separate salt for every password.<A ID="tex2html3"
-  HREF="footnode.html#foot245"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
+  HREF="footnode.html#foot247"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
 <P>
 
-<H1><A ID="SECTION005000000000000000000"></A><A ID="337"></A>
+<H1><A ID="SECTION005000000000000000000"></A><A ID="339"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A ID="SECTION005100000000000000000"></A><A ID="339"></A>
+<H1><A ID="SECTION005100000000000000000"></A><A ID="341"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -651,7 +651,7 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A ID="SECTION005200000000000000000"></A><A ID="346"></A><A ID="347"></A>
+<H1><A ID="SECTION005200000000000000000"></A><A ID="348"></A><A ID="349"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -897,7 +897,7 @@ done.
 </H1>
 
 <P>
-Welcome to the advanced part of WendzelNNTPd. WendzelNNTPd includes a powerful role based access control system. You can either only use normal access control lists where you can configure which user will have access to which newsgroup. Or you can use the advanced role system: You can add users to roles (e.g. the user &ldquo;boss99&rdquo; to the role &ldquo;management&rdquo;) and give a role access to a group (e.g. role &ldquo;management&rdquo; shall have access to &ldquo;discuss.management&rdquo;).
+Welcome to the advanced part of WendzelNNTPd. WendzelNNTPd includes a powerful role based access control system. You can either only use normal access control lists where you can configure which user will have access to which newsgroup. Or you can use the advanced role system: You can add users to roles (e.g., the user &ldquo;boss99&rdquo; to the role &ldquo;management&rdquo;) and give a role access to a group (e.g., role &ldquo;management&rdquo; shall have access to &ldquo;discuss.management&rdquo;).
 
 <P>
 <SPAN  CLASS="textbf">Note:</SPAN> Please note that you must activate the ACL feature in your configuration file to use it.
@@ -974,7 +974,7 @@ done.
 </H2>
 
 <P>
-If you have many users, some of them should have access to the same newsgroup (e.g. the developers of a new system should have access to the development newsgroup of the system). With roles you do not have to give every user explicit access to such a group. Instead you add the users to a role and give the role access to the group. (One advantage is that you can easily give the complete role access to another group with only one command instead of adding each of its users to the list of people who have access to the new group).
+If you have many users, some of them should have access to the same newsgroup (e.g., the developers of a new system should have access to the development newsgroup of the system). With roles you do not have to give every user explicit access to such a group. Instead you add the users to a role and give the role access to the group. (One advantage is that you can easily give the complete role access to another group with only one command instead of adding each of its users to the list of people who have access to the new group).
 
 <P>
 In the following examples, we give the users &ldquo;developer1&rdquo;, &ldquo;developer2&rdquo;, and &ldquo;developer3&rdquo; access to the development role of &ldquo;project-x&rdquo; and connect their role to the newsgroups &ldquo;project-x.discussion&rdquo; and &ldquo;project-x.support&rdquo;. To do so, we create the three users and the two newsgroups first:
@@ -1177,14 +1177,14 @@ If you want to give all developers access to the group &ldquo;project-x.news&rdq
 
 <P>
 Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a <SPAN  CLASS="textit">chroot</SPAN> environment or letting it run under an unprivileged user account (the user then needs write access to <SPAN  CLASS="textit">/var/spool/news/wendzelnntpd</SPAN> and read access to (<SPAN  CLASS="textit">/usr/local)/etc/wendzelnntpd.conf</SPAN>). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually<A ID="tex2html4"
-  HREF="footnode.html#foot435"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
+  HREF="footnode.html#foot437"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
  STYLE="height: 2.18ex; vertical-align: -0.41ex; " SRC="img2.svg"
  ALT="$\geq$"></SPAN>1024 if it is started by a non-root user.
 
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <SPAN  CLASS="texttt">nmap</SPAN> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A ID="SECTION006000000000000000000"></A><A ID="616"></A>
+<H1><A ID="SECTION006000000000000000000"></A><A ID="618"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Development
 </H1>
@@ -1229,7 +1229,7 @@ $ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
 </PRE>
 Then stop and start the NNTP server.
 
-<H1><A ID="SECTION007000000000000000000"></A><A ID="636"></A><A ID="Ch:Upgrade"></A>
+<H1><A ID="SECTION007000000000000000000"></A><A ID="638"></A><A ID="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">6</SPAN> Upgrading
 </H1>
@@ -1438,22 +1438,22 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you ma
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#182"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
+<DD><A HREF="docs.html#183"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <DT><STRONG>Development</STRONG>
-<DD><A HREF="docs.html#616"><SPAN CLASS="arabic">5</SPAN> Development</A>
+<DD><A HREF="docs.html#618"><SPAN CLASS="arabic">5</SPAN> Development</A>
 <DT><STRONG>Installation</STRONG>
 <DD><A HREF="docs.html#98"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <DT><STRONG>Introduction</STRONG>
 <DD><A HREF="docs.html#43"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#347"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#349"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#337"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
- | <A HREF="docs.html#339"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
+<DD><A HREF="docs.html#339"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
+ | <A HREF="docs.html#341"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#346"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#348"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#636"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
+<DD><A HREF="docs.html#638"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 
 </DL>
 
