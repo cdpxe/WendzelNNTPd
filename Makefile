@@ -122,7 +122,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpadm.8
 	# config
 	@if [ -f $(FAKECDIR)/wendzelnntpd.conf ]; then cp $(FAKECDIR)/wendzelnntpd.conf $(FAKECDIR)/wendzelnntpd.conf.bkp; chmod 0644 $(FAKECDIR)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
-	cp wendzelnntpd.conf $(FAKECDIR)/
+	cp $(CONFFILE) $(FAKECDIR)/wendzelnntpd.conf
 	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
 	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
 	# nextmsgid and database/usenet.db are placed here:
@@ -187,16 +187,11 @@ man_wendzelnntpadm :
 	groff -Tascii -man wendzelnntpadm.8  > test.man
 	man -l test.man
 
-docker-build-base:
-	docker build -f ./docker/Dockerfile-Base -t wendzelnntpd-base:latest .
-
-docker-build-app:
-	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-
-docker-build: docker-build-base docker-build-app
+docker-build:
+	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
 
 docker-run:
-	docker run --name wendzelnntpd --rm -it -p 119:119 -d wendzelnntpd:latest
+	docker run --name wendzelnntpd --rm -it -p 119:119 -v ${PWD}:/wendzelnntpd  wendzelnntpd:latest
 
 docker-stop:
 	docker stop wendzelnntpd

@@ -101,6 +101,11 @@ if [ "$CONFDIR" = "" ]; then
 	CONFDIR=/usr/local/etc
 fi
 
+# make wendzelnntpd.conf the default CONFFILE
+if [ "$CONFFILE" = "" ]; then
+	CONFFILE="wendzelnntpd.conf"
+fi
+
 if [ "$FAKECDIR" = "" ]; then
 	FAKECDIR=$CONFDIR
 fi
@@ -114,6 +119,8 @@ if [ "$1" != "" ]; then
 	echo "           or /usr/local in 99% of all cases) and there is"
 	echo "           usually little reason to change this variable."
 	echo "           The default value is: /usr/local"
+	echo "CONFFILE - The config file name of the source config file"
+	echo "           The default value is: wendzelnntpd.conf"
 	echo "CONFDIR  - The installation destination of the config file"
 	echo "           (would be /etc or /usr/local/etc in 99% of all cases)."
 	echo "           The default value is: /usr/local/etc"
@@ -524,6 +531,7 @@ echo "ADD_LNKFLAGS=$ADD_LNKFLAGS">> $MAKEFILE_INC
 echo >> $MAKEFILE_INC
 echo "DESTDIR=$DESTDIR">> $MAKEFILE_INC
 echo "CONFDIR=$CONFDIR">> $MAKEFILE_INC
+echo "CONFFILE=$CONFFILE">> $MAKEFILE_INC
 echo "FAKECDIR=$FAKECDIR">> $MAKEFILE_INC
 
 echo "

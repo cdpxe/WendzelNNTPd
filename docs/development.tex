@@ -14,9 +14,9 @@ $ make docker-stop
 \end{verbatim}
 If you are not on a UNIX-based system (like Windows) use the following native docker commands:
 \begin{verbatim}
-$ docker build -f ./docker/Dockerfile-Base -t wendzelnntpd-base:latest .
-$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-$ docker run --name wendzelnntpd --rm -it -p 119:119 -d wendzelnntpd:latest
+$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
+$ docker run --name wendzelnntpd 
+    --rm -it -p 119:119 -v ${PWD}:/wendzelnntpd  wendzelnntpd:latest
 \end{verbatim}
 To stop the Docker container you can use the following command:
 \begin{verbatim}
@@ -24,9 +24,4 @@ $ docker stop wendzelnntpd
 \end{verbatim}
 
 \subsection{Test new code}
-The container is build with code included. To use new code run one of the following commands depending on operation system:
-\begin{verbatim}
-$ make docker-build-app
-$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-\end{verbatim}
-Then stop and start the NNTP server.
+The container is build without code included. The code is automatically mounted as volume into the container. After each change of source code, the application is compiled again.
