@@ -53,7 +53,7 @@ jobs:
 
             - name: Run appium
               run: |
-                appium
+                start appium
 
             - name: Wait for appium started
               run: curl --head --retry 5 --retry-connrefused --fail http://127.0.0.1:4723/wd/hub/sessions
