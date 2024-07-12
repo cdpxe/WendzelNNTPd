@@ -21,7 +21,7 @@ jobs:
             
             - name: Install WinAppDriver
               run: |
-                Start-Process "msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait"
+                Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
                 Write-Output "installation complete."
 
             
