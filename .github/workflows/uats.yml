@@ -1,0 +1,21 @@
+name: Desktop App Test
+
+on:
+    workflow_dispatch: 
+
+jobs:
+    build:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+
+            - name: Setting up WinAppDriver
+              run: |
+                curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
+                Start-Process msiexec "/i D:\a\wido-ultimate\wido-ultimate\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+
+            - name: Enable developer-mode
+              run : |
+                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
