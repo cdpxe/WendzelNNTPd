@@ -14,9 +14,24 @@ jobs:
 
             - name: Download WinAppDriver
               run: curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
+
+            - name: Download Python3
+              run: |
+                curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe  -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru
+                Write-Output "installation complete."
+
             
             - name: Install WinAppDriver
-              run: Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+              run: |
+                Start-Process "msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait"
+                Write-Output "installation complete."
+
+            
+            - name: Install Python3
+              run: Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe"
+
+            - name: Install pip
+              run: python -m ensurepip --upgrade  
 
             - name: Enable developer-mode
               run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
@@ -27,5 +42,14 @@ jobs:
             - name: Installing Dependencies
               run: npm i --location=global appium
 
+            - name: Install Appium-Python-Client
+              run: pip install Appium-Python-Client
+
+            - name: Install pytest
+              run: pip install -U pytest
+
             - name: Run appium
-              run: appium -v
+              run: |
+                appium
+                ping 127.0.0.1 -n 6 > nul
+                python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
