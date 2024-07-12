@@ -48,8 +48,11 @@ jobs:
             - name: Install pytest
               run: pip install -U pytest
 
+            - name: Install AppiumWindowsDriver
+              run: appium driver install --source=local windows
+
             - name: Run appium
               run: |
-                appium
+                appium > nul
                 ping 127.0.0.1 -n 6 > nul
                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
