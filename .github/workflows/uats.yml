@@ -16,9 +16,7 @@ jobs:
               run: curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
 
             - name: Download Python3
-              run: |
-                curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe  -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru
-                Write-Output "installation complete."
+              run: curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
 
             
             - name: Install WinAppDriver
@@ -28,7 +26,9 @@ jobs:
 
             
             - name: Install Python3
-              run: Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe"
+              run: |
+                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Write-Output "installation complete."
 
             - name: Install pip
               run: python -m ensurepip --upgrade  
