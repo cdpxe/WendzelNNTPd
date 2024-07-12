@@ -53,7 +53,6 @@ jobs:
 
             - name: Run appium
               run: |
-                where appium
-                start /B appium
+                Start-Process "c:\users\runneradmin\AppData\Roaming\npm\appium" -PassThru
                 curl --head --retry 5 --retry-connrefused --fail http://127.0.0.1:4723/wd/hub/sessions
                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
