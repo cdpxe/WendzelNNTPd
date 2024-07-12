@@ -12,11 +12,20 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v3
 
-            - name: Setting up WinAppDriver
-              run: |
-                curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
-                Start-Process msiexec "/i D:\a\wido-ultimate\wido-ultimate\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+            - name: Download WinAppDriver
+              run: curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
+            
+            - name: Install WinAppDriver
+              run: Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
 
             - name: Enable developer-mode
-              run : |
-                reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+              run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+            
+            - name: Add WinAppDriver firewall rule
+              run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
+            
+            - name: Installing Dependencies
+              run: npm i --location=global appium
+
+            - name: Run appium
+              run: appium -v
