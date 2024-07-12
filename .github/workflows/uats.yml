@@ -40,7 +40,7 @@ jobs:
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
             
             - name: Installing Dependencies
-              run: npm i --location=global appium
+              run: npm i --location=global --loglevel verbose appium
 
             - name: Install Appium-Python-Client
               run: pip install Appium-Python-Client
