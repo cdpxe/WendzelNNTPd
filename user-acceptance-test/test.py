@@ -7,7 +7,7 @@ from appium.options.windows import WindowsOptions
 
 def generate_options():
     classic_options = WindowsOptions()
-    classic_options.app = 'C:\\Windows\\system32\\notepad.exe'
+    classic_options.app = 'C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe'
     # Make sure arguments are quoted/escaped properly if necessary:
     # https://ss64.com/nt/syntax-esc.html
 
@@ -22,6 +22,6 @@ def driver(request):
     drv.quit()
 
 def test_app_source_could_be_retrieved(driver):
-    element = driver.find_element('name', 'File')
+    element = driver.find_element('name', 'AppMenu')
     element.click()
-    #assert driver.find_element('name', 'Konten-Einstellungen')
+    assert driver.find_element('name', 'Account Settings')

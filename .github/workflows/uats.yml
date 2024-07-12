@@ -16,7 +16,7 @@ jobs:
               run: |
                 curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
                 curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
-                curl -L -o thunderbird-setup.exe https://download.mozilla.org/?product=thunderbird-128.0esr-SSL&os=win64&lang=de
+                curl -L -o thunderbird-setup.exe "https://download.mozilla.org/?product=thunderbird-128.0esr-SSL&os=win64&lang=de"
 
             - name: Enable developer-mode
               run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
