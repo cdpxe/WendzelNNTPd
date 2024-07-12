@@ -49,7 +49,7 @@ jobs:
               run: pip install -U pytest
 
             - name: Install AppiumWindowsDriver
-              run: appium driver install --source=local windows
+              run: appium driver install windows
 
             - name: Run appium
               run: |
