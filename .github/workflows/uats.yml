@@ -12,44 +12,29 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v3
 
-            - name: Download WinAppDriver
-              run: curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
-
-            - name: Download Python3
-              run: curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
-
-            
-            - name: Install WinAppDriver
+            - name: Download Dependencies
               run: |
-                Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
-                Write-Output "installation complete."
-
-            
-            - name: Install Python3
-              run: |
-                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
-                Write-Output "installation complete."
-
-            - name: Install pip
-              run: python -m ensurepip --upgrade  
+                curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
+                curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
+                curl -L -o thunderbird-setup.exe https://download.mozilla.org/?product=thunderbird-128.0esr-SSL&os=win64&lang=de
 
             - name: Enable developer-mode
-              run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+              run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
+
+            - name: Install Dependencies
+              run: |
+                Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                python -m ensurepip --upgrade
+                npm i --location=global appium
+                pip install Appium-Python-Client
+                pip install -U pytest
+                appium driver install windows
+                Write-Output "installation complete."
             
             - name: Add WinAppDriver firewall rule
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
-            
-            - name: Installing Dependencies
-              run: npm i --location=global appium
-
-            - name: Install Appium-Python-Client
-              run: pip install Appium-Python-Client
-
-            - name: Install pytest
-              run: pip install -U pytest
-
-            - name: Install AppiumWindowsDriver
-              run: appium driver install windows
 
             - name: Run appium
               run: |
