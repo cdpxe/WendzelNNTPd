@@ -7,7 +7,7 @@ from appium.options.windows import WindowsOptions
 
 def generate_options():
     classic_options = WindowsOptions()
-    classic_options.app = 'C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe'
+    classic_options.app = 'C:\\Windows\\system32\\notepad.exe'
     # Make sure arguments are quoted/escaped properly if necessary:
     # https://ss64.com/nt/syntax-esc.html
 

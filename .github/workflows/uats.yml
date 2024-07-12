@@ -40,7 +40,7 @@ jobs:
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
             
             - name: Installing Dependencies
-              run: npm i --location=global --loglevel verbose appium
+              run: npm i --location=global appium
 
             - name: Install Appium-Python-Client
               run: pip install Appium-Python-Client
@@ -51,14 +51,7 @@ jobs:
             - name: Install AppiumWindowsDriver
               run: appium driver install windows
 
-            - name: Dir
-              run: dir C:\npm\prefix\
-
-            - name: Dir 2
-              run: dir C:\npm\
-
             - name: Run appium
               run: |
                 Start-Process "C:\npm\prefix\appium" -PassThru
-                curl --head --retry 5 --retry-connrefused --fail http://127.0.0.1:4723/wd/hub/sessions
                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
