@@ -9,34 +9,41 @@ jobs:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v3
+            - uses: FedericoCarboni/setup-ffmpeg@v3
+              id: setup-ffmpeg
+              with:
+                ffmpeg-version: release.
+                architecture: 'x64'
+                linking-type: static
+                github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
             - name: Use Node.js
               uses: actions/setup-node@v3
-
             - name: Download Dependencies
               run: |
                 curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
                 curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
                 curl -L -o thunderbird-setup.exe "https://download.mozilla.org/?product=thunderbird-128.0esr-SSL&os=win64&lang=de"
-
             - name: Enable developer-mode
               run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
-
             - name: Install Dependencies
               run: |
-                Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
-                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
-                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Start-Process msiexec "/i D:\a\SvenLie\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+                Start-Process "D:\a\SvenLie\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Start-Process "D:\a\SvenLie\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
                 python -m ensurepip --upgrade
                 npm i --location=global appium
                 pip install Appium-Python-Client
                 pip install -U pytest
                 appium driver install windows
-                Write-Output "installation complete."
-            
+                Write-Output "installation complete."     
             - name: Add WinAppDriver firewall rule
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
-
             - name: Run appium
               run: |
                 Start-Process "C:\npm\prefix\appium" -PassThru
-                python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
+                python -m pytest D:\a\SvenLie\WendzelNNTPd\user-acceptance-test\test.py 
+            - uses: actions/upload-artifact@v4
+              with:
+                name: videos
+                path: D:\a\SvenLie\WendzelNNTPd\user-acceptance-test\videos\
+                retention-days: 1
