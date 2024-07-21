@@ -21,7 +21,7 @@ class TestAppium(unittest.TestCase):
         self.driver.start_recording_screen()
 
     def save_video(self, video, filename):
-        log_folder = 'D:\\a\\SvenLie\\WendzelNNTPd\\user-acceptance-test\\videos'
+        log_folder = 'D:\\a\\WendzelNNTPd\\WendzelNNTPd\\user-acceptance-test\\videos'
         video_path = f'{log_folder}\\{filename}.mp4'
         with open(video_path, 'wb') as output_file:
             output_file.write(base64.b64decode(video))

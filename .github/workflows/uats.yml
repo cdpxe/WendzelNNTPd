@@ -27,9 +27,9 @@ jobs:
               run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
             - name: Install Dependencies
               run: |
-                Start-Process msiexec "/i D:\a\SvenLie\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
-                Start-Process "D:\a\SvenLie\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
-                Start-Process "D:\a\SvenLie\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
                 python -m ensurepip --upgrade
                 npm i --location=global appium
                 pip install Appium-Python-Client
@@ -41,9 +41,9 @@ jobs:
             - name: Run appium
               run: |
                 Start-Process "C:\npm\prefix\appium" -PassThru
-                python -m pytest D:\a\SvenLie\WendzelNNTPd\user-acceptance-test\test.py 
+                python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
             - uses: actions/upload-artifact@v4
               with:
                 name: videos
-                path: D:\a\SvenLie\WendzelNNTPd\user-acceptance-test\videos\
+                path: D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\
                 retention-days: 1
