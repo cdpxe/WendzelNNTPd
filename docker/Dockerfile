@@ -1,19 +1,12 @@
-FROM wendzelnntpd-base:latest
+FROM debian:stable-slim
 
-COPY .. /my-app
-WORKDIR /my-app
+RUN apt-get update -y
+RUN apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go
 
-# disable IPv6 as default because not enabled by default
-RUN sed -i 's/listen	::1/;listen	::1/g' wendzelnntpd.conf
-# listen to all IP addresses for reaching from host system
-RUN sed -i 's/listen	127.0.0.1/;listen	127.0.0.1/g' wendzelnntpd.conf
-RUN sed -i 's/;listen	0.0.0.0/listen	0.0.0.0/g' wendzelnntpd.conf
-# default activate verbose mode for development
-RUN sed -i 's/;verbose-mode/verbose-mode/g' wendzelnntpd.conf
+RUN go install github.com/cespare/reflex@latest
+
 RUN touch /var/log/wendzelnntpd
 
-RUN ./configure
-RUN make
-RUN make install
+WORKDIR /wendzelnntpd
 
-ENTRYPOINT /usr/local/sbin/wendzelnntpd
+ENTRYPOINT ["/root/go/bin/reflex", "-c", "docker/reflex.conf"]
