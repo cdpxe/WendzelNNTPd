@@ -39,7 +39,7 @@ jobs:
             - name: Add WinAppDriver firewall rule
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
             - name: Add videos directory for appium tests
-              run: New-Item C:\\foo\\bar -ItemType Directory -ea 0
+              run: New-Item D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\ -ItemType Directory -ea 0
             - name: Run appium
               run: |
                 Start-Process "C:\npm\prefix\appium" -PassThru
