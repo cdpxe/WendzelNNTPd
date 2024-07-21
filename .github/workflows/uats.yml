@@ -38,11 +38,15 @@ jobs:
                 Write-Output "installation complete."     
             - name: Add WinAppDriver firewall rule
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
+            - name: Add videos directory for appium tests
+              run: New-Item C:\\foo\\bar -ItemType Directory -ea 0
             - name: Run appium
               run: |
                 Start-Process "C:\npm\prefix\appium" -PassThru
                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\test.py 
             - uses: actions/upload-artifact@v4
+              name: Upload videos
+              if: always()
               with:
                 name: videos
                 path: D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\
