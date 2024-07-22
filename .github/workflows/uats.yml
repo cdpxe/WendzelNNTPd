@@ -47,7 +47,7 @@ jobs:
           with:
             azcliversion: latest
             inlineScript: |
-                echo "ip=$(az container show --name "wendzelnntpd-bla" --resource-group WendzelNNTPd --query ipAddress.ip --output tsv)" >> $GITHUB_OUTPUT
+                echo "ip=$(az container show --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --query ipAddress.ip --output tsv)" >> $GITHUB_OUTPUT
         outputs:
             container_ip: ${{steps.container-ip.outputs.ip}}
 
@@ -123,7 +123,7 @@ jobs:
             azcliversion: latest
             inlineScript: |
                 az container stop --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd
-        - name: 'Stop container'
+        - name: 'Delete container'
           uses: azure/cli@v2
           with:
               azcliversion: latest
