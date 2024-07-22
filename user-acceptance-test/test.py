@@ -35,19 +35,19 @@ class TestAppium(unittest.TestCase):
             self.driver.quit()
 
     def test_find_battery(self) -> None:
-        self.driver.find_element('name', 'Anwendungsmenü').click()
-        self.driver.find_element('name', 'Neues Konto').click()
+        self.driver.find_element('name', 'AppMenu').click()
+        self.driver.find_element('name', 'New Account').click()
         self.driver.find_element('name', 'Newsgroup').click()
-        self.driver.find_element(By.XPATH, '//Edit[@Name="Ihr Name:"]').send_keys('Testautomatisierung')
-        self.driver.find_element(By.XPATH, '//Edit[@Name="E-Mail-Adresse:"]').send_keys('testautomatisierung@test.de')
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Weiter")]').click()
+        self.driver.find_element(By.XPATH, '//Edit[@Name="Your Name:"]').send_keys('Testautomatisierung')
+        self.driver.find_element(By.XPATH, '//Edit[@Name="Email Address:"]').send_keys('testautomatisierung@test.de')
+        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
 
-        self.driver.find_element(By.XPATH, '//Edit[@Name="Newsgruppen-Server:"]').send_keys('127.0.0.1')
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Weiter")]').click()
+        self.driver.find_element(By.XPATH, '//Edit[@Name="Newsgroup Server:"]').send_keys('127.0.0.1')
+        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
         
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Weiter")]').click()
+        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
 
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Fertigstellen")]').click()
+        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Finish")]').click()
 
 if __name__ == '__main__':
     unittest.main()
