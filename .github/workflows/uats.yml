@@ -46,6 +46,10 @@ jobs:
                 Write-Output "installation complete."     
             - name: Add WinAppDriver firewall rule
               run: netsh advfirewall firewall add rule name="WinAppDriver remote" dir=in action=allow protocol=TCP localport=4723
+            - name: Build WendzelNNTPd docker container
+              run: docker build -f ./docker/Dockerfile_GitHub -t wendzelnntpd:latest . 
+            - name: Run WendzelNNTPd docker container
+              run: docker run --name wendzelnntpd --rm -it -d -p 119:119 wendzelnntpd:latest
             - name: Add videos directory for appium tests
               run: New-Item D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\ -ItemType Directory -ea 0
             - name: Run appium
