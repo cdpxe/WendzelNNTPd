@@ -18,16 +18,20 @@ jobs:
                 github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
             - name: Use Node.js
               uses: actions/setup-node@v3
+            - name: Activate Hyper-V
+              run: Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -NoRestart
             - name: Download Dependencies
               run: |
                 curl -L -o WindowsApplicationDriver_1.2.1.msi https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi
                 curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
                 curl -L -o thunderbird-setup.exe "https://download.mozilla.org/?product=thunderbird-128.0esr-SSL&os=win64&lang=de"
+                curl -L -o Docker-Desktop-Installer.exe "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
             - name: Enable developer-mode
               run : reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1" 
             - name: Install Dependencies
               run: |
                 Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+                Start-Process 'D:\a\WendzelNNTPd\WendzelNNTPd\Docker-Desktop-Installer.exe' -Wait -ArgumentList 'install', '--accept-license', '--backend=hyper-v', '--always-run-service'
                 Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
                 Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
                 python -m ensurepip --upgrade
