@@ -35,7 +35,7 @@ class TestAppium(unittest.TestCase):
             self.driver.quit()
 
     def test_find_battery(self) -> None:
-        self.driver.find_element('name', 'AppMenu').click()
+        self.driver.find_element(By.XPATH, '//Button[@AutomationId="button-appmenu"]').click()
         self.driver.find_element('name', 'New Account').click()
         self.driver.find_element('name', 'Newsgroup').click()
         self.driver.find_element(By.XPATH, '//Edit[@Name="Your Name:"]').send_keys('Testautomatisierung')
