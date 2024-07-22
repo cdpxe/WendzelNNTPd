@@ -25,7 +25,7 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
-            docker build -f ./docker/Dockerfile_GitHub -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} .
+            docker build -f ./docker/Dockerfile_Github -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} .
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }}
     # uat:
     #     runs-on: windows-latest
