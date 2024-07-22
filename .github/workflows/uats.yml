@@ -40,6 +40,7 @@ jobs:
             registry-password: ${{ secrets.REGISTRY_PASSWORD }}
             name: wendzelnntpd-${{ github.sha }}
             location: 'Germany West Central'
+            ports: '119 563'
     # uat:
     #     runs-on: windows-latest
     #     steps:
