@@ -55,7 +55,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: build-and-deploy
         steps:
-            - run: echo "${{ needs.build-deploy.outputs.container_ip }}"      
+            - run: echo "${{ needs.build-and-deploy.outputs.container_ip }}"      
     # uat:
     #     runs-on: windows-latest
     #     steps:
