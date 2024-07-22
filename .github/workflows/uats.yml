@@ -31,9 +31,13 @@ jobs:
             - name: Install Dependencies
               run: |
                 Start-Process msiexec "/i D:\a\WendzelNNTPd\WendzelNNTPd\WindowsApplicationDriver_1.2.1.msi /norestart /qn" -Wait
+                Write-Output "WinAppDriver installation complete."
                 Start-Process 'D:\a\WendzelNNTPd\WendzelNNTPd\Docker-Desktop-Installer.exe' -Wait -ArgumentList 'install', '--accept-license', '--backend=hyper-v', '--always-run-service'
+                Write-Output "Docker installation complete."
                 Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\python-3.12.4-amd64.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Write-Output "Python installation complete."
                 Start-Process "D:\a\WendzelNNTPd\WendzelNNTPd\thunderbird-setup.exe" -ArgumentList "/i /qn /S /AllUsers /norestart" -Wait -PassThru 
+                Write-Output "Thunderbird installation complete."
                 python -m ensurepip --upgrade
                 npm i --location=global appium
                 pip install Appium-Python-Client
