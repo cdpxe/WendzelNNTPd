@@ -129,9 +129,3 @@ jobs:
               azcliversion: latest
               inlineScript: |
                 az container delete --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --yes
-        - name: 'Delete container image'
-          uses: azure/cli@v2
-          with:
-              azcliversion: latest
-              inlineScript: |
-                az acr repository delete --name wendzelnntpd --image wendzelnntpd:${{ github.sha }} --yes
