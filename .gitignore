@@ -8,4 +8,4 @@ config.output
 config.tab.c
 config.tab.h
 lex.yy.c
-
+.idea

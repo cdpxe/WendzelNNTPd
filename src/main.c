@@ -83,6 +83,10 @@ main(int argc, char *argv[])
 	bzero(&sa, sizeof(sa));
 	bzero(&sa6, sizeof(sa6));
 
+#ifdef USE_TLS
+	OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS | OPENSSL_INIT_NO_LOAD_CONFIG, NULL);
+#endif
+
 	basic_setup_server();
 
 #ifndef __WIN32__
@@ -201,6 +205,8 @@ main(int argc, char *argv[])
 
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
+					sockinf->tls_active = FALSE;
+                    sockinf->connectorinfo=(sockinfo + i)->connectorinfo;
 
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {
 						DO_SYSL("pthread_create() returned != 0")
