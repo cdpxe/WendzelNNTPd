@@ -289,6 +289,7 @@ start_listeners(void) {
 %token TOK_SSL_CERT
 %token TOK_SSL_KEY
 %token TOK_STARTTLS
+%token TOK_SSL_CA_FILE
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -302,7 +303,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCAFile;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -318,6 +319,7 @@ connectorBegin:
 
 			connectorinfo->server_cert_file=NULL;
 			connectorinfo->server_key_file=NULL;
+			connectorinfo->CA_file=NULL;
 		}
 	};
 
@@ -367,7 +369,7 @@ connectorEnd:
 									exit(ERR_EXIT);
 								}
 				
-							SSL_CTX_load_verify_locations(connectorinfo->ctx, "/usr/local/etc/ssl/ca-root.pem", NULL);
+							SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->CA_file, NULL);
 
 							if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
         						fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
@@ -476,6 +478,19 @@ SSLKey:
 			}
 		}
 	};
+
+SSLCAFile:
+   TOK_SSL_CA_FILE TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->CA_file == NULL) {
+         	CALLOC(connectorinfo->CA_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->CA_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-CAfile statement in connector. Ignoring");
+			}
+      }
+   };
 
 beVerbose:
 	TOK_VERBOSE_MODE

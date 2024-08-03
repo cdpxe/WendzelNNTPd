@@ -20,7 +20,7 @@ RUN openssl req \
   -extensions v3_ca \
   -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
   -keyout "/usr/local/etc/ssl/ca-key.pem" \
-  -out "/usr/local/etc/ssl/ca-root.pem"
+  -out "/usr/local/etc/ssl/ca.crt"
 
 RUN openssl genrsa -out "/usr/local/etc/ssl/server.key" 2048
 RUN openssl req \
@@ -32,7 +32,7 @@ RUN openssl x509 \
     -req \
     -days 365 \
     -in "/usr/local/etc/ssl/server.csr" \
-    -CA "/usr/local/etc/ssl/ca-root.pem" \
+    -CA "/usr/local/etc/ssl/ca.crt" \
     -CAkey "/usr/local/etc/ssl/ca-key.pem" \
     -CAcreateserial \
     -extensions v3_req \

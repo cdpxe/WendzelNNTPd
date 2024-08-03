@@ -30,6 +30,13 @@ jobs:
             filename: "server.crt"
             working-directory: "."
 
+        - name: Get ca certificate from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.CA_CERTIFICATE }}
+            filename: "ca.crt"
+            working-directory: "."
+
         - name: Get server key from secrets
           uses: mobiledevops/secret-to-file-action@v1
           with:
@@ -68,16 +75,17 @@ jobs:
 
         - run: echo "${{steps.container-ip.outputs.ip}}"
 
-        - name: 'Update Application Gateway'
+        - name: 'Update Loadbalancer Backend IP'
           uses: azure/cli@v2
           with:
             azcliversion: latest
             inlineScript: |
-                az network application-gateway address-pool update \
+                az network lb address-pool address update \
+                    --ip-address ${{steps.container-ip.outputs.ip}} \ 
                     --resource-group ${{ secrets.RESOURCE_GROUP }} \
-                    --gateway-name wendzelnntpd-test-app-gateway \
-                    --name appGatewayBackendPool \
-                    --servers ${{steps.container-ip.outputs.ip}}
+                    --lb-name wendzelnntpd-proxy \
+                    --pool-name Backend \
+                    --name wendzelnntpd-backend-server
     second:
         runs-on: ubuntu-latest
         needs: build-and-deploy

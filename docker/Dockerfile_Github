@@ -10,6 +10,7 @@ WORKDIR /wendzelnntpd
 
 RUN mkdir -p /usr/local/etc/ssl
 COPY ../server.crt /usr/local/etc/ssl/server.crt
+COPY ../ca.crt /usr/local/etc/ssl/ca.crt
 COPY ../server.key /usr/local/etc/ssl/server.key
 
 RUN CONFFILE=wendzelnntpd_dev.conf ./configure
