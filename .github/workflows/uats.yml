@@ -142,7 +142,7 @@ jobs:
             build-and-deploy,
             second
         ]
-        if: never()
+        if: false
         steps:
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
