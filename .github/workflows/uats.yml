@@ -54,7 +54,6 @@ jobs:
                   --vnet wendzelNNTPdVNET \
                   --subnet wendzelNNTPdVNETSub2 \
                   --ports 119 563 \
-                  --dns-name-label ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }} \
                   --location "Germany West Central" \
                   --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
                   --registry-username ${{ secrets.REGISTRY_USERNAME }} \
