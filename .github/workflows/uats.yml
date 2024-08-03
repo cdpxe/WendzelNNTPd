@@ -53,7 +53,7 @@ jobs:
                   --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} \
                   --vnet wendzelNNTPdVNET \
                   --subnet wendzelNNTPdVNETSub2 \
-                  --ports "119 563" \
+                  --ports 119 563 \
                   --dns-name-label ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }} \
                   --location "Germany West Central" \
                   --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
