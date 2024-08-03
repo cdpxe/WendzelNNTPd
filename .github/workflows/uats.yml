@@ -141,7 +141,7 @@ jobs:
             build-and-deploy,
             second
         ]
-        if: false
+        if: always()
         steps:
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
