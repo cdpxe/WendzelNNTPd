@@ -70,7 +70,7 @@ jobs:
             inlineScript: |
                 echo "ip=$(az container show --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --query ipAddress.ip --output tsv)" >> $GITHUB_OUTPUT
 
-         - run: echo "$ip"
+        - run: echo "$ip"
 
         - name: 'Update Application Gateway'
           uses: azure/cli@v2
@@ -86,7 +86,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: build-and-deploy
         steps:
-            - run: echo "hallo"
+          - run: echo "hallo"
     # uat:
     #     runs-on: windows-latest
     #     steps:
