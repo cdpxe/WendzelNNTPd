@@ -22,23 +22,20 @@ jobs:
             login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
-        
-        - name: Create certificate directory
-          run: mkdir -p /usr/local/etc/ssl
 
         - name: Get server certificate from secrets
           uses: mobiledevops/secret-to-file-action@v1
           with:
             base64-encoded-secret: ${{ secrets.SERVER_CERTIFICATE }}
             filename: "server.crt"
-            working-directory: "/usr/local/etc/ssl"
+            working-directory: "."
 
         - name: Get server key from secrets
           uses: mobiledevops/secret-to-file-action@v1
           with:
             base64-encoded-secret: ${{ secrets.SERVER_KEY }}
             filename: "server.key"
-            working-directory: "/usr/local/etc/ssl"
+            working-directory: "."
 
         - name: 'Build and push image to registry'
           run: |
