@@ -8,6 +8,10 @@ RUN touch /var/log/wendzelnntpd
 COPY .. /wendzelnntpd
 WORKDIR /wendzelnntpd
 
+RUN mkdir -p /usr/local/etc/ssl
+COPY /usr/local/etc/ssl/server.crt /usr/local/etc/ssl/server.crt
+COPY /usr/local/etc/ssl/server.key /usr/local/etc/ssl/server.key
+
 RUN CONFFILE=wendzelnntpd_dev.conf ./configure
 RUN make
 RUN make install

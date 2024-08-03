@@ -42,6 +42,7 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "\tarticle [number|<message-id>]\r\n"
 				 "\tauthinfo <user|pass> <username|password>\r\n"
                                  "\tbody [number|<message-id>]\r\n"
+								 "\tcapabilities\r\n"
                                  "\tdate\r\n"
                                  "\tgroup <group>\r\n"
                                  "\thead [number|<message-id>]\r\n"
@@ -51,6 +52,9 @@ char helpstring[]=            "100 help text follows\r\n"
                                  "\tmode reader (always returns 200)\r\n"
                                  "\tpost\r\n"
                                  "\tquit\r\n"
+#ifdef USE_TLS
+                                 "\tstarttls\r\n"
+#endif
                                  "\tstat [number|<message-id>]\r\n"
                                  "\txhdr <from|date|newsgroups|subject|lines> <number[-[endnum]]|msgid>\r\n"
 				"\txover <from[-[to]]>\r\n"
@@ -73,6 +77,11 @@ char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				"Lines:\r\n"
 				"Xref:full\r\n"
 				".\r\n";
+char capsstring[]=	  		  "101 capability list follows\r\n";
+char capsstring_version[]=	  "VERSION 2\r\n";
+char capsstring_reader[]=	  "READER\r\n";
+char capsstring_list[]=	      "LIST\r\n";
+char capsstring_starttls[]=	  "STARTTLS\r\n";
 char welcomestring[]=         "200 WendzelNNTPd " WELCOMEVERSION " ready (posting ok).\r\n";
 char mode_reader_ok[]=        "200 hello, you can post\r\n";
 char quitstring[]=            "205 closing connection - goodbye!\r\n";
@@ -103,7 +112,8 @@ char post_too_big[]=             "503 posting size too big (administratively pro
 char period_end[]=            ".\r\n";
 
 static char *get_slinearg(char *, int);
-static void Send(int, char *, int);
+static void Send(sockinfo_t *, char *, int);
+static int Receive(sockinfo_t *, char *, int);
 static void do_command(char *, server_cb_inf *);
 static void docmd_list(char *, server_cb_inf *, int);
 static void docmd_authinfo_user(char *, server_cb_inf *);
@@ -162,16 +172,51 @@ get_slinearg(char *cmdstring, int num)
 }
 
 static void
-Send(int lsockfd, char *str, int len)
+Send(sockinfo_t *sockinfo, char *str, int len)
 {
-	if(send(lsockfd, str, len, MSG_NOSIGNAL)<0) {
-		if (daemon_mode) {
-			DO_SYSL("send() returned <0 -- killing connection.")
-		} else {
-			perror("send");
+	if (sockinfo->tls_active == TRUE) {
+#ifdef USE_TLS
+		int return_code;
+		return_code = SSL_write(sockinfo->tls_session, str, len);
+		if (return_code <= 0) {
+			if (daemon_mode) {
+				DO_SYSL("SSL_write() returned <= 0 -- killing connection.")
+			} else {
+				int err = SSL_get_error(sockinfo->tls_session, return_code);
+				if (err == SSL_ERROR_SSL) {
+					fprintf(stderr, "SSL error: ");
+					ERR_print_errors_fp(stderr);
+				}
+			}
+			pthread_exit(NULL);
 		}
-		pthread_exit(NULL);
+#endif
+   } else {
+		if(send(sockinfo->sockfd, str, len, MSG_NOSIGNAL)<0) {
+			if (daemon_mode) {
+				DO_SYSL("send() returned <0 -- killing connection.")
+			} else {
+				perror("send");
+			}
+			pthread_exit(NULL);
+		}
+   }
+}
+
+int
+Receive(sockinfo_t *sockinfo, char *str, int len)
+{
+	int recv_bytes = 0;
+
+	if (sockinfo->tls_active == TRUE) {
+#ifdef USE_TLS
+		recv_bytes = SSL_read(sockinfo->tls_session, str, len);
+#endif
+	} else {
+		recv_bytes = recv(sockinfo->sockfd, str, len, 0);
 	}
+
+	return recv_bytes;
 }
 
 void
@@ -305,6 +350,17 @@ docmd_authinfo_pass(char *cmdstring, server_cb_inf *inf)
 		/* the client first has to send a username */
 		ToSend(need_more_inf, strlen(need_more_inf), inf);
 	}
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	CAPABILITIES
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+static void
+docmd_capabilities(server_cb_inf *inf)
+{
+	ToSend(capsstring, strlen(capsstring), inf);
+	ToSend(capsstring_version, strlen(capsstring_version), inf);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -924,7 +980,7 @@ docmd_post(server_cb_inf *inf)
 	time_t ltime;
 	charstack_t *stackp = NULL;
 
-	Send(inf->sockinf->sockfd, postok, strlen(postok));
+	Send(inf->sockinf, postok, strlen(postok));
 
 	{
 		size_t recv_bytes = 0;
@@ -968,7 +1024,7 @@ docmd_post(server_cb_inf *inf)
 				 * big.
 				 */
 				if (max_post_size - recv_bytes <= 1) {
-					Send(inf->sockinf->sockfd, post_too_big, strlen(post_too_big));
+					Send(inf->sockinf, post_too_big, strlen(post_too_big));
 					fprintf(stderr, "Posting is larger than allowed max (%i Bytes) "
 						"in docmd_post()\n", max_post_size);
 					DO_SYSL("posting from client larger than allowed max. value. "
@@ -979,9 +1035,7 @@ docmd_post(server_cb_inf *inf)
 					/* NOTREACHED */
 				}
 
-				recv_ret = recv(inf->sockinf->sockfd,
-						buf + recv_bytes,
-						max_post_size - recv_bytes - 1, 0);
+				recv_ret = Receive(inf->sockinf, buf + recv_bytes, max_post_size - recv_bytes - 1);
 				if ((int)recv_ret == -1) {
 					perror("recv()");
 					DO_SYSL("posting recv() error!");
@@ -1447,7 +1501,7 @@ do_command(char *recvbuf, server_cb_inf *inf)
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
-		Send(inf->sockinf->sockfd, quitstring, strlen(quitstring));
+		Send(inf->sockinf, quitstring, strlen(quitstring));
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
@@ -1486,6 +1540,8 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		docmd_post(inf);
 	} else if (QUESTION_AUTH("date", 4)) {
 		docmd_date(inf);
+	} else if (QUESTION_AUTH("capabilities", 12)) {
+		docmd_capabilities(inf);
 	} else if (QUESTION_AUTH("NEWNEWS", 7)) {
 		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 	} else {
@@ -1527,13 +1583,44 @@ do_server(void *socket_info_ptr)
 
 	db_open_connection(&inf);
 
-	Send(sockinf->sockfd, welcomestring, strlen(welcomestring));
-
 	if(use_auth==1) {
 		servinf.auth_is_there=0;
 	} else {
 		servinf.auth_is_there=1;
 	}
+
+#ifdef USE_TLS
+	if (sockinf->connectorinfo->enable_tls == TRUE) {
+		char *connection_log = NULL;
+		sockinf->tls_session = SSL_new(sockinf->connectorinfo->ctx);
+		if(!SSL_set_fd(sockinf->tls_session,sockinf->sockfd)) {
+			fprintf(stderr,"Error creating TLS session!!\n");
+			ERR_print_errors_fp(stderr);
+			FFLUSH
+			kill_thread(&inf);
+		} else {
+			if (SSL_accept(sockinf->tls_session) <=0) {
+				fprintf(stderr,"Error negotiating TLS session!!\n");
+				ERR_print_errors_fp(stderr);
+				FFLUSH
+				kill_thread(&inf);
+			}
+
+			/* Log the started connection */
+			char conn_s[50];
+			sprintf(conn_s,"%s:%d",sockinf->connectorinfo->listen,sockinf->connectorinfo->port);
+			connection_log = str_concat("Created TLS connection from ", sockinf->ip, " Connector:", conn_s, NULL);
+			DO_SYSL(connection_log);
+			fprintf(stderr,"%s\n",connection_log);
+			FFLUSH
+			free(connection_log);
+
+			sockinf->tls_active=TRUE;
+		}
+	}
+#endif
+
+	Send(sockinf, welcomestring, strlen(welcomestring));
 
 	while(1) {
 		if (len == 0)
@@ -1544,12 +1631,14 @@ do_server(void *socket_info_ptr)
 		if (len == MAX_CMDLEN)
 			kill_thread(&inf);
 		/* 2. receive byte-wise */
-		if (recv(sockinf->sockfd, recvbuf+len, 1 /*MAX_CMDLEN-len*/, 0) <= 0) {
+		int return_val = -1;
+		return_val = Receive(sockinf, recvbuf+len, 1);
+		if (return_val <= 0) {
 			/* kill connection in problem case */
 			kill_thread(&inf);
 			/* NOTREACHED */
 		}
-		if (strstr(recvbuf, "\r\n") != NULL) {
+		if (strstr(recvbuf, "\r\n") != NULL || (strstr(recvbuf, "\n")) != NULL) {
 			if (be_verbose) {
 				if (strncasecmp(recvbuf, "authinfo pass", 13) == 0) {
 					fprintf(stderr, "client sent 'authinfo pass 'xxxxx'\n");
@@ -1563,7 +1652,7 @@ do_server(void *socket_info_ptr)
 			/* make the buffer more secure before going on */
 			/* 1. remove trailing \r\n by replacing \r with \0 */
 			for (i = (strlen(recvbuf) - 1); i > 0; i--) {
-				if (recvbuf[i] == '\r') {
+				if (recvbuf[i] == '\r' || recvbuf[i] == '\n') {
 					recvbuf[i] = '\0';
 					i = 0; /* = break */
 				}
@@ -1574,7 +1663,7 @@ do_server(void *socket_info_ptr)
 			/* now proceed */
 			do_command(sec_cmd, &inf);
 			db_secure_sqlbuffer_free(sec_cmd);
-			Send(sockinf->sockfd, servinf.curstring, strlen(servinf.curstring));
+			Send(sockinf, servinf.curstring, strlen(servinf.curstring));
 			free(servinf.curstring);
 			servinf.curstring=NULL;
 			len=0;
@@ -1609,6 +1698,12 @@ kill_thread(server_cb_inf *inf)
 
 	/* close db connection */
 	db_close_connection(inf);
+
+#ifdef USE_TLS
+	if (inf->sockinf->tls_active) {
+		tls_session_close(inf->sockinf->tls_session);
+	}
+#endif
 
 #ifdef __WIN32__
 	closesocket(inf->sockinf->sockfd);

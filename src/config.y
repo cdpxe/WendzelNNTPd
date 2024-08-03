@@ -43,8 +43,8 @@ extern int size_sockinfo_t; /* is set to 0 on startup in main.c */
 short parser_mode = PARSER_MODE_SERVER;
 
 sockinfo_t *sockinfo = 0;
+connectorinfo_t *connectorinfo = NULL;
 int peak = 0;
-int port = DEFAULTPORT;
 int max_post_size = MAX_POSTSIZE_DEFAULT;
 fd_set fds;
 
@@ -61,10 +61,6 @@ char *db_user = NULL;
 char *db_pass = NULL;
 unsigned short db_port = 0;
 char *hash_salt = "default-hash-salt-0_----3331";
-
-#define LF_ANY_IP	0x01
-#define	LF_SPEC_IP	0x02
-int listenflag = 0;
 
 void
 yyerror(const char *str)
@@ -130,11 +126,15 @@ basic_setup_server(void)
 	if (WSAStartup(0x101, &wsa_dat) != 0) {
 		fprintf(stderr,
 			"Unable to initialize Windows Sockets (WSAStartUp(0x101,...))\n");
-		exit(1);
+		exit(ERR_EXIT);
 	}
 #endif
 
-	yyparse();
+	if (yyparse() != 0){		//Error parsing config file
+		DO_SYSL("Error parsing config file!");
+	   	fprintf(stderr,"Error parsing config file!\n");
+		exit(ERR_EXIT);
+	}
 
 	/* check if all needed values are included in the config struct */
 
@@ -174,6 +174,92 @@ basic_setup_server(void)
 	}
 }
 
+static void
+start_listeners(void) {
+
+	int size=0;
+	int salen, sa6len;
+	int yup=1;
+	struct sockaddr_in sa;
+	struct sockaddr_in6 sa6;
+
+	if (!sockinfo) {
+		CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
+	} else {
+		size = size_sockinfo_t;
+		if ((sockinfo=realloc(sockinfo, (size + 1) * sizeof(sockinfo_t))) == NULL) {
+			fprintf(stderr, "cannot allocate memory.\n");
+			exit(ERR_EXIT);
+		}
+	}
+
+	bzero(&sa, sizeof(sa));
+	bzero(&sa6, sizeof(sa6));
+
+	(sockinfo + size)->tls_active=FALSE;			
+	(sockinfo + size)->connectorinfo=connectorinfo;					//Link sockinfo to connectorinfo
+
+	if (inet_pton(AF_INET, connectorinfo->listen, &sa.sin_addr)) {					//IPv4 Listener
+		sa.sin_port = htons(connectorinfo->port);
+		sa.sin_family = AF_INET;
+		salen = sizeof(struct sockaddr_in);
+
+		if (((sockinfo+size)->sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {							//Socket create
+			fprintf(stderr, "cannot do socket() on %s\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}	
+
+		setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));		//Socket Options
+
+		if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa, salen) < 0) {					//Socket bind
+			perror("bind");
+			fprintf(stderr, "bind() for %s failed.\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}
+
+		if (listen((sockinfo + size)->sockfd, 5) < 0) {														//Socket listen
+			fprintf(stderr, "listen() for %s failed.\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}
+
+		peak = max((sockinfo + size)->sockfd, peak);
+		(sockinfo + size)->family=AF_INET;
+		fprintf(stderr, "Created IPv4 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+	} else if (inet_pton(AF_INET6, connectorinfo->listen, &sa6.sin6_addr)) {	//IPv6 Listener
+		sa6.sin6_port = htons(connectorinfo->port);
+		sa6.sin6_family = AF_INET6;
+		sa6len = sizeof(struct sockaddr_in6);
+
+		if (((sockinfo + size)->sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {					//Socket create
+			fprintf(stderr, "cannot do socket() on %s\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}
+
+		setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
+		setsockopt((sockinfo + size)->sockfd, IPPROTO_IPV6, IPV6_V6ONLY, &yup, sizeof(yup));	//Do not bind IPv4 port with IPv6
+
+		if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {				//Socket bind
+			perror("bind");
+			fprintf(stderr, "bind() for %s failed.\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}
+
+		if (listen((sockinfo + size)->sockfd, 5) < 0) {														//Socket listen
+			fprintf(stderr, "listen() for %s failed.\n", connectorinfo->listen);
+			exit(ERR_EXIT);
+		}
+	
+		peak = max((sockinfo+size)->sockfd, peak);
+		(sockinfo + size)->family = AF_INET6;	
+		fprintf(stderr, "Created IPv6 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+	} else {																							//Error Listener not IPv4 or IPv6
+		fprintf(stderr, "Invalid address: %s\n", connectorinfo->listen);
+		exit(ERR_EXIT);
+	}
+	size_sockinfo_t++;
+
+}
+
 %}
 
 %token TOK_VERBOSE_MODE
@@ -196,13 +282,200 @@ basic_setup_server(void)
 %token TOK_MESSAGE_COUNT_IN_DB
 %token TOK_MESSAGE_BODY_IN_DB
 %token TOK_HASHSALT
+%token TOK_CONN_BEGIN
+%token TOK_TLS
+%token TOK_TLS_CIPHERS
+%token TOK_TLS_CIPHER_SUITES;
+%token TOK_SSL_CERT
+%token TOK_SSL_KEY
+%token TOK_STARTTLS
+%token TOK_CONN_END
 %token TOK_EOF
 
 %%
 
-commands: /**/ | commands command;
+commands: /**/ | commands command | commands connector;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | usePort | maxPostSize | listenonSpec | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | maxPostSize | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | eof;
+
+connector: connectorBegin connectorCmds connectorEnd;
+
+connectorCmds: /**/ | connectorCmds connectorCmd;
+
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey;
+
+connectorBegin:
+	TOK_CONN_BEGIN
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			CALLOC(connectorinfo, (connectorinfo_t *), 1, sizeof(connectorinfo_t));
+			connectorinfo->port=0;
+			connectorinfo->listen=NULL;
+			connectorinfo->enable_tls=FALSE;
+			connectorinfo->enable_starttls=FALSE;
+			connectorinfo->ciphers=NULL;	// Cipher TLS1.0 - 1.2
+			connectorinfo->cipher_suites=NULL;
+
+			connectorinfo->server_cert_file=NULL;
+			connectorinfo->server_key_file=NULL;
+		}
+	};
+
+connectorEnd:
+	TOK_CONN_END
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->port == 0) {					//Port was not set in config-File
+				if (connectorinfo->enable_tls)				//TLS enabled
+					connectorinfo->port=DEFAULTTLSPORT;
+				else
+					connectorinfo->port=DEFAULTPORT;
+			}
+			if (connectorinfo->listen != NULL) {
+				if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {	
+					if ((connectorinfo->server_cert_file != NULL) && (connectorinfo->server_key_file != NULL)) {
+						if ((access(connectorinfo->server_cert_file,R_OK) == 0) && (access(connectorinfo->server_key_file,R_OK) == 0))	{	//Cert and Key files exist
+#ifdef USE_TLS
+							connectorinfo->ctx=SSL_CTX_new(TLS_server_method());
+							if (!connectorinfo->ctx) {
+        						fprintf(stderr,"Error creating SSL Context!\n");
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+
+							if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, TLS1_VERSION)) {
+        						fprintf(stderr,"Error setting min TLS version in SSL Context!!\n");
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+							if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, TLS1_3_VERSION )) {
+        						fprintf(stderr,"Error setting max TLS version in SSL Context!!\n");
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+
+		
+							if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,"TLS_AES_256_GCM_SHA384")) {
+        						fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
+									ERR_print_errors_fp(stderr);
+									exit(ERR_EXIT);
+							}
+
+							if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,"ALL")) {
+        							fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+									ERR_print_errors_fp(stderr);
+									exit(ERR_EXIT);
+								}
+				
+							SSL_CTX_load_verify_locations(connectorinfo->ctx, "/usr/local/etc/ssl/ca-root.pem", NULL);
+
+							if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
+        						fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+							if (!SSL_CTX_use_certificate_file(connectorinfo->ctx,connectorinfo->server_cert_file,SSL_FILETYPE_PEM)) {
+        						fprintf(stderr,"Error loading certificate \"%s\" in SSL Context!!\n",connectorinfo->server_cert_file);
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+							// verify private key with certificate
+							if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
+        						fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
+								ERR_print_errors_fp(stderr);
+								exit(ERR_EXIT);
+							}
+
+							SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
+#endif
+						}
+					}
+				}
+				start_listeners();
+			}
+			else {
+        		fprintf(stderr,"Listen was not defined in connector!\n");
+			}
+		}
+	};
+
+enableTLS:
+	TOK_TLS
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_TLS
+			connectorinfo->enable_tls=TRUE;
+#else
+			connectorinfo->enable_tls=FALSE;			//enabled on Connector but no SSL support
+#endif
+		}
+	};
+
+enableSTARTTLS:
+	TOK_STARTTLS
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_TLS
+			connectorinfo->enable_starttls=TRUE;
+#else
+			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no SSL support
+#endif
+		}
+	};
+
+TLSCiphers:
+	TOK_TLS_CIPHERS TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->ciphers == NULL) {			//Ciphers have not been defined in connector
+				CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
+			} else {													//Cipher already defined in connector
+				DO_SYSL("Ciphers already defined in Connector - ignoring");
+				fprintf(stderr,"Ciphers already defined in Connector - ignoring: %s \n",yytext);
+			}
+		}
+	};
+
+TLSCipherSuites:
+	TOK_TLS_CIPHER_SUITES TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->cipher_suites == NULL) {			//Cipher suites have not been defined in connector
+				CALLOC(connectorinfo->cipher_suites, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->cipher_suites, yytext, strlen(yytext));
+			} else {														//Cipher suites already defined in connector
+				DO_SYSL("TLS1.3 Cipher suites already defined in Connector - ignoring");
+				fprintf(stderr,"TLS1.3 Cipher suites already defined in Connector - ignoring: %s \n",yytext);
+			}
+		}
+	};
+
+SSLCert:
+	TOK_SSL_CERT TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->server_cert_file == NULL)	{
+				CALLOC(connectorinfo->server_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->server_cert_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-servercertificate statement in connector");
+			}
+		}
+	};
+
+SSLKey:
+	TOK_SSL_KEY TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->server_key_file == NULL)	{
+				CALLOC(connectorinfo->server_key_file, (char *), strlen(yytext) + 1, sizeof(char));
+				strncpy(connectorinfo->server_key_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one openssl-serverkey statement in connector");
+			}
+		}
+	};
 
 beVerbose:
 	TOK_VERBOSE_MODE
@@ -234,7 +507,7 @@ useACL:
 					"Shutting down.\n");
 				DO_SYSL("ACL enabling failed since authentication is disabled!\n"
 					"Shutting down.\n");
-				exit(1);
+				exit(ERR_EXIT);
 			}
 			use_acl=1;
 		}
@@ -247,7 +520,7 @@ messageBodyInDb:
 		    if (dbase != DBASE_POSTGRES) {
 			fprintf(stderr, "Storing message body within the"
 				" database is only supported for Postgres.\n");
-			exit(1);
+			exit(ERR_EXIT);
 		    }
 		    message_body_in_db = 1;
 		}
@@ -260,7 +533,7 @@ messageCountInDb:
 		    if (dbase != DBASE_POSTGRES) {
 			fprintf(stderr, "Storing next-message ID within the"
 				" database is only supported for Postgres.\n");
-			exit(1);
+			exit(ERR_EXIT);
 		    }
 		    message_count_in_db = 1;
 		}
@@ -270,10 +543,16 @@ usePort:
 	TOK_PORT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			port = atoi(yytext);
-			if (!port) {
-				fprintf(stderr, "Port '%s' is not valid.\n", yytext);
-				exit(1);
+			if (connectorinfo->port == 0) {
+				connectorinfo->port = atoi(yytext);
+				if (!connectorinfo->port) {
+					fprintf(stderr, "Port '%s' is not a valid port.\n", yytext);
+					exit(ERR_EXIT);
+				}
+//        		fprintf(stderr,"Port: %d\n",connectorinfo->port);
+			} else {																		//more than one port definition in connector
+				fprintf(stderr, "More than one port statement in connector\n" );
+				exit(ERR_EXIT);
 			}
 		}
 	};
@@ -285,7 +564,7 @@ maxPostSize:
 			max_post_size = atoi(yytext);
 			if (!max_post_size) {
 				fprintf(stderr, "Max. posting size value '%s' is not valid.\n", yytext);
-				exit(1);
+				exit(ERR_EXIT);
 			} /*else {
 				fprintf(stderr, "Max. posting size set to %s bytes\n", yytext);
 			}*/
@@ -293,103 +572,17 @@ maxPostSize:
 	};
 
 
-listenonSpec:  /* done */
+listenonSpec:
 	TOK_LISTEN_ON TOK_NAME
 	{
-		int size=0;
-		int salen, sa6len;
-		int yup=1;
-		struct sockaddr_in sa;
-		struct sockaddr_in6 sa6;
-		char *yytext_ = NULL;
-
 		if (parser_mode == PARSER_MODE_SERVER) {
-
-			CALLOC(yytext_, (char *), strlen(yytext) + 1, sizeof(char))
-			strncpy(yytext_, yytext, strlen(yytext));
-
-			if (listenflag == LF_ANY_IP) {
-				fprintf(stderr,
-					"error: you have to choose between ANY IP address or some specific\n"
-					"IP address but you cannot use both features at the same time.\n");
-				exit(0);
-			}
-			listenflag = LF_SPEC_IP;
-
-			if (!sockinfo) {
-				CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
+			if (connectorinfo->listen == NULL) {
+				CALLOC(connectorinfo->listen, (char *), strlen(yytext) + 1, sizeof(char))
+				strncpy(connectorinfo->listen, yytext, strlen(yytext));
 			} else {
-				size = size_sockinfo_t;
-				if ((sockinfo=realloc(sockinfo, (size + 1) * sizeof(sockinfo_t))) == NULL) {
-					fprintf(stderr, "cannot allocate memory.\n");
-					exit(ERR_EXIT);
-				}
-			}
-
-			bzero(&sa, sizeof(sa));
-			bzero(&sa6, sizeof(sa6));
-#ifdef __WIN32__ /* lol */
-			sa.sin_addr.s_addr = inet_addr(yytext);
-			/* Warning: This 32bit only! */
-			if (sa.sin_addr.s_addr != 0xffffffff)
-#else
-			if (inet_pton(AF_INET, yytext_, &sa.sin_addr))
-#endif
-			{
-				sa.sin_port = htons(port);
-				sa.sin_family = AF_INET;
-				salen = sizeof(struct sockaddr_in);
-
-				if (((sockinfo+size)->sockfd=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
-					exit(ERR_EXIT);
-				}
-
-				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-
-				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa, salen) < 0) {
-					perror("bind");
-					fprintf(stderr, "bind() for %s failed.\n", yytext_);
-					exit(ERR_EXIT);
-				}
-
-				if (listen((sockinfo + size)->sockfd, 5) < 0) {
-					fprintf(stderr, "listen() for %s failed.\n", yytext_);
-					exit(ERR_EXIT);
-				}
-				peak = max((sockinfo + size)->sockfd, peak);
-				(sockinfo + size)->family=AF_INET;
-#ifndef __WIN32__ /* IPv6-ready systems */
-			} else if (inet_pton(AF_INET6, yytext_, &sa6.sin6_addr)) {
-				sa6.sin6_port = htons(port);
-				sa6.sin6_family = AF_INET6;
-				sa6len = sizeof(struct sockaddr_in6);
-
-				if (((sockinfo + size)->sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0) {
-					fprintf(stderr, "cannot do socket() on %s\n", yytext_);
-					exit(ERR_EXIT);
-				}
-
-				setsockopt((sockinfo + size)->sockfd, SOL_SOCKET, SO_REUSEADDR, &yup, sizeof(yup));
-
-				if (bind((sockinfo + size)->sockfd, (struct sockaddr *)&sa6, sa6len) < 0) {
-					fprintf(stderr, "bind() for %s failed.\n", yytext_);
-					exit(ERR_EXIT);
-				}
-
-				if (listen((sockinfo + size)->sockfd, 5) < 0) {
-					fprintf(stderr, "listen() for %s failed.\n", yytext_);
-					exit(ERR_EXIT);
-				}
-				peak = max((sockinfo+size)->sockfd, peak);
-				(sockinfo + size)->family = AF_INET6;
-#endif
-			} else {
-				fprintf(stderr, "Invalid address: %s\n", yytext_);
+				fprintf(stderr, "More than one listen statement in connector\n" );
 				exit(ERR_EXIT);
 			}
-			free(yytext_);
-			size_sockinfo_t++;
 		}
 	};
 
@@ -406,7 +599,7 @@ dbEngine:
 		} else {
 			fprintf(stderr, "Database engine %s not supported.\n", yytext);
 			DO_SYSL("Unknown database engine specified in config file")
-			exit(1);
+			exit(ERR_EXIT);
 		}
 	}
 

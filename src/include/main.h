@@ -87,6 +87,11 @@
 	#include <libpq-fe.h>
 #endif
 
+#ifdef USE_TLS
+	#include <openssl/ssl.h>
+	#include <openssl/err.h>
+#endif
+
 /* Own files */
 #include "wendzelnntpdpath.h"
 
@@ -156,6 +161,7 @@
 #define IPv6ADDRLEN		48 /* 40 should be enough */
 
 #define DEFAULTPORT		119
+#define DEFAULTTLSPORT	563
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -242,11 +248,32 @@
 /*******************************************************************/
 
 typedef struct {
+   uint16_t port;
+   char     *listen;
+   uint8_t  enable_tls;
+   uint8_t  enable_starttls;
+   char     *ciphers;
+   char		*cipher_suites;
+   char     *server_cert_file;
+   char     *server_key_file;
+
+#ifdef USE_TLS
+	SSL_CTX	*ctx;
+#endif
+} connectorinfo_t;
+
+typedef struct {
 	int		sockfd;
 	int		family;
 	struct sockaddr_in  sa;
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
+	connectorinfo_t *connectorinfo;
+	int		tls_active; /* is the client already communicating encrypted= */
+	
+#ifdef USE_TLS
+	SSL		*tls_session; /* save the current TLS session */
+#endif
 } sockinfo_t;
 
 typedef struct {
@@ -330,6 +357,13 @@ void Recv(int sockfd, char *buf, int len);
 void *do_server(void *);
 void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
+
+#ifdef USE_TLS
+int tls_global_init();
+void tls_global_close();
+int tls_session_init(SSL **session, int sockfd);
+void tls_session_close(SSL *session);
+#endif
 
 /* db_abstraction.c */
 void db_open_connection(server_cb_inf *);

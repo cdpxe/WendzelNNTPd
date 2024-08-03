@@ -24,23 +24,46 @@ jobs:
             login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
+        
+        - name: Create certificate directory
+          run: mkdir -p /usr/local/etc/ssl
+
+        - name: Get server certificate from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.SERVER_CERTIFICATE }}
+            filename: "server.crt"
+            working-directory: "/usr/local/etc/ssl"
+
+        - name: Get server key from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.SERVER_KEY }}
+            filename: "server.key"
+            working-directory: "/usr/local/etc/ssl"
+
         - name: 'Build and push image to registry'
           run: |
             docker build -f ./docker/Dockerfile_Github -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} .
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
+          uses: azure/cli@v2
           with:
-            resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
-            image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }}
-            registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-            registry-username: ${{ secrets.REGISTRY_USERNAME }}
-            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-            name: wendzelnntpd-${{ github.sha }}
-            location: 'Germany West Central'
-            ports: '119 563'
+            azcliversion: latest
+            inlineScript: |
+                az container create \
+                  --name wendzelnntpd-${{ github.sha }} \
+                  --resource-group ${{ secrets.RESOURCE_GROUP }} \
+                  --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} \
+                  --vnet wendzelNNTPdVNET \
+                  --subnet wendzelNNTPdVNETSub2 \
+                  --ports "119 563" \
+                  --dns-name-label ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }} \
+                  --location "Germany West Central" \
+                  --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
+                  --registry-username ${{ secrets.REGISTRY_USERNAME }} \
+                  --registry-password ${{ secrets.REGISTRY_PASSWORD }}
         - name: 'Get Container IP'
           id: container-ip
           uses: azure/cli@v2
@@ -48,14 +71,24 @@ jobs:
             azcliversion: latest
             inlineScript: |
                 echo "ip=$(az container show --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --query ipAddress.ip --output tsv)" >> $GITHUB_OUTPUT
-        outputs:
-            container_ip: ${{steps.container-ip.outputs.ip}}
 
+         - run: echo "$ip"
+
+        - name: 'Update Application Gateway'
+          uses: azure/cli@v2
+          with:
+            azcliversion: latest
+            inlineScript: |
+                az network application-gateway address-pool update \
+                    --resource-group ${{ secrets.RESOURCE_GROUP }} \
+                    --gateway-name wendzelnntpd-test-app-gateway \
+                    --name appGatewayBackendPool \
+                    --servers $ip
     second:
         runs-on: ubuntu-latest
         needs: build-and-deploy
         steps:
-            - run: echo "${{ needs.build-and-deploy.outputs.container_ip }}"      
+            - run: echo "hallo"
     # uat:
     #     runs-on: windows-latest
     #     steps:
@@ -111,7 +144,7 @@ jobs:
             build-and-deploy,
             second
         ]
-        if: always()
+        if: never()
         steps:
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
@@ -129,3 +162,9 @@ jobs:
               azcliversion: latest
               inlineScript: |
                 az container delete --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --yes
+        - name: 'Delete container image'
+          uses: azure/cli@v2
+          with:
+              azcliversion: latest
+              inlineScript: |
+                az acr repository delete --name wendzelnntpd --image wendzelnntpd:${{ github.sha }} --yes

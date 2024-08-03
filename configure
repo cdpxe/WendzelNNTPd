@@ -47,6 +47,9 @@ COMPILER=cc
 OS=`uname -s`
 RELEASE=`uname -r`
 
+# Default for usage of TLS is YES
+USE_TLS="YES"
+
 TABCPATH='src/'
 
 ###################################################
@@ -110,6 +113,11 @@ if [ "$FAKECDIR" = "" ]; then
 	FAKECDIR=$CONFDIR
 fi
 
+# if TLS is explicit disable, then compile without
+if [ "$TLS" = "NO" ]; then
+	USE_TLS = "NO"
+fi
+
 if [ "$1" != "" ]; then
 	echo "This configure script takes some environment variables:"
 	echo
@@ -148,6 +156,11 @@ if [ "$1" != "" ]; then
 	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE *or*"
 	echo "PostgreSQL but not all of them, i.e., at least one database is"
 	echo "required to operate WendzelNNTPd."
+	echo
+	echo "3) Encryption (options to disable support at compile-time):"
+	echo
+	echo "TLS=NO - Disables support for TLS encryption"
+	echo "If encryption is not enabled, openssl is needed to be installed."
 	exit 1
 fi
 
@@ -437,17 +450,21 @@ rm -f temp temp.c
 
 
 ###############
+if [ "$USE_TLS" = "NO" ]; then
+	out "configuring without TLS support ..."; echo
+else
+	out "checking for openssl..."
+	openssl version >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
 
-#out "checking for openssl..."
-#	openssl -v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
-#
-#out "checking for libssl..."
-#cat << EOF >temp.c
-##include <openssl/ssl.h>
-#int main(){SSL_library_init();return 0;}
-#EOF
-#$COMPILER $ADD_LNKFLAGS -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
-#rm -f temp temp.c
+	out "checking for libssl..."
+	cat << EOF >temp.c
+	#include <openssl/ssl.h>
+	int main(){SSL_library_init();return 0;}
+EOF
+
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+	rm -f temp temp.c	
+fi
 
 ############# rc.d script ADJUSTMENT ##########
 
@@ -505,6 +522,14 @@ else
 	echo 'POSTGRESOBJ=db_postgres.o'>> $MAKEFILE_INC
 fi
 
+if [ "$USE_TLS" = "YES" ]; then
+	echo 'OPENSSLOBJ=libssl.o' >> $MAKEFILE_INC
+	echo 'OPENSSLLIB=-lssl -lcrypto' >> $MAKEFILE_INC
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DUSE_TLS "`
+else
+	echo 'OPENSSLOBJ=' >> $MAKEFILE_INC
+	echo 'OPENSSLLIB=' >> $MAKEFILE_INC
+fi
 
 
 if [ "$SQLITE" = "NO" ]; then
