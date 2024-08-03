@@ -2,8 +2,6 @@ name: Desktop App Test
 
 on:
     workflow_dispatch:
-    push:
-        branches: [ "feature/tls" ]
 
 jobs:
     build-and-deploy:
