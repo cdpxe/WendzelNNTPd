@@ -224,7 +224,7 @@ start_listeners(void) {
 
 		peak = max((sockinfo + size)->sockfd, peak);
 		(sockinfo + size)->family=AF_INET;
-		fprintf(stderr, "Created IPv4 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+		fprintf(stdout, "Created IPv4 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
 	} else if (inet_pton(AF_INET6, connectorinfo->listen, &sa6.sin6_addr)) {	//IPv6 Listener
 		sa6.sin6_port = htons(connectorinfo->port);
 		sa6.sin6_family = AF_INET6;
@@ -251,7 +251,7 @@ start_listeners(void) {
 	
 		peak = max((sockinfo+size)->sockfd, peak);
 		(sockinfo + size)->family = AF_INET6;	
-		fprintf(stderr, "Created IPv6 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+		fprintf(stdout, "Created IPv6 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
 	} else {																							//Error Listener not IPv4 or IPv6
 		fprintf(stderr, "Invalid address: %s\n", connectorinfo->listen);
 		exit(ERR_EXIT);
@@ -289,7 +289,7 @@ start_listeners(void) {
 %token TOK_SSL_CERT
 %token TOK_SSL_KEY
 %token TOK_STARTTLS
-%token TOK_SSL_CA_FILE
+%token TOK_SSL_CA_CERT
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -303,7 +303,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCAFile;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -319,7 +319,7 @@ connectorBegin:
 
 			connectorinfo->server_cert_file=NULL;
 			connectorinfo->server_key_file=NULL;
-			connectorinfo->CA_file=NULL;
+			connectorinfo->ca_cert_file=NULL;
 		}
 	};
 
@@ -328,76 +328,24 @@ connectorEnd:
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->port == 0) {					//Port was not set in config-File
-				if (connectorinfo->enable_tls)				//TLS enabled
-					connectorinfo->port=DEFAULTTLSPORT;
-				else
-					connectorinfo->port=DEFAULTPORT;
+				initialize_connector_ports(connectorinfo);
 			}
-			if (connectorinfo->listen != NULL) {
-				if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {	
-					if ((connectorinfo->server_cert_file != NULL) && (connectorinfo->server_key_file != NULL)) {
-						if ((access(connectorinfo->server_cert_file,R_OK) == 0) && (access(connectorinfo->server_key_file,R_OK) == 0))	{	//Cert and Key files exist
+
+			// early return if no listener was defined for connector
+			if (connectorinfo->listen == NULL) {
+				fprintf(stderr,"Listen was not defined in connector!\n");
+				ERR_print_errors_fp(stderr);
+				exit(ERR_EXIT);
+			}
+
 #ifdef USE_TLS
-							connectorinfo->ctx=SSL_CTX_new(TLS_server_method());
-							if (!connectorinfo->ctx) {
-        						fprintf(stderr,"Error creating SSL Context!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-							if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, TLS1_VERSION)) {
-        						fprintf(stderr,"Error setting min TLS version in SSL Context!!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, TLS1_3_VERSION )) {
-        						fprintf(stderr,"Error setting max TLS version in SSL Context!!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-		
-							if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,"TLS_AES_256_GCM_SHA384")) {
-        						fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
-									ERR_print_errors_fp(stderr);
-									exit(ERR_EXIT);
-							}
-
-							if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,"ALL")) {
-        							fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
-									ERR_print_errors_fp(stderr);
-									exit(ERR_EXIT);
-								}
-				
-							SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->CA_file, NULL);
-
-							if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
-        						fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							if (!SSL_CTX_use_certificate_file(connectorinfo->ctx,connectorinfo->server_cert_file,SSL_FILETYPE_PEM)) {
-        						fprintf(stderr,"Error loading certificate \"%s\" in SSL Context!!\n",connectorinfo->server_cert_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							// verify private key with certificate
-							if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
-        						fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-							SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
-#endif
-						}
-					}
+			if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {
+				if (check_ssl_prerequisites(connectorinfo)) {
+					tls_global_init(connectorinfo);
 				}
-				start_listeners();
 			}
-			else {
-        		fprintf(stderr,"Listen was not defined in connector!\n");
-			}
+#endif
+			start_listeners();
 		}
 	};
 
@@ -479,15 +427,15 @@ SSLKey:
 		}
 	};
 
-SSLCAFile:
-   TOK_SSL_CA_FILE TOK_NAME
+SSLCACert:
+   TOK_SSL_CA_CERT TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
-			if (connectorinfo->CA_file == NULL) {
-         	CALLOC(connectorinfo->CA_file, (char *), strlen(yytext) + 1, sizeof(char));
-         	strncpy(connectorinfo->CA_file, yytext, strlen(yytext));
+			if (connectorinfo->ca_cert_file == NULL) {
+         	CALLOC(connectorinfo->ca_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->ca_cert_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-CAfile statement in connector. Ignoring");
+				DO_SYSL("Config-File: More than one openssl-ca-certificate statement in connector. Ignoring");
 			}
       }
    };

@@ -59,7 +59,7 @@ openssl-ciphers			    		return TOK_TLS_CIPHERS;
 openssl-cipher-suites			 	return TOK_TLS_CIPHER_SUITES;
 openssl-servercertificate	    	return TOK_SSL_CERT;
 openssl-serverkey		    		return TOK_SSL_KEY;
-openssl-CAfile						return TOK_SSL_CA_FILE;
+openssl-ca-certificate				return TOK_SSL_CA_CERT;
 \<\/connector\>			    		return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */

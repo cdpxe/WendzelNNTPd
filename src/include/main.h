@@ -160,8 +160,8 @@
 #define CONN_LOGSTR_LEN		128
 #define IPv6ADDRLEN		48 /* 40 should be enough */
 
-#define DEFAULTPORT		119
-#define DEFAULTTLSPORT	563
+#define DEFAULT_PORT		119
+#define DEFAULT_TLS_PORT	563
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -256,7 +256,7 @@ typedef struct {
    char		*cipher_suites;
    char     *server_cert_file;
    char     *server_key_file;
-   char 	*CA_file;
+   char 	*ca_cert_file;
 #ifdef USE_TLS
 	SSL_CTX	*ctx;
 #endif
@@ -359,7 +359,9 @@ void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
 
 #ifdef USE_TLS
-int tls_global_init();
+void tls_global_init(connectorinfo_t *connectorinfo);
+int check_ssl_prerequisites(connectorinfo_t *connectorinfo);
+void initialize_connector_ports(connectorinfo_t *connectorinfo);
 void tls_global_close();
 int tls_session_init(SSL **session, int sockfd);
 void tls_session_close(SSL *session);

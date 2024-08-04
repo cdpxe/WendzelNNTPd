@@ -23,48 +23,109 @@ extern char *tls_cipher_prio; /* config.y */
 
 static SSL_CTX *context;
 
-#define CHECK(cmd)	\
-	return_code = cmd; \
-	if (!return_code) { \
-		DO_SYSL("TLS not initialized, error in") \
-		DO_SYSL(#cmd) \
-		fprintf(stderr, "TLS not initialized, %s error\n", #cmd); \
-		fprintf(stderr, "%i\n", SSL_get_error((const SSL*) context, return_code)); \
-		return FALSE; \
+void
+tls_global_init(connectorinfo_t *connectorinfo)
+{
+    connectorinfo->ctx=SSL_CTX_new(TLS_server_method());
+					
+	if (!connectorinfo->ctx) {
+        fprintf(stderr,"Error creating SSL Context!\n");
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
 	}
 
-#define CHECK_CTX(cmd)	\
-	return_code = cmd; \
-	if (return_code != 1) { \
-		DO_SYSL("TLS not initialized, error in") \
-		DO_SYSL(#cmd) \
-		fprintf(stderr, "TLS not initialized, %s error\n", #cmd); \
-		ERR_print_errors_fp(stderr); \
-		return FALSE; \
+    if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
+        fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
 	}
+
+	if (!SSL_CTX_use_certificate_file(connectorinfo->ctx,connectorinfo->server_cert_file,SSL_FILETYPE_PEM)) {
+        fprintf(stderr,"Error loading certificate \"%s\" in SSL Context!!\n",connectorinfo->server_cert_file);
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+	if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
+        fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+	SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
+
+    if (!SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->ca_cert_file, NULL)) {
+        fprintf(stderr,"Error setting ca certificate\n");
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+    }
+
+
+    if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, TLS1_VERSION)) {
+        fprintf(stderr,"Error setting min TLS version in SSL Context!!\n");
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+	if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, TLS1_3_VERSION )) {
+        fprintf(stderr,"Error setting max TLS version in SSL Context!!\n");
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+    if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,"TLS_AES_256_GCM_SHA384")) {
+        fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+	if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,"ALL")) {
+        fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+		ERR_print_errors_fp(stderr);
+		exit(ERR_EXIT);
+	}
+
+	fprintf(stdout, "TLS initialized\n");
+}
+
+void
+initialize_connector_ports(connectorinfo_t *connectorinfo)
+{
+    if (connectorinfo->enable_tls) {
+        connectorinfo->port = DEFAULT_TLS_PORT; 
+    } else {
+        connectorinfo->port = DEFAULT_PORT;
+    }
+}
 
 int
-tls_global_init(sockinfo_t *sockinf)
+check_ssl_prerequisites(connectorinfo_t *connectorinfo)
 {
-	ERR_load_crypto_strings();
-	SSL_load_error_strings();
-
-    int return_code;
-	const SSL_METHOD *method;
-	method = TLS_server_method();
-	context = SSL_CTX_new(method);
-	if (!context) {
-		DO_SYSL("TLS not initialized, error in SSL_CTX_new()")
-		fprintf(stderr, "TLS not initialized, SSL_CTX_new() error\n");
+    if (connectorinfo->server_cert_file == NULL) {
+        fprintf(stderr,"There was no certificate file defined!\n");
+        ERR_print_errors_fp(stderr);
 		return FALSE;
-	}
+    }
 
-    if (sockinf->connectorinfo->ciphers) {
-		CHECK_CTX(SSL_CTX_set_cipher_list(context, sockinf->connectorinfo->ciphers));
-	}
+    if (connectorinfo->server_key_file == NULL) {
+        fprintf(stderr,"There was no server key file defined!\n");
+        ERR_print_errors_fp(stderr);
+		return FALSE;
+    }
 
-	DO_SYSL("TLS initialized");
-	return TRUE;
+    if (access(connectorinfo->server_cert_file,R_OK) != 0) {
+        fprintf(stderr,"Certificate file is not found in defined path!\n");
+        ERR_print_errors_fp(stderr);
+		return FALSE;
+    }
+
+    if (access(connectorinfo->server_key_file,R_OK) != 0) {
+        fprintf(stderr,"Server key file is not found in defined path!\n");
+        ERR_print_errors_fp(stderr);
+		return FALSE;
+    }
+
+    return TRUE;
 }
 
 void
@@ -78,19 +139,6 @@ tls_global_close()
 int
 tls_session_init(SSL **session, int sockfd)
 {
-	int return_code;
-
-	*session = SSL_new(context);
-	if (!*session) {
-		DO_SYSL("TLS session not initialized, error in SSL_new()");
-		fprintf(stderr, "TLS session not initialized, SSL_new() error\n");
-		return FALSE;
-	}
-
-	CHECK(SSL_set_fd(*session, sockfd));
-	CHECK(SSL_accept(*session));
-
-	DO_SYSL("TLS session init");
 	return TRUE;
 }
 

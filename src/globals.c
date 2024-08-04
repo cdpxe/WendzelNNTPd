@@ -31,6 +31,10 @@ short global_mode = MODE_PROCESS; /* don't change default value */
 void
 sig_handler(int signr)
 {
+#ifdef USE_TLS
+	tls_global_close();
+#endif
+
 	DO_SYSL("----clean exit after signal.----")
 	exit(ERR_EXIT);
 }
