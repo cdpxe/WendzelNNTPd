@@ -91,7 +91,7 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
-          - run: ls -la
+          - run: expect unittesting/tls-testing/nntp-tls-port-test.exp
     # uat:
     #     runs-on: windows-latest
     #     steps:
