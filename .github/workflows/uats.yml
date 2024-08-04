@@ -82,10 +82,16 @@ jobs:
             inlineScript: |
                 az network lb address-pool address update --ip-address ${{steps.container-ip.outputs.ip}} --resource-group ${{ secrets.RESOURCE_GROUP }} --lb-name wendzelnntpd-proxy --pool-name Backend --name wendzelnntpd-backend-server
     second:
-        runs-on: svenlie/expect
+        runs-on: ubuntu-latest
+        container:
+          image: svenlie/expect:latest
+          env:
+            nntp_address: 'nntp.svenliebert.de'
+          volumes:
+            - .:/data
         needs: build-and-deploy
         steps:
-          - run: ls -la
+          - run: ls -la /data
     # uat:
     #     runs-on: windows-latest
     #     steps:
