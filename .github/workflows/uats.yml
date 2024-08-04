@@ -89,7 +89,10 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
-          - run: chmod +x unittesting/tls-testing/run.sh && ./unittesting/tls-testing/run.sh
+          - name: Change working directory
+            run: cd unittesting/tls-testing
+          - name: Run unit tests
+            run: chmod +x run.sh && ./run.sh
     # uat:
     #     runs-on: windows-latest
     #     steps:
