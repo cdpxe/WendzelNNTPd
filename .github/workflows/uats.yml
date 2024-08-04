@@ -87,11 +87,11 @@ jobs:
           image: svenlie/expect:latest
           env:
             nntp_address: 'nntp.svenliebert.de'
-          volumes:
-            - .:/data
         needs: build-and-deploy
         steps:
-          - run: ls -la /data
+          - name: 'Checkout GitHub Action'
+            uses: actions/checkout@main
+          - run: ls -la
     # uat:
     #     runs-on: windows-latest
     #     steps:
