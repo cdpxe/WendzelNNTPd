@@ -92,7 +92,7 @@ jobs:
           - name: Change working directory
             run: cd unittesting/tls-testing
           - name: Run unit tests
-            run: chmod +x run.sh && ./run.sh
+            run: ls -la && chmod +x ./run.sh && ./run.sh
     # uat:
     #     runs-on: windows-latest
     #     steps:
