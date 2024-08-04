@@ -73,15 +73,13 @@ jobs:
             inlineScript: |
                 echo "ip=$(az container show --name "wendzelnntpd-${{ github.sha }}" --resource-group WendzelNNTPd --query ipAddress.ip --output tsv)" >> $GITHUB_OUTPUT
 
-        - run: echo "${{steps.container-ip.outputs.ip}}"
-
         - name: 'Update Loadbalancer Backend IP'
           uses: azure/cli@v2
           with:
             azcliversion: latest
             inlineScript: |
                 az network lb address-pool address update --ip-address ${{steps.container-ip.outputs.ip}} --resource-group ${{ secrets.RESOURCE_GROUP }} --lb-name wendzelnntpd-proxy --pool-name Backend --name wendzelnntpd-backend-server
-    second:
+    unit-tests:
         runs-on: ubuntu-latest
         container:
           image: svenlie/expect:latest
@@ -91,7 +89,7 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
-          - run: expect unittesting/tls-testing/nntp-tls-port-test.exp
+          - run: chmod +x unittesting/tls-testing/run.sh && ./unittesting/tls-testing/run.sh
     # uat:
     #     runs-on: windows-latest
     #     steps:
@@ -145,7 +143,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: [
             build-and-deploy,
-            second
+            unit-tests
         ]
         if: always()
         steps:

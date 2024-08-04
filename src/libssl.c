@@ -137,8 +137,32 @@ tls_global_close()
 }
 
 int
-tls_session_init(SSL **session, int sockfd)
+tls_session_init(server_cb_inf *inf)
 {
+	char *connection_log = NULL;
+	inf->sockinf->tls_session = SSL_new(inf->sockinf->connectorinfo->ctx);
+
+	if(!SSL_set_fd(inf->sockinf->tls_session,inf->sockinf->sockfd)) {
+		fprintf(stderr,"Error creating TLS session!!\n");
+		ERR_print_errors_fp(stderr);
+		return FALSE;
+	} 
+
+	if (SSL_accept(inf->sockinf->tls_session) <=0) {
+		fprintf(stderr,"Error negotiating TLS session!!\n");
+		ERR_print_errors_fp(stderr);
+		return FALSE;
+	}
+
+	/* Log the started connection */
+	char conn_s[50];
+	sprintf(conn_s,"%s:%d",inf->sockinf->connectorinfo->listen,inf->sockinf->connectorinfo->port);
+	connection_log = str_concat("Created TLS connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
+	DO_SYSL(connection_log);
+	fprintf(stderr,"%s\n",connection_log);
+	FFLUSH
+	free(connection_log);
+
 	return TRUE;
 }
 

@@ -1,14 +1,14 @@
 set timeout 2
 
-send_user "=== Test with active TLS via extra port ===\n"
+send_user "=== Test with activated TLS via STARTTLS ===\n"
 
-spawn openssl s_client -verify_quiet -quiet -crlf -connect $env(nntp_address):563
+spawn openssl s_client -verify_quiet -quiet -crlf -starttls nntp -connect $env(nntp_address):119
 
 # startup greeting banner
-send_user "== Checking for startup banner ==\n"
+send_user "== Checking for startup info about switching to TLS ==\n"
 expect {
-  timeout { send_user "\nError while getting startup banner\n"; exit 1 }
-  -re "200 WendzelNNTPd.*"
+  timeout { send_user "\nError while getting STARTTLS startup message\n"; exit 1 }
+  -re "382*"
 }
 
 # check for help

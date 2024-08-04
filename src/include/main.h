@@ -272,6 +272,7 @@ typedef struct {
 	int		tls_active; /* is the client already communicating encrypted= */
 	
 #ifdef USE_TLS
+	int		switch_to_tls;
 	SSL		*tls_session; /* save the current TLS session */
 #endif
 } sockinfo_t;
@@ -363,7 +364,7 @@ void tls_global_init(connectorinfo_t *connectorinfo);
 int check_ssl_prerequisites(connectorinfo_t *connectorinfo);
 void initialize_connector_ports(connectorinfo_t *connectorinfo);
 void tls_global_close();
-int tls_session_init(SSL **session, int sockfd);
+int tls_session_init(server_cb_inf *inf);
 void tls_session_close(SSL *session);
 #endif
 

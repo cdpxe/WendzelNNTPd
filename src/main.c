@@ -206,6 +206,7 @@ main(int argc, char *argv[])
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					sockinf->tls_active = FALSE;
+					sockinf->switch_to_tls = FALSE;
                     sockinf->connectorinfo=(sockinfo + i)->connectorinfo;
 
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {

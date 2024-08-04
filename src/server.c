@@ -79,9 +79,11 @@ char list_overview_fmt_info[]="215 Order of fields in overview database.\r\n"
 				".\r\n";
 char capsstring[]=	  		  "101 capability list follows\r\n";
 char capsstring_version[]=	  "VERSION 2\r\n";
-char capsstring_reader[]=	  "READER\r\n";
-char capsstring_list[]=	      "LIST\r\n";
+char capsstring_list[]=	      "LIST NEWSGROUPS OVERVIEW.FMT\r\n";
 char capsstring_starttls[]=	  "STARTTLS\r\n";
+char capsstring_post[]=		  "POST\r\n";
+char capsstring_authinfo[]=	  "AUTHINFO\r\n";
+char capsstring_modereader[]= "MODE-READER\r\n";
 char welcomestring[]=         "200 WendzelNNTPd " WELCOMEVERSION " ready (posting ok).\r\n";
 char mode_reader_ok[]=        "200 hello, you can post\r\n";
 char quitstring[]=            "205 closing connection - goodbye!\r\n";
@@ -94,6 +96,7 @@ char xover[]=                 "224 overview information follows\r\n";
 char postdone[]=              "240 article posted\r\n";
 char xgtitle[]=               "282 list of groups and descriptions follows\r\n";
 char postok[]=                "340 send article to be posted. End with <CR-LF>.<CR-LF>\r\n";
+char tls_connect[]=           "382 continue with TLS negotiation\r\n";
 char nosuchgroup[]=           "411 no such group\r\n";
 char nogroupselected[]=       "412 no news group current selected\r\n";
 char noarticleselected[]=     "420 no (current) article selected\r\n";
@@ -106,6 +109,7 @@ char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in w
 char auth_req[]=              "480 authentication required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
+char starttls_notallowed[]=   "502 STARTTLS not allowed with active TLS layer\r\n";
 char cmd_not_supported[]=     "502 command not implemented\r\n";
 char progerr503[]=            "503 program error, function not performed\r\n";
 char post_too_big[]=             "503 posting size too big (administratively prohibited)\r\n";
@@ -125,6 +129,8 @@ static void docmd_listgroup(char *, server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
+static void docmd_starttls(server_cb_inf *);
+static void docmd_capabilities(server_cb_inf *);
 
 /* this function returns a command line argv[]. counting (=num) starts
  * by 0 */
@@ -360,7 +366,55 @@ static void
 docmd_capabilities(server_cb_inf *inf)
 {
 	ToSend(capsstring, strlen(capsstring), inf);
-	ToSend(capsstring_version, strlen(capsstring_version), inf);
+	ToSend(capsstring_version, strlen(capsstring_version), inf); 
+	ToSend(capsstring_authinfo, strlen(capsstring_authinfo), inf);
+	ToSend(capsstring_list, strlen(capsstring_list), inf);
+
+#ifdef USE_TLS
+	if (!inf->sockinf->tls_active && inf->sockinf->connectorinfo->enable_starttls) {
+		//User not already authenticated - required by RFC4642 || no authentication needed
+		if ((use_auth == 1 && inf->servinf->auth_is_there == 0) || use_auth == 0) {
+			ToSend(capsstring_starttls, strlen(capsstring_starttls), inf);
+		} 
+	}
+
+	// MODE READER can NOT be switched when TLS active
+	if (!inf->sockinf->tls_active) {
+		ToSend(capsstring_modereader, strlen(capsstring_modereader), inf);
+	}
+#else
+	ToSend(capsstring_mode, strlen(capsstring_mode), inf);
+#endif
+
+	ToSend(capsstring_post, strlen(capsstring_post), inf);
+	ToSend(period_end, strlen(period_end), inf);
+}
+
+static void
+docmd_starttls(server_cb_inf *inf)
+{
+	// STARTTLS could not be used if TLS already active
+	if (inf->sockinf->tls_active) {
+		ToSend(starttls_notallowed, strlen(starttls_notallowed), inf);
+		return;
+	}
+
+	// Connector doesn't support STARTTLS
+	if (!inf->sockinf->connectorinfo->enable_starttls) {
+		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
+		return; 
+	}
+
+	// STARTTLS is not allowed after successful authentication
+	if (use_auth == 1 && inf->servinf->auth_is_there == 1) {
+		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
+		return; 
+	}
+
+	inf->sockinf->switch_to_tls = TRUE;
+	ToSend(tls_connect, strlen(tls_connect), inf);
+
+	return;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1542,6 +1596,10 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		docmd_date(inf);
 	} else if (QUESTION_AUTH("capabilities", 12)) {
 		docmd_capabilities(inf);
+#ifdef USE_TLS
+	} else if (QUESTION("starttls", 8)) {
+		docmd_starttls(inf);
+#endif
 	} else if (QUESTION_AUTH("NEWNEWS", 7)) {
 		ToSend(cmd_not_supported, strlen(cmd_not_supported), inf);
 	} else {
@@ -1591,30 +1649,11 @@ do_server(void *socket_info_ptr)
 
 #ifdef USE_TLS
 	if (sockinf->connectorinfo->enable_tls == TRUE) {
-		char *connection_log = NULL;
-		sockinf->tls_session = SSL_new(sockinf->connectorinfo->ctx);
-		if(!SSL_set_fd(sockinf->tls_session,sockinf->sockfd)) {
-			fprintf(stderr,"Error creating TLS session!!\n");
-			ERR_print_errors_fp(stderr);
-			FFLUSH
+		if (!tls_session_init(&inf)) {
+			DO_SYSL("Could not init TLS session. Exiting.");
+			fprintf(stderr, "Could not init TLS session. Exiting\n");
 			kill_thread(&inf);
 		} else {
-			if (SSL_accept(sockinf->tls_session) <=0) {
-				fprintf(stderr,"Error negotiating TLS session!!\n");
-				ERR_print_errors_fp(stderr);
-				FFLUSH
-				kill_thread(&inf);
-			}
-
-			/* Log the started connection */
-			char conn_s[50];
-			sprintf(conn_s,"%s:%d",sockinf->connectorinfo->listen,sockinf->connectorinfo->port);
-			connection_log = str_concat("Created TLS connection from ", sockinf->ip, " Connector:", conn_s, NULL);
-			DO_SYSL(connection_log);
-			fprintf(stderr,"%s\n",connection_log);
-			FFLUSH
-			free(connection_log);
-
 			sockinf->tls_active=TRUE;
 		}
 	}
@@ -1628,8 +1667,35 @@ do_server(void *socket_info_ptr)
 		/* receive only one byte each time; not good for performance but allows to deal
 		 * with crappy clients who send multiple requests within one request. */
 		/* 1. kill connection if the client sends more bytes than allowed */
-		if (len == MAX_CMDLEN)
+		if (len == MAX_CMDLEN) {
 			kill_thread(&inf);
+		}
+		
+		if (sockinf->switch_to_tls) {
+			sockinf->switch_to_tls = FALSE;
+
+			if (!tls_session_init(&inf)) {
+				DO_SYSL("Could not init TLS session. Exiting.");
+				fprintf(stderr, "Could not init TLS session. Exiting\n");
+				kill_thread(&inf);
+			} else {
+				sockinf->tls_active = TRUE;
+
+				/* Reset all data of the user when switchting to TLS (RFC 4642 requires this) */
+				if (inf.servinf->selected_group) {
+					free(inf.servinf->selected_group);
+					inf.servinf->selected_group = NULL;
+				}
+				if (inf.servinf->selected_article) {
+					free(inf.servinf->selected_article);
+					inf.servinf->selected_article = NULL;
+				}
+
+				fprintf(stderr, "client switched to TLS.\n");
+				FFLUSH
+			}
+		}
+
 		/* 2. receive byte-wise */
 		int return_val = -1;
 		return_val = Receive(sockinf, recvbuf+len, 1);
