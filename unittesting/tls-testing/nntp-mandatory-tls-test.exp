@@ -1,0 +1,36 @@
+set timeout 2
+
+send_user "=== Test for mandatory TLS on non-encrypted NNTP port ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+# startup greeting banner
+send_user "== Checking for startup banner ==\n"
+expect -re "200 WendzelNNTPd.*"
+
+# check for help
+send_user "== Checking for help command ==\n"
+send "help\n"
+expect {
+  timeout { send_user "\nError while getting help text\n"; exit 1 }
+  -re "100.*"
+}
+
+# check if STARTTLS is in capabilties list
+send_user "== Checking for capabilities command, STARTTLS must be there ==\n"
+send "capabilities\n"
+expect {
+  timeout { send_user "\nError while getting capabilities\n"; exit 1 }
+  -re "101.*STARTTLS"
+}
+
+# check if list command outputs correct value
+send_user "== Checking for list command to send 483 ==\n"
+send "list\n"
+expect {
+  timeout { send_user "\nFailed to get group list\n"; exit 1 }
+  -re "483.*"
+}
+
+# all checks OK
+send_user "== All checks succeeded ==\n"

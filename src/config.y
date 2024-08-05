@@ -61,6 +61,7 @@ char *db_user = NULL;
 char *db_pass = NULL;
 unsigned short db_port = 0;
 char *hash_salt = "default-hash-salt-0_----3331";
+unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
 yyerror(const char *str)
@@ -282,6 +283,7 @@ start_listeners(void) {
 %token TOK_MESSAGE_COUNT_IN_DB
 %token TOK_MESSAGE_BODY_IN_DB
 %token TOK_HASHSALT
+%token TOK_TLS_MANDATORY
 %token TOK_CONN_BEGIN
 %token TOK_TLS
 %token TOK_TLS_CIPHERS
@@ -297,7 +299,7 @@ start_listeners(void) {
 
 commands: /**/ | commands command | commands connector;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | maxPostSize | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | maxPostSize | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | TLSMandatory | eof;
 
 connector: connectorBegin connectorCmds connectorEnd;
 
@@ -400,6 +402,14 @@ TLSCipherSuites:
 			}
 		}
 	};
+
+TLSMandatory:
+	TOK_TLS_MANDATORY
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			tls_is_mandatory = 1;
+		}
+	}
 
 SSLCert:
 	TOK_SSL_CERT TOK_NAME

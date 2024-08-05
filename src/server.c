@@ -34,6 +34,7 @@ extern unsigned short use_auth;	/* config.y */
 extern unsigned short use_acl; /* config.y */
 extern unsigned short message_body_in_db; /* config.y */
 extern unsigned short message_count_in_db; /* config.y */
+extern unsigned short tls_is_mandatory; /* config.y */
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	NNTP Messages
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -107,6 +108,7 @@ char hdrerror_newsgroup[]=    "441 'newsgroups' line needed or incorrect.\r\n";
 char posterr_posttoobig[]=    "441 posting too huge.\r\n";
 char posterror_notallowed[]=  "441 posting failed (you selected a newsgroup in which posting is not permitted).\r\n";
 char auth_req[]=              "480 authentication required.\r\n";
+char tls_req[]=               "483 TLS encryption required.\r\n";
 char unknown_cmd[]=           "500 unknown command\r\n";
 char parameter_miss[]=        "501 missing a parameter, see 'help'\r\n";
 char starttls_notallowed[]=   "502 STARTTLS not allowed with active TLS layer\r\n";
@@ -1552,6 +1554,17 @@ do_command(char *recvbuf, server_cb_inf *inf)
 #define QUESTION(cmd, len)	strncasecmp(recvbuf, cmd, len)==0
 #define QUESTION_AUTH(cmd, len)	( (inf->servinf->auth_is_there || use_auth == 0) && strncasecmp(recvbuf, cmd, len)==0)
 
+#ifdef USE_TLS
+#define CHECK_MANDATORY_TLS(cmd) \
+	if (!inf->sockinf->tls_active && tls_is_mandatory) { \
+		ToSend(tls_req, strlen(tls_req), inf); \
+	} else { \
+		(cmd); \
+	}
+#else
+#define CHECK_MANDATORY_TLS(cmd) (cmd);
+#endif
+
 	/* COMMANDS THAT NEED _NO_ AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 	if (QUESTION("quit", 4)) {
@@ -1559,39 +1572,39 @@ do_command(char *recvbuf, server_cb_inf *inf)
 		kill_thread(inf);
 		/* NOTREACHED */
 	} else if (QUESTION("authinfo user ", 14)) {
-		docmd_authinfo_user(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_authinfo_user(recvbuf, inf));
 	} else if (QUESTION("authinfo pass ", 14)) {
-		docmd_authinfo_pass(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_authinfo_pass(recvbuf, inf));
 	}
 
 	/* COMMANDS THAT NEED AUTHENTICATION */
 	/* Check "AAAA" before "AAA" to make sure we match the correct command here! */
 
 	else if (QUESTION_AUTH("list newsgroups", 15)) {
-		docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS);
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_LIST_NEWSGROUPS));
 	} else if (QUESTION_AUTH("list overview.fmt", 17)) {
 		ToSend(list_overview_fmt_info, strlen(list_overview_fmt_info), inf);
 	} else if (QUESTION_AUTH("listgroup", 9)) {
-		docmd_listgroup(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_listgroup(recvbuf, inf));
 	} else if (QUESTION_AUTH("list", 4)) {
-		docmd_list(recvbuf, inf, CMDTYP_LIST);
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_LIST));
 	} else if (QUESTION_AUTH("xgtitle", 7)) {
-		docmd_list(recvbuf, inf, CMDTYP_XGTITLE);
+		CHECK_MANDATORY_TLS(docmd_list(recvbuf, inf, CMDTYP_XGTITLE));
 	} else if (QUESTION_AUTH("help", 4)) {
 		ToSend(helpstring, strlen(helpstring), inf);
 	} else if (QUESTION_AUTH("group", 5)) {
-		docmd_group(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_group(recvbuf, inf));
 	} else if (QUESTION_AUTH("xover", 5)) {
-		docmd_xover(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_xover(recvbuf, inf));
 	} else if (QUESTION_AUTH("xhdr", 4)) {
-		docmd_xhdr(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_xhdr(recvbuf, inf));
 	} else if (QUESTION_AUTH("article", 7) || QUESTION_AUTH("head", 4)
 		|| QUESTION_AUTH("body", 4) || QUESTION_AUTH("stat", 4)) {
-		docmd_article(recvbuf, inf);
+		CHECK_MANDATORY_TLS(docmd_article(recvbuf, inf));
 	} else if (QUESTION_AUTH("mode reader", 11)) {
-		ToSend(mode_reader_ok, strlen(mode_reader_ok), inf);
+		CHECK_MANDATORY_TLS(ToSend(mode_reader_ok, strlen(mode_reader_ok), inf));
 	} else if (QUESTION_AUTH("post", 4)) {
-		docmd_post(inf);
+		CHECK_MANDATORY_TLS(docmd_post(inf));
 	} else if (QUESTION_AUTH("date", 4)) {
 		docmd_date(inf);
 	} else if (QUESTION_AUTH("capabilities", 12)) {

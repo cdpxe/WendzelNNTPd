@@ -52,6 +52,7 @@ client-limit                        return TOK_CLIENT_LIMIT;
 change-uid                          return TOK_CHANGEUID;
 change-gid                          return TOK_CHANGEGID;
 hash-salt                           return TOK_HASHSALT;
+tls-is-mandatory                    return TOK_TLS_MANDATORY;
 \<connector\>			  			return TOK_CONN_BEGIN;
 enable-tls			    			return TOK_TLS;
 enable-starttls			    		return TOK_STARTTLS;
