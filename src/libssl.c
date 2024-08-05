@@ -61,29 +61,34 @@ tls_global_init(connectorinfo_t *connectorinfo)
     }
 
 
-    if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, TLS1_VERSION)) {
-        fprintf(stderr,"Error setting min TLS version in SSL Context!!\n");
+    if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, connectorinfo->tls_minimum_version)) {
+        fprintf(stderr,"Error setting minimum TLS version in SSL Context!!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
-	if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, TLS1_3_VERSION )) {
-        fprintf(stderr,"Error setting max TLS version in SSL Context!!\n");
+	if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, connectorinfo->tls_maximum_version )) {
+        fprintf(stderr,"Error setting maximum TLS version in SSL Context!!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
-    if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,"TLS_AES_256_GCM_SHA384")) {
-        fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
-		ERR_print_errors_fp(stderr);
-		exit(ERR_EXIT);
+	if (connectorinfo->cipher_suites != NULL) {
+		if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,connectorinfo->cipher_suites)) {
+			fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
+			ERR_print_errors_fp(stderr);
+			exit(ERR_EXIT);
+		}
 	}
 
-	if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,"ALL")) {
-        fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
-		ERR_print_errors_fp(stderr);
-		exit(ERR_EXIT);
+	if (connectorinfo->ciphers != NULL) {
+		if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,connectorinfo->ciphers)) {
+			fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
+			ERR_print_errors_fp(stderr);
+			exit(ERR_EXIT);
+		}
 	}
+	
 
 	fprintf(stdout, "TLS initialized\n");
 }

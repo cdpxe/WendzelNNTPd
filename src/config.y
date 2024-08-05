@@ -292,6 +292,8 @@ start_listeners(void) {
 %token TOK_SSL_KEY
 %token TOK_STARTTLS
 %token TOK_SSL_CA_CERT
+%token TOK_TLS_VERSION
+%token TOK_TLS_VERSION_STRING
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -305,7 +307,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert | TLSVersion;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -322,6 +324,14 @@ connectorBegin:
 			connectorinfo->server_cert_file=NULL;
 			connectorinfo->server_key_file=NULL;
 			connectorinfo->ca_cert_file=NULL;
+
+#ifdef USE_TLS
+			connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+			connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+#else
+			connectorinfo->tls_minimum_version = 0;
+			connectorinfo->tls_maximum_version = 0;
+#endif
 		}
 	};
 
@@ -379,7 +389,7 @@ TLSCiphers:
 	TOK_TLS_CIPHERS TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			if (connectorinfo->ciphers == NULL) {			//Ciphers have not been defined in connector
+			if (connectorinfo->ciphers == NULL) { //Ciphers have not been defined in connector
 				CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
 			} else {													//Cipher already defined in connector
@@ -409,7 +419,54 @@ TLSMandatory:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			tls_is_mandatory = 1;
 		}
-	}
+	};
+
+TLSVersion:
+	TOK_TLS_VERSION TOK_TLS_VERSION_STRING
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_TLS
+			int maximum = 3;
+			int minimum = 0;
+
+			sscanf(yytext, "1.%d-1.%d", &minimum, &maximum);
+
+			if (maximum < minimum) {
+				int tmp = maximum;
+				maximum = minimum;
+				minimum = tmp;
+			}
+
+			switch (minimum) {
+				case 0: 	connectorinfo->tls_minimum_version = TLS1_VERSION;
+							break;
+				case 1: 	connectorinfo->tls_minimum_version = TLS1_1_VERSION;
+							break;
+				case 2: 	connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+							break;
+				case 3: 	connectorinfo->tls_minimum_version = TLS1_3_VERSION;
+							break;
+				default: 	connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+							fprintf(stderr,"Error TLS Version String \"%s\"! Minimum could not be recognized - setting default TLS1.2!\n",yytext);
+							break;
+			}
+
+			switch (maximum) {
+				case 0: 	connectorinfo->tls_maximum_version = TLS1_VERSION;
+							break;
+				case 1: 	connectorinfo->tls_maximum_version = TLS1_1_VERSION;
+							break;
+				case 2: 	connectorinfo->tls_maximum_version = TLS1_2_VERSION;
+							break;
+				case 3: 	connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+							break;
+				default: 	connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+							fprintf(stderr,"Error TLS Version String \"%s\"! Maximum could not be recognized - setting default TLS1.3!\n",yytext);
+							break;
+			}
+#endif
+		}
+	};
 
 SSLCert:
 	TOK_SSL_CERT TOK_NAME

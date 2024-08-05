@@ -56,15 +56,17 @@ tls-is-mandatory                    return TOK_TLS_MANDATORY;
 \<connector\>			  			return TOK_CONN_BEGIN;
 enable-tls			    			return TOK_TLS;
 enable-starttls			    		return TOK_STARTTLS;
-openssl-ciphers			    		return TOK_TLS_CIPHERS;
-openssl-cipher-suites			 	return TOK_TLS_CIPHER_SUITES;
-openssl-servercertificate	    	return TOK_SSL_CERT;
-openssl-serverkey		    		return TOK_SSL_KEY;
-openssl-ca-certificate				return TOK_SSL_CA_CERT;
+tls-ciphers			    		    return TOK_TLS_CIPHERS;
+tls-cipher-suites			 	    return TOK_TLS_CIPHER_SUITES;
+tls-servercertificate	    	    return TOK_SSL_CERT;
+tls-serverkey		    		    return TOK_SSL_KEY;
+tls-ca-certificate				    return TOK_SSL_CA_CERT;
+tls-version                         return TOK_TLS_VERSION;
+1\.[0-3]-1\.[0-3]                   return TOK_TLS_VERSION_STRING;
 \<\/connector\>			    		return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
 [ \t\n]+                            /* ignore whitespace and newline */
-[a-zA-Z0-9\.\:\\\/\-\_]+            return TOK_NAME;
+[a-zA-Z0-9\.\:\\\/\-\_!]+           return TOK_NAME;
 \0                                  return TOK_EOF;
 %%

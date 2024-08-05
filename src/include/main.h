@@ -256,6 +256,8 @@ typedef struct {
    char		*cipher_suites;
    char     *server_cert_file;
    char     *server_key_file;
+   int		tls_minimum_version;
+   int		tls_maximum_version;
    char 	*ca_cert_file;
 #ifdef USE_TLS
 	SSL_CTX	*ctx;
