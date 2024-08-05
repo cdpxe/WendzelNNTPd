@@ -89,6 +89,12 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
+          - name: Get ca certificate from secrets
+            uses: mobiledevops/secret-to-file-action@v1
+            with:
+              base64-encoded-secret: ${{ secrets.CA_CERTIFICATE }}
+              filename: "ca.crt"
+              working-directory: "./unittesting/tls-testing/test-files"
           - name: Get server key from secrets
             uses: mobiledevops/secret-to-file-action@v1
             with:
@@ -98,7 +104,7 @@ jobs:
           - name: Generate client csr
             run: openssl req -new -key "./unittesting/tls-testing/test-files/client-key.pem" -out "./unittesting/tls-testing/test-files/client.csr" -config "./unittesting/tls-testing/test-files/openssl-client.cnf"
           - name: Generate client certificate
-            run: openssl x509 -req -days 365 -in "./unittesting/tls-testing/test-files/client.csr" -extensions v3_req -key "./unittesting/tls-testing/test-files/client-key.pem" -extfile "./unittesting/tls-testing/test-files/openssl-client.cnf" -out "./unittesting/tls-testing/test-files/client-pub.pem"
+            run: openssl x509 -req -days 365 -in "./unittesting/tls-testing/test-files/client.csr" -extensions v3_req -key "./unittesting/tls-testing/test-files/client-key.pem" -extfile "./unittesting/tls-testing/test-files/openssl-client.cnf" -CA "./unittesting/tls-testing/test-files/ca.crt" -out "./unittesting/tls-testing/test-files/client-pub.pem"
           - name: Run unit tests
             run: cd unittesting/tls-testing && chmod +x ./run.sh && ./run.sh
     # uat:
