@@ -294,6 +294,8 @@ start_listeners(void) {
 %token TOK_SSL_CA_CERT
 %token TOK_TLS_VERSION
 %token TOK_TLS_VERSION_STRING
+%token TOK_TLS_VERIFY_CLIENT
+%token TOK_TLS_VERIFY_CLIENT_DEPTH
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -307,7 +309,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert | TLSVersion;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert | TLSVersion | TLSVerifyClient | TLSVerifyClientDepth;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -324,6 +326,8 @@ connectorBegin:
 			connectorinfo->server_cert_file=NULL;
 			connectorinfo->server_key_file=NULL;
 			connectorinfo->ca_cert_file=NULL;
+			connectorinfo->tls_verify_client = VERIFY_UNDEV; // VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
+			connectorinfo->tls_verify_client_depth = 10;
 
 #ifdef USE_TLS
 			connectorinfo->tls_minimum_version = TLS1_2_VERSION;
@@ -506,6 +510,33 @@ SSLCACert:
 			}
       }
    };
+
+TLSVerifyClient:
+	TOK_TLS_VERIFY_CLIENT TOK_NAME
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (strncmp(yytext, "none", 4) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_NONE;
+			} else if (strncmp(yytext, "optional", 8) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_OPTIONAL;
+			} else if (strncmp(yytext, "require", 7) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_REQUIRE;
+			} else {
+				DO_SYSL("Config-File: openssl-verifyclient must be [none | optional | require]. Ignoring");
+			}
+		}
+	};
+
+TLSVerifyClientDepth:
+	TOK_TLS_VERIFY_CLIENT_DEPTH TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			connectorinfo->tls_verify_client_depth = atoi(yytext);
+			if (atoi(yytext) > 128) {
+				DO_SYSL("Config-File: openssl-verifydepth too large [0-128]. Ignoring - using Default (10)");
+				connectorinfo->tls_verify_client_depth=10;
+			}
+		}
+	};
 
 beVerbose:
 	TOK_VERBOSE_MODE

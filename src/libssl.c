@@ -52,8 +52,6 @@ tls_global_init(connectorinfo_t *connectorinfo)
 		exit(ERR_EXIT);
 	}
 
-	SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
-
     if (!SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->ca_cert_file, NULL)) {
         fprintf(stderr,"Error setting ca certificate\n");
 		ERR_print_errors_fp(stderr);
@@ -71,6 +69,23 @@ tls_global_init(connectorinfo_t *connectorinfo)
         fprintf(stderr,"Error setting maximum TLS version in SSL Context!!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
+	}
+
+	if (connectorinfo->tls_verify_client != VERIFY_UNDEV) {
+		switch (connectorinfo->tls_verify_client) {
+			case VERIFY_REQUIRE:
+				SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT | SSL_VERIFY_CLIENT_ONCE, NULL);
+				break;
+			case VERIFY_OPTIONAL:
+				SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_PEER, NULL);
+				break;
+			case VERIFY_NONE: 
+			default:
+				connectorinfo->tls_verify_client = VERIFY_NONE;
+				SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
+				break;
+		}
+		SSL_CTX_set_verify_depth(connectorinfo->ctx, connectorinfo->tls_verify_client_depth);
 	}
 
 	if (connectorinfo->cipher_suites != NULL) {

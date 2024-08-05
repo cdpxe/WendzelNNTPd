@@ -60,7 +60,7 @@ jobs:
                   --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/wendzelnntpd:${{ github.sha }} \
                   --vnet wendzelNNTPdVNET \
                   --subnet wendzelNNTPdVNETSub2 \
-                  --ports 119 563 \
+                  --ports 118 119 563 564 \
                   --location "Germany West Central" \
                   --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
                   --registry-username ${{ secrets.REGISTRY_USERNAME }} \
@@ -89,6 +89,18 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
+          - name: Get server key from secrets
+            uses: mobiledevops/secret-to-file-action@v1
+            with:
+              base64-encoded-secret: ${{ secrets.SERVER_KEY }}
+              filename: "server.key"
+              working-directory: "./unittesting/tls-testing/test-files"
+          - name: Generate client key
+            run: openssl genrsa -out "./unittesting/tls-testing/test-files/client-key.pem"
+          - name: Generate client csr
+            run: openssl req -new -key "./unittesting/tls-testing/test-files/client-key.pem" -out "./unittesting/tls-testing/test-files/client.csr" -config "./unittesting/tls-testing/test-files/openssl-client.cnf"
+          - name: Generate client certificate
+            run: openssl x509 -req -days 365 -in "./unittesting/tls-testing/test-files/client.csr" -extensions v3_req -key "./unittesting/tls-testing/test-files/server.key" -extfile "./unittesting/tls-testing/test-files/openssl-client.cnf" -out "./unittesting/tls-testing/test-files/client-pub.pem"
           - name: Run unit tests
             run: cd unittesting/tls-testing && chmod +x ./run.sh && ./run.sh
     # uat:

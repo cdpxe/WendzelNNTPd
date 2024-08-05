@@ -63,6 +63,8 @@ tls-serverkey		    		    return TOK_SSL_KEY;
 tls-ca-certificate				    return TOK_SSL_CA_CERT;
 tls-version                         return TOK_TLS_VERSION;
 1\.[0-3]-1\.[0-3]                   return TOK_TLS_VERSION_STRING;
+tls-verify-client                   return TOK_TLS_VERIFY_CLIENT;
+tls-verify-client-depth             return TOK_TLS_VERIFY_CLIENT_DEPTH;
 \<\/connector\>			    		return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */
