@@ -1,6 +1,6 @@
 FROM debian:stable-slim
 
-RUN apt -y update && apt -y install wget gcc make
+RUN apt -y update && apt -y install wget gcc make telnet
 
 RUN wget https://core.tcl-lang.org/tcl/tarball/release/tcl.tar.gz
 RUN tar -xvf tcl.tar.gz
