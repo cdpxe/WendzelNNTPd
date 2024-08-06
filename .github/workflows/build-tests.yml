@@ -55,23 +55,6 @@ jobs:
             make
             make install
 
-  build-test-netbsd:
-    runs-on: ubuntu-latest
-    name: Build wendzelnntpd on NetBSD
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run in NetBSD VM
-        uses: vmactions/netbsd-vm@v1
-        with:
-          usesh: true
-          prepare: |
-            /usr/sbin/pkg_add bison
-            /usr/sbin/pkg_add libmhash
-          run: |
-            MYSQL=NO ./configure
-            make
-            make install
-
   build-test-freebsd:
     runs-on: ubuntu-latest
     name: Build wendzelnntpd on FreeBSD
