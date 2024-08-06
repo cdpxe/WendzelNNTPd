@@ -369,6 +369,7 @@ char *filebackend_retrbody(char *);
 /* globals.c */
 void sig_handler(int);
 void initialize_connector_ports(connectorinfo_t *connectorinfo);
+void signal_action_handler (int, siginfo_t *, void *);
 
 /* server.c */
 void ToSend(char *, int, server_cb_inf *);
