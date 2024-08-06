@@ -49,10 +49,9 @@ jobs:
           usesh: true
           prepare: |
             pkg_add bison
-            pkg_add mariadb-client
             pkg_add mhash
           run: |
-            ./configure
+            MYSQL=NO ./configure
             make
             make install
 
@@ -67,10 +66,9 @@ jobs:
           usesh: true
           prepare: |
             /usr/sbin/pkg_add bison
-            /usr/sbin/pkg_add mysql-client
             /usr/sbin/pkg_add mhash
           run: |
-            ./configure
+            MYSQL=NO ./configure
             make
             make install
 
@@ -86,9 +84,8 @@ jobs:
           prepare: |
             pkg install -y sqlite3
             pkg install -y bison
-            pkg install -y mariadb-client
             pkg install -y mhash
           run: |
-            ./configure
+            MYSQL=NO ./configure
             make
             make install
