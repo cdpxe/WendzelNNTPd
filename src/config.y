@@ -288,14 +288,16 @@ start_listeners(void) {
 %token TOK_TLS
 %token TOK_TLS_CIPHERS
 %token TOK_TLS_CIPHER_SUITES;
-%token TOK_SSL_CERT
-%token TOK_SSL_KEY
+%token TOK_TLS_CERT
+%token TOK_TLS_KEY
 %token TOK_STARTTLS
-%token TOK_SSL_CA_CERT
+%token TOK_TLS_CA_CERT
 %token TOK_TLS_VERSION
 %token TOK_TLS_VERSION_STRING
 %token TOK_TLS_VERIFY_CLIENT
 %token TOK_TLS_VERIFY_CLIENT_DEPTH
+%token TOK_TLS_CRL
+%token TOK_TLS_CRL_FILE
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -309,7 +311,7 @@ connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey | SSLCACert | TLSVersion | TLSVerifyClient | TLSVerifyClientDepth;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | TLSCert | TLSKey | TLSCACert | TLSVersion | TLSVerifyClient | TLSVerifyClientDepth | TLSCrl | TLSCrlFile;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -328,6 +330,8 @@ connectorBegin:
 			connectorinfo->ca_cert_file=NULL;
 			connectorinfo->tls_verify_client = VERIFY_UNDEV; // VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
 			connectorinfo->tls_verify_client_depth = 10;
+			connectorinfo->tls_crl = CRL_UNDEV;
+			connectorinfo->tls_crl_file = NULL;
 
 #ifdef USE_TLS
 			connectorinfo->tls_minimum_version = TLS1_2_VERSION;
@@ -356,7 +360,7 @@ connectorEnd:
 
 #ifdef USE_TLS
 			if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {
-				if (check_ssl_prerequisites(connectorinfo)) {
+				if (check_tls_prerequisites(connectorinfo)) {
 					tls_global_init(connectorinfo);
 				}
 			}
@@ -372,7 +376,7 @@ enableTLS:
 #ifdef USE_TLS
 			connectorinfo->enable_tls=TRUE;
 #else
-			connectorinfo->enable_tls=FALSE;			//enabled on Connector but no SSL support
+			connectorinfo->enable_tls=FALSE;			//enabled on Connector but no TLS support
 #endif
 		}
 	};
@@ -384,7 +388,7 @@ enableSTARTTLS:
 #ifdef USE_TLS
 			connectorinfo->enable_starttls=TRUE;
 #else
-			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no SSL support
+			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no TLS support
 #endif
 		}
 	};
@@ -472,41 +476,41 @@ TLSVersion:
 		}
 	};
 
-SSLCert:
-	TOK_SSL_CERT TOK_NAME
+TLSCert:
+	TOK_TLS_CERT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->server_cert_file == NULL)	{
 				CALLOC(connectorinfo->server_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->server_cert_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-servercertificate statement in connector");
+				DO_SYSL("Config-File: More than one tls-server-certificate statement in connector");
 			}
 		}
 	};
 
-SSLKey:
-	TOK_SSL_KEY TOK_NAME
+TLSKey:
+	TOK_TLS_KEY TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->server_key_file == NULL)	{
 				CALLOC(connectorinfo->server_key_file, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->server_key_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-serverkey statement in connector");
+				DO_SYSL("Config-File: More than one tls-server-key statement in connector");
 			}
 		}
 	};
 
-SSLCACert:
-   TOK_SSL_CA_CERT TOK_NAME
+TLSCACert:
+   TOK_TLS_CA_CERT TOK_NAME
    {
       if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->ca_cert_file == NULL) {
          	CALLOC(connectorinfo->ca_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
          	strncpy(connectorinfo->ca_cert_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-ca-certificate statement in connector. Ignoring");
+				DO_SYSL("Config-File: More than one tls-ca-certificate statement in connector. Ignoring");
 			}
       }
    };
@@ -522,7 +526,7 @@ TLSVerifyClient:
 			} else if (strncmp(yytext, "require", 7) == 0) {
 				connectorinfo->tls_verify_client = VERIFY_REQUIRE;
 			} else {
-				DO_SYSL("Config-File: openssl-verifyclient must be [none | optional | require]. Ignoring");
+				DO_SYSL("Config-File: tls-verify-client must be [none | optional | require]. Ignoring");
 			}
 		}
 	};
@@ -532,9 +536,32 @@ TLSVerifyClientDepth:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			connectorinfo->tls_verify_client_depth = atoi(yytext);
 			if (atoi(yytext) > 128) {
-				DO_SYSL("Config-File: openssl-verifydepth too large [0-128]. Ignoring - using Default (10)");
+				DO_SYSL("Config-File: tls-verify-client-depth too large [0-128]. Ignoring - using Default (10)");
 				connectorinfo->tls_verify_client_depth=10;
 			}
+		}
+	};
+
+TLSCrl:
+	TOK_TLS_CRL TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (strncmp(yytext, "none", 4) == 0) {
+				connectorinfo->tls_crl = CRL_NONE;
+			} else if (strncmp(yytext, "leaf", 4) == 0) {
+				connectorinfo->tls_crl = CRL_LEAF;
+			} else if (strncmp(yytext, "chain", 5) == 0) {
+				connectorinfo->tls_crl = CRL_CHAIN;
+			} else {
+				 DO_SYSL("Config-File: tls-crl must be [none | leaf | chain]. Ignoring");
+			}
+		}
+	};
+
+TLSCrlFile:
+	TOK_TLS_CRL_FILE TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			CALLOC(connectorinfo->tls_crl_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->tls_crl_file, yytext, strlen(yytext));
 		}
 	};
 

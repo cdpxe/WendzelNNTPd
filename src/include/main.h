@@ -194,11 +194,17 @@
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
 
 #ifdef USE_TLS
-/* Config-Option openssl-verifyclient */
+/* Config-Option tls-verify-client */
 #define VERIFY_NONE 0x00
 #define VERIFY_OPTIONAL 0x01
 #define VERIFY_REQUIRE 0x02
 #define VERIFY_UNDEV 0xFF
+
+/* Config-Option tls-crl*/
+#define CRL_NONE 0x00
+#define CRL_LEAF 0x01
+#define CRL_CHAIN 0x02
+#define CRL_UNDEV 0xFF
 #endif
 
 #define PR_STRING		"WendzelNNTPd: "
@@ -256,19 +262,21 @@
 /*******************************************************************/
 
 typedef struct {
-   uint16_t port;
-   char     *listen;
-   uint8_t  enable_tls;
-   uint8_t  enable_starttls;
-   char     *ciphers;
-   char		*cipher_suites;
-   char     *server_cert_file;
-   char     *server_key_file;
-   int		tls_minimum_version;
-   int		tls_maximum_version;
-   char 	*ca_cert_file;
-   int		tls_verify_client;
-   int		tls_verify_client_depth;
+	uint16_t port;
+	char     *listen;
+	uint8_t  enable_tls;
+	uint8_t  enable_starttls;
+	char     *ciphers;
+	char		*cipher_suites;
+	char     *server_cert_file;
+	char     *server_key_file;
+	int		tls_minimum_version;
+	int		tls_maximum_version;
+	char 	*ca_cert_file;
+	int		tls_verify_client;
+	int		tls_verify_client_depth;
+	int		tls_crl;
+	char		*tls_crl_file;
 #ifdef USE_TLS
 	SSL_CTX	*ctx;
 #endif

@@ -58,13 +58,15 @@ enable-tls			    			return TOK_TLS;
 enable-starttls			    		return TOK_STARTTLS;
 tls-ciphers			    		    return TOK_TLS_CIPHERS;
 tls-cipher-suites			 	    return TOK_TLS_CIPHER_SUITES;
-tls-servercertificate	    	    return TOK_SSL_CERT;
-tls-serverkey		    		    return TOK_SSL_KEY;
-tls-ca-certificate				    return TOK_SSL_CA_CERT;
+tls-server-certificate	    	    return TOK_TLS_CERT;
+tls-server-key		    		    return TOK_TLS_KEY;
+tls-ca-certificate				    return TOK_TLS_CA_CERT;
 tls-version                         return TOK_TLS_VERSION;
 1\.[0-3]-1\.[0-3]                   return TOK_TLS_VERSION_STRING;
 tls-verify-client                   return TOK_TLS_VERIFY_CLIENT;
 tls-verify-client-depth             return TOK_TLS_VERIFY_CLIENT_DEPTH;
+tls-crl                             return TOK_TLS_CRL;
+tls-crl-file                        return TOK_TLS_CRL_FILE;
 \<\/connector\>			    		return TOK_CONN_END;
 ;.*\n                               /* ignore comment */
 \|.*\n                              /*   -"-    -"-   */

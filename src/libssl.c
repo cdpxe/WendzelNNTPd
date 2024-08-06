@@ -103,7 +103,38 @@ tls_global_init(connectorinfo_t *connectorinfo)
 			exit(ERR_EXIT);
 		}
 	}
-	
+
+	if (connectorinfo->tls_crl == CRL_LEAF || connectorinfo->tls_crl == CRL_CHAIN) {
+		X509_VERIFY_PARAM *param = X509_VERIFY_PARAM_new();
+
+		switch (connectorinfo->tls_crl) {
+			case CRL_LEAF:
+				X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_CRL_CHECK);
+				break;
+			case CRL_CHAIN:
+				X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL| X509_V_FLAG_TRUSTED_FIRST); 
+				break;
+		}
+
+		SSL_CTX_set1_param(connectorinfo->ctx,param);
+		X509_VERIFY_PARAM_free(param);
+
+		if (connectorinfo->tls_crl_file == NULL) {
+			DO_SYSL("Config-File: CRL check activated but no CRL location defined! All checks will fail!");
+		}
+
+		X509_STORE *cert_store = SSL_CTX_get_cert_store(connectorinfo->ctx);
+		if (cert_store != NULL) {
+			fprintf(stderr, connectorinfo->tls_crl_file);
+			if (!X509_STORE_load_locations(cert_store,connectorinfo->tls_crl_file,NULL)) {
+        		fprintf(stderr,"Error setting CRL location in SSL Context!\n");
+				ERR_print_errors_fp(stderr);
+				exit(ERR_EXIT);
+			}
+		} else {
+			fprintf(stderr,"X509_STORE could not be loaded from SSL Context!\n");
+		}
+	}
 
 	fprintf(stdout, "TLS initialized\n");
 }
@@ -119,7 +150,7 @@ initialize_connector_ports(connectorinfo_t *connectorinfo)
 }
 
 int
-check_ssl_prerequisites(connectorinfo_t *connectorinfo)
+check_tls_prerequisites(connectorinfo_t *connectorinfo)
 {
     if (connectorinfo->server_cert_file == NULL) {
         fprintf(stderr,"There was no certificate file defined!\n");
