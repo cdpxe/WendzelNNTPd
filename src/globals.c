@@ -140,7 +140,7 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
         strcpy(sname,"SIGTERM");
         break;
 
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || !defined(__OpenBSD__) || !defined(__NetBSD__)
       case SIGSTKFLT:
 	  	strcpy(sname,"SIGSTKFLT");
         break;
