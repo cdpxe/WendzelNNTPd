@@ -55,3 +55,39 @@ jobs:
             ./configure
             make
             make install
+
+  build-test-netbsd:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on NetBSD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run in NetBSD VM
+        uses: vmactions/netbsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg_add bison
+            pkg_add mariadb-client
+            pkg_add mhash
+          run: |
+            ./configure
+            make
+            make install
+
+  build-test-freebsd:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on FreeBSD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run in FreeBSD VM
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg_add bison
+            pkg_add mariadb-client
+            pkg_add mhash
+          run: |
+            ./configure
+            make
+            make install
