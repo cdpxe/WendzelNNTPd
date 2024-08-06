@@ -28,6 +28,9 @@ short global_mode = MODE_PROCESS; /* don't change default value */
 sig_atomic_t rec_sighup=0;    	//SIGHUP has been sent to process
 sig_atomic_t rec_sigterm=0;      //SIGTERM (KILL) has been sent to process
 
+/* set default port, if is not set in configuration
+ *
+ */
 void
 initialize_connector_ports(connectorinfo_t *connectorinfo)
 {
@@ -52,6 +55,9 @@ sig_handler(int signr)
 	exit(ERR_EXIT);
 }
 
+/* handles signals properly
+ *
+ */
 void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
 
    char line[256], sname[30]="UNKNOWN", code[30]="UNKNOWN";
@@ -140,6 +146,7 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
         strcpy(sname,"SIGTERM");
         break;
 
+	// ignore in OpenBSD, FreeBSD and NetBSD because the signals are not supported and throw errors on compiling
 #ifdef __OpenBSD__
 #elif __FreeBSD__
 #elif __NetBSD__

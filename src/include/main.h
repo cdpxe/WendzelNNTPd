@@ -87,6 +87,7 @@
 	#include <libpq-fe.h>
 #endif
 
+/* OpenSSL */
 #ifdef USE_TLS
 	#include <openssl/ssl.h>
 	#include <openssl/err.h>
@@ -160,8 +161,8 @@
 #define CONN_LOGSTR_LEN		128
 #define IPv6ADDRLEN		48 /* 40 should be enough */
 
-#define DEFAULT_PORT		119
-#define DEFAULT_TLS_PORT	563
+#define DEFAULT_PORT		119 // default non-TLS port
+#define DEFAULT_TLS_PORT	563 // default TLS port
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -193,13 +194,13 @@
 #define ARTCLTYP_NUMBER		0x02
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
 
-/* Config-Option tls-verify-client */
+/* Config-Options tls-verify-client */
 #define VERIFY_NONE 0x00
 #define VERIFY_OPTIONAL 0x01
 #define VERIFY_REQUIRE 0x02
 #define VERIFY_UNDEV 0xFF
 
-/* Config-Option tls-crl*/
+/* Config-Options tls-crl*/
 #define CRL_NONE 0x00
 #define CRL_LEAF 0x01
 #define CRL_CHAIN 0x02
@@ -259,6 +260,7 @@
 
 /*******************************************************************/
 
+// struct definition for connector
 typedef struct {
 	uint16_t port;
 	char     *listen;
@@ -276,7 +278,7 @@ typedef struct {
 	int		tls_crl;
 	char		*tls_crl_file;
 #ifdef USE_TLS
-	SSL_CTX	*ctx;
+	SSL_CTX	*ctx; // current SSL_CONTEXT
 #endif
 } connectorinfo_t;
 
@@ -289,7 +291,7 @@ typedef struct {
 	connectorinfo_t *connectorinfo;
 #ifdef USE_TLS
 	int		tls_active; /* is the client already communicating encrypted= */
-	int		switch_to_tls;
+	int		switch_to_tls; /* does the client want to switch to TLS via STARTTLS? */
 	SSL		*tls_session; /* save the current TLS session */
 #endif
 } sockinfo_t;

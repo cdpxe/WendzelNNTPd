@@ -43,7 +43,7 @@ extern int size_sockinfo_t; /* is set to 0 on startup in main.c */
 short parser_mode = PARSER_MODE_SERVER;
 
 sockinfo_t *sockinfo = 0;
-connectorinfo_t *connectorinfo = NULL;
+connectorinfo_t *connectorinfo = NULL; /* used for multiple connectors */
 int peak = 0;
 int max_post_size = MAX_POSTSIZE_DEFAULT;
 fd_set fds;
@@ -178,13 +178,14 @@ basic_setup_server(void)
 static void
 start_listeners(void) {
 
-	int size=0;
+	int size = 0;
 	int salen, sa6len;
-	int yup=1;
+	int yup = 1;
 	struct sockaddr_in sa;
 	struct sockaddr_in6 sa6;
 
 	if (!sockinfo) {
+		// allocate memory for socket
 		CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
 	} else {
 		size = size_sockinfo_t;
@@ -198,6 +199,7 @@ start_listeners(void) {
 	bzero(&sa6, sizeof(sa6));
 
 #ifdef USE_TLS
+	// set tls_active default for socket
 	(sockinfo + size)->tls_active=FALSE;			
 #endif
 	(sockinfo + size)->connectorinfo=connectorinfo;					//Link sockinfo to connectorinfo
@@ -325,14 +327,14 @@ connectorBegin:
 			connectorinfo->enable_tls=FALSE;
 			connectorinfo->enable_starttls=FALSE;
 			connectorinfo->ciphers=NULL;	// Cipher TLS1.0 - 1.2
-			connectorinfo->cipher_suites=NULL;
+			connectorinfo->cipher_suites=NULL; // Cipher Suites TLS1.3
 
-			connectorinfo->server_cert_file=NULL;
-			connectorinfo->server_key_file=NULL;
-			connectorinfo->ca_cert_file=NULL;
-			connectorinfo->tls_verify_client = VERIFY_UNDEV; // VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
+			connectorinfo->server_cert_file=NULL;	// Server Cert
+			connectorinfo->server_key_file=NULL; // Server Key
+			connectorinfo->ca_cert_file=NULL; // CA File
+			connectorinfo->tls_verify_client = VERIFY_UNDEV; // mTLS: VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
 			connectorinfo->tls_verify_client_depth = 10;
-			connectorinfo->tls_crl = CRL_UNDEV;
+			connectorinfo->tls_crl = CRL_UNDEV; // Certificate Revocation List (CRL)
 			connectorinfo->tls_crl_file = NULL;
 
 #ifdef USE_TLS
@@ -349,7 +351,7 @@ connectorEnd:
 	TOK_CONN_END
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			if (connectorinfo->port == 0) {					//Port was not set in config-File
+			if (connectorinfo->port == 0) {					//Port was not set in config-File -> set default port
 				initialize_connector_ports(connectorinfo);
 			}
 
@@ -363,7 +365,9 @@ connectorEnd:
 			}
 
 #ifdef USE_TLS
+			// enable TLS if enable-tls or enable-starttls isset in configuration for connector
 			if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {
+				// check needed prerequisites -> if successful, then init TLS implementation
 				if (check_tls_prerequisites(connectorinfo)) {
 					tls_global_init(connectorinfo);
 				}
@@ -429,6 +433,7 @@ TLSMandatory:
 	TOK_TLS_MANDATORY
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
+			// set TLS mandatory
 			tls_is_mandatory = 1;
 		}
 	};
@@ -443,6 +448,7 @@ TLSVersion:
 
 			sscanf(yytext, "1.%d-1.%d", &minimum, &maximum);
 
+			// change maximum and minimum, if minimum is greater than maximum
 			if (maximum < minimum) {
 				int tmp = maximum;
 				maximum = minimum;
@@ -522,6 +528,7 @@ TLSCACert:
 TLSVerifyClient:
 	TOK_TLS_VERIFY_CLIENT TOK_NAME
 	{
+		// set mTLS mode
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (strncmp(yytext, "none", 4) == 0) {
 				connectorinfo->tls_verify_client = VERIFY_NONE;
@@ -637,11 +644,11 @@ usePort:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->port == 0) {
 				connectorinfo->port = atoi(yytext);
+				// check if port isset and is an integer
 				if (!connectorinfo->port) {
 					fprintf(stderr, "Port '%s' is not a valid port.\n", yytext);
 					exit(ERR_EXIT);
 				}
-//        		fprintf(stderr,"Port: %d\n",connectorinfo->port);
 			} else {																		//more than one port definition in connector
 				fprintf(stderr, "More than one port statement in connector\n" );
 				exit(ERR_EXIT);

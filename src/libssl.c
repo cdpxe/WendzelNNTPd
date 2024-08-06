@@ -28,49 +28,56 @@ tls_global_init(connectorinfo_t *connectorinfo)
 {
     connectorinfo->ctx=SSL_CTX_new(TLS_server_method());
 					
+	// create SSL context
 	if (!connectorinfo->ctx) {
         fprintf(stderr,"Error creating SSL Context!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// load server private key
     if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
         fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// load server certificate
 	if (!SSL_CTX_use_certificate_file(connectorinfo->ctx,connectorinfo->server_cert_file,SSL_FILETYPE_PEM)) {
         fprintf(stderr,"Error loading certificate \"%s\" in SSL Context!!\n",connectorinfo->server_cert_file);
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// check if private key and certificate are matching
 	if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
         fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// load ca file
     if (!SSL_CTX_load_verify_locations(connectorinfo->ctx, connectorinfo->ca_cert_file, NULL)) {
         fprintf(stderr,"Error setting ca certificate\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
     }
 
-
+	// set minimal TLS version
     if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, connectorinfo->tls_minimum_version)) {
         fprintf(stderr,"Error setting minimum TLS version in SSL Context!!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// set maximal TLS version
 	if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, connectorinfo->tls_maximum_version )) {
         fprintf(stderr,"Error setting maximum TLS version in SSL Context!!\n");
 		ERR_print_errors_fp(stderr);
 		exit(ERR_EXIT);
 	}
 
+	// enable mTLS if configured
 	if (connectorinfo->tls_verify_client != VERIFY_UNDEV) {
 		switch (connectorinfo->tls_verify_client) {
 			case VERIFY_REQUIRE:
@@ -88,6 +95,7 @@ tls_global_init(connectorinfo_t *connectorinfo)
 		SSL_CTX_set_verify_depth(connectorinfo->ctx, connectorinfo->tls_verify_client_depth);
 	}
 
+	// set cipher suites for TLS 1.3
 	if (connectorinfo->cipher_suites != NULL) {
 		if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,connectorinfo->cipher_suites)) {
 			fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
@@ -96,6 +104,7 @@ tls_global_init(connectorinfo_t *connectorinfo)
 		}
 	}
 
+	// set ciphers for TLS1.1-1.2
 	if (connectorinfo->ciphers != NULL) {
 		if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,connectorinfo->ciphers)) {
 			fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
@@ -104,6 +113,7 @@ tls_global_init(connectorinfo_t *connectorinfo)
 		}
 	}
 
+	// enable usage of CRL if configured
 	if (connectorinfo->tls_crl == CRL_LEAF || connectorinfo->tls_crl == CRL_CHAIN) {
 		X509_VERIFY_PARAM *param = X509_VERIFY_PARAM_new();
 

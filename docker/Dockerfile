@@ -3,12 +3,14 @@ FROM debian:stable-slim
 RUN apt-get update -y
 RUN apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev gdb
 
+# install reflex for on-demand compiling of source code
 RUN go install github.com/cespare/reflex@latest
 
 RUN touch /var/log/wendzelnntpd
 
 COPY docker/openssl/openssl.cnf /usr/local/etc/ssl/openssl.cnf
 
+# Create server certificate for TLS
 RUN mkdir -p /usr/local/etc/ssl
 # create CA
 RUN openssl req \

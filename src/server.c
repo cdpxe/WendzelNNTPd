@@ -185,6 +185,7 @@ static void
 Send(sockinfo_t *sockinfo, char *str, int len)
 {
 #ifdef USE_TLS
+	// send message with encryption if TLS active
 	if (sockinfo->tls_active == TRUE) {
 
 		int return_code;
@@ -222,6 +223,7 @@ Receive(sockinfo_t *sockinfo, char *str, int len)
 	int recv_bytes = 0;
 
 #ifdef USE_TLS
+	// read message with decryption when TLS is active
 	if (sockinfo->tls_active == TRUE) {
 		recv_bytes = SSL_read(sockinfo->tls_session, str, len);
 	} else {
@@ -421,6 +423,7 @@ docmd_starttls(server_cb_inf *inf)
 		return; 
 	}
 
+	// set information, that connection should be switched to encrypted one
 	inf->sockinf->switch_to_tls = TRUE;
 	ToSend(tls_connect, strlen(tls_connect), inf);
 
@@ -1564,6 +1567,7 @@ do_command(char *recvbuf, server_cb_inf *inf)
 #define QUESTION_AUTH(cmd, len)	( (inf->servinf->auth_is_there || use_auth == 0) && strncasecmp(recvbuf, cmd, len)==0)
 
 #ifdef USE_TLS
+// check if TLS is mandatory -> send error message when needed and not used
 #define CHECK_MANDATORY_TLS(cmd) \
 	if (!inf->sockinf->tls_active && tls_is_mandatory) { \
 		ToSend(tls_req, strlen(tls_req), inf); \
@@ -1670,6 +1674,7 @@ do_server(void *socket_info_ptr)
 	}
 
 #ifdef USE_TLS
+	// try to initialize TLS connection if TLS is enabled on this connector
 	if (sockinf->connectorinfo->enable_tls == TRUE) {
 		if (!tls_session_init(&inf)) {
 			DO_SYSL("Could not init TLS session. Exiting.");
@@ -1694,14 +1699,17 @@ do_server(void *socket_info_ptr)
 		}
 
 #ifdef USE_TLS
+		// try to switch to TLS if switch_to_tls is TRUE
 		if (sockinf->switch_to_tls) {
 			sockinf->switch_to_tls = FALSE;
 
+			// send error message if not successful
 			if (!tls_session_init(&inf)) {
 				DO_SYSL("Could not init TLS session. Exiting.");
 				fprintf(stderr, "Could not init TLS session. Exiting\n");
 				kill_thread(&inf);
 			} else {
+				// set active-Flag TRUE
 				sockinf->tls_active = TRUE;
 
 				/* Reset all data of the user when switchting to TLS (RFC 4642 requires this) */
@@ -1791,6 +1799,7 @@ kill_thread(server_cb_inf *inf)
 
 #ifdef USE_TLS
 	if (inf->sockinf->tls_active) {
+		// close TLS session on connection abort
 		tls_session_close(inf->sockinf->tls_session);
 	}
 #endif

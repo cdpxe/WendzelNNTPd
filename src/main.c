@@ -209,6 +209,7 @@ main(int argc, char *argv[])
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 #ifdef USE_TLS
+					// set default values for initialization
 					sockinf->tls_active = FALSE;
 					sockinf->switch_to_tls = FALSE;
 #endif

@@ -7,7 +7,6 @@ desirable features are missing, such as a support for encrypted
 and integrity-checked connections.
 
 Major:
-- add TLS support (merge best of the two TLS branches!)
 - store unique message ID and message body in the DB (this is available
   only for the experimental postgres setup). 
 - enable sync w/ other NNTP servers

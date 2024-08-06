@@ -8,6 +8,7 @@ RUN touch /var/log/wendzelnntpd
 COPY .. /wendzelnntpd
 WORKDIR /wendzelnntpd
 
+# get certificate from CA and self-signed for mTLS test
 RUN mkdir -p /usr/local/etc/ssl
 COPY ../server.crt /usr/local/etc/ssl/server.crt
 COPY ../server-self.crt /usr/local/etc/ssl/server-self.crt
