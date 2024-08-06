@@ -1,0 +1,46 @@
+name: Build tests
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [ "feature/tls" ]
+
+jobs:
+  build-test-ubuntu:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on Ubuntu
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run configuration
+        run: ./configure
+      - name: Run make
+        run: make
+      - name: Run make install
+        run: make install
+
+  build-test-debian:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on Debian
+    container:
+          image: debian:stable-slim
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run configuration
+        run: ./configure
+      - name: Run make
+        run: make
+      - name: Run make install
+        run: make install
+
+  build-test-openbsd:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on OpenBSD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run in OpenBSD VM
+        uses: vmactions/openbsd-vm@v1
+        with:
+          run: |
+            ./configure
+            make
+            make install
