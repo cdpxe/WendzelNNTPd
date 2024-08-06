@@ -10,8 +10,11 @@ WORKDIR /wendzelnntpd
 
 RUN mkdir -p /usr/local/etc/ssl
 COPY ../server.crt /usr/local/etc/ssl/server.crt
+COPY ../server-self.crt /usr/local/etc/ssl/server-self.crt
 COPY ../ca.crt /usr/local/etc/ssl/ca.crt
+COPY ../ca-self.crt /usr/local/etc/ssl/ca-self.crt
 COPY ../server.key /usr/local/etc/ssl/server.key
+COPY ../server-self.key /usr/local/etc/ssl/server-self.key
 COPY ../ca.crt /usr/local/share/ca-certificates
 
 RUN update-ca-certificates

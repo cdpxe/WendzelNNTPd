@@ -39,6 +39,9 @@ RUN openssl x509 \
     -extfile "/usr/local/etc/ssl/openssl.cnf" \
     -out "/usr/local/etc/ssl/server.crt"
 
+# for local development only copy existing certificate (GitHub Action will use different certificates there)
+RUN cp /usr/local/etc/ssl/server.crt /usr/local/etc/ssl/server-self.crt && cp /usr/local/etc/ssl/server.key /usr/local/etc/ssl/server-self.key && cp /usr/local/etc/ssl/ca.crt /usr/local/etc/ssl/ca-self.crt
+
 WORKDIR /wendzelnntpd
 
 ENTRYPOINT ["/root/go/bin/reflex", "-c", "docker/reflex.conf"]

@@ -29,6 +29,13 @@ jobs:
             base64-encoded-secret: ${{ secrets.SERVER_CERTIFICATE }}
             filename: "server.crt"
             working-directory: "."
+        
+        - name: Get server-self certificate from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.SERVER_SELF_CERTIFICATE }}
+            filename: "server-self.crt"
+            working-directory: "."
 
         - name: Get ca certificate from secrets
           uses: mobiledevops/secret-to-file-action@v1
@@ -37,11 +44,25 @@ jobs:
             filename: "ca.crt"
             working-directory: "."
 
+        - name: Get ca-self certificate from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.CA_SELF_CERTIFICATE }}
+            filename: "ca-self.crt"
+            working-directory: "."
+
         - name: Get server key from secrets
           uses: mobiledevops/secret-to-file-action@v1
           with:
             base64-encoded-secret: ${{ secrets.SERVER_KEY }}
             filename: "server.key"
+            working-directory: "."
+        
+        - name: Get server-self key from secrets
+          uses: mobiledevops/secret-to-file-action@v1
+          with:
+            base64-encoded-secret: ${{ secrets.SERVER_SELF_KEY }}
+            filename: "server-self.key"
             working-directory: "."
 
         - name: 'Build and push image to registry'
@@ -89,18 +110,24 @@ jobs:
         steps:
           - name: 'Checkout GitHub Action'
             uses: actions/checkout@main
-          - name: Get server certificate from secrets
+          - name: Get ca-self certificate from secrets
             uses: mobiledevops/secret-to-file-action@v1
             with:
-              base64-encoded-secret: ${{ secrets.SERVER_CERTIFICATE }}
-              filename: "client-pub.pem"
-              working-directory: "./unittesting/tls-testing/test-files"
-          - name: Get server key from secrets
+              base64-encoded-secret: ${{ secrets.CA_SELF_CERTIFICATE }}
+              filename: "ca-self.crt"
+              working-directory: "."
+          - name: Get ca-self key from secrets
             uses: mobiledevops/secret-to-file-action@v1
             with:
-              base64-encoded-secret: ${{ secrets.SERVER_KEY }}
-              filename: "client-key.pem"
-              working-directory: "./unittesting/tls-testing/test-files"
+              base64-encoded-secret: ${{ secrets.CA_SELF_KEY }}
+              filename: "ca-self.key"
+              working-directory: "."
+          - name: Generate client key
+            run: openssl genrsa -out "./unittesting/tls-testing/test-files/client-key.pem" 2048
+          - name: Generate client csr
+            run: openssl req -new -key "./unittesting/tls-testing/test-files/client-key.pem" -out "client.csr" -config "./unittesting/tls-testing/test-files/openssl-client.cnf"
+          - name: Generate client certificate
+            run: openssl x509 -req -days 36500 -in "client.csr" -CA "ca-self.crt" -CAkey "ca-self.key" -CAcreateserial -extensions v3_req -extfile "./unittesting/tls-testing/test-files/openssl-client.cnf" -out "./unittesting/tls-testing/test-files/client-pub.pem"
           - name: Run unit tests
             run: cd unittesting/tls-testing && chmod +x ./run.sh && ./run.sh
     # uat:
