@@ -9,6 +9,8 @@ jobs:
   build-test-ubuntu:
     runs-on: ubuntu-latest
     name: Build wendzelnntpd on Ubuntu
+    container:
+          image: ubuntu:latest
     steps:
       - uses: actions/checkout@v4
       - name: Install needed packages
@@ -47,6 +49,8 @@ jobs:
           usesh: true
           prepare: |
             pkg_add bison
+            pkg_add mariadb-client
+            pkg_add mhash
           run: |
             ./configure
             make
