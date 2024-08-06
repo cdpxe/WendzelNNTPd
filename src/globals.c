@@ -140,9 +140,15 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
         strcpy(sname,"SIGTERM");
         break;
 
+#ifndef __FreeBSD__
       case SIGSTKFLT:
 	  	strcpy(sname,"SIGSTKFLT");
         break;
+
+      case SIGPWR:
+	  	strcpy(sname,"SIGPWR");
+        break;
+#endif
 
       case SIGCHLD: 
 	  	strcpy(sname,"SIGCHLD");
@@ -194,10 +200,6 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
 
       case SIGIO: 
 	  	strcpy(sname,"SIGIO");
-        break;
-
-      case SIGPWR:
-	  	strcpy(sname,"SIGPWR");
         break;
 
       case SIGSYS:

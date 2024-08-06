@@ -125,7 +125,6 @@ tls_global_init(connectorinfo_t *connectorinfo)
 
 		X509_STORE *cert_store = SSL_CTX_get_cert_store(connectorinfo->ctx);
 		if (cert_store != NULL) {
-			fprintf(stderr, connectorinfo->tls_crl_file);
 			if (!X509_STORE_load_locations(cert_store,connectorinfo->tls_crl_file,NULL)) {
         		fprintf(stderr,"Error setting CRL location in SSL Context!\n");
 				ERR_print_errors_fp(stderr);
