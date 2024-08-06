@@ -131,8 +131,10 @@ static void docmd_listgroup(char *, server_cb_inf *);
 static int docmd_post_chk_ng_name_correctness(char *, server_cb_inf *);
 static int docmd_post_chk_required_hdr_lines(char *, server_cb_inf *);
 static void docmd_post(server_cb_inf *);
-static void docmd_starttls(server_cb_inf *);
 static void docmd_capabilities(server_cb_inf *);
+#ifdef USE_TLS
+static void docmd_starttls(server_cb_inf *);
+#endif
 
 /* this function returns a command line argv[]. counting (=num) starts
  * by 0 */
@@ -182,8 +184,9 @@ get_slinearg(char *cmdstring, int num)
 static void
 Send(sockinfo_t *sockinfo, char *str, int len)
 {
-	if (sockinfo->tls_active == TRUE) {
 #ifdef USE_TLS
+	if (sockinfo->tls_active == TRUE) {
+
 		int return_code;
 		return_code = SSL_write(sockinfo->tls_session, str, len);
 		if (return_code <= 0) {
@@ -198,8 +201,8 @@ Send(sockinfo_t *sockinfo, char *str, int len)
 			}
 			pthread_exit(NULL);
 		}
-#endif
    } else {
+#endif
 		if(send(sockinfo->sockfd, str, len, MSG_NOSIGNAL)<0) {
 			if (daemon_mode) {
 				DO_SYSL("send() returned <0 -- killing connection.")
@@ -208,7 +211,9 @@ Send(sockinfo_t *sockinfo, char *str, int len)
 			}
 			pthread_exit(NULL);
 		}
+#ifdef USE_TLS
    }
+#endif
 }
 
 int
@@ -216,13 +221,15 @@ Receive(sockinfo_t *sockinfo, char *str, int len)
 {
 	int recv_bytes = 0;
 
-	if (sockinfo->tls_active == TRUE) {
 #ifdef USE_TLS
+	if (sockinfo->tls_active == TRUE) {
 		recv_bytes = SSL_read(sockinfo->tls_session, str, len);
-#endif
 	} else {
+#endif
 		recv_bytes = recv(sockinfo->sockfd, str, len, 0);
+#ifdef USE_TLS
 	}
+#endif
 
 	return recv_bytes;
 }
@@ -385,13 +392,14 @@ docmd_capabilities(server_cb_inf *inf)
 		ToSend(capsstring_modereader, strlen(capsstring_modereader), inf);
 	}
 #else
-	ToSend(capsstring_mode, strlen(capsstring_mode), inf);
+	ToSend(capsstring_modereader, strlen(capsstring_modereader), inf);
 #endif
 
 	ToSend(capsstring_post, strlen(capsstring_post), inf);
 	ToSend(period_end, strlen(period_end), inf);
 }
 
+#ifdef USE_TLS
 static void
 docmd_starttls(server_cb_inf *inf)
 {
@@ -418,6 +426,7 @@ docmd_starttls(server_cb_inf *inf)
 
 	return;
 }
+#endif
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	DATE
@@ -1683,7 +1692,8 @@ do_server(void *socket_info_ptr)
 		if (len == MAX_CMDLEN) {
 			kill_thread(&inf);
 		}
-		
+
+#ifdef USE_TLS
 		if (sockinf->switch_to_tls) {
 			sockinf->switch_to_tls = FALSE;
 
@@ -1708,6 +1718,7 @@ do_server(void *socket_info_ptr)
 				FFLUSH
 			}
 		}
+#endif
 
 		/* 2. receive byte-wise */
 		int return_val = -1;

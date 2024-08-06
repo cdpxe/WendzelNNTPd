@@ -193,7 +193,6 @@
 #define ARTCLTYP_NUMBER		0x02
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
 
-#ifdef USE_TLS
 /* Config-Option tls-verify-client */
 #define VERIFY_NONE 0x00
 #define VERIFY_OPTIONAL 0x01
@@ -205,7 +204,6 @@
 #define CRL_LEAF 0x01
 #define CRL_CHAIN 0x02
 #define CRL_UNDEV 0xFF
-#endif
 
 #define PR_STRING		"WendzelNNTPd: "
 #define PROMPT(x)		printf(PR_STRING x "\n")
@@ -289,9 +287,8 @@ typedef struct {
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
 	connectorinfo_t *connectorinfo;
-	int		tls_active; /* is the client already communicating encrypted= */
-	
 #ifdef USE_TLS
+	int		tls_active; /* is the client already communicating encrypted= */
 	int		switch_to_tls;
 	SSL		*tls_session; /* save the current TLS session */
 #endif
@@ -371,6 +368,7 @@ char *filebackend_retrbody(char *);
 
 /* globals.c */
 void sig_handler(int);
+void initialize_connector_ports(connectorinfo_t *connectorinfo);
 
 /* server.c */
 void ToSend(char *, int, server_cb_inf *);
@@ -381,8 +379,7 @@ void nntp_localtime_to_str(char [40], time_t);
 
 #ifdef USE_TLS
 void tls_global_init(connectorinfo_t *connectorinfo);
-int check_ssl_prerequisites(connectorinfo_t *connectorinfo);
-void initialize_connector_ports(connectorinfo_t *connectorinfo);
+int check_tls_prerequisites(connectorinfo_t *connectorinfo);
 void tls_global_close();
 int tls_session_init(server_cb_inf *inf);
 void tls_session_close(SSL *session);

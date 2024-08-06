@@ -197,7 +197,9 @@ start_listeners(void) {
 	bzero(&sa, sizeof(sa));
 	bzero(&sa6, sizeof(sa6));
 
+#ifdef USE_TLS
 	(sockinfo + size)->tls_active=FALSE;			
+#endif
 	(sockinfo + size)->connectorinfo=connectorinfo;					//Link sockinfo to connectorinfo
 
 	if (inet_pton(AF_INET, connectorinfo->listen, &sa.sin_addr)) {					//IPv4 Listener
@@ -354,7 +356,9 @@ connectorEnd:
 			// early return if no listener was defined for connector
 			if (connectorinfo->listen == NULL) {
 				fprintf(stderr,"Listen was not defined in connector!\n");
+#ifdef USE_TLS
 				ERR_print_errors_fp(stderr);
+#endif
 				exit(ERR_EXIT);
 			}
 

@@ -47,10 +47,10 @@ COMPILER=cc
 OS=`uname -s`
 RELEASE=`uname -r`
 
+TABCPATH='src/'
+
 # Default for usage of TLS is YES
 USE_TLS="YES"
-
-TABCPATH='src/'
 
 ###################################################
 
@@ -114,8 +114,15 @@ if [ "$FAKECDIR" = "" ]; then
 fi
 
 # if TLS is explicit disable, then compile without
-if [ "$TLS" = "NO" ]; then
-	USE_TLS = "NO"
+# Default for SSL/TLS is YES
+if [ "$TLS" = "" ]; then
+	USE_TLS="YES"
+# Compile without SSL/TLS
+elif [ "$TLS" = "NO" ]; then	
+	USE_TLS="NO"
+# Compile with SSL/TLS
+else
+	USE_TLS="YES"
 fi
 
 if [ "$1" != "" ]; then

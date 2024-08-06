@@ -25,6 +25,16 @@ int daemon_mode = 0;
 int size_sockinfo_t = 0;
 short global_mode = MODE_PROCESS; /* don't change default value */
 
+void
+initialize_connector_ports(connectorinfo_t *connectorinfo)
+{
+    if (connectorinfo->enable_tls) {
+        connectorinfo->port = DEFAULT_TLS_PORT; 
+    } else {
+        connectorinfo->port = DEFAULT_PORT;
+    }
+}
+
 /* sig_handler() for win32, too, since I sometimes call it in code and
  * not only from outside.
  */

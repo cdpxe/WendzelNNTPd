@@ -139,16 +139,6 @@ tls_global_init(connectorinfo_t *connectorinfo)
 	fprintf(stdout, "TLS initialized\n");
 }
 
-void
-initialize_connector_ports(connectorinfo_t *connectorinfo)
-{
-    if (connectorinfo->enable_tls) {
-        connectorinfo->port = DEFAULT_TLS_PORT; 
-    } else {
-        connectorinfo->port = DEFAULT_PORT;
-    }
-}
-
 int
 check_tls_prerequisites(connectorinfo_t *connectorinfo)
 {
