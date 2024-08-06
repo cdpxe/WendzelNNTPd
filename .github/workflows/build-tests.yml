@@ -66,9 +66,9 @@ jobs:
         with:
           usesh: true
           prepare: |
-            pkg_add bison
-            pkg_add mariadb-client
-            pkg_add mhash
+            /usr/sbin/pkg_add bison
+            /usr/sbin/pkg_add mariadb-client
+            /usr/sbin/pkg_add mhash
           run: |
             ./configure
             make
@@ -84,9 +84,9 @@ jobs:
         with:
           usesh: true
           prepare: |
-            pkg_add bison
-            pkg_add mariadb-client
-            pkg_add mhash
+            pkg install -y bison
+            pkg install -y mariadb-client
+            pkg install -y mhash
           run: |
             ./configure
             make
