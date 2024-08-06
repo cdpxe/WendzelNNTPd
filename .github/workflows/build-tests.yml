@@ -11,6 +11,8 @@ jobs:
     name: Build wendzelnntpd on Ubuntu
     steps:
       - uses: actions/checkout@v4
+      - name: Install needed packages
+        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
       - name: Run configuration
         run: ./configure
       - name: Run make
@@ -25,6 +27,8 @@ jobs:
           image: debian:stable-slim
     steps:
       - uses: actions/checkout@v4
+      - name: Install needed packages
+        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
       - name: Run configuration
         run: ./configure
       - name: Run make
@@ -40,6 +44,9 @@ jobs:
       - name: Run in OpenBSD VM
         uses: vmactions/openbsd-vm@v1
         with:
+          usesh: true
+          prepare: |
+            pkg_add bison
           run: |
             ./configure
             make
