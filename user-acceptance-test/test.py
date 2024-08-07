@@ -7,6 +7,13 @@ from appium import webdriver
 from appium.options.windows import WindowsOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from pprint import pprint
+import sys
+import requests
+import time
+import pyautogui
+from selenium.common.exceptions import ElementNotVisibleException, ElementNotSelectableException, NoSuchElementException
+from selenium.webdriver.support.wait import WebDriverWait
 
 appium_server_url = 'http://127.0.0.1:4723'
 
@@ -20,7 +27,7 @@ class TestAppium(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = webdriver.Remote(appium_server_url, options=UiAutomator2Options().load_capabilities(capabilities))
-        self.driver.implicitly_wait(10)
+        self.driver.implicitly_wait(30)
         self.driver.start_recording_screen()
 
     def save_video(self, video, filename):
@@ -34,20 +41,60 @@ class TestAppium(unittest.TestCase):
         if self.driver:
             self.driver.quit()
 
-    def test_find_battery(self) -> None:
-        self.driver.find_element(By.XPATH, '//Button[@AutomationId="button-appmenu"]').click()
-        self.driver.find_element('name', 'New Account').click()
-        self.driver.find_element('name', 'Newsgroup').click()
-        self.driver.find_element(By.XPATH, '//Edit[@Name="Your Name:"]').send_keys('Testautomatisierung')
-        self.driver.find_element(By.XPATH, '//Edit[@Name="Email Address:"]').send_keys('testautomatisierung@test.de')
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
+    def test_with_nntp(self) -> None:
+        wait = WebDriverWait(self.driver, 30)
 
-        self.driver.find_element(By.XPATH, '//Edit[@Name="Newsgroup Server:"]').send_keys('127.0.0.1')
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="button-appmenu"]')).click()
+
+        wait.until(lambda x: x.find_element('name', 'New Account')).click()
+
+        wait.until(lambda x: x.find_element('name', 'Newsgroup')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Edit[@Name="Your Name:"]')).send_keys('Testautomatisierung')
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Edit[@Name="Email Address:"]')).send_keys('testautomatisierung@test.de')
+        wait.until(lambda x: x.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Edit[@Name="Newsgroup Server:"]')).send_keys('nntp.svenliebert.de')
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]')).click()
         
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]').click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Next")]')).click()
 
-        self.driver.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Finish")]').click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Window[@AutomationId="AccountWizard"]/Button[contains(@Name, "Finish")]')).click()
 
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="mailButton"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//*[@Name="nntp.svenliebert.de"]')).click()
+        
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="nntpSubscriptionButton"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//TreeItem[@Name="alt.wendzelnntpd.test false"]/DataItem[@Name="false"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@Name="Subscribe"]')).click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@Name="OK"]')).click()
+
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//TreeItem[@Name="alt.wendzelnntpd.test"]')).click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="folderPaneGetMessages"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="folderPaneWriteMessage"]')).click()
+
+        subject = 'Testautomatisierung - ' + str(time.time())
+
+        time.sleep(5)
+
+        pyautogui.write(subject)
+        pyautogui.press('tab')
+        pyautogui.write("Das ist ein Test")
+        pyautogui.hotkey('ctrlleft', 'enter')
+        pyautogui.press('enter')
+
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="folderPaneGetMessages"]')).click()
+
+        element = wait.until(lambda x: x.find_element(By.XPATH, '//Group[@AutomationId="threadTree"]/Table/Tree[@Name="a.w.test"]/TreeItem[starts-with(@Name,"Testautomatisierung")]'))
+
+        assert subject in element.text
 if __name__ == '__main__':
     unittest.main()
