@@ -167,10 +167,13 @@ jobs:
              - name: Add videos directory for appium tests
                run: New-Item D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\ -ItemType Directory -ea 0
              - name: Run appium
-               run: |
-                 Start-Process "C:\npm\prefix\appium" -PassThru
-                 docker -v
-                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\nntp_thunderbird.py 
+               uses: nick-fields/retry@v2
+               with:
+                timeout_minutes: 10
+                max_attempts: 10
+                command: |
+                  Start-Process "C:\npm\prefix\appium" -PassThru
+                  python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\nntp_thunderbird.py 
              - uses: actions/upload-artifact@v4
                name: Upload videos
                if: always()
@@ -219,10 +222,13 @@ jobs:
              - name: Add videos directory for appium tests
                run: New-Item D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\ -ItemType Directory -ea 0
              - name: Run appium
-               run: |
-                 Start-Process "C:\npm\prefix\appium" -PassThru
-                 docker -v
-                 python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\snntp_thunderbird.py 
+               uses: nick-fields/retry@v2
+               with:
+                timeout_minutes: 10
+                max_attempts: 10
+                command: |
+                  Start-Process "C:\npm\prefix\appium" -PassThru
+                  python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\snntp_thunderbird.py 
              - uses: actions/upload-artifact@v4
                name: Upload videos
                if: always()
