@@ -37,12 +37,12 @@ class TestAppium(unittest.TestCase):
             output_file.write(base64.b64decode(video))
 
     def tearDown(self) -> None:
-        self.save_video(self.driver.stop_recording_screen(), 'test')
+        self.save_video(self.driver.stop_recording_screen(), 'snntp-thunderbird')
         if self.driver:
             self.driver.quit()
 
     def test_with_nntp(self) -> None:
-        wait = WebDriverWait(self.driver, 30)
+        wait = WebDriverWait(self.driver, 60)
 
         wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="button-appmenu"]')).click()
 

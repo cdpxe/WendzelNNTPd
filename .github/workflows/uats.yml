@@ -175,7 +175,7 @@ jobs:
                name: Upload videos
                if: always()
                with:
-                 name: videos
+                 name: videos-nntp
                  path: D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\
                  retention-days: 1
     uat-snntp:
@@ -227,7 +227,7 @@ jobs:
                name: Upload videos
                if: always()
                with:
-                 name: videos
+                 name: videos-snntp
                  path: D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\
                  retention-days: 1
     cleanup:
