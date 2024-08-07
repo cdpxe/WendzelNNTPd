@@ -79,6 +79,8 @@ class TestAppium(unittest.TestCase):
         pyautogui.press('enter')
 
         wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="mailButton"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//*[@Name="nntp.svenliebert.de"]')).click()
         # set TLS encryption end
 
         wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="nntpSubscriptionButton"]')).click()
