@@ -183,7 +183,7 @@ jobs:
                  retention-days: 1
     uat-snntp:
          runs-on: windows-latest
-         needs: build-and-deploy
+         needs: uat-nntp
          steps:
              - uses: actions/checkout@v3
              - uses: FedericoCarboni/setup-ffmpeg@v3
