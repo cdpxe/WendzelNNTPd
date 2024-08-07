@@ -158,6 +158,8 @@ jobs:
                  npm i --location=global appium
                  pip install Appium-Python-Client
                  pip install -U pytest
+                 pip install requests
+                 pip install pyautogui
                  appium driver install windows
                  Write-Output "installation complete."     
              - name: Add WinAppDriver firewall rule
