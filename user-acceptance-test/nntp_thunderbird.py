@@ -20,7 +20,8 @@ appium_server_url = 'http://127.0.0.1:4723'
 capabilities = dict(
     platformName='Windows',
     automationName='Windows',
-    app='C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe'
+    app='C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe',
+    waitForAppLaunch=50
 )
 
 class TestAppium(unittest.TestCase):
