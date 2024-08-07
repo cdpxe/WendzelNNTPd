@@ -18,3 +18,5 @@ For local-testing you need have installed TCL (https://core.tcl-lang.org/tcl/dow
 export nntp_address=127.0.0.1
 chmod +x ./unittesting/tls-testing/run.sh && ./unittesting/tls-testing/run.sh
 ```
+
+The test nntp-mandatory-tls-test.exp_ can not be run automatically because then only TLS connection is possible in user acceptance test
