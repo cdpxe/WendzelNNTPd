@@ -97,5 +97,17 @@ class TestAppium(unittest.TestCase):
         element = wait.until(lambda x: x.find_element(By.XPATH, '//Group[@AutomationId="threadTree"]/Table/Tree[@Name="a.w.test"]/TreeItem[starts-with(@Name,"Testautomatisierung")]'))
 
         assert subject in element.text
+
+        # remove mail account
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@AutomationId="mailButton"]')).click()
+
+        wait.until(lambda x: x.find_element(By.XPATH, '//*[@Name="nntp.svenliebert.de"]')).click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@Name="Account Settings"]')).click()
+        wait.until(lambda x: x.find_element(By.XPATH, '//Button[@Name="Account Actions"]')).click()
+        time.sleep(5)
+        pyautogui.press('up')
+        pyautogui.press('enter')
+        pyautogui.press('left')
+        pyautogui.press('enter')
 if __name__ == '__main__':
     unittest.main()
