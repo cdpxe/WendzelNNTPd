@@ -173,8 +173,7 @@ jobs:
                 max_attempts: 10
                 command: |
                   Start-Process "C:\npm\prefix\appium" -PassThru
-                  python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\nntp_thunderbird.py 
-                  python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\snntp_thunderbird.py 
+                  python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\nntp_thunderbird.py; python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\snntp_thunderbird.py 
              - uses: actions/upload-artifact@v4
                name: Upload videos
                if: always()
