@@ -40,6 +40,10 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
+* TLS server authentication and data encryption
+* Supports multiple connectors with different configurations
+* Supports NNTPS ans SNNTP with TLS 1.0-1.3
+* Support for client certificate verification (mTLS) and CRL checks
 
 #### Features Under Development/Call for Testing
 
