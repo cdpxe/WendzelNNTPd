@@ -21,7 +21,8 @@ capabilities = dict(
     platformName='Windows',
     automationName='Windows',
     app='C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe',
-    waitForAppLaunch=50
+    waitForAppLaunch=50,
+    appWorkingDir='C:\\Program Files\\Mozilla Thunderbird\\'
 )
 
 class TestAppium(unittest.TestCase):
