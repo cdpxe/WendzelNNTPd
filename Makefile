@@ -196,7 +196,7 @@ docker-build:
 	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
 
 docker-run:
-	docker run --name wendzelnntpd --rm -it -p 119:119 -p 563:563 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
+	docker run --name wendzelnntpd --rm -it -p 118:118 -p 119:119 -p 563:563 -p 564:564 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
 
 docker-stop:
 	docker stop wendzelnntpd

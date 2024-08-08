@@ -1,0 +1,5 @@
+Newsgroups: alt.wendzelnntpd.test
+From: aaa <aaa@aa.de>
+Subject: test
+
+.

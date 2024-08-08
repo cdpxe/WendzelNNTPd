@@ -87,6 +87,7 @@
 	#include <libpq-fe.h>
 #endif
 
+/* OpenSSL */
 #ifdef USE_TLS
 	#include <openssl/ssl.h>
 	#include <openssl/err.h>
@@ -160,8 +161,8 @@
 #define CONN_LOGSTR_LEN		128
 #define IPv6ADDRLEN		48 /* 40 should be enough */
 
-#define DEFAULTPORT		119
-#define DEFAULTTLSPORT	563
+#define DEFAULT_PORT		119 // default non-TLS port
+#define DEFAULT_TLS_PORT	563 // default TLS port
 
 #define STACK_FOUND		0x00
 #define STACK_NOTFOUND		0x01
@@ -192,6 +193,18 @@
 #define ARTCLTYP_MESSAGEID	0x01
 #define ARTCLTYP_NUMBER		0x02
 #define ARTCLTYP_CURRENT	0x03  /* > ARTICLE\r\n -> return the currently selected article */
+
+/* Config-Options tls-verify-client */
+#define VERIFY_NONE 0x00
+#define VERIFY_OPTIONAL 0x01
+#define VERIFY_REQUIRE 0x02
+#define VERIFY_UNDEV 0xFF
+
+/* Config-Options tls-crl*/
+#define CRL_NONE 0x00
+#define CRL_LEAF 0x01
+#define CRL_CHAIN 0x02
+#define CRL_UNDEV 0xFF
 
 #define PR_STRING		"WendzelNNTPd: "
 #define PROMPT(x)		printf(PR_STRING x "\n")
@@ -247,18 +260,25 @@
 
 /*******************************************************************/
 
+// struct definition for connector
 typedef struct {
-   uint16_t port;
-   char     *listen;
-   uint8_t  enable_tls;
-   uint8_t  enable_starttls;
-   char     *ciphers;
-   char		*cipher_suites;
-   char     *server_cert_file;
-   char     *server_key_file;
-
+	uint16_t port;
+	char     *listen;
+	uint8_t  enable_tls;
+	uint8_t  enable_starttls;
+	char     *ciphers;
+	char		*cipher_suites;
+	char     *server_cert_file;
+	char     *server_key_file;
+	int		tls_minimum_version;
+	int		tls_maximum_version;
+	char 	*ca_cert_file;
+	int		tls_verify_client;
+	int		tls_verify_client_depth;
+	int		tls_crl;
+	char		*tls_crl_file;
 #ifdef USE_TLS
-	SSL_CTX	*ctx;
+	SSL_CTX	*ctx; // current SSL_CONTEXT
 #endif
 } connectorinfo_t;
 
@@ -269,9 +289,9 @@ typedef struct {
 	struct sockaddr_in6 sa6;
 	char		ip[IPv6ADDRLEN];
 	connectorinfo_t *connectorinfo;
-	int		tls_active; /* is the client already communicating encrypted= */
-	
 #ifdef USE_TLS
+	int		tls_active; /* is the client already communicating encrypted= */
+	int		switch_to_tls; /* does the client want to switch to TLS via STARTTLS? */
 	SSL		*tls_session; /* save the current TLS session */
 #endif
 } sockinfo_t;
@@ -350,6 +370,8 @@ char *filebackend_retrbody(char *);
 
 /* globals.c */
 void sig_handler(int);
+void initialize_connector_ports(connectorinfo_t *connectorinfo);
+void signal_action_handler (int, siginfo_t *, void *);
 
 /* server.c */
 void ToSend(char *, int, server_cb_inf *);
@@ -359,9 +381,10 @@ void kill_thread(server_cb_inf *);
 void nntp_localtime_to_str(char [40], time_t);
 
 #ifdef USE_TLS
-int tls_global_init();
+void tls_global_init(connectorinfo_t *connectorinfo);
+int check_tls_prerequisites(connectorinfo_t *connectorinfo);
 void tls_global_close();
-int tls_session_init(SSL **session, int sockfd);
+int tls_session_init(server_cb_inf *inf);
 void tls_session_close(SSL *session);
 #endif
 

@@ -43,7 +43,7 @@ extern int size_sockinfo_t; /* is set to 0 on startup in main.c */
 short parser_mode = PARSER_MODE_SERVER;
 
 sockinfo_t *sockinfo = 0;
-connectorinfo_t *connectorinfo = NULL;
+connectorinfo_t *connectorinfo = NULL; /* used for multiple connectors */
 int peak = 0;
 int max_post_size = MAX_POSTSIZE_DEFAULT;
 fd_set fds;
@@ -61,6 +61,7 @@ char *db_user = NULL;
 char *db_pass = NULL;
 unsigned short db_port = 0;
 char *hash_salt = "default-hash-salt-0_----3331";
+unsigned short tls_is_mandatory = 0; /* force TLS on commands */
 
 void
 yyerror(const char *str)
@@ -177,13 +178,14 @@ basic_setup_server(void)
 static void
 start_listeners(void) {
 
-	int size=0;
+	int size = 0;
 	int salen, sa6len;
-	int yup=1;
+	int yup = 1;
 	struct sockaddr_in sa;
 	struct sockaddr_in6 sa6;
 
 	if (!sockinfo) {
+		// allocate memory for socket
 		CALLOC(sockinfo, (sockinfo_t *), 1, sizeof(sockinfo_t))
 	} else {
 		size = size_sockinfo_t;
@@ -196,7 +198,10 @@ start_listeners(void) {
 	bzero(&sa, sizeof(sa));
 	bzero(&sa6, sizeof(sa6));
 
+#ifdef USE_TLS
+	// set tls_active default for socket
 	(sockinfo + size)->tls_active=FALSE;			
+#endif
 	(sockinfo + size)->connectorinfo=connectorinfo;					//Link sockinfo to connectorinfo
 
 	if (inet_pton(AF_INET, connectorinfo->listen, &sa.sin_addr)) {					//IPv4 Listener
@@ -224,7 +229,7 @@ start_listeners(void) {
 
 		peak = max((sockinfo + size)->sockfd, peak);
 		(sockinfo + size)->family=AF_INET;
-		fprintf(stderr, "Created IPv4 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+		fprintf(stdout, "Created IPv4 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
 	} else if (inet_pton(AF_INET6, connectorinfo->listen, &sa6.sin6_addr)) {	//IPv6 Listener
 		sa6.sin6_port = htons(connectorinfo->port);
 		sa6.sin6_family = AF_INET6;
@@ -251,7 +256,7 @@ start_listeners(void) {
 	
 		peak = max((sockinfo+size)->sockfd, peak);
 		(sockinfo + size)->family = AF_INET6;	
-		fprintf(stderr, "Created IPv6 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
+		fprintf(stdout, "Created IPv6 listener on %s:%d\n",connectorinfo->listen,connectorinfo->port);
 	} else {																							//Error Listener not IPv4 or IPv6
 		fprintf(stderr, "Invalid address: %s\n", connectorinfo->listen);
 		exit(ERR_EXIT);
@@ -282,13 +287,21 @@ start_listeners(void) {
 %token TOK_MESSAGE_COUNT_IN_DB
 %token TOK_MESSAGE_BODY_IN_DB
 %token TOK_HASHSALT
+%token TOK_TLS_MANDATORY
 %token TOK_CONN_BEGIN
 %token TOK_TLS
 %token TOK_TLS_CIPHERS
 %token TOK_TLS_CIPHER_SUITES;
-%token TOK_SSL_CERT
-%token TOK_SSL_KEY
+%token TOK_TLS_CERT
+%token TOK_TLS_KEY
 %token TOK_STARTTLS
+%token TOK_TLS_CA_CERT
+%token TOK_TLS_VERSION
+%token TOK_TLS_VERSION_STRING
+%token TOK_TLS_VERIFY_CLIENT
+%token TOK_TLS_VERIFY_CLIENT_DEPTH
+%token TOK_TLS_CRL
+%token TOK_TLS_CRL_FILE
 %token TOK_CONN_END
 %token TOK_EOF
 
@@ -296,13 +309,13 @@ start_listeners(void) {
 
 commands: /**/ | commands command | commands connector;
 
-command:  beVerbose | anonMessageIDs | useAuth | useACL | maxPostSize | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | eof;
+command:  beVerbose | anonMessageIDs | useAuth | useACL | maxPostSize | dbEngine | dbServer | dbUser | dbPass | dbPort | hashSalt | messageBodyInDb | messageCountInDb | TLSMandatory | eof;
 
 connector: connectorBegin connectorCmds connectorEnd;
 
 connectorCmds: /**/ | connectorCmds connectorCmd;
 
-connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | SSLCert | SSLKey;
+connectorCmd:  usePort | listenonSpec | enableTLS | enableSTARTTLS | TLSCiphers | TLSCipherSuites | TLSCert | TLSKey | TLSCACert | TLSVersion | TLSVerifyClient | TLSVerifyClientDepth | TLSCrl | TLSCrlFile;
 
 connectorBegin:
 	TOK_CONN_BEGIN
@@ -314,10 +327,23 @@ connectorBegin:
 			connectorinfo->enable_tls=FALSE;
 			connectorinfo->enable_starttls=FALSE;
 			connectorinfo->ciphers=NULL;	// Cipher TLS1.0 - 1.2
-			connectorinfo->cipher_suites=NULL;
+			connectorinfo->cipher_suites=NULL; // Cipher Suites TLS1.3
 
-			connectorinfo->server_cert_file=NULL;
-			connectorinfo->server_key_file=NULL;
+			connectorinfo->server_cert_file=NULL;	// Server Cert
+			connectorinfo->server_key_file=NULL; // Server Key
+			connectorinfo->ca_cert_file=NULL; // CA File
+			connectorinfo->tls_verify_client = VERIFY_UNDEV; // mTLS: VERIFY_NONE, VERIFY_OPTIONAL, VERIFY_REQUIRE
+			connectorinfo->tls_verify_client_depth = 10;
+			connectorinfo->tls_crl = CRL_UNDEV; // Certificate Revocation List (CRL)
+			connectorinfo->tls_crl_file = NULL;
+
+#ifdef USE_TLS
+			connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+			connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+#else
+			connectorinfo->tls_minimum_version = 0;
+			connectorinfo->tls_maximum_version = 0;
+#endif
 		}
 	};
 
@@ -325,77 +351,29 @@ connectorEnd:
 	TOK_CONN_END
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			if (connectorinfo->port == 0) {					//Port was not set in config-File
-				if (connectorinfo->enable_tls)				//TLS enabled
-					connectorinfo->port=DEFAULTTLSPORT;
-				else
-					connectorinfo->port=DEFAULTPORT;
+			if (connectorinfo->port == 0) {					//Port was not set in config-File -> set default port
+				initialize_connector_ports(connectorinfo);
 			}
-			if (connectorinfo->listen != NULL) {
-				if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {	
-					if ((connectorinfo->server_cert_file != NULL) && (connectorinfo->server_key_file != NULL)) {
-						if ((access(connectorinfo->server_cert_file,R_OK) == 0) && (access(connectorinfo->server_key_file,R_OK) == 0))	{	//Cert and Key files exist
+
+			// early return if no listener was defined for connector
+			if (connectorinfo->listen == NULL) {
+				fprintf(stderr,"Listen was not defined in connector!\n");
 #ifdef USE_TLS
-							connectorinfo->ctx=SSL_CTX_new(TLS_server_method());
-							if (!connectorinfo->ctx) {
-        						fprintf(stderr,"Error creating SSL Context!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-							if (!SSL_CTX_set_min_proto_version(connectorinfo->ctx, TLS1_VERSION)) {
-        						fprintf(stderr,"Error setting min TLS version in SSL Context!!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							if (!SSL_CTX_set_max_proto_version(connectorinfo->ctx, TLS1_3_VERSION )) {
-        						fprintf(stderr,"Error setting max TLS version in SSL Context!!\n");
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-		
-							if (!SSL_CTX_set_ciphersuites(connectorinfo->ctx,"TLS_AES_256_GCM_SHA384")) {
-        						fprintf(stderr,"Error setting TLS1.3 ciphers suites \"%s\" in SSL Context!!\n",connectorinfo->cipher_suites);
-									ERR_print_errors_fp(stderr);
-									exit(ERR_EXIT);
-							}
-
-							if (!SSL_CTX_set_cipher_list(connectorinfo->ctx,"ALL")) {
-        							fprintf(stderr,"Error setting ciphers \"%s\" in SSL Context!!\n",connectorinfo->ciphers);
-									ERR_print_errors_fp(stderr);
-									exit(ERR_EXIT);
-								}
-				
-							SSL_CTX_load_verify_locations(connectorinfo->ctx, "/usr/local/etc/ssl/ca-root.pem", NULL);
-
-							if (!SSL_CTX_use_PrivateKey_file(connectorinfo->ctx,connectorinfo->server_key_file,SSL_FILETYPE_PEM)) {
-        						fprintf(stderr,"Error loading private key file \"%s\" in SSL Context!!\n",connectorinfo->server_key_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							if (!SSL_CTX_use_certificate_file(connectorinfo->ctx,connectorinfo->server_cert_file,SSL_FILETYPE_PEM)) {
-        						fprintf(stderr,"Error loading certificate \"%s\" in SSL Context!!\n",connectorinfo->server_cert_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-							// verify private key with certificate
-							if (!SSL_CTX_check_private_key(connectorinfo->ctx)) {
-        						fprintf(stderr,"Private key in \"%s\" does not match Certificate in \"%s\" !\n",connectorinfo->server_key_file,connectorinfo->server_cert_file);
-								ERR_print_errors_fp(stderr);
-								exit(ERR_EXIT);
-							}
-
-							SSL_CTX_set_verify(connectorinfo->ctx, SSL_VERIFY_NONE, NULL);
+				ERR_print_errors_fp(stderr);
 #endif
-						}
-					}
+				exit(ERR_EXIT);
+			}
+
+#ifdef USE_TLS
+			// enable TLS if enable-tls or enable-starttls isset in configuration for connector
+			if (connectorinfo->enable_tls || connectorinfo->enable_starttls) {
+				// check needed prerequisites -> if successful, then init TLS implementation
+				if (check_tls_prerequisites(connectorinfo)) {
+					tls_global_init(connectorinfo);
 				}
-				start_listeners();
 			}
-			else {
-        		fprintf(stderr,"Listen was not defined in connector!\n");
-			}
+#endif
+			start_listeners();
 		}
 	};
 
@@ -406,7 +384,7 @@ enableTLS:
 #ifdef USE_TLS
 			connectorinfo->enable_tls=TRUE;
 #else
-			connectorinfo->enable_tls=FALSE;			//enabled on Connector but no SSL support
+			connectorinfo->enable_tls=FALSE;			//enabled on Connector but no TLS support
 #endif
 		}
 	};
@@ -418,7 +396,7 @@ enableSTARTTLS:
 #ifdef USE_TLS
 			connectorinfo->enable_starttls=TRUE;
 #else
-			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no SSL support
+			connectorinfo->enable_starttls=FALSE;		//STARTTLS enabled on Connector but no TLS support
 #endif
 		}
 	};
@@ -427,7 +405,7 @@ TLSCiphers:
 	TOK_TLS_CIPHERS TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
-			if (connectorinfo->ciphers == NULL) {			//Ciphers have not been defined in connector
+			if (connectorinfo->ciphers == NULL) { //Ciphers have not been defined in connector
 				CALLOC(connectorinfo->ciphers, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->ciphers, yytext, strlen(yytext));
 			} else {													//Cipher already defined in connector
@@ -451,29 +429,150 @@ TLSCipherSuites:
 		}
 	};
 
-SSLCert:
-	TOK_SSL_CERT TOK_NAME
+TLSMandatory:
+	TOK_TLS_MANDATORY
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+			// set TLS mandatory
+			tls_is_mandatory = 1;
+		}
+	};
+
+TLSVersion:
+	TOK_TLS_VERSION TOK_TLS_VERSION_STRING
+	{
+		if (parser_mode == PARSER_MODE_SERVER) {
+#ifdef USE_TLS
+			int maximum = 3;
+			int minimum = 0;
+
+			sscanf(yytext, "1.%d-1.%d", &minimum, &maximum);
+
+			// change maximum and minimum, if minimum is greater than maximum
+			if (maximum < minimum) {
+				int tmp = maximum;
+				maximum = minimum;
+				minimum = tmp;
+			}
+
+			switch (minimum) {
+				case 0: 	connectorinfo->tls_minimum_version = TLS1_VERSION;
+							break;
+				case 1: 	connectorinfo->tls_minimum_version = TLS1_1_VERSION;
+							break;
+				case 2: 	connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+							break;
+				case 3: 	connectorinfo->tls_minimum_version = TLS1_3_VERSION;
+							break;
+				default: 	connectorinfo->tls_minimum_version = TLS1_2_VERSION;
+							fprintf(stderr,"Error TLS Version String \"%s\"! Minimum could not be recognized - setting default TLS1.2!\n",yytext);
+							break;
+			}
+
+			switch (maximum) {
+				case 0: 	connectorinfo->tls_maximum_version = TLS1_VERSION;
+							break;
+				case 1: 	connectorinfo->tls_maximum_version = TLS1_1_VERSION;
+							break;
+				case 2: 	connectorinfo->tls_maximum_version = TLS1_2_VERSION;
+							break;
+				case 3: 	connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+							break;
+				default: 	connectorinfo->tls_maximum_version = TLS1_3_VERSION;
+							fprintf(stderr,"Error TLS Version String \"%s\"! Maximum could not be recognized - setting default TLS1.3!\n",yytext);
+							break;
+			}
+#endif
+		}
+	};
+
+TLSCert:
+	TOK_TLS_CERT TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->server_cert_file == NULL)	{
 				CALLOC(connectorinfo->server_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->server_cert_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-servercertificate statement in connector");
+				DO_SYSL("Config-File: More than one tls-server-certificate statement in connector");
 			}
 		}
 	};
 
-SSLKey:
-	TOK_SSL_KEY TOK_NAME
+TLSKey:
+	TOK_TLS_KEY TOK_NAME
 	{
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->server_key_file == NULL)	{
 				CALLOC(connectorinfo->server_key_file, (char *), strlen(yytext) + 1, sizeof(char));
 				strncpy(connectorinfo->server_key_file, yytext, strlen(yytext));
 			} else {
-				DO_SYSL("Config-File: More than one openssl-serverkey statement in connector");
+				DO_SYSL("Config-File: More than one tls-server-key statement in connector");
 			}
+		}
+	};
+
+TLSCACert:
+   TOK_TLS_CA_CERT TOK_NAME
+   {
+      if (parser_mode == PARSER_MODE_SERVER) {
+			if (connectorinfo->ca_cert_file == NULL) {
+         	CALLOC(connectorinfo->ca_cert_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->ca_cert_file, yytext, strlen(yytext));
+			} else {
+				DO_SYSL("Config-File: More than one tls-ca-certificate statement in connector. Ignoring");
+			}
+      }
+   };
+
+TLSVerifyClient:
+	TOK_TLS_VERIFY_CLIENT TOK_NAME
+	{
+		// set mTLS mode
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (strncmp(yytext, "none", 4) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_NONE;
+			} else if (strncmp(yytext, "optional", 8) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_OPTIONAL;
+			} else if (strncmp(yytext, "require", 7) == 0) {
+				connectorinfo->tls_verify_client = VERIFY_REQUIRE;
+			} else {
+				DO_SYSL("Config-File: tls-verify-client must be [none | optional | require]. Ignoring");
+			}
+		}
+	};
+
+TLSVerifyClientDepth:
+	TOK_TLS_VERIFY_CLIENT_DEPTH TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			connectorinfo->tls_verify_client_depth = atoi(yytext);
+			if (atoi(yytext) > 128) {
+				DO_SYSL("Config-File: tls-verify-client-depth too large [0-128]. Ignoring - using Default (10)");
+				connectorinfo->tls_verify_client_depth=10;
+			}
+		}
+	};
+
+TLSCrl:
+	TOK_TLS_CRL TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			if (strncmp(yytext, "none", 4) == 0) {
+				connectorinfo->tls_crl = CRL_NONE;
+			} else if (strncmp(yytext, "leaf", 4) == 0) {
+				connectorinfo->tls_crl = CRL_LEAF;
+			} else if (strncmp(yytext, "chain", 5) == 0) {
+				connectorinfo->tls_crl = CRL_CHAIN;
+			} else {
+				 DO_SYSL("Config-File: tls-crl must be [none | leaf | chain]. Ignoring");
+			}
+		}
+	};
+
+TLSCrlFile:
+	TOK_TLS_CRL_FILE TOK_NAME {
+		if (parser_mode == PARSER_MODE_SERVER) {
+			CALLOC(connectorinfo->tls_crl_file, (char *), strlen(yytext) + 1, sizeof(char));
+         	strncpy(connectorinfo->tls_crl_file, yytext, strlen(yytext));
 		}
 	};
 
@@ -545,11 +644,11 @@ usePort:
 		if (parser_mode == PARSER_MODE_SERVER) {
 			if (connectorinfo->port == 0) {
 				connectorinfo->port = atoi(yytext);
+				// check if port isset and is an integer
 				if (!connectorinfo->port) {
 					fprintf(stderr, "Port '%s' is not a valid port.\n", yytext);
 					exit(ERR_EXIT);
 				}
-//        		fprintf(stderr,"Port: %d\n",connectorinfo->port);
 			} else {																		//more than one port definition in connector
 				fprintf(stderr, "More than one port statement in connector\n" );
 				exit(ERR_EXIT);

@@ -1,0 +1,74 @@
+name: Build tests
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+
+jobs:
+  build-test-ubuntu:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on Ubuntu
+    container:
+          image: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install needed packages
+        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
+      - name: Run configuration
+        run: ./configure
+      - name: Run make
+        run: make
+      - name: Run make install
+        run: make install
+
+  build-test-debian:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on Debian
+    container:
+          image: debian:stable-slim
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install needed packages
+        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
+      - name: Run configuration
+        run: ./configure
+      - name: Run make
+        run: make
+      - name: Run make install
+        run: make install
+
+  build-test-openbsd:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on OpenBSD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run in OpenBSD VM
+        uses: vmactions/openbsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg_add bison
+            pkg_add mhash
+          run: |
+            MYSQL=NO ./configure
+            make
+            make install
+
+  build-test-freebsd:
+    runs-on: ubuntu-latest
+    name: Build wendzelnntpd on FreeBSD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run in FreeBSD VM
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y sqlite3
+            pkg install -y bison
+            pkg install -y mhash
+          run: |
+            MYSQL=NO ./configure
+            make
+            make install

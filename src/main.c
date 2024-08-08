@@ -26,6 +26,9 @@ extern int size_sockinfo_t;
 extern int daemon_mode;
 extern short global_mode;
 
+extern sig_atomic_t rec_sighup;    //SIGHUP has been sent to process - global.c
+extern sig_atomic_t rec_sigterm;   //SIGTERM (KILL) has been sent to process - global.c
+
 /* need this global for server.c */
 struct sockaddr_in sa;
 struct sockaddr_in6 sa6;
@@ -67,6 +70,8 @@ main(int argc, char *argv[])
 #endif
 	pthread_t th1;
 	sockinfo_t *sockinf;
+	struct sigaction sig_a;
+	fd_set fds;
 
 	if (argc > 1) { /* non-daemon mode parameters are checked before startup */
 		if (strncmp(argv[1], "-v", 2) == 0) { /* just display the version */
@@ -89,17 +94,15 @@ main(int argc, char *argv[])
 
 	basic_setup_server();
 
-#ifndef __WIN32__
-	/* signal handling */
-	if (signal(SIGINT, sig_handler) == SIG_ERR) {
-		perror("signal");
-		exit(ERR_EXIT);
+	/* signal handling - for all signals*/
+	memset(&sig_a,0,sizeof(sig_a));
+	sig_a.sa_sigaction=&signal_action_handler;
+	sig_a.sa_flags=SA_SIGINFO;
+	for (i = 1; i < 32; i++) {
+		if ((i != SIGKILL) && (i != SIGSTOP))     //Handler except SIGKILL and SIGSTOP
+			sigaction(i,&sig_a,NULL);        		//Handler for all other signals 
 	}
-	if (signal(SIGTERM, sig_handler) == SIG_ERR) {
-		perror("signal");
-		exit(ERR_EXIT);
-	}
-#endif
+
 	/* 41 - 5a = upper case -> + 0x20 = lower case */
 	for (i = 0; i < 256; i++) {
 		if (i >= 0x41 && i <= 0x5a)
@@ -205,7 +208,11 @@ main(int argc, char *argv[])
 
 					strncpy(sockinf->ip, (sockinfo+i)->ip, strlen((sockinfo+i)->ip));
 					bzero((sockinfo+i)->ip, strlen((sockinfo+i)->ip));
+#ifdef USE_TLS
+					// set default values for initialization
 					sockinf->tls_active = FALSE;
+					sockinf->switch_to_tls = FALSE;
+#endif
                     sockinf->connectorinfo=(sockinfo + i)->connectorinfo;
 
 					if (pthread_create(&th1, NULL, &do_server, sockinf) != 0) {
