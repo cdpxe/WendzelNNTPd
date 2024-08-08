@@ -218,7 +218,6 @@ jobs:
              - name: Add videos directory for appium tests
                run: New-Item D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\videos\ -ItemType Directory -ea 0
              - name: Run appium
-               uses: nick-fields/retry@v2
                run: |
                   Start-Process "C:\npm\prefix\appium" -PassThru
                   python -m pytest D:\a\WendzelNNTPd\WendzelNNTPd\user-acceptance-test\snntp_thunderbird.py 
