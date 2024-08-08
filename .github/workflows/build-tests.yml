@@ -3,7 +3,7 @@ name: Build tests
 on:
     workflow_dispatch:
     push:
-        branches: [ "feature/tls" ]
+        branches:
 
 jobs:
   build-test-ubuntu:
