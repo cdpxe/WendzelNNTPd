@@ -3,11 +3,10 @@ WNNTPd (WendzelNNTPd) was originally written by Steffen Wendzel (since 2004)
     web: https://www.wendzel.de
 
 Contributors:
-  - **TODO** Michael Dunsky: Added support for TLS (NNTPS/STARTTLS)
-  - **TODO** Christoph Grill: Added support for TLS (NNTPS/STARTTLS)
   - Christian Barthel: Postgres support (2023), currently experimental, and code clean-up
   - @deavmi: clean-up and fixes of the documentation (2018-2019)
-  - Sven Liebert: Docker support for development purposes
+  - Sven Liebert: Docker support for development purposes, improved signal handling
+  - Sven Liebert, Michael Dunsky, and Christoph Grill: TLS/NTTPS/SNNTP support
 
 Additional patches by:
   - Michael Baeuerle (NetBSD pkgsrc)
