@@ -118,7 +118,7 @@
 #endif
 
 #define VERSION			"2.2-alpha1"
-#define RELEASENAME		"'St.-Peter-Ording'" /* should not include white-spaces! */
+#define RELEASENAME		"'Giersleben'" /* should not include white-spaces! */
 
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"
