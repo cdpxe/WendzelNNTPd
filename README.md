@@ -6,7 +6,11 @@ This server is tailored for workgroups, where users trust each other and where n
 
 ## Download
 
-##### Source
+##### Version 2.2-alpha
+
+The Git repository contains version 2.2 alpha that includes TLS support and several other features.
+
+##### Source (version 2.1.3)
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
 
 ##### Packages & Executables
@@ -40,15 +44,14 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Automatically prevents double-postings
 * Supports "invisible newsgroups"
 * It is open + free software! :)
-* TLS server authentication and data encryption
-* Supports multiple connectors with different configurations
-* Supports NNTPS ans SNNTP with TLS 1.0-1.3
-* Support for client certificate verification (mTLS) and CRL checks
+* v.2.2: TLS server authentication and data encryption
+* v.2.2: Supports multiple connectors with different configurations
+* v.2.2.: Supports NNTPS ans SNNTP with TLS 1.0-1.3
+* v.2.2.: Support for client certificate verification (mTLS) and CRL checks
 
 #### Features Under Development/Call for Testing
 
-* The main branch currently provides experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!).
-* Two independent and experimental **NNTPS/TLS** branches are available for testing (thx to Mr. Dunsky and Mr. Grill!)
+* The main branch currently provides version 2.2-alpha, including experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!). Further, the main branch provides TLS support.
 
 ## Website
 
