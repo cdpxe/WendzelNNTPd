@@ -104,6 +104,7 @@ wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGR
 
 install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(FAKECDIR) ]; then install -d -m 0755 $(FAKECDIR); fi
+	if [ ! -d $(FAKECDIR)/etc ]; then install -d -m 0755 $(FAKECDIR)/etc; fi
 	if [ ! -d $(DESTDIR)/sbin ]; then install -d -m 0755 $(DESTDIR)/sbin; fi
 	if [ ! -d $(DESTDIR)/share ]; then install -d -m 0755 $(DESTDIR)/share; fi
 	if [ ! -d $(DESTDIR)/share/doc ]; then install -d -m 0755 $(DESTDIR)/share/doc; fi
