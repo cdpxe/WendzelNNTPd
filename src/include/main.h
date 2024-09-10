@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2024 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
  * http://www.wendzel.de
  *
  * This program is free software; you can redistribute it and/or modify
@@ -117,7 +117,7 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"current-DEV-unstable"
+#define VERSION			"2.2-alpha1"
 #define RELEASENAME		"'St.-Peter-Ording'" /* should not include white-spaces! */
 
 #ifndef BUILD /* Win32 */
