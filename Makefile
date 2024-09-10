@@ -19,7 +19,7 @@ CFLAGS+=$(ADD_CFLAGS)
 BUILD=-DBUILD=\"`cat build`\"
 GDBON=-ggdb -g #-lefence
 
-#DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
+DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 
@@ -27,9 +27,9 @@ BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
 
-all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) globals.o
+all : wendzelnntpadm main.o db_rawcheck.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o
 	expr `cat build` \+ 1 >build
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o db_rawcheck.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH) $(OPENSSLLIB)
 	#strip bin/wendzelnntpd
 
 lexyacc : lex.yy.o config.tab.o
@@ -87,14 +87,17 @@ charstack.o : $(SRC)/charstack.c $(HEADERS)
 globals.o : $(SRC)/globals.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
 
+libssl.o : $(SRC)/libssl.c $(HEADERS)
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+
 # admin tool
 
 cdpnntpadm.o : $(SRC)/cdpnntpadm.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) \
 	-DTHIS_TOOLNAME=\"wendzelnntpd\" -c $<
 
-wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH)
+wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o $(OPENSSLOBJ) globals.o
+	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(OPENSSLOBJ) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH) $(OPENSSLLIB)
 	#strip bin/wendzelnntpadm
 
 # misc targets
@@ -122,15 +125,16 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpadm.8
 	# config
 	@if [ -f $(FAKECDIR)/wendzelnntpd.conf ]; then cp $(FAKECDIR)/wendzelnntpd.conf $(FAKECDIR)/wendzelnntpd.conf.bkp; chmod 0644 $(FAKECDIR)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
-	cp wendzelnntpd.conf $(FAKECDIR)/
+	cp $(CONFFILE) $(FAKECDIR)/wendzelnntpd.conf
 	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
 	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
 	# nextmsgid and database/usenet.db are placed here:
 	mkdir -p /var/spool/news/wendzelnntpd
 	# og-rwx since the passwords are stored in the database too!
 	chmod 700 /var/spool/news/wendzelnntpd
-	# create a backup of the old usenet database, if needed
-	@if [ -f $(UDBFILE) ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
+	# create a backup of the old usenet database, if needed (only if not dev-mode)
+	@if [ -f $(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
+			
 	@# create new database, dir already exists due to earlier mkdir call
 	install -d -m 0700 $(CMD_INSTALL_USEROPT) 0 -g 0 /var/spool/news/wendzelnntpd
 	@#
@@ -138,7 +142,8 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@# AND
 	@# create initial newsgroup for sqlite3
 	@#
-	@if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi
+	@# only create if there is no database file already
+	@if [ ! -f $(UDBFILE) ]; then if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi; fi
 	@echo "Installation finished. Please note that your existing wendzelnntpd.conf might have been replaced (a backup should be located in the same folder as your original configuration file)."
 	@echo "Thank you for using this software! Have fun using it!"
 
@@ -187,16 +192,11 @@ man_wendzelnntpadm :
 	groff -Tascii -man wendzelnntpadm.8  > test.man
 	man -l test.man
 
-docker-build-base:
-	docker build -f ./docker/Dockerfile-Base -t wendzelnntpd-base:latest .
-
-docker-build-app:
-	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-
-docker-build: docker-build-base docker-build-app
+docker-build:
+	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
 
 docker-run:
-	docker run --name wendzelnntpd --rm -it -p 119:119 -d wendzelnntpd:latest
+	docker run --name wendzelnntpd --rm -it -p 118:118 -p 119:119 -p 563:563 -p 564:564 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
 
 docker-stop:
 	docker stop wendzelnntpd

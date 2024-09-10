@@ -1,0 +1,82 @@
+set timeout 2
+
+send_user "=== Test with active TLS via extra port, with mutual TLS and client certificate ===\n"
+
+spawn openssl s_client -verify_quiet -quiet -crlf -cert test-files/client-pub.pem -key test-files/client-key.pem -connect $env(nntp_address):564
+
+# startup greeting banner
+send_user "== Checking for startup banner ==\n"
+expect {
+  timeout { send_user "\nError while getting startup banner\n"; exit 1 }
+  -re "200 WendzelNNTPd.*"
+}
+
+# check for help
+send_user "== Checking for help command ==\n"
+send "help\n"
+expect {
+  timeout { send_user "\nError while getting help text\n"; exit 1 }
+  -re "100.*"
+}
+
+# check if STARTTLS is NOT in capabilties list
+send_user "== Checking for capabilities command, no STARTTLS allowed ==\n"
+send "capabilities\n"
+expect {
+  -re "101.*" { set outcome $expect_out(0,string) }
+  timeout { send_user "\nError while getting capabilities\n"; exit 1 }
+}
+
+foreach line [ split $outcome "\r\n"] {
+  set found [regexp {STARTTLS} $line match STARTTLS]
+  if {$found == 1} {
+    send_user "\nError: STARTTLS in capabilities\n"
+    exit 1
+  }
+}
+
+# check if starttls command outputs correct value
+send_user "== Checking for STARTTLS to return 502 as we are already on TLS ==\n"
+send "starttls\n"
+expect {
+  timeout { send_user "\nError: STARTTLS did not respond with 502\n"; exit 1 }
+  -re "502.*"
+}
+
+# check if list command outputs correct value
+send_user "== Checking for list command ==\n"
+send "list\n"
+expect {
+  timeout { send_user "\nFailed to get group list\n"; exit 1 }
+  -re "215.*"
+}
+
+# check if posting works
+send_user "== Checking if article can be posted ==\n"
+send "post\n"
+expect {
+  timeout { send_user "\nFailed to send post command\n"; exit 1 }
+  -re "340.*"
+}
+send [ exec cat test-files/test-posting.txt ]
+send "\n"
+expect {
+  timeout { send_user "\nFailed to post article\n"; exit 1 }
+  -re "240.*"
+}
+
+# check if we have a posting
+send_user "== Checking if we have content in group ==\n"
+send "group alt.wendzelnntpd.test\n"
+expect {
+  timeout { send_user "\nFailed to change group\n"; exit 1 }
+  -re "211.*"
+}
+send "article\n"
+expect {
+  timeout { send_user "\nFailed to get article\n"; exit 1 }
+  -re "220.*"
+}
+
+# all checks OK
+send_user "== All checks succeeded ==\n"

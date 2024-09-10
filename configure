@@ -49,6 +49,9 @@ RELEASE=`uname -r`
 
 TABCPATH='src/'
 
+# Default for usage of TLS is YES
+USE_TLS="YES"
+
 ###################################################
 
 out()
@@ -101,8 +104,25 @@ if [ "$CONFDIR" = "" ]; then
 	CONFDIR=/usr/local/etc
 fi
 
+# make wendzelnntpd.conf the default CONFFILE
+if [ "$CONFFILE" = "" ]; then
+	CONFFILE="wendzelnntpd.conf"
+fi
+
 if [ "$FAKECDIR" = "" ]; then
 	FAKECDIR=$CONFDIR
+fi
+
+# if TLS is explicit disable, then compile without
+# Default for SSL/TLS is YES
+if [ "$TLS" = "" ]; then
+	USE_TLS="YES"
+# Compile without SSL/TLS
+elif [ "$TLS" = "NO" ]; then	
+	USE_TLS="NO"
+# Compile with SSL/TLS
+else
+	USE_TLS="YES"
 fi
 
 if [ "$1" != "" ]; then
@@ -114,6 +134,8 @@ if [ "$1" != "" ]; then
 	echo "           or /usr/local in 99% of all cases) and there is"
 	echo "           usually little reason to change this variable."
 	echo "           The default value is: /usr/local"
+	echo "CONFFILE - The config file name of the source config file"
+	echo "           The default value is: wendzelnntpd.conf"
 	echo "CONFDIR  - The installation destination of the config file"
 	echo "           (would be /etc or /usr/local/etc in 99% of all cases)."
 	echo "           The default value is: /usr/local/etc"
@@ -141,6 +163,11 @@ if [ "$1" != "" ]; then
 	echo "Note: You can only deactivate *either* MYSQL *or* SQLITE *or*"
 	echo "PostgreSQL but not all of them, i.e., at least one database is"
 	echo "required to operate WendzelNNTPd."
+	echo
+	echo "3) Encryption (options to disable support at compile-time):"
+	echo
+	echo "TLS=NO - Disables support for TLS encryption"
+	echo "If encryption is not enabled, openssl is needed to be installed."
 	exit 1
 fi
 
@@ -430,17 +457,21 @@ rm -f temp temp.c
 
 
 ###############
+if [ "$USE_TLS" = "NO" ]; then
+	out "configuring without TLS support ..."; echo
+else
+	out "checking for openssl..."
+	openssl version >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
 
-#out "checking for openssl..."
-#	openssl -v >/dev/null 2>&1; check "yes" "no" "You need openssl (or set PATH)."
-#
-#out "checking for libssl..."
-#cat << EOF >temp.c
-##include <openssl/ssl.h>
-#int main(){SSL_library_init();return 0;}
-#EOF
-#$COMPILER $ADD_LNKFLAGS -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
-#rm -f temp temp.c
+	out "checking for libssl..."
+	cat << EOF >temp.c
+	#include <openssl/ssl.h>
+	int main(){SSL_library_init();return 0;}
+EOF
+
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lssl 2>&1; check "yes" "no" "You need libssl."
+	rm -f temp temp.c	
+fi
 
 ############# rc.d script ADJUSTMENT ##########
 
@@ -498,6 +529,14 @@ else
 	echo 'POSTGRESOBJ=db_postgres.o'>> $MAKEFILE_INC
 fi
 
+if [ "$USE_TLS" = "YES" ]; then
+	echo 'OPENSSLOBJ=libssl.o' >> $MAKEFILE_INC
+	echo 'OPENSSLLIB=-lssl -lcrypto' >> $MAKEFILE_INC
+	ADD_CFLAGS=`echo $ADD_CFLAGS " -DUSE_TLS "`
+else
+	echo 'OPENSSLOBJ=' >> $MAKEFILE_INC
+	echo 'OPENSSLLIB=' >> $MAKEFILE_INC
+fi
 
 
 if [ "$SQLITE" = "NO" ]; then
@@ -524,6 +563,7 @@ echo "ADD_LNKFLAGS=$ADD_LNKFLAGS">> $MAKEFILE_INC
 echo >> $MAKEFILE_INC
 echo "DESTDIR=$DESTDIR">> $MAKEFILE_INC
 echo "CONFDIR=$CONFDIR">> $MAKEFILE_INC
+echo "CONFFILE=$CONFFILE">> $MAKEFILE_INC
 echo "FAKECDIR=$FAKECDIR">> $MAKEFILE_INC
 
 echo "
