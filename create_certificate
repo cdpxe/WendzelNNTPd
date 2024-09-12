@@ -1,0 +1,105 @@
+#!/bin/bash
+
+echo "This is the WendzelNNTPd script for generating SSL certificates"
+echo
+
+mkdir -p /usr/local/etc/ssl
+
+if [ "$USER" != "root" ]; then
+    echo "Run this script with root privileges!"
+    exit
+fi
+
+function usage {
+    echo ""
+    echo "Creates certificates for WendzelNNTPd selfsigned or via LetsEncrypt for production usage"
+    echo ""
+    echo "usage: ./create_certificate --environment localhost | letsencrypt --email string --domain string "
+    echo ""
+    echo "  --environment string    context for generating certificates (localhost or letsnecrypt are allowed values) "
+    echo "  --email string          only needed if letsencrypt is used"
+    echo "                          (example: test@test.de)"
+    echo "  --domain string         only needed if letsencrypt is used; specify domain under which your wendzelnntpd server is reachable"
+    echo "                          (example: test.de)"
+    echo ""
+}
+
+while [ $# -gt 0 ]; do
+    if [[ $1 == "--help" ]]; then
+        usage
+        exit
+    fi
+
+    if [[ $1 == "--"* ]]; then
+        v="${1/--/}"
+        declare "$v"="$2"
+        shift
+    fi
+    shift
+done
+
+if [[ -z $environment || "$environment" = "local" ]]; then
+    echo "Environment is set to local. Certificates for local use are generated now..."
+    echo 
+
+    openssl req \
+        -x509 \
+        -new \
+        -newkey rsa:2048 \
+        -days 3650 \
+        -nodes \
+        -extensions v3_ca \
+        -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
+        -keyout "/usr/local/etc/ssl/ca-key.pem" \
+        -out "/usr/local/etc/ssl/ca.crt"
+
+    openssl genrsa -out "/usr/local/etc/ssl/server.key" 2048
+    openssl req \
+        -new -key "/usr/local/etc/ssl/server.key" \
+        -out "/usr/local/etc/ssl/server.csr" \
+        -config "./docker/openssl/openssl.cnf"
+
+    openssl x509 \
+        -req \
+        -days 365 \
+        -in "/usr/local/etc/ssl/server.csr" \
+        -CA "/usr/local/etc/ssl/ca.crt" \
+        -CAkey "/usr/local/etc/ssl/ca-key.pem" \
+        -CAcreateserial \
+        -extensions v3_req \
+        -extfile "./docker/openssl/openssl.cnf" \
+        -out "/usr/local/etc/ssl/server.crt"
+
+    echo "Finished ..."
+    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo
+elif [ "$environment" = "letsencrypt" ]; then
+    echo "Environment is set to local. Certificates are generated now via LetsEncrypt certbot..."
+    echo "Check if certbot is installed..."
+    certbot --version  || exit
+
+    if [ -z $email ]; then
+        echo "You have to add an email with --email parameter"
+        exit
+    fi
+
+    if [ -z $domain ]; then
+        echo "You have to add the domain where running this script with --domain parameter"
+        exit
+    fi
+
+    echo "Generating certificates..."
+    certbot certonly --standalone -n --agree-tos --email $email --domains $domain --cert-name wendzelnntpd
+
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/fullchain.pem /usr/local/etc/ssl/server.crt
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/privkey.pem /usr/local/etc/ssl/server.key
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/chain.pem /usr/local/etc/ssl/ca.crt
+
+    echo "Finished ..."
+    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo
+else
+    echo "Unknown environment for script generation provided..."
+    echo "Stopping script."
+    echo
+fi
