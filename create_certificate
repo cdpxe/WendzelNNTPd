@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This is the WendzelNNTPd script for generating SSL certificates"
+echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
 
 mkdir -p /usr/local/etc/ssl
@@ -12,14 +12,14 @@ fi
 
 function usage {
     echo ""
-    echo "Creates certificates for WendzelNNTPd selfsigned or via LetsEncrypt for production usage"
+    echo "Creates certificates for WendzelNNTPd (selfsigned or via LetsEncrypt)"
     echo ""
-    echo "usage: ./create_certificate --environment localhost | letsencrypt --email string --domain string "
+    echo "usage: ./create_certificate --environment localhost | letsencrypt --email string --domain string"
     echo ""
-    echo "  --environment string    context for generating certificates (localhost or letsnecrypt are allowed values) "
-    echo "  --email string          only needed if letsencrypt is used"
+    echo "  --environment string    context for generating certificates ('localhost' and 'letsencrypt' are allowed values)"
+    echo "  --email string          only needed if 'letsencrypt' is used"
     echo "                          (example: test@test.de)"
-    echo "  --domain string         only needed if letsencrypt is used; specify domain under which your wendzelnntpd server is reachable"
+    echo "  --domain string         only needed if 'letsencrypt' is used; specify domain under which your server is reachable"
     echo "                          (example: test.de)"
     echo ""
 }
@@ -39,7 +39,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [[ -z $environment || "$environment" = "local" ]]; then
-    echo "Environment is set to local. Certificates for local use are generated now..."
+    echo "Environment is set to 'local'. Certificates for 'local' use are generated now..."
     echo 
 
     openssl req \
@@ -71,7 +71,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -out "/usr/local/etc/ssl/server.crt"
 
     echo "Finished ..."
-    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo "You can find the certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
     echo
 elif [ "$environment" = "letsencrypt" ]; then
     echo "Environment is set to local. Certificates are generated now via LetsEncrypt certbot..."
