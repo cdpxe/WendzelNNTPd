@@ -32,17 +32,19 @@ $ make
 ...
 \end{verbatim}
 
+\paragraph*{Generating SSL certifiates}
 If you want to generate SSL certificates you can use the helper script:
 \begin{verbatim}
-	$ sudo ./create_certificate \
-		--environment letsencrypt \
-		--email <YOUR-EMAIL> \\
-		--domain <YOUR-DOMAIN>
+$ sudo ./create_certificate \
+	--environment letsencrypt \
+	--email <YOUR-EMAIL> \\
+	--domain <YOUR-DOMAIN>
 \end{verbatim}
-For the parameter -{}-environment \textit{local} is also a valid value. Then the certificate is generated only for usage on localhost and is self-signed. After generating the certificate you have to adjust \textit{wendzelnntpd.conf} (check Section \ref{network-settings}) to activate TLS (configuration option \textit{enable-tls})). The paths for certificate and server key can stay as they are. 
+For the parameter \texttt{-{}-environment}, ``\textit{local}'' is also a valid value. In that case, the certificate is generated only for usage on localhost and is self-signed. After generating the certificate you have to adjust \textit{wendzelnntpd.conf} (check Section~\ref{network-settings}) to activate TLS (configuration option \textit{enable-tls})). The paths for certificate and server key can stay as they are. 
 
 ~
 
+\paragraph*{Installing WendzelNNTPd}
 To install WendzelNNTPd on your system, you need superuser access. Run \textbf{make install} to install it to the default location \textit{/usr/local/*}.
 
 \begin{verbatim}

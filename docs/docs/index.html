@@ -3,8 +3,8 @@
 <!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
 <HTML lang="en">
 <HEAD>
-<TITLE>WendzelNNTPd Version 2.1 Documentation</TITLE>
-<META NAME="description" CONTENT="WendzelNNTPd Version 2.1 Documentation">
+<TITLE>WendzelNNTPd Version 2.2 Documentation</TITLE>
+<META NAME="description" CONTENT="WendzelNNTPd Version 2.2 Documentation">
 <META NAME="keywords" CONTENT="docs">
 <META NAME="resource-type" CONTENT="document">
 <META NAME="distribution" CONTENT="global">
@@ -29,11 +29,10 @@
 <!--End of Navigation Panel-->
 
 <P>
-<H1 class="CENTER">WendzelNNTPd Version 2.1 Documentation</H1>
+<H1 class="CENTER">WendzelNNTPd Version 2.2 Documentation</H1>
 <DIV CLASS="author_info">
 
-<STRONG>Steffen Wendzel, <kbd><A ID="tex2html1"
-  HREF="https://www.wendzel.de">https://www.wendzel.de</A></kbd></STRONG>
+<STRONG>Steffen Wendzel and contributors</STRONG>
 </DIV>
 
 <P>
@@ -46,157 +45,161 @@ Contents</A>
 <!--Table of Contents-->
 
 <UL CLASS="TofC">
-<LI><A ID="tex2html75"
+<LI><A ID="tex2html76"
   HREF="docs.html#SECTION002000000000000000000"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <UL>
-<LI><A ID="tex2html76"
+<LI><A ID="tex2html77"
   HREF="docs.html#SECTION002100000000000000000"><SPAN CLASS="arabic">1</SPAN> Features</A>
 <UL>
-<LI><A ID="tex2html77"
-  HREF="docs.html#SECTION002110000000000000000"><SPAN CLASS="arabic">1</SPAN> License</A>
 <LI><A ID="tex2html78"
-  HREF="docs.html#SECTION002120000000000000000"><SPAN CLASS="arabic">2</SPAN> Database Abstraction Layer</A>
+  HREF="docs.html#SECTION002110000000000000000"><SPAN CLASS="arabic">1</SPAN> License</A>
 <LI><A ID="tex2html79"
-  HREF="docs.html#SECTION002130000000000000000"><SPAN CLASS="arabic">3</SPAN> Security</A>
+  HREF="docs.html#SECTION002120000000000000000"><SPAN CLASS="arabic">2</SPAN> Database Abstraction Layer</A>
 <LI><A ID="tex2html80"
-  HREF="docs.html#SECTION002140000000000000000"><SPAN CLASS="arabic">4</SPAN> Auto-prevention of double-postings</A>
+  HREF="docs.html#SECTION002130000000000000000"><SPAN CLASS="arabic">3</SPAN> Security</A>
 <LI><A ID="tex2html81"
-  HREF="docs.html#SECTION002150000000000000000"><SPAN CLASS="arabic">5</SPAN> IPv6</A>
+  HREF="docs.html#SECTION002140000000000000000"><SPAN CLASS="arabic">4</SPAN> Auto-prevention of double-postings</A>
 <LI><A ID="tex2html82"
+  HREF="docs.html#SECTION002150000000000000000"><SPAN CLASS="arabic">5</SPAN> IPv6</A>
+<LI><A ID="tex2html83"
   HREF="docs.html#SECTION002160000000000000000"><SPAN CLASS="arabic">6</SPAN> Why this is not a perfect Usenet server</A>
 </UL>
-<LI><A ID="tex2html83"
-  HREF="docs.html#SECTION002200000000000000000"><SPAN CLASS="arabic">2</SPAN> Contribute</A>
 <LI><A ID="tex2html84"
+  HREF="docs.html#SECTION002200000000000000000"><SPAN CLASS="arabic">2</SPAN> Contribute</A>
+<LI><A ID="tex2html85"
   HREF="docs.html#SECTION002300000000000000000"><SPAN CLASS="arabic">3</SPAN> History</A>
 </UL>
 <BR>
-<LI><A ID="tex2html85"
+<LI><A ID="tex2html86"
   HREF="docs.html#SECTION003000000000000000000"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <UL>
-<LI><A ID="tex2html86"
+<LI><A ID="tex2html87"
   HREF="docs.html#SECTION003100000000000000000"><SPAN CLASS="arabic">1</SPAN> Linux/*nix/BSD</A>
 <UL>
-<LI><A ID="tex2html87"
+<LI><A ID="tex2html88"
   HREF="docs.html#SECTION003110000000000000000"><SPAN CLASS="arabic">1</SPAN> Init Script for Automatic Startup</A>
 </UL>
-<LI><A ID="tex2html88"
-  HREF="docs.html#SECTION003200000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
 <LI><A ID="tex2html89"
+  HREF="docs.html#SECTION003200000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
+<LI><A ID="tex2html90"
   HREF="docs.html#SECTION003300000000000000000"><SPAN CLASS="arabic">3</SPAN> Windows</A>
 </UL>
 <BR>
-<LI><A ID="tex2html90"
+<LI><A ID="tex2html91"
   HREF="docs.html#SECTION004000000000000000000"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <UL>
-<LI><A ID="tex2html91"
+<LI><A ID="tex2html92"
   HREF="docs.html#SECTION004100000000000000000"><SPAN CLASS="arabic">1</SPAN> Choosing a database engine</A>
 <UL>
-<LI><A ID="tex2html92"
-  HREF="docs.html#SECTION004110000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
 <LI><A ID="tex2html93"
+  HREF="docs.html#SECTION004110000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
+<LI><A ID="tex2html94"
   HREF="docs.html#SECTION004120000000000000000"><SPAN CLASS="arabic">2</SPAN> Generating your database tables</A>
 </UL>
-<LI><A ID="tex2html94"
-  HREF="docs.html#SECTION004200000000000000000"><SPAN CLASS="arabic">2</SPAN> Network Settings</A>
 <LI><A ID="tex2html95"
-  HREF="docs.html#SECTION004300000000000000000"><SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
+  HREF="docs.html#SECTION004200000000000000000"><SPAN CLASS="arabic">2</SPAN> Network Settings</A>
 <LI><A ID="tex2html96"
-  HREF="docs.html#SECTION004400000000000000000"><SPAN CLASS="arabic">4</SPAN> Verbose Mode</A>
+  HREF="docs.html#SECTION004300000000000000000"><SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
 <LI><A ID="tex2html97"
+  HREF="docs.html#SECTION004400000000000000000"><SPAN CLASS="arabic">4</SPAN> Verbose Mode</A>
+<LI><A ID="tex2html98"
   HREF="docs.html#SECTION004500000000000000000"><SPAN CLASS="arabic">5</SPAN> Security Settings</A>
 <UL>
-<LI><A ID="tex2html98"
-  HREF="docs.html#SECTION004510000000000000000"><SPAN CLASS="arabic">1</SPAN> Authentication and Access Control Lists (ACL)</A>
 <LI><A ID="tex2html99"
-  HREF="docs.html#SECTION004520000000000000000"><SPAN CLASS="arabic">2</SPAN> Anonymized Message-ID</A>
+  HREF="docs.html#SECTION004510000000000000000"><SPAN CLASS="arabic">1</SPAN> Authentication and Access Control Lists (ACL)</A>
 <LI><A ID="tex2html100"
+  HREF="docs.html#SECTION004520000000000000000"><SPAN CLASS="arabic">2</SPAN> Anonymized Message-ID</A>
+<LI><A ID="tex2html101"
   HREF="docs.html#SECTION004530000000000000000"><SPAN CLASS="arabic">3</SPAN> Changing the Default Salt for Password Hashing</A>
+<LI><A ID="tex2html102"
+  HREF="docs.html#SECTION004540000000000000000"><SPAN CLASS="arabic">4</SPAN> Encrypted communication (TLS)</A>
 </UL>
 </UL>
 <BR>
-<LI><A ID="tex2html101"
+<LI><A ID="tex2html103"
   HREF="docs.html#SECTION005000000000000000000"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
 <UL>
-<LI><A ID="tex2html102"
+<LI><A ID="tex2html104"
   HREF="docs.html#SECTION005100000000000000000"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
-<LI><A ID="tex2html103"
+<LI><A ID="tex2html105"
   HREF="docs.html#SECTION005200000000000000000"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service</A>
 <UL>
-<LI><A ID="tex2html104"
+<LI><A ID="tex2html106"
   HREF="docs.html#SECTION005210000000000000000"><SPAN CLASS="arabic">1</SPAN> Automating Start, Stop, and Restart</A>
 </UL>
-<LI><A ID="tex2html105"
+<LI><A ID="tex2html107"
   HREF="docs.html#SECTION005300000000000000000"><SPAN CLASS="arabic">3</SPAN> Administration Tool `wendzelnntpadm'</A>
-<LI><A ID="tex2html106"
+<LI><A ID="tex2html108"
   HREF="docs.html#SECTION005400000000000000000"><SPAN CLASS="arabic">4</SPAN> Creating/Listing/Deleting Newsgroups</A>
 <UL>
-<LI><A ID="tex2html107"
-  HREF="docs.html#SECTION005410000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing existing newsgroups</A>
-<LI><A ID="tex2html108"
-  HREF="docs.html#SECTION005420000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new newsgroup</A>
 <LI><A ID="tex2html109"
+  HREF="docs.html#SECTION005410000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing existing newsgroups</A>
+<LI><A ID="tex2html110"
+  HREF="docs.html#SECTION005420000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new newsgroup</A>
+<LI><A ID="tex2html111"
   HREF="docs.html#SECTION005430000000000000000"><SPAN CLASS="arabic">3</SPAN> Deleting a newsgroup</A>
 </UL>
-<LI><A ID="tex2html110"
+<LI><A ID="tex2html112"
   HREF="docs.html#SECTION005500000000000000000"><SPAN CLASS="arabic">5</SPAN> User Accounts Administration</A>
 <UL>
-<LI><A ID="tex2html111"
-  HREF="docs.html#SECTION005510000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing Users (and Passwords)</A>
-<LI><A ID="tex2html112"
-  HREF="docs.html#SECTION005520000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new user</A>
 <LI><A ID="tex2html113"
+  HREF="docs.html#SECTION005510000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing Users (and Passwords)</A>
+<LI><A ID="tex2html114"
+  HREF="docs.html#SECTION005520000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new user</A>
+<LI><A ID="tex2html115"
   HREF="docs.html#SECTION005530000000000000000"><SPAN CLASS="arabic">3</SPAN> Deleting an existing user</A>
 </UL>
-<LI><A ID="tex2html114"
+<LI><A ID="tex2html116"
   HREF="docs.html#SECTION005600000000000000000"><SPAN CLASS="arabic">6</SPAN> Access Control List Administration (in case the standard NNTP authentication is not enough)</A>
 <UL>
-<LI><A ID="tex2html115"
-  HREF="docs.html#SECTION005610000000000000000"><SPAN CLASS="arabic">1</SPAN> Invisible Newsgroups</A>
-<LI><A ID="tex2html116"
-  HREF="docs.html#SECTION005620000000000000000"><SPAN CLASS="arabic">2</SPAN> Simple Access Control</A>
 <LI><A ID="tex2html117"
-  HREF="docs.html#SECTION005630000000000000000"><SPAN CLASS="arabic">3</SPAN> Adding and Removing ACL Roles</A>
+  HREF="docs.html#SECTION005610000000000000000"><SPAN CLASS="arabic">1</SPAN> Invisible Newsgroups</A>
 <LI><A ID="tex2html118"
-  HREF="docs.html#SECTION005640000000000000000"><SPAN CLASS="arabic">4</SPAN> Connecting and Disconnecting Users with/from Roles</A>
+  HREF="docs.html#SECTION005620000000000000000"><SPAN CLASS="arabic">2</SPAN> Simple Access Control</A>
 <LI><A ID="tex2html119"
-  HREF="docs.html#SECTION005650000000000000000"><SPAN CLASS="arabic">5</SPAN> Connecting and Disconnecting Roles with/from Newsgroups</A>
+  HREF="docs.html#SECTION005630000000000000000"><SPAN CLASS="arabic">3</SPAN> Adding and Removing ACL Roles</A>
 <LI><A ID="tex2html120"
+  HREF="docs.html#SECTION005640000000000000000"><SPAN CLASS="arabic">4</SPAN> Connecting and Disconnecting Users with/from Roles</A>
+<LI><A ID="tex2html121"
+  HREF="docs.html#SECTION005650000000000000000"><SPAN CLASS="arabic">5</SPAN> Connecting and Disconnecting Roles with/from Newsgroups</A>
+<LI><A ID="tex2html122"
   HREF="docs.html#SECTION005660000000000000000"><SPAN CLASS="arabic">6</SPAN> Listing Your Whole ACL Configuration Again</A>
 </UL>
-<LI><A ID="tex2html121"
+<LI><A ID="tex2html123"
   HREF="docs.html#SECTION005700000000000000000"><SPAN CLASS="arabic">7</SPAN> Hardening</A>
 </UL>
 <BR>
-<LI><A ID="tex2html122"
+<LI><A ID="tex2html124"
   HREF="docs.html#SECTION006000000000000000000"><SPAN CLASS="arabic">5</SPAN> Development</A>
 <UL>
-<LI><A ID="tex2html123"
+<LI><A ID="tex2html125"
   HREF="docs.html#SECTION006010000000000000000"><SPAN CLASS="arabic">1</SPAN> Initial setup</A>
-<LI><A ID="tex2html124"
+<LI><A ID="tex2html126"
   HREF="docs.html#SECTION006020000000000000000"><SPAN CLASS="arabic">2</SPAN> Test new code</A>
 </UL>
 <BR>
-<LI><A ID="tex2html125"
+<LI><A ID="tex2html127"
   HREF="docs.html#SECTION007000000000000000000"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 <UL>
-<LI><A ID="tex2html126"
-  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
-<LI><A ID="tex2html127"
-  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
 <LI><A ID="tex2html128"
-  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 <LI><A ID="tex2html129"
-  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
+  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
+<LI><A ID="tex2html130"
+  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+<LI><A ID="tex2html131"
+  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+<LI><A ID="tex2html132"
+  HREF="docs.html#SECTION007500000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
 </UL>
 <BR>
-<LI><A ID="tex2html130"
+<LI><A ID="tex2html133"
   HREF="docs.html#SECTION008000000000000000000">Index</A>
 </UL>
 <!--End of Table of Contents-->
 <P>
 
-<H1><A ID="SECTION002000000000000000000"></A><A ID="43"></A>
+<H1><A ID="SECTION002000000000000000000"></A><A ID="42"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Introduction
 </H1>
@@ -242,7 +245,7 @@ Another feature that was introduced by WendzelNNTPd (and later adopted by other 
 
 <P>
 However, <SPAN  CLASS="textbf">please note</SPAN> that the salting for password hashing is using SHA-256, but with a global user-definable salt that is concatenated with the username and password, rendering it less secure than using unique random hashes per password. 
-Also, WendzelNNTPd does not support TLS (not even SSL)!
+WendzelNNTPd does support TLS v1.0 to v1.3 including STARTTLS!
 
 <P>
 
@@ -270,7 +273,6 @@ WendzelNNTPd supports IPv6. The server can listen on multiple IP addresses as we
 
 <P>
 WendzelNNTPd does not implement all NNTP commands, but the (most) important ones. Another problem is that the regular expression library used is not 100% compatible with the NNTP matching in commands like &ldquo;XGTITLE&rdquo;. Another limitation is that WendzelNNTPd cannot share messages with other NNTP servers. 
-Finally, WendzelNNTPd lacks support for TLS encrypted connections.
 
 <P>
 
@@ -290,7 +292,7 @@ See the <SPAN  CLASS="textit">CONTRIBUTE</SPAN> file in the tarball.
 <P>
 The project started in 2004 under the name Xyria:cdpNNTPd, as part of the Xyria project that also contained a fast DNS server, called Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped development of Xyria:DNSd. Version 1.0.0 was released in 2007, version 2.0.0 in 2011. Since then I have primarily fixed reported bugs and added minor features but the software is still maintained and smaller advancements can still be expected. A detailed history can be found in the <SPAN  CLASS="textit">HISTORY</SPAN> file in the tarball. Fortunately, several people contributed to the code and documentation, see <SPAN  CLASS="textit">AUTHORS</SPAN> file.
 
-<H1><A ID="SECTION003000000000000000000"></A><A ID="98"></A>
+<H1><A ID="SECTION003000000000000000000"></A><A ID="97"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Installation
 </H1>
@@ -305,8 +307,8 @@ This chapter provides a guide on how to install WendzelNNTPd 2.x.
 </H1>
 
 <P>
-To install WendzelNNTPd from source you need to download the provided archive file (e.g., <SPAN  CLASS="textit">wendzelnntpd-2.0.0.tar.gz</SPAN>) file.<A ID="tex2html2"
-  HREF="footnode.html#foot136"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
+To install WendzelNNTPd from source you need to download the provided archive file (e.g., <SPAN  CLASS="textit">wendzelnntpd-2.0.0.tar.gz</SPAN>) file.<A ID="tex2html1"
+  HREF="footnode.html#foot147"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> Extract it and run <SPAN  CLASS="textbf">./configure</SPAN>. Please note that configure indicates missing libraries and packages that you may first need to install using the package system of your operating system.
 
 <P>
 <PRE>
@@ -329,6 +331,12 @@ $ ./configure
 &nbsp;
 
 <P>
+<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT TLS support</SPAN>, then run <SPAN  CLASS="textbf">TLS=NO ./configure</SPAN>.
+
+<P>
+&nbsp;
+
+<P>
 After <SPAN  CLASS="texttt">configure</SPAN> has finished, run <SPAN  CLASS="textbf">make</SPAN>:
 
 <P>
@@ -338,6 +346,27 @@ $ make
 </PRE>
 
 <P>
+
+<H4><A ID="SECTION003100100000000000000">
+Generating SSL certifiates</A>
+</H4>
+If you want to generate SSL certificates you can use the helper script:
+<PRE>
+$ sudo ./create_certificate \
+	--environment letsencrypt \
+	--email &lt;YOUR-EMAIL&gt; \\
+	--domain &lt;YOUR-DOMAIN&gt;
+</PRE>
+For the parameter <SPAN  CLASS="texttt">--environment</SPAN>, &ldquo;<SPAN  CLASS="textit">local</SPAN>&rdquo; is also a valid value. In that case, the certificate is generated only for usage on localhost and is self-signed. After generating the certificate you have to adjust <SPAN  CLASS="textit">wendzelnntpd.conf</SPAN> (check Section&nbsp;<A HREF="#network-settings">3.2</A>) to activate TLS (configuration option <SPAN  CLASS="textit">enable-tls</SPAN>)). The paths for certificate and server key can stay as they are. 
+
+<P>
+&nbsp;
+
+<P>
+
+<H4><A ID="SECTION003100200000000000000">
+Installing WendzelNNTPd</A>
+</H4>
 To install WendzelNNTPd on your system, you need superuser access. Run <SPAN  CLASS="textbf">make install</SPAN> to install it to the default location <SPAN  CLASS="textit">/usr/local/*</SPAN>.
 
 <P>
@@ -380,7 +409,7 @@ Not supported.
 
 <P>
 
-<H1><A ID="SECTION004000000000000000000"></A><A ID="183"></A><A ID="Ch:Config"></A>
+<H1><A ID="SECTION004000000000000000000"></A><A ID="203"></A><A ID="Ch:Config"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Basic Configuration
 </H1>
@@ -497,27 +526,79 @@ wendzelnntpd=&gt; commit; quit;
 
 <P>
 
-<H1><A ID="SECTION004200000000000000000">
-<SPAN CLASS="arabic">2</SPAN> Network Settings</A>
+<H1><A ID="SECTION004200000000000000000"></A><A ID="network-settings"></A>
+<BR>
+<SPAN CLASS="arabic">2</SPAN> Network Settings
 </H1>
 
 <P>
-Now you should specify the IP addresse(s) (IPv4 and/or IPv6) for WendzelNNTPd to accept connections on and the TCP port (the default NNTP port is 119) to run on.
+For each type of IP address (IPv4 and/or IPv6) you have to define a own connector. You can find an example for NNTP over port 119 below.
 
 <P>
 <PRE>
-; You have to specify the port _before_ using the 'listen' command!
-port	119
-; network addresses to listen on
-listen	127.0.0.1
-listen	::1
-listen	192.168.0.1
+&lt;connector&gt;
+	;; enables STARTTLS for this port
+	;enable-starttls
+	port		119
+	listen	    127.0.0.1
+	;; configure SSL server certificate (required)
+	;tls-server-certificate "/usr/local/etc/ssl/server.crt"
+	;; configure SSL private key (required)
+	;tls-server-key "/usr/local/etc/ssl/server.key"
+	;; configure SSL CA certificate (required)
+	;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+	;; configure TLS ciphers for TLSv1.3
+	;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
+	;; configure TLS ciphers for TLSv1.1 and TLSv1.2
+	;tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+	;; configure allowed TLS version (1.0-1.3)
+	;tls-version "1.2-1.3"
+	;; possibility to force the client to authenticate 
+	;;with client certificate (none | optional | require)
+	;tls-verify-client "required"
+	;; define depth for checking client certificate
+	;tls-verify-client-depth 0
+	;; possibility to use certificate revocation list (none | leaf | chain)
+	;tls-crl "none"
+	;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+&lt;/connector&gt;
 </PRE>
 
 <P>
-You <SPAN  CLASS="textit">could</SPAN> also use different ports for each IP address by placing a <SPAN  CLASS="textbf">port</SPAN> command right before each <SPAN  CLASS="textbf">listen</SPAN> command but this is not recommended.
+To use dedicated TLS with NNTP (SNNTP) you can define another connector. The example below is for SNNTP over port 563.
 
 <P>
+<PRE>
+&lt;connector&gt;
+	;; enables TLS for this port
+	;enable-tls
+	port		563
+	listen	    127.0.0.1
+	;; configure SSL server certificate (required)
+	;tls-server-certificate "/usr/local/etc/ssl/server.crt"
+	;; configure SSL private key (required)
+	;tls-server-key "/usr/local/etc/ssl/server.key"
+	;; configure SSL CA certificate (required)
+	;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+	;; configure TLS ciphers for TLSv1.3
+	;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
+	;; configure TLS ciphers for TLSv1.1 and TLSv1.2
+	;tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+	;; configure allowed TLS version (1.0-1.3)
+	;tls-version "1.2-1.3"
+	;; possibility to force the client to authenticate 
+	;;with client certificate (none | optional | require)
+	;tls-verify-client "required"
+	;; define depth for checking client certificate
+	;tls-verify-client-depth 0
+	;; possibility to use certificate revocation list (none | leaf | chain)
+	;tls-crl "none"
+	;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+&lt;/connector&gt;
+</PRE>
+
+<P>
+The configuration options <SPAN  CLASS="textit">tls-server-certificate</SPAN>, <SPAN  CLASS="textit">tls-server-key</SPAN> and <SPAN  CLASS="textit">tls-ca-certificate</SPAN> are required for using TLS or STARTTLS with NNTP. All other TLS-related options are optional. More examples are in the existing <SPAN  CLASS="textit">wendzelnntpd.conf</SPAN> file.
 
 <H1><A ID="SECTION004300000000000000000">
 <SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
@@ -620,18 +701,25 @@ hash-salt 0.hG4//3baA-::_\
 </PRE>
 
 <P>
-WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users. However, utilizing the username is less secure than having a completely separate salt for every password.<A ID="tex2html3"
-  HREF="footnode.html#foot247"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
+WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users. However, utilizing the username is less secure than having a completely separate salt for every password.<A ID="tex2html2"
+  HREF="footnode.html#foot271"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
 <P>
 
-<H1><A ID="SECTION005000000000000000000"></A><A ID="339"></A>
+<H2><A ID="SECTION004540000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Encrypted communication (TLS)</A>
+</H2>
+Please look at section <A HREF="#network-settings">3.2</A> when you want to use encryption over TLS.
+
+<P>
+
+<H1><A ID="SECTION005000000000000000000"></A><A ID="369"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A ID="SECTION005100000000000000000"></A><A ID="341"></A>
+<H1><A ID="SECTION005100000000000000000"></A><A ID="371"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -651,7 +739,7 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A ID="SECTION005200000000000000000"></A><A ID="348"></A><A ID="349"></A>
+<H1><A ID="SECTION005200000000000000000"></A><A ID="378"></A><A ID="379"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1176,15 +1264,15 @@ If you want to give all developers access to the group &ldquo;project-x.news&rdq
 </H1>
 
 <P>
-Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a <SPAN  CLASS="textit">chroot</SPAN> environment or letting it run under an unprivileged user account (the user then needs write access to <SPAN  CLASS="textit">/var/spool/news/wendzelnntpd</SPAN> and read access to (<SPAN  CLASS="textit">/usr/local)/etc/wendzelnntpd.conf</SPAN>). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually<A ID="tex2html4"
-  HREF="footnode.html#foot437"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
+Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a <SPAN  CLASS="textit">chroot</SPAN> environment or letting it run under an unprivileged user account (the user then needs write access to <SPAN  CLASS="textit">/var/spool/news/wendzelnntpd</SPAN> and read access to (<SPAN  CLASS="textit">/usr/local)/etc/wendzelnntpd.conf</SPAN>). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually<A ID="tex2html3"
+  HREF="footnode.html#foot467"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
  STYLE="height: 2.18ex; vertical-align: -0.41ex; " SRC="img2.svg"
  ALT="$\geq$"></SPAN>1024 if it is started by a non-root user.
 
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <SPAN  CLASS="texttt">nmap</SPAN> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A ID="SECTION006000000000000000000"></A><A ID="618"></A>
+<H1><A ID="SECTION006000000000000000000"></A><A ID="648"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Development
 </H1>
@@ -1208,9 +1296,8 @@ $ make docker-stop
 </PRE>
 If you are not on a UNIX-based system (like Windows) use the following native docker commands:
 <PRE>
-$ docker build -f ./docker/Dockerfile-Base -t wendzelnntpd-base:latest .
-$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-$ docker run --name wendzelnntpd --rm -it -p 119:119 -d wendzelnntpd:latest
+$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
+$ docker run --name wendzelnntpd --rm -it -p 118:118 -p 119:119 -p 563:563 -p 564:564 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
 </PRE>
 To stop the Docker container you can use the following command:
 <PRE>
@@ -1222,14 +1309,9 @@ $ docker stop wendzelnntpd
 <H2><A ID="SECTION006020000000000000000">
 <SPAN CLASS="arabic">2</SPAN> Test new code</A>
 </H2>
-The container is build with code included. To use new code run one of the following commands depending on operation system:
-<PRE>
-$ make docker-build-app
-$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest . --no-cache
-</PRE>
-Then stop and start the NNTP server.
+The container is build without code included. The code is automatically mounted as volume into the container. After each change of source code, the application is compiled again.
 
-<H1><A ID="SECTION007000000000000000000"></A><A ID="638"></A><A ID="Ch:Upgrade"></A>
+<H1><A ID="SECTION007000000000000000000"></A><A ID="666"></A><A ID="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">6</SPAN> Upgrading
 </H1>
@@ -1237,22 +1319,31 @@ Then stop and start the NNTP server.
 <P>
 
 <H1><A ID="SECTION007100000000000000000">
-<SPAN CLASS="arabic">1</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
+<SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 </H1>
 
 <P>
-Same as upgrading from v.2.0.x to v.2.0.y, see Section <A HREF="#20xto20y">6.3</A>.
-
-<P>
-&nbsp;
-
-<P>
-&nbsp;
+Please stop WendzelNNTPd and check the <SPAN  CLASS="textit">wendzelnntpd.conf</SPAN>. There is a new configuration style that breaks parts of the previous configuration style (especially due to the introduction of &ldquo;connectors&rdquo;).
 
 <P>
 
 <H1><A ID="SECTION007200000000000000000">
-<SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+<SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
+</H1>
+
+<P>
+Same as upgrading from v.2.0.x to v.2.0.y, see Section <A HREF="#20xto20y">6.4</A>.
+
+<P>
+&nbsp;
+
+<P>
+&nbsp;
+
+<P>
+
+<H1><A ID="SECTION007300000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
 </H1>
 
 <P>
@@ -1266,9 +1357,9 @@ Please follow the upgrade instructions for upgrading from 2.0.x to 2.0.y below. 
 
 <P>
 
-<H1><A ID="SECTION007300000000000000000"></A><A ID="20xto20y"></A>
+<H1><A ID="SECTION007400000000000000000"></A><A ID="20xto20y"></A>
 <BR>
-<SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.0.y
+<SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y
 </H1>
 
 <P>
@@ -1282,8 +1373,8 @@ Stop WendzelNNTPd if it is currently running. Install WendzelNNTPd as described 
 
 <P>
 
-<H1><A ID="SECTION007400000000000000000">
-<SPAN CLASS="arabic">4</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
+<H1><A ID="SECTION007500000000000000000">
+<SPAN CLASS="arabic">5</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
 </H1>
 
 <P>
@@ -1297,13 +1388,13 @@ An upgrade from version 1.4.x was not foreseen due to the limited available time
 
 <P>
 
-<H4><A ID="SECTION007400100000000000000">
+<H4><A ID="SECTION007500100000000000000">
 Preparation Step:</A>
 </H4> You <SPAN  CLASS="textbf">need to create a backup of your existing installation first</SPAN>, at least everything from <SPAN  CLASS="textbf">/var/spool/news/wendzelnntpd</SPAN> as you will need all these files later. <SPAN  CLASS="textbf">Perform the following steps on your own risk &ndash; it is possible that they do not work on your system as only two WendzelNNTPd installations were tested!</SPAN>
 
 <P>
 
-<H4><A ID="SECTION007400200000000000000">
+<H4><A ID="SECTION007500200000000000000">
 First Step:</A>
 </H4> Install Wendzelnntpd-2.x on a Linux system (Windows is not supported anymore). This requires some libraries and tools.
 
@@ -1327,7 +1418,7 @@ Run <SPAN  CLASS="textbf">MYSQL=NO ./configure</SPAN>, followed by <SPAN  CLASS=
 
 <P>
 
-<H4><A ID="SECTION007400300000000000000">
+<H4><A ID="SECTION007500300000000000000">
 Second Step:</A>
 </H4> Please make sure WendzelNNTPd-2 is configured in a way that we can *hopefully* make it work with your own database file. Therefore, in the configuration file <SPAN  CLASS="textbf">/usr/local/etc/wendzelnntpd.conf</SPAN> make sure that WendzelNNTPd uses sqlite3 instead of mysql:
 
@@ -1338,7 +1429,7 @@ database-engine sqlite3
 
 <P>
 
-<H4><A ID="SECTION007400400000000000000">
+<H4><A ID="SECTION007500400000000000000">
 Third Step:</A>
 </H4>
 Now comes the tricky part. The install command should have created
@@ -1371,7 +1462,7 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 
 <P>
 
-<H4><A ID="SECTION007400500000000000000">
+<H4><A ID="SECTION007500500000000000000">
 Fix Postings</A>
 </H4>
 
@@ -1390,7 +1481,7 @@ $
 
 <P>
 
-<H4><A ID="SECTION007400600000000000000">
+<H4><A ID="SECTION007500600000000000000">
 Last Step (Checking whether it works!):</A>
 </H4>
 
@@ -1438,22 +1529,22 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you ma
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#183"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
+<DD><A HREF="docs.html#203"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <DT><STRONG>Development</STRONG>
-<DD><A HREF="docs.html#618"><SPAN CLASS="arabic">5</SPAN> Development</A>
+<DD><A HREF="docs.html#648"><SPAN CLASS="arabic">5</SPAN> Development</A>
 <DT><STRONG>Installation</STRONG>
-<DD><A HREF="docs.html#98"><SPAN CLASS="arabic">2</SPAN> Installation</A>
+<DD><A HREF="docs.html#97"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <DT><STRONG>Introduction</STRONG>
-<DD><A HREF="docs.html#43"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
+<DD><A HREF="docs.html#42"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#349"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#379"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#339"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
- | <A HREF="docs.html#341"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
+<DD><A HREF="docs.html#369"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
+ | <A HREF="docs.html#371"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#348"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#378"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#638"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
+<DD><A HREF="docs.html#666"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 
 </DL>
 
@@ -1462,95 +1553,97 @@ Index</A>
 <H1><A ID="SECTION009000000000000000000">
 About this document ...</A>
 </H1>
- <STRONG>WendzelNNTPd Version 2.1 Documentation</STRONG><P>
+ <STRONG>WendzelNNTPd Version 2.2 Documentation</STRONG><P>
 This document was generated using the
 <A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2021.2 (Released July 1, 2021)
 <P>
 The command line arguments were: <BR>
  <kbd>latex2html -show_section_numbers -local_icons -split 2 docs.tex</kbd>
 <P>
-The translation was initiated on 2024-04-06
+The translation was initiated on 2024-09-12
 <BR><HR>
 <!--Table of Child-Links-->
 <A ID="CHILD_LINKS"></A>
 
 <UL CLASS="ChildLinks">
-<LI><A ID="tex2html5"
+<LI><A ID="tex2html4"
   HREF="docs.html#SECTION001000000000000000000">Contents</A>
-<LI><A ID="tex2html6"
+<LI><A ID="tex2html5"
   HREF="docs.html#SECTION002000000000000000000"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <UL>
-<LI><A ID="tex2html7"
+<LI><A ID="tex2html6"
   HREF="docs.html#SECTION002100000000000000000"><SPAN CLASS="arabic">1</SPAN> Features</A>
 <UL>
-<LI><A ID="tex2html8"
+<LI><A ID="tex2html7"
   HREF="docs.html#SECTION002110000000000000000"><SPAN CLASS="arabic">1</SPAN> License</A>
-<LI><A ID="tex2html9"
+<LI><A ID="tex2html8"
   HREF="docs.html#SECTION002120000000000000000"><SPAN CLASS="arabic">2</SPAN> Database Abstraction Layer</A>
-<LI><A ID="tex2html10"
+<LI><A ID="tex2html9"
   HREF="docs.html#SECTION002130000000000000000"><SPAN CLASS="arabic">3</SPAN> Security</A>
-<LI><A ID="tex2html11"
+<LI><A ID="tex2html10"
   HREF="docs.html#SECTION002140000000000000000"><SPAN CLASS="arabic">4</SPAN> Auto-prevention of double-postings</A>
-<LI><A ID="tex2html12"
+<LI><A ID="tex2html11"
   HREF="docs.html#SECTION002150000000000000000"><SPAN CLASS="arabic">5</SPAN> IPv6</A>
-<LI><A ID="tex2html13"
+<LI><A ID="tex2html12"
   HREF="docs.html#SECTION002160000000000000000"><SPAN CLASS="arabic">6</SPAN> Why this is not a perfect Usenet server</A>
 </UL>
-<LI><A ID="tex2html14"
+<LI><A ID="tex2html13"
   HREF="docs.html#SECTION002200000000000000000"><SPAN CLASS="arabic">2</SPAN> Contribute</A>
-<LI><A ID="tex2html15"
+<LI><A ID="tex2html14"
   HREF="docs.html#SECTION002300000000000000000"><SPAN CLASS="arabic">3</SPAN> History</A>
 </UL>
 <BR>
-<LI><A ID="tex2html16"
+<LI><A ID="tex2html15"
   HREF="docs.html#SECTION003000000000000000000"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <UL>
-<LI><A ID="tex2html17"
+<LI><A ID="tex2html16"
   HREF="docs.html#SECTION003100000000000000000"><SPAN CLASS="arabic">1</SPAN> Linux/*nix/BSD</A>
 <UL>
-<LI><A ID="tex2html18"
+<LI><A ID="tex2html17"
   HREF="docs.html#SECTION003110000000000000000"><SPAN CLASS="arabic">1</SPAN> Init Script for Automatic Startup</A>
 </UL>
-<LI><A ID="tex2html19"
+<LI><A ID="tex2html18"
   HREF="docs.html#SECTION003200000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
-<LI><A ID="tex2html20"
+<LI><A ID="tex2html19"
   HREF="docs.html#SECTION003300000000000000000"><SPAN CLASS="arabic">3</SPAN> Windows</A>
 </UL>
 <BR>
-<LI><A ID="tex2html21"
+<LI><A ID="tex2html20"
   HREF="docs.html#SECTION004000000000000000000"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <UL>
-<LI><A ID="tex2html22"
+<LI><A ID="tex2html21"
   HREF="docs.html#SECTION004100000000000000000"><SPAN CLASS="arabic">1</SPAN> Choosing a database engine</A>
 <UL>
-<LI><A ID="tex2html23"
+<LI><A ID="tex2html22"
   HREF="docs.html#SECTION004110000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
-<LI><A ID="tex2html24"
+<LI><A ID="tex2html23"
   HREF="docs.html#SECTION004120000000000000000"><SPAN CLASS="arabic">2</SPAN> Generating your database tables</A>
 <UL>
-<LI><A ID="tex2html25"
+<LI><A ID="tex2html24"
   HREF="docs.html#SECTION004121000000000000000"><SPAN CLASS="arabic">1</SPAN> SQLite</A>
-<LI><A ID="tex2html26"
+<LI><A ID="tex2html25"
   HREF="docs.html#SECTION004122000000000000000"><SPAN CLASS="arabic">2</SPAN> MySQL</A>
-<LI><A ID="tex2html27"
+<LI><A ID="tex2html26"
   HREF="docs.html#SECTION004123000000000000000"><SPAN CLASS="arabic">3</SPAN> PostgreSQL</A>
 </UL>
 </UL>
-<LI><A ID="tex2html28"
+<LI><A ID="tex2html27"
   HREF="docs.html#SECTION004200000000000000000"><SPAN CLASS="arabic">2</SPAN> Network Settings</A>
-<LI><A ID="tex2html29"
+<LI><A ID="tex2html28"
   HREF="docs.html#SECTION004300000000000000000"><SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
-<LI><A ID="tex2html30"
+<LI><A ID="tex2html29"
   HREF="docs.html#SECTION004400000000000000000"><SPAN CLASS="arabic">4</SPAN> Verbose Mode</A>
-<LI><A ID="tex2html31"
+<LI><A ID="tex2html30"
   HREF="docs.html#SECTION004500000000000000000"><SPAN CLASS="arabic">5</SPAN> Security Settings</A>
 <UL>
-<LI><A ID="tex2html32"
+<LI><A ID="tex2html31"
   HREF="docs.html#SECTION004510000000000000000"><SPAN CLASS="arabic">1</SPAN> Authentication and Access Control Lists (ACL)</A>
-<LI><A ID="tex2html33"
+<LI><A ID="tex2html32"
   HREF="docs.html#SECTION004520000000000000000"><SPAN CLASS="arabic">2</SPAN> Anonymized Message-ID</A>
-<LI><A ID="tex2html34"
+<LI><A ID="tex2html33"
   HREF="docs.html#SECTION004530000000000000000"><SPAN CLASS="arabic">3</SPAN> Changing the Default Salt for Password Hashing</A>
+<LI><A ID="tex2html34"
+  HREF="docs.html#SECTION004540000000000000000"><SPAN CLASS="arabic">4</SPAN> Encrypted communication (TLS)</A>
 </UL>
 </UL>
 <BR>
@@ -1648,18 +1741,20 @@ The translation was initiated on 2024-04-06
   HREF="docs.html#SECTION007000000000000000000"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 <UL>
 <LI><A ID="tex2html69"
-  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
+  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 <LI><A ID="tex2html70"
-  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
 <LI><A ID="tex2html71"
-  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
 <LI><A ID="tex2html72"
-  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
+  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+<LI><A ID="tex2html73"
+  HREF="docs.html#SECTION007500000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
 </UL>
 <BR>
-<LI><A ID="tex2html73"
-  HREF="docs.html#SECTION008000000000000000000">Index</A>
 <LI><A ID="tex2html74"
+  HREF="docs.html#SECTION008000000000000000000">Index</A>
+<LI><A ID="tex2html75"
   HREF="docs.html#SECTION009000000000000000000">About this document ...</A>
 </UL>
 <!--End of Table of Child-Links-->
