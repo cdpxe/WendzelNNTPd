@@ -10,7 +10,26 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
+function usage {
+    echo ""
+    echo "Creates certificates for WendzelNNTPd selfsigned or via LetsEncrypt for production usage"
+    echo ""
+    echo "usage: ./create_certificate --environment localhost | letsencrypt --email string --domain string "
+    echo ""
+    echo "  --environment string    context for generating certificates (localhost or letsnecrypt are allowed values) "
+    echo "  --email string          only needed if letsencrypt is used"
+    echo "                          (example: test@test.de)"
+    echo "  --domain string         only needed if letsencrypt is used; specify domain under which your wendzelnntpd server is reachable"
+    echo "                          (example: test.de)"
+    echo ""
+}
+
 while [ $# -gt 0 ]; do
+    if [[ $1 == "--help" ]]; then
+        usage
+        exit
+    fi
+
     if [[ $1 == "--"* ]]; then
         v="${1/--/}"
         declare "$v"="$2"
@@ -52,7 +71,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -out "/usr/local/etc/ssl/server.crt"
 
     echo "Finished ..."
-    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.crt, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
     echo
 elif [ "$environment" = "letsencrypt" ]; then
     echo "Environment is set to local. Certificates are generated now via LetsEncrypt certbot..."
@@ -70,8 +89,15 @@ elif [ "$environment" = "letsencrypt" ]; then
     fi
 
     echo "Generating certificates..."
-    certbot certonly --standalone -n --agree-tos --email $email --domains $domain
+    certbot certonly --standalone -n --agree-tos --email $email --domains $domain --cert-name wendzelnntpd
 
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/fullchain.pem /usr/local/etc/ssl/server.crt
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/privkey.pem /usr/local/etc/ssl/server.key
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/chain.pem /usr/local/etc/ssl/ca.crt
+
+    echo "Finished ..."
+    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo
 else
     echo "Unknown environment for script generation provided..."
     echo "Stopping script."
