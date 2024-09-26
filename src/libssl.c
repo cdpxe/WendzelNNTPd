@@ -1,7 +1,9 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2024 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (C) 2004-2024 Steffen Wendzel
+ *
+ * -This file was initially contributed by my students. Thanks for that!-
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,14 +165,14 @@ check_tls_prerequisites(connectorinfo_t *connectorinfo)
 		return FALSE;
     }
 
-    if (access(connectorinfo->server_cert_file,R_OK) != 0) {
-        fprintf(stderr,"Certificate file is not found on defined path!\n");
+    if (access(connectorinfo->server_cert_file, R_OK) != 0) {
+        fprintf(stderr,"Certificate file '%s' is not found on defined path!\n", connectorinfo->server_cert_file);
         ERR_print_errors_fp(stderr);
 		return FALSE;
     }
 
-    if (access(connectorinfo->server_key_file,R_OK) != 0) {
-        fprintf(stderr,"Server key file is not found on defined path!\n");
+    if (access(connectorinfo->server_key_file, R_OK) != 0) {
+        fprintf(stderr,"Server key file '%s' is not found on defined path!\n", connectorinfo->server_key_file);
         ERR_print_errors_fp(stderr);
 		return FALSE;
     }
@@ -191,23 +193,24 @@ tls_session_init(server_cb_inf *inf)
 {
 	char *connection_log = NULL;
 	inf->sockinf->tls_session = SSL_new(inf->sockinf->connectorinfo->ctx);
+	char conn_s[50] = { '\0' };
 
 	if(!SSL_set_fd(inf->sockinf->tls_session,inf->sockinf->sockfd)) {
-		fprintf(stderr,"Error creating TLS session!!\n");
+		fprintf(stderr,"Error creating TLS session!\n");
 		ERR_print_errors_fp(stderr);
 		return FALSE;
 	} 
 
 	if (SSL_accept(inf->sockinf->tls_session) <=0) {
-		fprintf(stderr,"Error negotiating TLS session!!\n");
+		fprintf(stderr,"Error negotiating TLS session!\n");
 		ERR_print_errors_fp(stderr);
 		return FALSE;
 	}
 
 	/* Log the started connection */
-	char conn_s[50];
+	/* TODO: replace sprintf() with snprintf() */
 	sprintf(conn_s,"%s:%d",inf->sockinf->connectorinfo->listen,inf->sockinf->connectorinfo->port);
-	connection_log = str_concat("Created TLS connection from ", inf->sockinf->ip, " Connector:", conn_s, NULL);
+	connection_log = str_concat("Created TLS connection from ", inf->sockinf->ip, ", Connector:", conn_s, NULL);
 	DO_SYSL(connection_log);
 	fprintf(stderr,"%s\n",connection_log);
 	FFLUSH

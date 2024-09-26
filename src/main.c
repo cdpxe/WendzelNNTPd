@@ -166,7 +166,7 @@ main(int argc, char *argv[])
 
 		for (i = 0; i < size_sockinfo_t; i++) {
 			if (FD_ISSET((sockinfo + i)->sockfd, &fds)) {
-				onxxdebug("accepting tcp connection.\n");
+				onxxdebug("accepting TCP connection.\n");
 				if ((connfd = accept((sockinfo+i)->sockfd,
 					SWITCHIP(i, (struct sockaddr *)&sa, (struct sockaddr *)&sa6),
 					SWITCHIP(i, &salen, &sa6len))) < 0) {
