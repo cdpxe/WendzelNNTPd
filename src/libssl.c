@@ -164,13 +164,13 @@ check_tls_prerequisites(connectorinfo_t *connectorinfo)
     }
 
     if (access(connectorinfo->server_cert_file,R_OK) != 0) {
-        fprintf(stderr,"Certificate file is not found in defined path!\n");
+        fprintf(stderr,"Certificate file is not found on defined path!\n");
         ERR_print_errors_fp(stderr);
 		return FALSE;
     }
 
     if (access(connectorinfo->server_key_file,R_OK) != 0) {
-        fprintf(stderr,"Server key file is not found in defined path!\n");
+        fprintf(stderr,"Server key file is not found on defined path!\n");
         ERR_print_errors_fp(stderr);
 		return FALSE;
     }
