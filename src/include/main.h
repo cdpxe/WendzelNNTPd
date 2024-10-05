@@ -572,9 +572,6 @@ void onxxdebug(char *str);
 void onxxdebugm(char *str, ...);
 void logstr(char *, int, char *, char *);
 
-/* db_rawcheck.c */
-void check_db(void);
-
 /* libfunc.c */
 #if defined(__WIN32__) || defined(NOSUPPORT_STRNDUP)
 char *strndup(char *, int);

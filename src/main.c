@@ -29,6 +29,9 @@ extern short global_mode;
 extern sig_atomic_t rec_sighup;    //SIGHUP has been sent to process - global.c
 extern sig_atomic_t rec_sigterm;   //SIGTERM (KILL) has been sent to process - global.c
 
+extern unsigned short dbase;	/* from config.y */
+extern short be_verbose;
+
 /* need this global for server.c */
 struct sockaddr_in sa;
 struct sockaddr_in6 sa6;
@@ -47,6 +50,44 @@ usage_(void)
 					"-d     run WendzelNNTPd in daemon mode\n"
 					"-h     print help\n"
 					"-v     print the version and exit\n");
+}
+
+static void
+check_db(void)
+{
+	server_cb_inf inf;
+
+	if (!(inf.servinf = (serverinfo_t *) calloc(1, sizeof(serverinfo_t)))) {
+		fprintf(stderr, "Unable to allocate memory");
+		exit(ERR_EXIT);
+	}
+
+	/* Make sure we have a database engine */
+	switch (dbase) {
+	case DBASE_NONE:
+		fprintf(stderr, "There is no database specified in the configuration!\n");
+		fprintf(stderr, "Please write at least 'database-engine sqlite3' in \n");
+		fprintf(stderr, "your config file.\n");
+		DO_SYSL("Exiting. No database engine specified.");
+		exit(ERR_EXIT);
+		/*NOTREACHED*/
+		break;
+	case DBASE_SQLITE3:
+	case DBASE_MYSQL:
+	case DBASE_POSTGRES:
+		db_open_connection(&inf);
+		db_close_connection(&inf);
+		break;
+	default:
+		fprintf(stderr, "DB engine not supported. exiting.");
+		DO_SYSL("DB engine not supported. exiting.");
+		exit(ERR_EXIT);
+		break;
+	}
+	if (be_verbose) {
+	    printf("Database check %s: Success.\n",
+		(dbase == DBASE_SQLITE3 ? "Sqlite3" : (dbase == DBASE_MYSQL ? "MySQL" : "PostgreSQL")));
+	}
 }
 
 static void
