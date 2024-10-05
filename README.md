@@ -8,7 +8,7 @@ This server is tailored for workgroups, where users trust each other and where n
 
 ##### Version 2.2-alpha
 
-The Git repository contains version 2.2 alpha that includes TLS support and several other features.
+The [Git repository's main branch](https://github.com/cdpxe/WendzelNNTPd) contains version 2.2 alpha that includes TLS support and several other features.
 
 ##### Source (version 2.1.3)
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
