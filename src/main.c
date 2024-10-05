@@ -53,7 +53,7 @@ usage_(void)
 }
 
 static void
-check_db(void)
+check_db_(void)
 {
 	server_cb_inf inf;
 
@@ -176,7 +176,7 @@ main(int argc, char *argv[])
 	umask(077);
 #endif
 
-	check_db();
+	check_db_();
 	welcome_(1);
 
 /* SOCKET MAINLOOP */
