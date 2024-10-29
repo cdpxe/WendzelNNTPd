@@ -3,12 +3,12 @@
 # Based on the Xyria:DNSd/cdpNNTPd configure script I wrote in 2004 or 2005.
 # This script is basically unchanged since 2015 as I only added detail
 # improvements.
-# e-mail: wendzel (at) hs-worms (dot) de
+# e-mail: <steffen (at) wendzel (dot) de>
 # web:    https://www.wendzel.de
 #
 # WendzelNNTPd is distributed under the following license:
 #
-# Copyright (c) 2004-2023 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+# Copyright (c) 2004-2023 Steffen Wendzel <steffen (at) wendzel (dot) de>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -86,7 +86,6 @@ check()
 echo "This is the WendzelNNTPd configuration script v.${VERSION}"
 echo
 echo "Written by Steffen Wendzel"
-echo "    mail: wendzel (at) hs-worms (dot) de"
 echo "    https://www.wendzel.de"
 echo
 

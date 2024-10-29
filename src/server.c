@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (c) 2004-2021 Steffen Wendzel <wendzel (at) hs-worms (dot) de>
+ * Copyright (c) 2004-2021 Steffen Wendzel <steffen (at) wendzel (dot) de>
  * https://www.wendzel.de
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ char helpstring[]=            "100 help text follows\r\n"
 				"\txover <from[-[to]]>\r\n"
                                  "\txgtitle [wildmat*] (equals LIST NEWSGROUPS but return code differs)\r\n"
                                  "--\r\n"
-                                 "Send questions and problems to <wendzel [at] hs-worms [dot] de>\r\n"
+                                 "Send questions and problems to <steffen [at] wendzel [dot] de>\r\n"
                                  "Website: https://www.wendzel.de\r\n"
                                  "\r\n"
                                  "Notes:\r\n"

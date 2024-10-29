@@ -1,7 +1,7 @@
 /*
  * WendzelNNTPd is distributed under the following license:
  *
- * Copyright (C) 2004-2024 Steffen Wendzel
+ * Copyright (C) 2004-2024 Steffen Wendzel <steffen (at) wendzel (dot) de>
  *
  * -This file was initially contributed by my students. Thanks for that!-
  * 
