@@ -1,14 +1,14 @@
 # WendzelNNTPd
 
-**WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/OpenBSD/FreeBSD/NetBSD and some similar systems), supports IPv4 and IPv6, TLS (SNNTP/NNTPS), AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
+**WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/OpenBSD/FreeBSD/NetBSD and some similar systems), supports IPv4 and IPv6, *experimental* support for TLS (SNNTP/NNTPS), AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
 
-This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks TLS support and strong hardening.
+This server is tailored for retro computing people as well as small workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization).
 
 ## Download
 
 ##### Version 2.2-alpha
 
-The Git repository contains version 2.2 alpha that includes TLS support and several other features.
+The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) contains the latest version (2.2 alpha) that includes TLS support and several more enhancements.
 
 ##### Source (version 2.1.3)
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
@@ -53,19 +53,17 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 * The main branch currently provides version 2.2-alpha, including experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!). Further, the main branch provides TLS support.
 
-## Why you want a Usenet server
+## Website
 
-Probably because you are into retro computing and already run a Gopher service! :) WendzelNNTPd is not tailored as a critical service, it is for nerds who like to play with the protocol and want to use it for fun! Also, feel invited to contribute your patches and extensions!
+https://cdpxe.github.io/WendzelNNTPd/
 
-Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new-release-usenet-server.html).
+## Forum for your Questions and Comments
+
+https://sourceforge.net/p/wendzelnntpd/discussion/general/
 
 ## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
-
-## Forum for your Questions and Comments
-
-[https://sourceforge.net/p/wendzelnntpd/discussion/general/](https://sourceforge.net/p/wendzelnntpd/discussion/general/)
 
 ## Propaganda
 
