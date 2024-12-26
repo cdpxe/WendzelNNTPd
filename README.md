@@ -45,21 +45,18 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * Supports "invisible newsgroups"
 * It is open + free software! :)
 * v.2.2: TLS server authentication and data encryption
-* v.2.2: Supports multiple connectors with different configurations
+* v.2.2: Supports multiple connectors so that multiple socket configurations can be used simultaneously
 * v.2.2.: Supports NNTPS ans SNNTP with TLS 1.0-1.3
 * v.2.2.: Support for client certificate verification (mTLS) and CRL checks
 
 #### Features Under Development/Call for Testing
 
-* The main branch currently provides version 2.2-alpha, including experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!). Further, the main branch provides TLS support.
+* The main branch currently provides version 2.2-alpha, including experimental support for **PostgreSQL** backends, including the option to store postings in the database and eliminate the use of */var/spool/news* (thx to Christian Barthel for the patch!). Further, the main branch provides experimental **TLS support**.
 
-## Website
-
-https://cdpxe.github.io/WendzelNNTPd/
-
-## Forum for your Questions and Comments
-
-https://sourceforge.net/p/wendzelnntpd/discussion/general/
+## More Information
+- List of contributors [https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS)
+- Website: [https://cdpxe.github.io/WendzelNNTPd/](https://cdpxe.github.io/WendzelNNTPd/)
+- Forum for your Questions and Comments: [https://sourceforge.net/p/wendzelnntpd/discussion/general/](https://sourceforge.net/p/wendzelnntpd/discussion/general/)
 
 ## Documentation
 
