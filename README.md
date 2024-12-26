@@ -1,8 +1,8 @@
 # WendzelNNTPd
 
-**WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/OpenBSD/FreeBSD/NetBSD and some similar systems), supports IPv4 and IPv6, TLS (SNNTP/NNTPS), AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
+**WendzelNNTPd** is an **easy to configure Usenet server** (NNTP daemon). WendzelNNTPd breaks down complicated things into an easy-to-use configuration file and tool. The server is portable (Linux/OpenBSD/FreeBSD/NetBSD and some similar systems), supports IPv4 and IPv6, *experimental* support for TLS (SNNTP/NNTPS), AUTHINFO authentication, contains support for Access Control Lists (ACL), Role-based Access Control (RBAC) and supports invisible newsgroups. It currently supports MySQL and SQLite backends.
 
-This server is tailored for workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization). The server is also not a suitable for confidential environments as it lacks TLS support (under development, see below) and strong hardening.
+This server is tailored for retro computing people as well as small workgroups, where users trust each other and where no synchronization with other usenet servers is necessary. For this reason, not all advanced NNTP features are included (e.g. commands for server synchronization).
 
 ## Download
 
@@ -64,3 +64,9 @@ https://sourceforge.net/p/wendzelnntpd/discussion/general/
 ## Documentation
 
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
+
+## Propaganda
+
+![Powered by WendzelNNTPd](images/wendzelnntpd_powered.png "powered by WendzelNNTPd usenet server")
+
+![Powered by WendzelNNTPd](images/wendzelnntpd_powered2.png "powered by WendzelNNTPd usenet server")
