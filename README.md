@@ -63,6 +63,8 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
 
 ## Propaganda
+Some late 1990's/early 2000's-styled 'powered by' logos. Let me know if you incl
+ude these into your websites.
 
 ![Powered by WendzelNNTPd](images/wendzelnntpd_powered.png "powered by WendzelNNTPd usenet server")
 
