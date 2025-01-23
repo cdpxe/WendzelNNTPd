@@ -187,8 +187,8 @@ Send(sockinfo_t *sockinfo, char *str, int len)
 #ifdef USE_TLS
 	// send message with encryption if TLS active
 	if (sockinfo->tls_active == TRUE) {
-
 		int return_code;
+
 		return_code = SSL_write(sockinfo->tls_session, str, len);
 		if (return_code <= 0) {
 			if (daemon_mode) {
@@ -934,7 +934,7 @@ docmd_post_chk_required_hdr_lines(char *header, server_cb_inf *inf)
 	/* From: */
 	/* "blah@blah.com" */
 	/* Comments:
-	 * - This allows "max....mustermann@muster.com", but we let it pass here.
+	 * - This allows "max....mustermann@...muster....com", but we let it pass here.
 	 */
 	if (wnntpd_rx_contain("^[fF][rR][oO][mM]: "EMAIL_NAME"@"DOMAIN_NAME"\r\n", header) == 0)
 		correctline = TRUE;
