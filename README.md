@@ -15,7 +15,7 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
 
 ##### Packages & Executables
 - *Slackware Linux*: 
-  - Slackware 14.2: [Slackbuilds.org Build Script](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/)
+  - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
   - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (v. 2.1.3 -- tgz)
      - Installation via `installpkg (filename)`
 - *NetBSD*:
