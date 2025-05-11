@@ -10,29 +10,29 @@ to run WendzelNNTPd in a Docker container.
 When you are on a UNIX-based system (like macOS) you can use the
 provided make commands:
 ```console
-$ make docker-build
-$ make docker-run
+$ make docker-dev-build
+$ make docker-dev-run
 ```
 
 To stop the Docker container you can use the following command:
 ```console
-$ make docker-stop
+$ make docker-dev-stop
 ```
 
 If you are not on a UNIX-based system (like Windows) use the following
 native docker commands:
 ```console
-$ docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
-$ docker run --name wendzelnntpd --rm -it \
+$ docker build -f ./docker/Dockerfile -t wendzelnntpd-dev:latest .
+$ docker run --name wendzelnntpd-dev --rm -it \
     -p 118:118 -p 119:119 -p 563:563 -p 564:564 \
     -v ${PWD}:/wendzelnntpd \
     -v wendzelnntpd_data:/var/spool/news/wendzelnntpd \
-    wendzelnntpd:latest
+    wendzelnntpd-dev:latest
 ```
 
 To stop the Docker container you can use the following command:
 ```console
-$ docker stop wendzelnntpd
+$ docker stop wendzelnntpd-dev
 ```
 
 ### Test new code
