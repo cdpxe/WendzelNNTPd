@@ -10,7 +10,6 @@ jobs:
 # Setup qemu mit docker/setup-qemu-action@v3
 # docker run und da drin dann dependencies installieren, dann ./configure && make && make install und dann config bereitstellen, tls-cert erstellen und wendzelnntpd starten
 # expect und tcl installieren oder das passende Docker-image verwenden und dann die Tests starten
-#            --platform linux/riscv64 \
   build-test:
     runs-on: ubuntu-latest
     name: Build and Test wendzelnntpd
@@ -28,6 +27,7 @@ jobs:
             --rm \
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
+            --platform linux/riscv64 \
             --name testcontainer \
             -d -it \
             debian:stable-slim \
@@ -42,8 +42,6 @@ jobs:
         run: docker exec testcontainer bash -c "make install"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
-      - name: Smoketest
-        run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer
       - name: Smoketest
         run: netcat $(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer) 119 -w 1
       - name: Stop Docker container
