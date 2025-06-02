@@ -27,7 +27,7 @@ jobs:
             --rm \
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
-            --platform linux/riscv64 \
+            --platform riscv64 \
             --name testcontainer \
             -d -it \
             debian:stable-slim \
