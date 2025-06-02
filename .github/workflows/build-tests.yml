@@ -10,6 +10,7 @@ jobs:
 # Setup qemu mit docker/setup-qemu-action@v3
 # docker run und da drin dann dependencies installieren, dann ./configure && make && make install und dann config bereitstellen, tls-cert erstellen und wendzelnntpd starten
 # expect und tcl installieren oder das passende Docker-image verwenden und dann die Tests starten
+# testmatrix für die verschiedenen Plattformen erstellen
   build-test:
     runs-on: ubuntu-latest
     name: Build and Test wendzelnntpd
@@ -20,14 +21,13 @@ jobs:
         with:
           platforms: linux/ppc64le
       - name: Install test tools
-        run: sudo apt-get update -y && sudo apt-get install -y netcat-openbsd
+        run: sudo apt-get update -y && sudo apt-get install -y netcat-openbsd expect
       - name: Start Docker container
         run: |
           docker run \
             --rm \
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
-            --platform linux/ppc64le \
             --name testcontainer \
             -d -it \
             debian:stable-slim \
@@ -44,5 +44,7 @@ jobs:
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: Smoketest
         run: netcat $(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer) 119 -w 1
+      - name: expect tests
+        run: cd unittesting/tls-testing && ./run.sh
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
