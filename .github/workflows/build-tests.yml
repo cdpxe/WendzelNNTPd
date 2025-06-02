@@ -6,69 +6,31 @@ on:
         branches:
 
 jobs:
-  build-test-ubuntu:
+# Plan:
+# Setup qemu mit docker/setup-qemu-action@v3
+# docker run und da drin dann dependencies installieren, dann ./configure && make && make install und dann config bereitstellen, tls-cert erstellen und wendzelnntpd starten
+# expect und tcl installieren oder das passende Docker-image verwenden und dann die Tests starten
+  build-test:
     runs-on: ubuntu-latest
-    name: Build wendzelnntpd on Ubuntu
-    container:
-          image: ubuntu:latest
+    name: Build and Test wendzelnntpd
     steps:
       - uses: actions/checkout@v4
-      - name: Install needed packages
-        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
-      - name: Run configuration
-        run: ./configure
-      - name: Run make
-        run: make
-      - name: Run make install
-        run: make install
-
-  build-test-debian:
-    runs-on: ubuntu-latest
-    name: Build wendzelnntpd on Debian
-    container:
-          image: debian:stable-slim
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install needed packages
-        run: apt -y update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make golang-go openssl libssl-dev
-      - name: Run configuration
-        run: ./configure
-      - name: Run make
-        run: make
-      - name: Run make install
-        run: make install
-
-  build-test-openbsd:
-    runs-on: ubuntu-latest
-    name: Build wendzelnntpd on OpenBSD
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run in OpenBSD VM
-        uses: vmactions/openbsd-vm@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
         with:
-          usesh: true
-          prepare: |
-            pkg_add bison
-            pkg_add mhash
-          run: |
-            MYSQL=NO ./configure
-            make
-            make install
-
-  build-test-freebsd:
-    runs-on: ubuntu-latest
-    name: Build wendzelnntpd on FreeBSD
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run in FreeBSD VM
-        uses: vmactions/freebsd-vm@v1
-        with:
-          usesh: true
-          prepare: |
-            pkg install -y sqlite3
-            pkg install -y bison
-            pkg install -y mhash
-          run: |
-            MYSQL=NO ./configure
-            make
-            make install
+          platforms: linux/riscv64
+      - name: Install test tools
+        run: apt-get update && apt-get install -y netcat-openbsd
+      - name: Start Docker container
+        run: |
+          docker run \
+            --rm \
+            -v $(pwd):/${{ github.workspace }} \
+            -w ${{ github.workspace }} \
+#            --platform linux/riscv64 \
+            --name testcontainer
+            -d -it \
+            debian:stable-slim \
+            /bin/sh
+      - name: Stop Docker container
+        run: docker stop testcontainer -t 1
