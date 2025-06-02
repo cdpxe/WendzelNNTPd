@@ -28,7 +28,7 @@ jobs:
             --rm \
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
-            --name testcontainer
+            --name testcontainer \
             -d -it \
             debian:stable-slim \
             /bin/sh
