@@ -21,7 +21,7 @@ jobs:
         with:
           platforms: linux/riscv64
       - name: Install test tools
-        run: sudo apt-get update && apt-get install -y netcat-openbsd
+        run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
       - name: Start Docker container
         run: |
           docker run \
