@@ -43,6 +43,8 @@ jobs:
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: Smoketest
+        run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer
+      - name: Smoketest
         run: netcat $(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer) 119 -w 1
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
