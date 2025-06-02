@@ -20,8 +20,8 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: linux/riscv64
-      - name: Install test tools
-        run: apt-get update && apt-get install -y netcat-openbsd
+#      - name: Install test tools
+#        run: apt-get update && apt-get install -y netcat-openbsd
       - name: Start Docker container
         run: |
           docker run \
