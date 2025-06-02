@@ -20,8 +20,8 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: linux/riscv64
-#      - name: Install test tools
-#        run: apt-get update && apt-get install -y netcat-openbsd
+      - name: Install test tools
+        run: sudo apt-get update && apt-get install -y netcat-openbsd
       - name: Start Docker container
         run: |
           docker run \
@@ -32,5 +32,17 @@ jobs:
             -d -it \
             debian:stable-slim \
             /bin/sh
+      - name: Install dependencies
+        run: docker exec -it testcontainer bash -c "apt-get update && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make openssl libssl-dev"
+      - name: configure
+        run: docker exec -it testcontainer bash -c "./configure"
+      - name: make
+        run: docker exec -it testcontainer bash -c "make"
+      - name: make install
+        run: docker exec -it testcontainer bash -c "make install"
+      - name: run wendzelnntpd
+        run: docker exec -it testcontainer bash -c "wendzelnntpd -d"
+      - name: Smoketest
+        run: netcat $(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer) 119 -w 1
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
