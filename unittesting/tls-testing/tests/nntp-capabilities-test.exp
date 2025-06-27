@@ -2,7 +2,7 @@ set timeout 2
 
 send_user "=== Test capabilities command ===\n"
 
-spawn telnet $env(nntpd_address) 119
+spawn telnet $env(nntp_address) 119
 
 send_user "== Check response of capabilities command ==\n"
 send "capabilities\n"
