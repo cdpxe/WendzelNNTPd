@@ -27,8 +27,7 @@ jobs:
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
             --name testcontainer \
-            -d \ 
-            -it \
+            -d -it \
             debian:stable-slim \
             /bin/sh
       - name: Install dependencies
