@@ -7,9 +7,7 @@ on:
 
 jobs:
 # Plan:
-# Setup qemu mit docker/setup-qemu-action@v3
-# docker run und da drin dann dependencies installieren, dann ./configure && make && make install und dann config bereitstellen, tls-cert erstellen und wendzelnntpd starten
-# expect und tcl installieren oder das passende Docker-image verwenden und dann die Tests starten
+# config bereitstellen, tls-cert erstellen, tls-client cert bereitstellen
 # testmatrix für die verschiedenen Plattformen erstellen
   build-test:
     runs-on: ubuntu-latest
@@ -29,7 +27,8 @@ jobs:
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
             --name testcontainer \
-            -d -it \
+            -d \ 
+            -it \
             debian:stable-slim \
             /bin/sh
       - name: Install dependencies
