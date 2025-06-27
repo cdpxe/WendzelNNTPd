@@ -8,5 +8,5 @@ send_user "== Check response of capabilities command ==\n"
 send "capabilities\n"
 expect {
   timeout { send_user "Error: capabilities command did not respond correctly\n"; exit 1 }
-  -re "101 capability list follows\\r\\nVERSION 2\\r\\nAUTHINFO\\r\\nLIST NEWSGROUPS OVERVIEW.FMT\\r\\nMODE-READER\\r\\nPOST\\r\\n."
+  -re "101 capability list follows\\r\\nVERSION 2\\r\\nAUTHINFO\\r\\nLIST NEWSGROUPS OVERVIEW.FMT\\r\\nMODE-READER\\r\\nPOST\\r\\n\\."
 }
