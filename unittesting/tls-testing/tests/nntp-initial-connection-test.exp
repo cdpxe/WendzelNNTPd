@@ -1,0 +1,11 @@
+set timeout 2
+
+send_user "=== Test TODO"
+
+spawn telnet $env(nntpd_address) 119
+
+send_user "== Check response of initial connection ==\n"
+expect {
+  timeout { send_user "Error TODO"; exit 1 }
+  -re "200 WendzelNNTPd.*ready \\(posting ok\\)"
+}

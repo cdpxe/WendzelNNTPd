@@ -3,7 +3,7 @@ results=()
 
 nntpd_address="${nntpd_address:-localhost}"
 
-for file in *.exp
+for file in tests/*.exp
 do
     echo "Run test $file"
     nntpd_address=$nntpd_address expect $file
