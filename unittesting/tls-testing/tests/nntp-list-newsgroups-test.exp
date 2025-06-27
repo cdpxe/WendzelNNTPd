@@ -1,0 +1,12 @@
+set timeout 2
+
+send_user "=== Test list newsgroups command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of list newsgroups command ==\n"
+send "list newsgroups\n"
+expect {
+  timeout { send_user "Error: list newsgroups command did not respond correctly\n"; exit 1 }
+  -re "215 information follows\\r\\nalt.wendzelnntpd.test -\\r\\n\\."
+}
