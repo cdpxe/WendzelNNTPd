@@ -1,0 +1,12 @@
+set timeout 2
+
+send_user "=== Test mode reader command ===\n"
+
+spawn telnet $env(nntpd_address) 119
+
+send_user "== Check response of mode reader command ==\n"
+send "mode reader\n"
+expect {
+  timeout { send_user "Error: mode reader command did not respond correctly\n"; exit 1 }
+  -re "200 hello, you can post"
+}

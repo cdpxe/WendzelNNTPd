@@ -1,0 +1,18 @@
+set timeout 2
+
+send_user "=== Test quit command ===\n"
+
+spawn telnet $env(nntpd_address) 119
+
+send_user "== Check response of quit command ==\n"
+send "quit\n"
+expect {
+  timeout { send_user "Error: quit command did not respond correctly\n"; exit 1 }
+  -re "205 closing connection - goodbye!"
+}
+
+send_user "== Check that the connection is closed ==\n"
+expect {
+  timeout { send_user "Error: the connection wasn't closed\n"; exit 1 }
+  eof
+}
