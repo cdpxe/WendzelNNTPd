@@ -1,10 +1,12 @@
 error=0
 results=()
 
+nntpd_address="${nntpd_address:-localhost}"
+
 for file in *.exp
 do
     echo "Run test $file"
-    expect $file
+    nntpd_address=$nntpd_address expect $file
     result=$?
     if [ $result -ne 0 ]
     then
