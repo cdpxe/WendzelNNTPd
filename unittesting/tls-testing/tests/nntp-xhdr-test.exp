@@ -1,0 +1,56 @@
+set timeout 2
+
+send_user "=== Test xhdr command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of xhdr command without group ==\n"
+send "xhdr subject\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of xhdr command with group without article ==\n"
+send "group alt.wendzelnntpd.test.empty\n"
+send "xhdr subject\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "420 no \\(current\\) article selected"
+}
+
+send_user "== Check response of xhdr command with group with article ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "xhdr subject\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "221 Header follows\\r\\n1 Test\\r\\n\\."
+}
+
+send_user "== Check response of xhdr command with article number parameter ==\n"
+send "xhdr subject 1\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "221 Header follows\\r\\n1 Test\\r\\n\\."
+}
+
+send_user "== Check response of xhdr command with article number range parameter ==\n"
+send "xhdr subject 1-2\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "221 Header follows\\r\\n1 Test\\r\\n2 Test\\r\\n\\."
+}
+
+send_user "== Check response of xhdr command with article number open range parameter ==\n"
+send "xhdr subject 1-\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "221 Header follows\\r\\n1 Test\\r\\n2 Test\\r\\n\\."
+}
+
+send_user "== Check response of xhdr command with invalid header name ==\n"
+send "xhdr invalid\n"
+expect {
+  timeout { send_user "Error: xhdr command did not respond correctly\n"; exit 1 }
+  -re "221 Header follows\\r\\n\\."
+}
