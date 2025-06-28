@@ -1,0 +1,72 @@
+set timeout 2
+
+send_user "=== Test stat command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of stat command without selected group ==\n"
+send "stat\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of stat command without selected group with article number ==\n"
+send "stat 1\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of stat command without selected group with existing message-id ==\n"
+send "stat <cdp1@localhost>\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of stat command with empty group ==\n"
+send "group alt.wendzelnntpd.test.empty\n"
+send "stat\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "420 no \\(current\\) article selected"
+}
+
+send_user "== Check response of stat command with non existing message-id ==\n"
+send "stat <1>\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "430 no such article found"
+}
+
+send_user "== Check response of stat command with non existing article number ==\n"
+send "stat 1\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "430 no such article found"
+}
+
+send_user "== Check response of stat command with group with article ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "stat\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "223 1 <cdp1@localhost> article retrieved - request text separately"
+}
+
+send_user "== Check response of stat command with group with article with message-id ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "stat <cdp2@localhost>\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "223 2 <cdp2@localhost> article retrieved - request text separately"
+}
+
+send_user "== Check response of stat command with group with article with article number ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "stat 2\n"
+expect {
+  timeout { send_user "Error: stat command did not respond correctly\n"; exit 1 }
+  -re "223 2 <cdp2@localhost> article retrieved - request text separately"
+}

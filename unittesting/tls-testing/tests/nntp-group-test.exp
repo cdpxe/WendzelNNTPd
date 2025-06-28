@@ -1,0 +1,26 @@
+set timeout 2
+
+send_user "=== Test group command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of group command without parameter ==\n"
+send "group\n"
+expect {
+  timeout { send_user "Error: group command did not respond correctly\n"; exit 1 }
+  -re "501 missing a parameter, see 'help'"
+}
+
+send_user "== Check response of group command for existing group ==\n"
+send "group alt.wendzelnntpd.test\n"
+expect {
+  timeout { send_user "Error: group command did not respond correctly\n"; exit 1 }
+  -re "211 2 1 2 alt.wendzelnntpd.test group selected"
+}
+
+send_user "== Check response of group command for non existing group ==\n"
+send "group invalid\n"
+expect {
+  timeout { send_user "Error: group command did not respond correctly\n"; exit 1 }
+  -re "411 no such group"
+}

@@ -1,0 +1,34 @@
+set timeout 2
+
+send_user "=== Test listgroup command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of listgroup command without parameter ==\n"
+send "listgroup\n"
+expect {
+  timeout { send_user "Error: listgroup command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of listgroup command for existing group ==\n"
+send "listgroup alt.wendzelnntpd.test\n"
+expect {
+  timeout { send_user "Error: listgroup command did not respond correctly\n"; exit 1 }
+  -re "211 Article list follows\\r\\n1\\r\\n2\\r\\n\\."
+}
+
+send_user "== Check response of listgroup command for non existing group ==\n"
+send "listgroup invalid\n"
+expect {
+  timeout { send_user "Error: listgroup command did not respond correctly\n"; exit 1 }
+  -re "411 no such group"
+}
+
+# "listgroup alt.wendzelnntpd.test" selected a group
+send_user "== Check response of listgroup command without parameter after a group was selected ==\n"
+send "listgroup\n"
+expect {
+  timeout { send_user "Error: listgroup command did not respond correctly\n"; exit 1 }
+  -re "211 Article list follows\\r\\n1\\r\\n2\\r\\n\\."
+}
