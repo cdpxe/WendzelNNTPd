@@ -24,26 +24,26 @@ send "group alt.wendzelnntpd.test\n"
 send "xover\n"
 expect {
   timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
-  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n\\."
+  -re "224 overview information follows\\r\\n1\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:00 \\+\\d{4}\\s<cdp1@localhost>\[\\t\] \[\\t\]204\[\\t\]1\[\\t\] \\r\\n\\."
 }
 
 send_user "== Check response of xover command with article number parameter ==\n"
 send "xover 1\n"
 expect {
   timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
-  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n\\."
+  -re "224 overview information follows\\r\\n1\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:00 \\+\\d{4}\\s<cdp1@localhost>\[\\t\] \[\\t\]204\[\\t\]1\[\\t\] \\r\\n\\."
 }
 
 send_user "== Check response of xover command with article number range parameter ==\n"
 send "xover 1-2\n"
 expect {
   timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
-  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n2\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:01 \\+0200\\s<cdp2@localhost>\\s*207\\s*1\\s*\\r\\n\\."
+  -re "224 overview information follows\\r\\n1\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:00 \\+\\d{4}\\s<cdp1@localhost>\[\\t\] \[\\t\]204\[\\t\]1\[\\t\] \\r\\n2\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:01 \\+\\d{4}\\s<cdp2@localhost>\[\\t\] \[\\t\]207\[\\t\]1\[\\t\] \\r\\n\\."
 }
 
 send_user "== Check response of xover command with article number open range parameter ==\n"
 send "xover 1-\n"
 expect {
   timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
-  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n2\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:01 \\+0200\\s<cdp2@localhost>\\s*207\\s*1\\s*\\r\\n\\."
+  -re "224 overview information follows\\r\\n1\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:00 \\+\\d{4}\\s<cdp1@localhost>\[\\t\] \[\\t\]204\[\\t\]1\[\\t\] \\r\\n2\[\\t\]Test\[\\t\]Testuser <test@example.com>\[\\t\]Sat, 28 Jun 2025 \\d{2}:\\d{2}:01 \\+\\d{4}\\s<cdp2@localhost>\[\\t\] \[\\t\]207\[\\t\]1\[\\t\] \\r\\n\\."
 }
