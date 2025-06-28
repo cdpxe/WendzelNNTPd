@@ -8,5 +8,5 @@ send_user "== Check response of list command ==\n"
 send "list\n"
 expect {
   timeout { send_user "Error: list command did not respond correctly\n"; exit 1 }
-  -re "215 list of newsgroups follows\\r\\nalt.wendzelnntpd.test 0 0 y\\r\\n\\."
+  -re "215 list of newsgroups follows\\r\\nalt.wendzelnntpd.test 2 1 y\\r\\nalt.wendzelnntpd.test.empty 0 0 y\\r\\nalt.wendzelnntpd.test.post \\d \\d y\\r\\n\\."
 }

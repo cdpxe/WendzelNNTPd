@@ -22,5 +22,5 @@ send_user "== Check response of xgtitle command with wildmat parameter ==\n"
 send "xgtitle .*wendzelnntpd.*\n"
 expect {
   timeout { send_user "Error: xgtitle command did not respond correctly\n"; exit 1 }
-  -re "282 list of groups and descriptions follows\\r\\nalt.wendzelnntpd.test -\\r\\n\\."
+  -re "282 list of groups and descriptions follows\\r\\nalt.wendzelnntpd.test -\\r\\nalt.wendzelnntpd.test.empty -\\r\\nalt.wendzelnntpd.test.post -\\r\\n\\."
 }

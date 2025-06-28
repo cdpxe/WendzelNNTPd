@@ -38,6 +38,8 @@ jobs:
         run: docker exec testcontainer bash -c "make"
       - name: make install
         run: docker exec testcontainer bash -c "make install"
+      - name: Initialize test data
+        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: get container ip

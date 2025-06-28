@@ -8,7 +8,7 @@ send_user "== Check response of list newsgroups command ==\n"
 send "list newsgroups\n"
 expect {
   timeout { send_user "Error: list newsgroups command did not respond correctly\n"; exit 1 }
-  -re "215 information follows\\r\\nalt.wendzelnntpd.test -\\r\\n\\."
+  -re "215 information follows\\r\\nalt.wendzelnntpd.test -\\r\\nalt.wendzelnntpd.test.empty -\\r\\nalt.wendzelnntpd.test.post -\\r\\n\\."
 }
 
 send_user "== Check response of list newsgroups command with unknown wildmat parameter ==\n"
@@ -19,8 +19,8 @@ expect {
 }
 
 send_user "== Check response of list newsgroups command with wildmat parameter ==\n"
-send "list newsgroups .*wendzelnntpd.*\n"
+send "list newsgroups .*wendzelnntpd.test.empty.*\n"
 expect {
   timeout { send_user "Error: list newsgroups command did not respond correctly\n"; exit 1 }
-  -re "215 information follows\\r\\nalt.wendzelnntpd.test -\\r\\n\\."
+  -re "215 information follows\\r\\nalt.wendzelnntpd.test.empty -\\r\\n\\."
 }
