@@ -1,0 +1,49 @@
+set timeout 2
+
+send_user "=== Test xover command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of xover command without group ==\n"
+send "xover\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of xover command with group without article ==\n"
+send "group alt.wendzelnntpd.test.empty\n"
+send "xover\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "420 no \\(current\\) article selected"
+}
+
+send_user "== Check response of xover command with group with article ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "xover\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n\\."
+}
+
+send_user "== Check response of xover command with article number parameter ==\n"
+send "xover 1\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n\\."
+}
+
+send_user "== Check response of xover command with article number range parameter ==\n"
+send "xover 1-2\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n2\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:01 \\+0200\\s<cdp2@localhost>\\s*207\\s*1\\s*\\r\\n\\."
+}
+
+send_user "== Check response of xover command with article number open range parameter ==\n"
+send "xover 1-\n"
+expect {
+  timeout { send_user "Error: xover command did not respond correctly\n"; exit 1 }
+  -re "224 overview information follows\\r\\n1\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:00 \\+0200\\s<cdp1@localhost>\\s*204\\s*1\\s*\\r\\n2\\s*Test\\s*Testuser <test@example.com>\\s*Sat, 28 Jun 2025 12:30:01 \\+0200\\s<cdp2@localhost>\\s*207\\s*1\\s*\\r\\n\\."
+}
