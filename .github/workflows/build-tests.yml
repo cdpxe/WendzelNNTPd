@@ -20,9 +20,11 @@ jobs:
           platforms: linux/ppc64le
       - name: Install test tools
         run: sudo apt-get update -y && sudo apt-get install -y netcat-openbsd expect
+      - run: docker network create --ipv6 ip6net
       - name: Start Docker container
         run: |
           docker run \
+            --network ip6net \
             --rm \
             -v $(pwd):${{ github.workspace }} \
             -w ${{ github.workspace }} \
@@ -42,11 +44,17 @@ jobs:
         run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
-      - name: get container ip
-        run: echo "ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer)" >> $GITHUB_ENV
-      - name: Smoketest
-        run: netcat ${{ env.ip }} 119 -w 1
-      - name: expect tests
-        run: cd unittesting/tls-testing && nntp_address=${{ env.ip }} ./run.sh
+      - name: get container ipv4
+        run: echo "ipv4=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer)" >> $GITHUB_ENV
+      - name: get container ipv6
+        run: echo "ipv6=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.GlobalIPv6Address}}{{end}}' testcontainer)" >> $GITHUB_ENV
+      - name: Smoketest IPv4
+        run: netcat ${{ env.ipv4 }} 119 -w 1
+      - name: Smoketest IPv6
+        run: netcat ${{ env.ipv6 }} 119 -w 1
+      - name: expect tests IPv4
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: expect tests IPv6
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
