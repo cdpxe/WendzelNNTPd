@@ -1,7 +1,9 @@
 #!/bin/sh
 
-openssl genrsa -out "./test-files/client-key.pem" 2048
+mkdir -p tmp
 
-openssl req -new -key "./test-files/client-key.pem" -out "client.csr" -config "./test-files/openssl-client.cnf"
+openssl genrsa -out "./tmp/client-key.pem" 2048
 
-openssl x509 -req -days 36500 -in "client.csr" -CA "ca-self.crt" -CAkey "ca-self.key" -CAcreateserial -extensions v3_req -extfile "./test-files/openssl-client.cnf" -out "./test-files/client-pub.pem"
+openssl req -new -key "./tmp/client-key.pem" -out "./tmp/client.csr" -config "./test-files/openssl-client.cnf"
+
+openssl x509 -req -days 36500 -in "./tmp/client.csr" -CA "./tmp/ca-self.crt" -CAkey "./tmp/ca-self.key" -CAcreateserial -extensions v3_req -extfile "./test-files/openssl-client.cnf" -out "./tmp/client-pub.pem"

@@ -33,17 +33,23 @@ jobs:
             debian:stable-slim \
             /bin/sh
       - name: Install dependencies
-        run: docker exec testcontainer bash -c "apt-get update -y && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make openssl libssl-dev"
+        run: docker exec testcontainer bash -c "apt-get update -y && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make openssl libssl-dev procps"
       - name: configure
         run: docker exec testcontainer bash -c "./configure"
       - name: make
         run: docker exec testcontainer bash -c "make"
       - name: make install
         run: docker exec testcontainer bash -c "make install"
+      - name: Setup ssl certificates
+        run: docker exec testcontainer bash -c "./create_certificate --environment local"
       - name: Initialize test data
         run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
+      - name: Copy certificates from container to host
+        run: cd unittesting/tls-testing && mkdir tmp && docker cp testcontainer:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt && docker cp testcontainer:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+      - name: Create client cert for mutual tls tests
+        run: cd unittesting/tls-testing && ./create-client-cert.sh
       - name: get container ipv4
         run: echo "ipv4=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' testcontainer)" >> $GITHUB_ENV
       - name: get container ipv6
@@ -56,5 +62,9 @@ jobs:
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
       - name: expect tests IPv6
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
+      - name: Enable mandatory tls
+        run: docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && wendzelnntpd -d"
+      - name: expect test for mandatory tls
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
       - name: Stop Docker container
         run: docker stop testcontainer -t 1

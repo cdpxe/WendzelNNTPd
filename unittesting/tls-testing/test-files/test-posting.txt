@@ -1,4 +1,4 @@
-Newsgroups: alt.wendzelnntpd.test
+Newsgroups: alt.wendzelnntpd.test.post
 From: aaa <aaa@aa.de>
 Subject: test
 

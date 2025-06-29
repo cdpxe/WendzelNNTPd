@@ -2,7 +2,7 @@ set timeout 2
 
 send_user "=== Test with active TLS via extra port, with mutual TLS but without client certificate ===\n"
 
-spawn openssl s_client -verify_quiet -quiet -crlf -connect $env(nntp_address):564
+spawn openssl s_client -verify_quiet -quiet -crlf -connect \[$env(nntp_address)\]:564
 
 expect {
   eof {

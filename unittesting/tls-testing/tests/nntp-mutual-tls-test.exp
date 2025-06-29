@@ -2,7 +2,7 @@ set timeout 2
 
 send_user "=== Test with active TLS via extra port, with mutual TLS and client certificate ===\n"
 
-spawn openssl s_client -verify_quiet -quiet -crlf -cert test-files/client-pub.pem -key test-files/client-key.pem -connect $env(nntp_address):564
+spawn openssl s_client -verify_quiet -quiet -crlf -cert tmp/client-pub.pem -key tmp/client-key.pem -connect \[$env(nntp_address)\]:564
 
 # startup greeting banner
 send_user "== Checking for startup banner ==\n"
