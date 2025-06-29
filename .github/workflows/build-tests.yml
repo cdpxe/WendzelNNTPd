@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Test wendzelnntpd
     strategy:
+      fail-fast: false
       matrix:
         platform:
           - linux/amd64
