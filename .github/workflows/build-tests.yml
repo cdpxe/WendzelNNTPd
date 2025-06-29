@@ -41,7 +41,7 @@ jobs:
       - name: make install
         run: docker exec testcontainer bash -c "make install"
       - name: Initialize test data
-        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh"
+        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: get container ipv4
