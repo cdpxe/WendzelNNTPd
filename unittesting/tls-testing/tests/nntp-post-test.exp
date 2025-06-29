@@ -1,0 +1,101 @@
+set timeout 2
+
+send_user "=== Test post command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of post command with invalid message ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "Invalid\n\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "441 'newsgroups' line needed or incorrect."
+}
+
+send_user "== Check response of post command without newsgroups line ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "from: Testuser <test@example.com>\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "441 'newsgroups' line needed or incorrect."
+}
+
+send_user "== Check response of post command with non existing newsgroup ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: invalid\nfrom: Testuser <test@example.com>\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "411 no such group"
+}
+
+send_user "== Check response of post command without from line ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.post\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "441 'from' line needed or incorrect."
+}
+
+send_user "== Check response of post command with invalid from line ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.post\nfrom: invalid\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "441 'from' line needed or incorrect."
+}
+
+send_user "== Check response of post command without subject line ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.post\nfrom: Testuser <test@example.com>\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "441 'subject' line needed or incorrect."
+}
+
+send_user "== Check response of post command without content ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.post\nfrom: Testuser <test@example.com>\nsubject: Testposting\n\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "240 article posted"
+}
+
+send_user "== Check response of post command with valid message ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.post\nfrom: Testuser <test@example.com>\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "240 article posted"
+}
