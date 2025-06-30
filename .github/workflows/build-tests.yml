@@ -28,6 +28,8 @@ jobs:
             image: fedora:latest
           - platform: linux/amd64
             image: opensuse/leap:latest
+          - platform: linux/amd64
+            image: archlinux:latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
@@ -58,6 +60,9 @@ jobs:
       - name: Install dependencies with zypper
         run: docker exec testcontainer bash -c "zypper install -y gcc flex bison sqlite3 sqlite3-devel libmariadb-devel ca-certificates mhash-devel make openssl libopenssl-devel procps"
         if: ${{ matrix.image == 'opensuse/leap:latest' }}
+      - name: Install dependencies with pacman
+        run: docker exec testcontainer bash -c "pacman -Syu --noconfirm gcc flex bison sqlite mariadb-libs ca-certificates mhash make openssl procps-ng"
+        if: ${{ matrix.image == 'archlinux:latest' }}
       - name: configure
         run: docker exec testcontainer bash -c "./configure"
       - name: make
