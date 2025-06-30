@@ -24,6 +24,8 @@ jobs:
         include:
           - platform: linux/amd64
             image: ubuntu:latest
+          - platform: linux/amd64
+            image: fedora:latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
@@ -45,8 +47,12 @@ jobs:
             -d -it \
             ${{ matrix.image }} \
             /bin/sh
-      - name: Install dependencies
+      - name: Install dependencies with apt
         run: docker exec testcontainer bash -c "apt-get update -y && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make openssl libssl-dev procps"
+        if: ${{ matrix.image == 'debian:stable-slim' || matrix.image == 'ubuntu:latest' }}
+      - name: Install dependencies with dnf
+        run: docker exec testcontainer bash -c "dnf -y update && dnf -y install gcc flex bison sqlite sqlite-devel mariadb-connector-c-devel ca-certificates mhash-devel make openssl openssl-devel procps-ng"
+        if: ${{ matrix.image == 'fedora:latest' }}
       - name: configure
         run: docker exec testcontainer bash -c "./configure"
       - name: make

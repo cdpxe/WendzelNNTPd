@@ -304,7 +304,7 @@ int main() {
 
 	ltime = time(NULL);
 	if (ltime == (time_t) - 1) {
-		return;
+		return 0;
 	}
 	strftime(unused, 0xff-1, "%z", localtime(&ltime));
 	return 0;
