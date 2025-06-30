@@ -20,6 +20,10 @@ jobs:
           - linux/arm64/v8
           - linux/ppc64le
           - linux/s390x
+        image: [debian:stable-slim]
+        include:
+          - platform: linux/amd64
+            image: ubuntu:latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up QEMU
@@ -39,7 +43,7 @@ jobs:
             --platform ${{ matrix.platform }} \
             --name testcontainer \
             -d -it \
-            debian:stable-slim \
+            ${{ matrix.image }} \
             /bin/sh
       - name: Install dependencies
         run: docker exec testcontainer bash -c "apt-get update -y && apt-get install -y gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev libmhash-dev make openssl libssl-dev procps"
