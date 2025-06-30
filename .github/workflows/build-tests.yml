@@ -53,6 +53,9 @@ jobs:
         run: docker exec testcontainer bash -c "./create_certificate --environment local"
       - name: Initialize test data
         run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/"
+      - name: Patch testuser password
+        run: docker exec testcontainer bash -c "echo \"update users set password = 'c336f7d5bab8ccf4860fc53cb33290bb794d481590db02c0936fbaa74099c77d' where name = 'testuser'\" | sqlite3 /var/spool/news/wendzelnntpd/usenet.db"
+        if: ${{ !(matrix.platform == 'linux/amd64' || matrix.platform == 'linux/386') }}
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: Copy certificates from container to host
