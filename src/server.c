@@ -1750,7 +1750,7 @@ do_server(void *socket_info_ptr)
 			/* make the buffer more secure before going on */
 			/* 1. remove trailing \r\n by replacing \r with \0 */
 			for (i = (strlen(recvbuf) - 1); i > 0; i--) {
-				if (recvbuf[i] == '\r' || recvbuf[i] == '\n') {
+				if (recvbuf[i] == '\r') {
 					recvbuf[i] = '\0';
 					i = 0; /* = break */
 				}
