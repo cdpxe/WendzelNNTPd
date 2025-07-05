@@ -402,7 +402,7 @@ int main() {
   return 0;
 }
 EOF
-	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lpq -I/usr/local/include -L/usr/local/lib -I/usr/include/postgresql >/dev/null 2>&1; check "yes" "no" "You need the PostgreSQL library and their development files (or disable PostgreSQL support, cf. ./configure --help)."
+	$COMPILER $ADD_LNKFLAGS -o temp temp.c -lpq -I/usr/local/include -L/usr/local/lib -I/usr/include/postgresql -I/usr/include/pgsql >/dev/null 2>&1; check "yes" "no" "You need the PostgreSQL library and their development files (or disable PostgreSQL support, cf. ./configure --help)."
 	rm -f temp temp.c
 fi
 
@@ -569,7 +569,7 @@ echo "
 SRC=src
 LIBDIRS=-L/usr/local/lib
 
-INCDIRS=-I. -I./src -I./src/include -I/usr/local/include -I/usr/include/postgresql
+INCDIRS=-I. -I./src -I./src/include -I/usr/local/include -I/usr/include/postgresql -I/usr/include/pgsql
 CPP=g++
 CC=$COMPILER
 LEX=flex
