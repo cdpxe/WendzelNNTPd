@@ -222,11 +222,21 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
+      - name: Install test tools
+        run: sudo apt-get update -y && sudo apt-get install -y netcat-openbsd expect mariadb-client postgresql-client libvirt-daemon-system
+      - name: Configure IPv6
+        run: |
+          sudo virsh net-dumpxml default --inactive > default.xml.dump
+          sed "s/<\/network>/<ip family='ipv6' address='fdf3:6058:2cb3::1' prefix='48' \/><\/network>/" default.xml.dump > default.xml
+          sudo virsh net-destroy default
+          sudo virsh net-define --file default.xml
+          sudo virsh net-start default
       - name: Start OpenBSD VM and build and install wendzelnntpd
         uses: vmactions/openbsd-vm@v1
         with:
           usesh: true
           prepare: |
+            ifconfig em0 inet6 autoconf
             pkg_add bash
             pkg_add bison
             pkg_add mhash
@@ -259,6 +269,10 @@ jobs:
         with:
           usesh: true
           prepare: |
+            # prefer ipv4 because pkg_add is very slow otherwise
+            echo "ip6addrctl=YES" >> /etc/rc.conf
+            echo "ip6addrctl_policy=ipv4_prefer" >> /etc/rc.conf
+            /usr/sbin/service ip6addrctl restart
             /usr/sbin/pkg_add bash
             /usr/sbin/pkg_add bison
             /usr/sbin/pkg_add mhash
@@ -288,10 +302,18 @@ jobs:
         run: cd unittesting/tls-testing && ./create-client-cert.sh
       - name: get vm ipv4
         run: echo "ipv4=$(sudo virsh net-dhcp-leases default | grep ipv4 | tail -1 | grep -o -E '192.168.[0-9]*.[0-9]*')" >> $GITHUB_ENV
+      - name: get container ipv6
+        run: |
+          IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
+          echo "ipv6=${IPV6%/64}" >> $GITHUB_ENV
       - name: Smoketest IPv4
         run: netcat ${{ env.ipv4 }} 119 -w 1
+      - name: Smoketest IPv6
+        run: netcat ${{ env.ipv6 }} 119 -w 1
       - name: expect tests IPv4
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: expect tests IPv6
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Enable mandatory tls
         shell: vm {0}
         run: echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
@@ -318,6 +340,8 @@ jobs:
         run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: expect tests IPv4
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: expect tests IPv6
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: reset config and switch to postgresql database
         shell: vm {0}
         run: >
@@ -337,3 +361,5 @@ jobs:
         run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: expect tests IPv4
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: expect tests IPv6
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
