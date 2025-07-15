@@ -8,7 +8,7 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    name: Build and Test wendzelnntpd
+    name: Build and test wendzelnntpd on Linux distributions
     strategy:
       fail-fast: false
       matrix:
@@ -180,3 +180,160 @@ jobs:
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
+
+  build-test-bsd:
+    runs-on: ubuntu-latest
+    name: Build and test wendzelnntpd on BSD distributions
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution:
+          - openbsd
+          - freebsd
+          - netbsd
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MARIADB_ROOT_PASSWORD: rootpass
+          MARIADB_USER: testuser
+          MARIADB_PASSWORD: testpass
+        options: >-
+          --health-cmd="healthcheck.sh
+          --connect
+          --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: wendzelnntpd
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start OpenBSD VM and build and install wendzelnntpd
+        uses: vmactions/openbsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg_add bash
+            pkg_add bison
+            pkg_add mhash
+            pkg_add mariadb-client
+            pkg_add postgresql-client
+          run: |
+            cp unittesting/tls-testing/test-files/openssl.cnf /etc/ssl/openssl.cnf
+            POSTGRES=YES ./configure
+            make
+            make install
+        if: ${{ matrix.distribution == 'openbsd' }}
+      - name: Start FreeBSD VM and build and install wendzelnntpd
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y bash
+            pkg install -y sqlite3
+            pkg install -y bison
+            pkg install -y mhash
+            pkg install -y mariadb114-client
+            pkg install -y postgresql17-client
+          run: |
+            POSTGRES=YES ./configure
+            make
+            make install
+        if: ${{ matrix.distribution == 'freebsd' }}
+      - name: Start NetBSD VM and build and install wendzelnntpd
+        uses: vmactions/netbsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            /usr/sbin/pkg_add bash
+            /usr/sbin/pkg_add bison
+            /usr/sbin/pkg_add mhash
+            /usr/sbin/pkg_add mariadb-client
+            /usr/sbin/pkg_add postgresql17-client
+          run: |
+            cp unittesting/tls-testing/test-files/openssl.cnf /etc/openssl/openssl.cnf
+            export PATH=/sbin:/usr/sbin:$PATH
+            CFLAGS=-I/usr/pkg/include\ -I/usr/include LDFLAGS=-L/usr/pkg/lib\ -Wl,-R/usr/pkg/lib POSTGRES=YES ./configure
+            make
+            make install
+        if: ${{ matrix.distribution == 'netbsd' }}
+      - name: Link vm shell script
+        run: ln -s /home/runner/.local/bin/${{ matrix.distribution }} /home/runner/.local/bin/vm
+      - name: Setup ssl certificates
+        shell: vm {0}
+        run: cd $GITHUB_WORKSPACE && bash ./create_certificate --environment local
+      - name: Initialize test data
+        shell: vm {0}
+        run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && bash ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/
+      - name: run wendzelnntpd
+        shell: vm {0}
+        run: /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+      - name: Copy certificates from container to host
+        run: cd unittesting/tls-testing && mkdir tmp && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+      - name: Create client cert for mutual tls tests
+        run: cd unittesting/tls-testing && ./create-client-cert.sh
+      - name: get vm ipv4
+        run: echo "ipv4=$(sudo virsh net-dhcp-leases default | grep ipv4 | tail -1 | grep -o -E '192.168.[0-9]*.[0-9]*')" >> $GITHUB_ENV
+      - name: Smoketest IPv4
+        run: netcat ${{ env.ipv4 }} 119 -w 1
+      - name: expect tests IPv4
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: Enable mandatory tls
+        shell: vm {0}
+        run: echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+      - name: expect test for mandatory tls
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
+      - name: reset config and switch to mysql database
+        shell: vm {0}
+        run: >
+          cd $GITHUB_WORKSPACE/unittesting/tls-testing
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/
+          && sed 's/^database-engine sqlite3$/database-engine mysql/' /usr/local/etc/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd.conf
+          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd.conf
+      - name: Initialize test data in mariadb
+        run: >
+          mysql --host=127.0.0.1 --user=root --password=rootpass --execute
+          "set session sql_mode='ANSI_QUOTES';
+          source database/mysql_db_struct.sql;
+          source unittesting/tls-testing/create_db_test_data.sql;
+          GRANT SELECT, INSERT, UPDATE, DELETE ON WendzelNNTPd.* TO 'testuser'@'%'"
+      - name: restart wendzelnntpd
+        shell: vm {0}
+        run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+      - name: expect tests IPv4
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
+      - name: reset config and switch to postgresql database
+        shell: vm {0}
+        run: >
+          cd $GITHUB_WORKSPACE/unittesting/tls-testing
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/
+          && sed 's/^database-engine sqlite3$/database-engine postgres/' /usr/local/etc/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd.conf
+          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd.conf
+      - name: Initialize test data in postgresql database
+        run: >
+          psql postgresql://testuser:testpass@127.0.0.1:5432/wendzelnntpd
+          --file database/postgres_db_struct.sql
+          --file unittesting/tls-testing/create_db_test_data.sql
+      - name: restart wendzelnntpd
+        shell: vm {0}
+        run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+      - name: expect tests IPv4
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} ./run.sh
