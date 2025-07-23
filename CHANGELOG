@@ -37,6 +37,10 @@ FIXES:
    FreeBSD.
  - Signal handler was improved. Some uncaught signals killed the server
    (thanks to @SvenLie)
+ - Fix the password hashing function. The last character of the password
+   is no longer truncated and the hash is correctly converted to the
+   hexadecimal representation.
+
 MISC:
  - Applied NetBSD pkgsrc patch for err feature and for lexer/parser
    functions from Michael Baeuerle; thx for that!

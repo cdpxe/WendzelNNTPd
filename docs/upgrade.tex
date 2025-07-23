@@ -4,6 +4,9 @@
 
 Please stop WendzelNNTPd and check the \textit{wendzelnntpd.conf}. There is a new configuration style that breaks parts of the previous configuration style (especially due to the introduction of ``connectors'').
 
+Existing user passwords will no longer work. You need to recreate all users and their passwords using \textbf{wendzelnntpadm}. Additionally, you must reapply any previously configured ACL roles and group memberships for the recreated users.
+
+
 \section{Upgrade from version 2.1.x to 2.1.y}
 
 Same as upgrading from v.2.0.x to v.2.0.y, see Section \ref{20xto20y}.
