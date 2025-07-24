@@ -39,7 +39,8 @@ FIXES:
    (thanks to @SvenLie)
  - Fix the password hashing function. The last character of the password
    is no longer truncated and the hash is correctly converted to the
-   hexadecimal representation.
+   hexadecimal representation. User databases need to be re-generated
+   using wendzelnntpadm, see `upgrade' instructions in the documentation.
 
 MISC:
  - Applied NetBSD pkgsrc patch for err feature and for lexer/parser
