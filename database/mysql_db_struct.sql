@@ -23,7 +23,7 @@ CREATE TABLE postings (
    `newsgroups` VARCHAR(2048),
    `subject` VARCHAR(2048),
    `lines` VARCHAR(10),
-   `header` VARCHAR(20000),
+   `header` TEXT,
    INDEX(`msgid`),
    PRIMARY KEY(`msgid`)
  ) ENGINE=INNODB;
@@ -38,14 +38,14 @@ CREATE TABLE ngposts (
    PRIMARY KEY(`msgid`, `ng`),
    INDEX `I_msgid` (`msgid`),
    INDEX `I_ng` (`ng`),
-   FOREIGN KEY `FK_msgid` (`msgid`) REFERENCES `postings` (`msgid`) ON DELETE CASCADE,
-   FOREIGN KEY `FK_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE
+   FOREIGN KEY `FK_ngposts_msgid` (`msgid`) REFERENCES `postings` (`msgid`) ON DELETE CASCADE,
+   FOREIGN KEY `FK_ngposts_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE
  ) ENGINE=INNODB;
 
 -- Authentification (as well as ACL)
 CREATE TABLE users (
    `name` VARCHAR(50),
-   `password` VARCHAR(50),
+   `password` VARCHAR(64),
    INDEX(`name`),
    PRIMARY KEY(`name`)
 ) ENGINE=INNODB;
@@ -67,8 +67,8 @@ CREATE TABLE users2roles (
    PRIMARY KEY(`username`, `role`),
    INDEX(`username`),
    INDEX(`role`),
-   FOREIGN KEY `FK_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
-   FOREIGN KEY `FK_rle` (`role`) REFERENCES `roles` (`role`) ON DELETE CASCADE
+   FOREIGN KEY `FK_users2roles_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
+   FOREIGN KEY `FK_users2roles_rle` (`role`) REFERENCES `roles` (`role`) ON DELETE CASCADE
  ) ENGINE=INNODB;
 
 -- User 2 Newsgroup
@@ -78,8 +78,8 @@ CREATE TABLE acl_users (
    PRIMARY KEY(`username`, `ng`),
    INDEX(`username`),
    INDEX(`ng`),
-   FOREIGN KEY `FK_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
-   FOREIGN KEY `FK_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE
+   FOREIGN KEY `FK_acl_users_usr` (`username`) REFERENCES `users` (`name`) ON DELETE CASCADE,
+   FOREIGN KEY `FK_acl_users_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE
  ) ENGINE=INNODB;
 
 -- Roles 2 Newsgroup
@@ -89,8 +89,8 @@ CREATE TABLE acl_roles (
    INDEX(`role`),
    INDEX(`ng`),
    PRIMARY KEY(`role`, `ng`),
-   FOREIGN KEY `FK_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE,
-   FOREIGN KEY `FK_rle` (`role`) REFERENCES `roles` (`role`) ON DELETE CASCADE
+   FOREIGN KEY `FK_acl_roles_ng` (`ng`) REFERENCES `newsgroups` (`name`) ON DELETE CASCADE,
+   FOREIGN KEY `FK_acl_roles_rle` (`role`) REFERENCES `roles` (`role`) ON DELETE CASCADE
  ) ENGINE=INNODB;
 
 -- Check:
