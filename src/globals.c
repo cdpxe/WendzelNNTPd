@@ -218,4 +218,10 @@ void signal_action_handler (int signal_number, siginfo_t *sigstru, void *dum) {
    }
    sprintf(line,"SIGNAL Received Signal Name: %s  Nr. %d  Error. %d  Code %d ",sname,signal_number,sigstru->si_errno,sigstru->si_code);
    DO_SYSL(line);
+
+   if (rec_sigterm == 1) {
+       // reraise the signal to the default signal handler which sets the return status and terminates the process
+       signal(signal_number, SIG_DFL);
+       raise(signal_number);
+   }
 }
