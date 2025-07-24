@@ -1,17 +1,13 @@
 <!DOCTYPE HTML>
 
-<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<!--Converted with LaTeX2HTML 2023 (Released January 1, 2023) -->
 <HTML lang="en">
 <HEAD>
 <TITLE>WendzelNNTPd Version 2.2 Documentation</TITLE>
-<META NAME="description" CONTENT="WendzelNNTPd Version 2.2 Documentation">
-<META NAME="keywords" CONTENT="docs">
-<META NAME="resource-type" CONTENT="document">
-<META NAME="distribution" CONTENT="global">
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
-<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2023">
 
 <LINK REL="STYLESHEET" HREF="docs.css">
 
@@ -33,9 +29,7 @@
 <DIV CLASS="author_info">
 
 <STRONG>Steffen Wendzel and contributors</STRONG>
-</DIV>
-
-<P>
+</DIV><P>
 
 <BR>
 
@@ -196,8 +190,7 @@ Contents</A>
 <LI><A ID="tex2html133"
   HREF="docs.html#SECTION008000000000000000000">Index</A>
 </UL>
-<!--End of Table of Contents-->
-<P>
+<!--End of Table of Contents--><P>
 
 <H1><A ID="SECTION002000000000000000000"></A><A ID="42"></A>
 <BR>
@@ -703,6 +696,7 @@ hash-salt 0.hG4//3baA-::_\
 <P>
 WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users. However, utilizing the username is less secure than having a completely separate salt for every password.<A ID="tex2html2"
   HREF="footnode.html#foot271"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
+
 <P>
 
 <H2><A ID="SECTION004540000000000000000">
@@ -1254,7 +1248,7 @@ As mentioned above, you can safe time by using roles. For instance, if you add a
 
 <P>
 If you want to give all developers access to the group &ldquo;project-x.news&rdquo;, you also do not have to connect every developer with the project. Instead, you just connect the role with the newsgroup, what is one command instead of <SPAN CLASS="MATH"><IMG
- STYLE="height: 1.39ex; vertical-align: -0.10ex; " SRC="img1.svg"
+ STYLE="height: 1.19ex; vertical-align: -0.10ex; " SRC="img1.svg"
  ALT="$n$"></SPAN> commands. Of course, this time-saving concept also works if you want to delete a user.
 
 <P>
@@ -1266,7 +1260,7 @@ If you want to give all developers access to the group &ldquo;project-x.news&rdq
 <P>
 Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a <SPAN  CLASS="textit">chroot</SPAN> environment or letting it run under an unprivileged user account (the user then needs write access to <SPAN  CLASS="textit">/var/spool/news/wendzelnntpd</SPAN> and read access to (<SPAN  CLASS="textit">/usr/local)/etc/wendzelnntpd.conf</SPAN>). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually<A ID="tex2html3"
   HREF="footnode.html#foot467"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
- STYLE="height: 2.18ex; vertical-align: -0.41ex; " SRC="img2.svg"
+ STYLE="height: 1.98ex; vertical-align: -0.41ex; " SRC="img2.svg"
  ALT="$\geq$"></SPAN>1024 if it is started by a non-root user.
 
 <P>
@@ -1324,6 +1318,9 @@ The container is build without code included. The code is automatically mounted 
 
 <P>
 Please stop WendzelNNTPd and check the <SPAN  CLASS="textit">wendzelnntpd.conf</SPAN>. There is a new configuration style that breaks parts of the previous configuration style (especially due to the introduction of &ldquo;connectors&rdquo;).
+
+<P>
+Existing user passwords will no longer work. You need to recreate all users and their passwords using <SPAN  CLASS="textbf">wendzelnntpadm</SPAN>. Additionally, you must reapply any previously configured ACL roles and group memberships for the recreated users.
 
 <P>
 
@@ -1547,7 +1544,6 @@ Index</A>
 <DD><A HREF="docs.html#666"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 
 </DL>
-
 <P>
 
 <H1><A ID="SECTION009000000000000000000">
@@ -1555,12 +1551,12 @@ About this document ...</A>
 </H1>
  <STRONG>WendzelNNTPd Version 2.2 Documentation</STRONG><P>
 This document was generated using the
-<A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2021.2 (Released July 1, 2021)
+<A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2023 (Released January 1, 2023)
 <P>
 The command line arguments were: <BR>
  <kbd>latex2html -show_section_numbers -local_icons -split 2 docs.tex</kbd>
 <P>
-The translation was initiated on 2024-09-12
+The translation was initiated on 2025-07-23
 <BR><HR>
 <!--Table of Child-Links-->
 <A ID="CHILD_LINKS"></A>
