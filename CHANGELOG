@@ -41,7 +41,15 @@ FIXES:
    is no longer truncated and the hash is correctly converted to the
    hexadecimal representation. User databases need to be re-generated
    using wendzelnntpadm, see `upgrade' instructions in the documentation.
-
+ - Fix the SQL script mysql_db_struct.sql
+   - Increase the size of the password column in the users table to 64 to
+     be big enough for the password hashes
+   - Use unique names for the foreign key constraints to avoid the error
+     (errno: 121 "Duplicate key on write or update")
+   - change the type of the of the header column in the postings table
+     from VARCHAR to TEXT to stay under the limit of 16383 characters per
+     column on databases which use the charset utfmb4 with 4 bytes per
+     character
 MISC:
  - Applied NetBSD pkgsrc patch for err feature and for lexer/parser
    functions from Michael Baeuerle; thx for that!
