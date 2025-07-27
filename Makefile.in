@@ -3,12 +3,43 @@
 # copy of the license in the 'LICENSE' file.
 #
 
-include Makefile.inc
+PACKAGE_TARNAME=@PACKAGE_TARNAME@
+PACKAGE_VERSION=@PACKAGE_VERSION@
+RELEASENAME=@RELEASENAME@
 
+srcdir=@srcdir@
+SRC=$(srcdir)/src
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sysconfdir=@sysconfdir@
+sbindir=@sbindir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+docdir=@docdir@
+mandir=@mandir@
+man8dir=$(mandir)/man8
+
+CC=@PTHREAD_CC@
+CFLAGS=@CFLAGS@ @PTHREAD_CFLAGS@ @SQLITE3_CFLAGS@ @MYSQL_CFLAGS@
+LDFLAGS=@LDFLAGS@ @POSTGRESQL_LDFLAGS@ @OPENSSL_LDFLAGS@
+LIBS=@LIBS@ @PTHREAD_LIBS@ @SQLITE3_LDFLAGS@ @MYSQL_LDFLAGS@ @POSTGRESQL_LIBS@ @OPENSSL_LIBS@
+CPPFLAGS=@CPPFLAGS@ -I$(srcdir) -I$(srcdir)/src -I$(srcdir)/src/include @POSTGRESQL_CPPFLAGS@ @OPENSSL_INCLUDES@
+ADD_CFLAGS=@DEFS@
+
+LEX=flex
+YACC=bison
+
+SQLITEOBJ=@SQLITEOBJ@
+MYSQLOBJ=@MYSQLOBJ@
+POSTGRESOBJ=@POSTGRESOBJ@
+OPENSSLOBJ=@OPENSSLOBJ@
+SQLITEINST=@SQLITEINST@
+
+CONFFILE=wendzelnntpd.conf
 UDBFILE=/var/spool/news/wendzelnntpd/usenet.db
-DESTCFLAGS=-DCONFDIR=\"$(CONFDIR)\"
+DESTCFLAGS=-DCONFDIR=\"$(sysconfdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
-CFLAGS= -c -Wall $(STACK_PROT) $(DESTCFLAGS)
+CFLAGS+= -Wall $(DESTCFLAGS)
 #CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
 #	-Wsign-compare -Wstrict-prototypes -Wcast-align \
 #	-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow \
@@ -21,15 +52,13 @@ GDBON=-ggdb -g #-lefence
 
 DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
-BUILDFLAGS=-O2 $(STACK_PROT) $(ADD_LNKFLAGS)
-
 # The list of documentation files we wish to install
-DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
+DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql docs/docs.pdf
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
 
-all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o
+all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script
 	expr `cat build` \+ 1 >build
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(SOLNETLIBS) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH) $(OPENSSLLIB)
+	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpd
 
 lexyacc : lex.yy.o config.tab.o
@@ -39,93 +68,92 @@ lex.yy.o : $(SRC)/config.l $(HEADERS)
 
 config.tab.o : $(SRC)/config.y lex.yy.o $(HEADERS)
 	$(YACC) -v -d -t -o config.tab.c $(SRC)/config.y
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(INCDIRS) $(DESTCFLAGS) -c config.tab.c
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(INCDIRS) $(DESTCFLAGS) -c lex.yy.c
+	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c config.tab.c
+	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c lex.yy.c
 
 database.o : $(SRC)/database.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 main.o : $(SRC)/main.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 log.o : $(SRC)/log.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 libfunc.o : $(SRC)/libfunc.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 acl.o : $(SRC)/acl.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 db_abstraction.o : $(SRC)/db_abstraction.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 db_sqlite3.o : $(SRC)/db_sqlite3.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 db_postgres.o : $(SRC)/db_postgres.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 db_mysql.o : $(SRC)/db_mysql.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 cdpstrings.o : $(SRC)/cdpstrings.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 server.o : $(SRC)/server.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 hash.o : $(SRC)/hash.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 charstack.o : $(SRC)/charstack.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 globals.o : $(SRC)/globals.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 libssl.o : $(SRC)/libssl.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) $<
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
 
 # admin tool
 
 cdpnntpadm.o : $(SRC)/cdpnntpadm.c $(HEADERS)
-	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(INCDIRS) \
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c \
 	-DTHIS_TOOLNAME=\"wendzelnntpd\" -c $<
 
 wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o hash.o server.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o $(OPENSSLOBJ) globals.o
-	$(CC) $(DEBUG) $(BUILDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(OPENSSLOBJ) $(SQLITELIB) $(MYSQLLIB) $(POSTGRESLIB) $(LIBDIRS) $(SOLNETLIBS) $(GCCLOCALPTHREAD) $(LIBPTHREAD) $(LIBMHASH) $(OPENSSLLIB)
+	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpadm cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) log.o server.o hash.o lex.yy.o config.tab.o charstack.o cdpstrings.o database.o acl.o libfunc.o globals.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpadm
+
+scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script_raw
+	sed -e 's|@sbindir[@]|$(sbindir)|g' $@_raw > $@
 
 # misc targets
 
 install : bin/wendzelnntpd bin/wendzelnntpadm
-	if [ ! -d $(FAKECDIR) ]; then install -d -m 0755 $(FAKECDIR); fi
-	if [ ! -d $(FAKECDIR)/etc ]; then install -d -m 0755 $(FAKECDIR)/etc; fi
-	if [ ! -d $(DESTDIR)/sbin ]; then install -d -m 0755 $(DESTDIR)/sbin; fi
-	if [ ! -d $(DESTDIR)/share ]; then install -d -m 0755 $(DESTDIR)/share; fi
-	if [ ! -d $(DESTDIR)/share/doc ]; then install -d -m 0755 $(DESTDIR)/share/doc; fi
-	if [ ! -d $(DESTDIR)/share/doc/wendzelnntpd ]; then install -d -m 0755 $(DESTDIR)/share/doc/wendzelnntpd; fi
-	if [ ! -d $(DESTDIR)/share/man/man8 ]; then install -d -m 0755 $(DESTDIR)/share/man/man8; fi
+	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then install -d -m 0755 $(DESTDIR)$(sysconfdir); fi
+	if [ ! -d $(DESTDIR)$(sbindir) ]; then install -d -m 0755 $(DESTDIR)$(sbindir); fi
+	if [ ! -d $(DESTDIR)$(docdir) ]; then install -d -m 0755 $(DESTDIR)$(docdir); fi
+	if [ ! -d $(DESTDIR)$(man8dir) ]; then install -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# binaries
-	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
-	chown 0:0 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
-	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
+	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
+	chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
+	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
 	# documentation and config files
-	cp $(DOCFILES_TO_INST) $(DESTDIR)/share/doc/wendzelnntpd/
-	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
-	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
-	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
-	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
+	cp $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
+	cp -r docs/docs $(DESTDIR)$(docdir)/
+	chown 0:0 $(DESTDIR)$(docdir)/*
+	chmod 0644 $(DESTDIR)$(docdir)/*
 	# manpages
-	cp $(MANPAGES) $(DESTDIR)/share/man/man8/
-	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpd.8
-	chmod 644 $(DESTDIR)/share/man/man8/wendzelnntpadm.8
+	cp $(MANPAGES) $(DESTDIR)$(man8dir)
+	chmod 644 $(DESTDIR)$(man8dir)/wendzelnntpd.8
+	chmod 644 $(DESTDIR)$(man8dir)/wendzelnntpadm.8
 	# config
-	@if [ -f $(FAKECDIR)/wendzelnntpd.conf ]; then cp $(FAKECDIR)/wendzelnntpd.conf $(FAKECDIR)/wendzelnntpd.conf.bkp; chmod 0644 $(FAKECDIR)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
-	cp $(CONFFILE) $(FAKECDIR)/wendzelnntpd.conf
-	chown 0:0 $(FAKECDIR)/wendzelnntpd.conf
-	chmod 0644 $(FAKECDIR)/wendzelnntpd.conf
+	@if [ -f $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
+	cp $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
+	chown 0:0 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
+	chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
 	# nextmsgid and database/usenet.db are placed here:
 	mkdir -p /var/spool/news/wendzelnntpd
 	# og-rwx since the passwords are stored in the database too!
@@ -134,7 +162,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@if [ -f $(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 			
 	@# create new database, dir already exists due to earlier mkdir call
-	install -d -m 0700 $(CMD_INSTALL_USEROPT) 0 -g 0 /var/spool/news/wendzelnntpd
+	install -d -m 0700 -o 0 -g 0 /var/spool/news/wendzelnntpd
 	@#
 	@# create sqlite initial database if Sqlite3 is used
 	@# AND
@@ -149,14 +177,14 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@echo "*** Please only upgrade your WendzelNNTPd if your existing installation is WendzelNNTPd version 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration files remain untouched. Press RETURN to perform an upgrade or press CTRL+C to abort. ***"
 	@read uselessinput
 	# binaries
-	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)/sbin/
-	chown 0:0 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
-	chmod 0755 $(DESTDIR)/sbin/wendzelnntpd $(DESTDIR)/sbin/wendzelnntpadm
+	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
+	chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
+	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
 	# documentation
-	cp -r docs/docs $(DESTDIR)/share/doc/wendzelnntpd/
-	cp docs/docs.pdf $(DESTDIR)/share/doc/wendzelnntpd/docs.pdf
-	chown 0:0 $(DESTDIR)/share/doc/wendzelnntpd/*
-	chmod 0644 $(DESTDIR)/share/doc/wendzelnntpd/*
+	cp -r docs/docs $(DESTDIR)$(docdir)/
+	cp docs/docs.pdf $(DESTDIR)$(docdir)/docs.pdf
+	chown 0:0 $(DESTDIR)$(docdir)/*
+	chmod 0644 $(DESTDIR)$(docdir)/*
 	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
 
 exec : bin/wendzelnntpd
@@ -166,7 +194,7 @@ db : bin/wendzelnntpd
 	gdb ./bin/wendzelnntpd
 
 count : clean
-	wc -l `find . -name '*.[chyl]'` | $(SORT)
+	wc -l `find . -name '*.[chyl]'` | sort -bn
 
 clean :
 	rm -f bin/wendzelnntpd bin/wendzelnntpadm *.core `find . -name '*.o'` \
@@ -178,9 +206,10 @@ clean :
 	docs/docs/*.tex docs/docs/*.pl docs/docs/*.log docs/docs/*.idx \
 	docs/docs/WARNINGS docs/docs/*.old docs/docs/*.aux docs/docs/images.out \
 	docs/docs/images.pdf docs/docs/crossref.png
+	rm -f $(srcdir)/scripts/startup/init.d_script
 
 print_version :
-	@/bin/sh ./getver.sh
+	@echo "$(PACKAGE_VERSION) $(RELEASENAME)"
 
 man_wendzelnntpd :
 	groff -Tascii -man wendzelnntpd.8  > test.man

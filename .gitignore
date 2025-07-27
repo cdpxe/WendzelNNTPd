@@ -9,3 +9,4 @@ config.tab.c
 config.tab.h
 lex.yy.c
 .idea
+autom4te.cache

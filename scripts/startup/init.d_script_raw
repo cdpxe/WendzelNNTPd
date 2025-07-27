@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-DAEMON=REPLACETHIS_WITH_DAEMONPATH
+DAEMON=@sbindir@/wendzelnntpd
 
 if [ "$1" != "start" -a "$1" != "stop" -a "$1" != "restart" ]; then
 	echo "usage: $0 start|stop|restart"
