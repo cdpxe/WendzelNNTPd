@@ -75,7 +75,7 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	mhash_deinit(td, hash_raw);
 
 	for (i = 0; i < SHA256_LEN/2; i++) {
-		snprintf(hash + (2 * i), 4, "%.2x", hash_raw[i]);
+		snprintf(hash + (2 * i), 3, "%.2x", hash_raw[i]);
 	}
 	bzero_and_free_sensitive_strings((char*) hash_raw, strs_plus_salt, NULL); /* overwrite with zeros */
 	return hash;
