@@ -1,4 +1,10 @@
-Makefile.inc
+Makefile
+autom4te.cache
+/config.cache
+/config.log
+/config.status
+/config.sub
+
 scripts/startup/init.d_script
 test.man
 *.o
@@ -9,4 +15,3 @@ config.tab.c
 config.tab.h
 lex.yy.c
 .idea
-autom4te.cache
