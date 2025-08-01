@@ -36,7 +36,7 @@ OPENSSLOBJ=@OPENSSLOBJ@
 SQLITEINST=@SQLITEINST@
 
 CONFFILE=wendzelnntpd.conf
-UDBFILE=/var/spool/news/wendzelnntpd/usenet.db
+UDBFILE=$(DESTDIR)/var/spool/news/wendzelnntpd/usenet.db
 DESTCFLAGS=-DCONFDIR=\"$(sysconfdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS+= -Wall $(DESTCFLAGS)
@@ -135,16 +135,16 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then install -d -m 0755 $(DESTDIR)$(sysconfdir); fi
 	if [ ! -d $(DESTDIR)$(sbindir) ]; then install -d -m 0755 $(DESTDIR)$(sbindir); fi
 	if [ ! -d $(DESTDIR)$(docdir) ]; then install -d -m 0755 $(DESTDIR)$(docdir); fi
+	if [ ! -d $(DESTDIR)$(docdir)/docs ]; then install -d -m 0755 $(DESTDIR)$(docdir)/docs; fi
 	if [ ! -d $(DESTDIR)$(man8dir) ]; then install -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
+	#chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
 	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
 	# documentation and config files
-	cp $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
-	cp -r docs/docs $(DESTDIR)$(docdir)/
-	chown 0:0 $(DESTDIR)$(docdir)/*
-	chmod 0644 $(DESTDIR)$(docdir)/*
+	install -m 0644 $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
+	install -m 0644 docs/docs/* $(DESTDIR)$(docdir)/docs/
+	#chown 0:0 $(DESTDIR)$(docdir)/*
 	# manpages
 	cp $(MANPAGES) $(DESTDIR)$(man8dir)
 	chmod 644 $(DESTDIR)$(man8dir)/wendzelnntpd.8
@@ -152,17 +152,17 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	# config
 	@if [ -f $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
 	cp $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
-	chown 0:0 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
+	#chown 0:0 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
 	chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
 	# nextmsgid and database/usenet.db are placed here:
-	mkdir -p /var/spool/news/wendzelnntpd
+	mkdir -p $(DESTDIR)/var/spool/news/wendzelnntpd
 	# og-rwx since the passwords are stored in the database too!
-	chmod 700 /var/spool/news/wendzelnntpd
+	chmod 700 $(DESTDIR)/var/spool/news/wendzelnntpd
 	# create a backup of the old usenet database, if needed (only if not dev-mode)
 	@if [ -f $(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 			
 	@# create new database, dir already exists due to earlier mkdir call
-	install -d -m 0700 -o 0 -g 0 /var/spool/news/wendzelnntpd
+	install -d -m 0700 $(DESTDIR)/var/spool/news/wendzelnntpd
 	@#
 	@# create sqlite initial database if Sqlite3 is used
 	@# AND
@@ -178,12 +178,12 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@read uselessinput
 	# binaries
 	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
+	#chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
 	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
 	# documentation
 	cp -r docs/docs $(DESTDIR)$(docdir)/
 	cp docs/docs.pdf $(DESTDIR)$(docdir)/docs.pdf
-	chown 0:0 $(DESTDIR)$(docdir)/*
+	#chown 0:0 $(DESTDIR)$(docdir)/*
 	chmod 0644 $(DESTDIR)$(docdir)/*
 	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
 
