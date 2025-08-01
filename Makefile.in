@@ -67,13 +67,17 @@ all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc chars
 
 lexyacc : lex.yy.o config.tab.o
 
-lex.yy.o : $(SRC)/config.l $(HEADERS)
+lex.yy.c : $(SRC)/config.l
 	$(LEX) src/config.l
 
-config.tab.o : $(SRC)/config.y lex.yy.o $(HEADERS)
-	$(YACC) -v -d -t -o config.tab.c $(SRC)/config.y
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c config.tab.c
+lex.yy.o : lex.yy.c config.tab.c $(HEADERS)
 	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c lex.yy.c
+
+config.tab.c : $(SRC)/config.y
+	$(YACC) -v -d -t -o config.tab.c $(SRC)/config.y
+
+config.tab.o : config.tab.c $(HEADERS)
+	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c config.tab.c
 
 database.o : $(SRC)/database.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
