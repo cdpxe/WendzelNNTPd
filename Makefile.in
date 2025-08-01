@@ -3,6 +3,10 @@
 # copy of the license in the 'LICENSE' file.
 #
 
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
 PACKAGE_TARNAME=@PACKAGE_TARNAME@
 PACKAGE_VERSION=@PACKAGE_VERSION@
 RELEASENAME=@RELEASENAME@
@@ -132,37 +136,29 @@ scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script
 # misc targets
 
 install : bin/wendzelnntpd bin/wendzelnntpadm
-	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then install -d -m 0755 $(DESTDIR)$(sysconfdir); fi
-	if [ ! -d $(DESTDIR)$(sbindir) ]; then install -d -m 0755 $(DESTDIR)$(sbindir); fi
-	if [ ! -d $(DESTDIR)$(docdir) ]; then install -d -m 0755 $(DESTDIR)$(docdir); fi
-	if [ ! -d $(DESTDIR)$(docdir)/docs ]; then install -d -m 0755 $(DESTDIR)$(docdir)/docs; fi
-	if [ ! -d $(DESTDIR)$(man8dir) ]; then install -d -m 0755 $(DESTDIR)$(man8dir); fi
+	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sysconfdir); fi
+	if [ ! -d $(DESTDIR)$(sbindir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sbindir); fi
+	if [ ! -d $(DESTDIR)$(docdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir); fi
+	if [ ! -d $(DESTDIR)$(docdir)/docs ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/docs; fi
+	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
+	# nextmsgid and database/usenet.db are placed here:
+	# og-rwx since the passwords are stored in the database too!
+	if [ ! -d $(DESTDIR)/var/spool/news/wendzelnntpd ]; then $(INSTALL) -d -m 0700 $(DESTDIR)/var/spool/news/wendzelnntpd; fi
+
 	# binaries
-	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	#chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
-	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
+	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	# documentation and config files
-	install -m 0644 $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
-	install -m 0644 docs/docs/* $(DESTDIR)$(docdir)/docs/
-	#chown 0:0 $(DESTDIR)$(docdir)/*
+	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
+	$(INSTALL_DATA) docs/docs/* $(DESTDIR)$(docdir)/docs/
 	# manpages
-	cp $(MANPAGES) $(DESTDIR)$(man8dir)
-	chmod 644 $(DESTDIR)$(man8dir)/wendzelnntpd.8
-	chmod 644 $(DESTDIR)$(man8dir)/wendzelnntpadm.8
+	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
 	# config
 	@if [ -f $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
-	cp $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
-	#chown 0:0 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
-	chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
-	# nextmsgid and database/usenet.db are placed here:
-	mkdir -p $(DESTDIR)/var/spool/news/wendzelnntpd
-	# og-rwx since the passwords are stored in the database too!
-	chmod 700 $(DESTDIR)/var/spool/news/wendzelnntpd
+	$(INSTALL_DATA) $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
 	# create a backup of the old usenet database, if needed (only if not dev-mode)
 	@if [ -f $(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
-			
+
 	@# create new database, dir already exists due to earlier mkdir call
-	install -d -m 0700 $(DESTDIR)/var/spool/news/wendzelnntpd
 	@#
 	@# create sqlite initial database if Sqlite3 is used
 	@# AND
@@ -177,14 +173,12 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@echo "*** Please only upgrade your WendzelNNTPd if your existing installation is WendzelNNTPd version 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration files remain untouched. Press RETURN to perform an upgrade or press CTRL+C to abort. ***"
 	@read uselessinput
 	# binaries
-	cp bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	#chown 0:0 $(DESTDIR)$(sbindir)/wendzelnntpd
-	chmod 0755 $(DESTDIR)$(sbindir)/wendzelnntpd
+	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	# documentation
-	cp -r docs/docs $(DESTDIR)$(docdir)/
-	cp docs/docs.pdf $(DESTDIR)$(docdir)/docs.pdf
-	#chown 0:0 $(DESTDIR)$(docdir)/*
-	chmod 0644 $(DESTDIR)$(docdir)/*
+	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
+	$(INSTALL_DATA) docs/docs/* $(DESTDIR)$(docdir)/docs/
+	# manpages
+	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
 	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
 
 exec : bin/wendzelnntpd
