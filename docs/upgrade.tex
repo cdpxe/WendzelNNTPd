@@ -6,6 +6,11 @@ Please stop WendzelNNTPd and check the \textit{wendzelnntpd.conf}. There is a ne
 
 Existing user passwords will no longer work. You need to recreate all users and their passwords using \textbf{wendzelnntpadm}. Additionally, you must reapply any previously configured ACL roles and group memberships for the recreated users.
 
+The behaviour of \textbf{./configure} has changed. The environment variables for enabling and disabling features are no
+longer supported and replaced by CLI flags. The support for the databases can now be enabled/disabled by
+\textit{-{}-disable-mysql}, \textit{-{}-disable-sqlite} and \textit{-{}-enable-postgres}. The suppport for TLS can be
+disabled by \textit{-{}-disable-tls}. You can use \textbf{./configure -{}-help} for an overview of the available
+CLI flags.
 
 \section{Upgrade from version 2.1.x to 2.1.y}
 
