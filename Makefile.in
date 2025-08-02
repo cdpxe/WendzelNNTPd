@@ -40,7 +40,8 @@ OPENSSLOBJ=@OPENSSLOBJ@
 SQLITEINST=@SQLITEINST@
 
 CONFFILE=wendzelnntpd.conf
-UDBFILE=$(DESTDIR)/var/spool/news/wendzelnntpd/usenet.db
+UDBDIR=/var/spool/news/wendzelnntpd
+UDBFILE=$(UDBDIR)/usenet.db
 DESTCFLAGS=-DCONFDIR=\"$(sysconfdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS+= -Wall $(DESTCFLAGS)
@@ -147,7 +148,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# nextmsgid and database/usenet.db are placed here:
 	# og-rwx since the passwords are stored in the database too!
-	if [ ! -d $(DESTDIR)/var/spool/news/wendzelnntpd ]; then $(INSTALL) -d -m 0700 $(DESTDIR)/var/spool/news/wendzelnntpd; fi
+	if [ ! -d $(DESTDIR)$(UDBDIR) ]; then $(INSTALL) -d -m 0700 $(DESTDIR)$(UDBDIR); fi
 
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
@@ -160,7 +161,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@if [ -f $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
 	$(INSTALL_DATA) $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
 	# create a backup of the old usenet database, if needed (only if not dev-mode)
-	@if [ -f $(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(UDBFILE) $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
+	@if [ -f $(DESTDIR)$(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(DESTDIR)$(UDBFILE) $(DESTDIR)$(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(DESTDIR)$(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 
 	@# create new database, dir already exists due to earlier mkdir call
 	@#
@@ -169,7 +170,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@# create initial newsgroup for sqlite3
 	@#
 	@# only create if there is no database file already
-	@if [ ! -f $(UDBFILE) ]; then if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi; fi
+	@if [ ! -f $(DESTDIR)$(UDBFILE) ]; then if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(DESTDIR)$(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi; fi
 	@echo "Installation finished. Please note that your existing wendzelnntpd.conf might have been replaced (a backup should be located in the same folder as your original configuration file)."
 	@echo "Thank you for using this software! Have fun using it!"
 
