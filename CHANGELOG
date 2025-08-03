@@ -27,6 +27,7 @@ ADDED FEATURES:
 FIXES:
  - Fixed some memory leaks during postings that would occur on rather
    rare errors.
+ - Fixed two buffer overflows of PR#44; thanks to @oleludwig
  - Once xhdr requested "date", all following responses were interpreted
    as "date" format, too.  Solved this by resettting inf->speccmd = 0;
  - Make sure that Sqlite3 statements with quotes are double-escaped to
@@ -41,7 +42,8 @@ FIXES:
    is no longer truncated and the hash is correctly converted to the
    hexadecimal representation. User databases need to be re-generated
    using wendzelnntpadm, see `upgrade' instructions in the documentation.
- - Fix the SQL script mysql_db_struct.sql
+   Thanks to @oleludwig for sending the patch.
+ - Fix the SQL script mysql_db_struct.sql (thanks to @oleludwig)
    - Increase the size of the password column in the users table to 64 to
      be big enough for the password hashes
    - Use unique names for the foreign key constraints to avoid the error
