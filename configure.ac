@@ -29,7 +29,7 @@ AC_ARG_ENABLE([sqlite], [AS_HELP_STRING([--disable-sqlite], [Disables support fo
 AC_ARG_ENABLE([postgres], [AS_HELP_STRING([--enable-postgres], [Enables support for PostgreSQL])])
 AC_ARG_ENABLE([tls], [AS_HELP_STRING([--disable-tls], [Disables support for TLS encryption])])
 
-dnl check if at least one of the databases is enabled and add helpstring
+# Check if at least one of the databases is enabled
 AS_IF([test "x$enable_mysql" = "xno" && test "x$enable_sqlite" = "xno" && test "x$enable_postgres" != "xyes"], [
 	AC_MSG_ERROR([You cannot deactivate support for MySQL, PostgreSQL *and* SQLite as you need to integrate support for at least one database!])
 ])
