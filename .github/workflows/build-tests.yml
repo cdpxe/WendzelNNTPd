@@ -108,7 +108,8 @@ jobs:
       - name: Patch testuser password
         run: >
           docker exec testcontainer bash -c
-          "sed -i 's/ff36ffffffffffffff0fff3cff32ffff794d4815ffff02ffff6fffff40ffff7d/c336f7d5bab8ccf4860fc53cb33290bb794d481590db02c0936fbaa74099c77d/' unittesting/tls-testing/create_db_test_data.sql"
+          "sed -i 's/ff36ffffffffffffff0fff3cff32ffff794d4815ffff02ffff6fffff40ffff7d/c336f7d5bab8ccf4860fc53cb33290bb794d481590db02c0936fbaa74099c77d/' unittesting/tls-testing/create_db_test_data.sql;
+          sed -i 's/ffffff3cffff151050ffff1cff1807ffff777cffffffff11ff67ff65ffff315c/e2d1c03ca0e3151050bdc51cd31807debe777cd2dabedb11e267e46598cb315c/' unittesting/tls-testing/create_db_test_data.sql;"
         if: ${{ !(matrix.platform == 'linux/amd64' || matrix.platform == 'linux/386') }}
       - name: configure
         run: docker exec testcontainer bash -c "POSTGRES=YES ./configure"
@@ -142,6 +143,16 @@ jobs:
         run: docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && wendzelnntpd -d"
       - name: expect test for mandatory tls
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
+      - name: reset config and enable acl
+        run: >
+          docker exec testcontainer bash -c "cd unittesting/tls-testing
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/
+          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd.conf
+          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd.conf"
+      - name: restart wendzelnntpd
+        run: docker exec testcontainer bash -c "pkill -9 wendzelnntpd && wendzelnntpd -d"
+      - name: expect test for acl
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-acl-test.exp
       - name: reset config and switch to mysql database
         run: >
           docker exec testcontainer bash -c "cd unittesting/tls-testing
@@ -319,6 +330,18 @@ jobs:
         run: echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: expect test for mandatory tls
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
+      - name: reset config and enable acl
+        shell: vm {0}
+        run: >
+          cd $GITHUB_WORKSPACE/unittesting/tls-testing
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/
+          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd.conf
+          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd.conf
+      - name: restart wendzelnntpd
+        shell: vm {0}
+        run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+      - name: expect test for acl
+        run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-acl-test.exp
       - name: reset config and switch to mysql database
         shell: vm {0}
         run: >

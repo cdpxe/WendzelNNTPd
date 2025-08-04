@@ -1,0 +1,68 @@
+set timeout 2
+
+send_user "=== Test acl feature ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of help command before login (access should be denied) ==\n"
+send "help\n"
+expect {
+  timeout { send_user "Error: help command did not respond correctly\n"; exit 1 }
+  -re "480 authentication required."
+}
+
+send_user "== Check for successful login ==\n"
+send "authinfo user testuser\n"
+send "authinfo pass password\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "281 Authentication accepted."
+}
+
+send_user "== Check response of list command (only accessable newsgroups should be listed) ==\n"
+send "list\n"
+expect {
+  timeout { send_user "Error: list command did not respond correctly\n"; exit 1 }
+  -re "215 list of newsgroups follows\\r\\nalt.wendzelnntpd.test 2 1 y\\r\\nalt.wendzelnntpd.test.post \\d* \\d y\\r\\n\\."
+}
+
+send_user "== Check response of group command for inaccessible group ==\n"
+send "group alt.wendzelnntpd.test.empty\n"
+expect {
+  timeout { send_user "Error: list command did not respond correctly\n"; exit 1 }
+  -re "411 no such group"
+}
+
+send_user "== Check response of group command for accessible group ==\n"
+send "group alt.wendzelnntpd.test\n"
+expect {
+  timeout { send_user "Error: group command did not respond correctly\n"; exit 1 }
+  -re "211 2 1 2 alt.wendzelnntpd.test group selected"
+}
+
+send_user "== Check response of post command with inaccessible group ==\n"
+send "post\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "340 send article to be posted. End with <CR-LF>.<CR-LF>"
+}
+send "newsgroups: alt.wendzelnntpd.test.empty\nfrom: Testuser <test@example.com>\nsubject: Testposting\n\nContent\n.\n"
+expect {
+  timeout { send_user "Error: article command did not respond correctly\n"; exit 1 }
+  -re "240 article posted"
+}
+
+send_user "== Check for successful login with testuser2 ==\n"
+send "authinfo user testuser2\n"
+send "authinfo pass password2\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "281 Authentication accepted."
+}
+
+send_user "== Check that the user has access to the group alt.wendzelnntpd.test.empty and that the post was not posted there ==\n"
+send "list\n"
+expect {
+  timeout { send_user "Error: list command did not respond correctly\n"; exit 1 }
+  -re "215 list of newsgroups follows\\r\\nalt.wendzelnntpd.test.empty 0 0 y\\r\\n\\."
+}
