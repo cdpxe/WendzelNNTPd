@@ -51,7 +51,7 @@ jobs:
             pkg_add bison
             pkg_add mhash
           run: |
-            MYSQL=NO ./configure
+            ./configure --disable-mysql CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
             make
             make install
 
@@ -69,6 +69,6 @@ jobs:
             pkg install -y bison
             pkg install -y mhash
           run: |
-            MYSQL=NO ./configure
+            ./configure --disable-mysql CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
             make
             make install

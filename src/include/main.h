@@ -100,10 +100,6 @@
    typedef uint8_t u_int8_t;
    typedef uint16_t u_int16_t;
    typedef uint32_t u_int32_t;
-
-   #define BYTE_ORDER		ORDER
-   #define BIG_ENDIAN		0
-   #define LITTLE_ENDIAN	1
 #endif
 
 #ifdef __WIN32__
@@ -117,15 +113,12 @@
     #define DBMODE		""
 #endif
 
-#define VERSION			"2.2-alpha1"
-#define RELEASENAME		"'Giersleben'" /* should not include white-spaces! */
-
 #ifndef BUILD /* Win32 */
    #define BUILD		"win"
 #endif
 
 #define DTB			" - (" __DATE__ " " __TIME__ " #" BUILD ")"
-#define WELCOMEVERSION		VERSION " " RELEASENAME " " DTB
+#define WELCOMEVERSION		PACKAGE_VERSION " '" RELEASENAME "' " DTB
 
 #define TRUE			1
 #define FALSE			0
@@ -253,10 +246,6 @@
 		fprintf(stderr, "couldn't allocate a datatype! mem-low.\n");\
 		exit(ERR_EXIT);						\
 	}
-
-#ifndef BYTE_ORDER
-   #error no BYTE_ORDER defined.
-#endif
 
 /*******************************************************************/
 
