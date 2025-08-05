@@ -1,24 +1,23 @@
-WendzelNNTPd was originally written by Steffen Wendzel (since 2004)
-   mail: steffen (at) wendzel (dot) de
-    web: https://www.wendzel.de
+WendzelNNTPd was originally written by Steffen Wendzel (since 2004) who is
+also the maintainer of this project.
+   mail: steffen (at) wendzel (dot) de | web: https://www.wendzel.de
 
 Major Contributors (in chronological order):
   - Ole Ludwig (FernUniversität in Hagen, 2025-):
-    - autotools (configure) replacement of original configure script
-    - several bugfixes
-    - sighandler improvement
-    - several code cleanups
-    - packaging support
+     - autotools (configure) replacement of original configure script
+     - several bugfixes
+     - sighandler improvement
+     - several code cleanups
+     - packaging support
   - Sven Liebert (FernUniversität in Hagen, 2024):
-    - Docker support for development purposes
-    - improved signal handling
+     - Docker support for development purposes
+     - improved signal handling
   - Sven Liebert, Michael Dunsky, and Christoph Grill (all FernUniversität in Hagen, 2022-2024):
+     - TLS/NTTPS/SNNTP support
   - Christian Barthel (2023):
-    - TLS/NTTPS/SNNTP support
-    - Postgres support (currently experimental) and code clean-up
+     - Postgres support (currently experimental) and code clean-up
   - @deavmi (2018-2019):
-    - code clean-up and documentation fixes (2018-2019)
+     - code clean-up and documentation fixes (2018-2019)
 
 Additional patches by:
   - Michael Baeuerle (NetBSD pkgsrc)
-
