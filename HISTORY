@@ -3,12 +3,16 @@ WendzelNNTPd History:
 
 upcoming:
 
-18-Oct-2024 - 20 years of WendzelNNTPd!
 ??-???-20?? - WendzelNNTPd 2.2 released! First major step since 2021.
-              X,XXXX LOC.
+              XX,XXXX LOC. Added TLS support, autotools replaced the
+              configure script, several bugs have been fixed. Network
+              settings can now be configured much more fine-granular.
+              Experimental Postgres support was added. Code-cleanup
+              was done and documentation was improved as well.
 
 -----------------------------------------------------------------------
 
+18-Oct-2024 - 20 years of WendzelNNTPd!
 04-Jan-2021 - WendzelNNTPd 2.1.0 released! The first major subversion
                 since 2011!
 12-Nov-2020 - WendzelNNTPd is now considered a fun+retro computing
