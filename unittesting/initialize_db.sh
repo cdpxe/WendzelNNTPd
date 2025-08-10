@@ -7,13 +7,13 @@ DB=$DATA_DIR/usenet.db
 rm $DATA_DIR/*
 
 # Initialize database structure
-cat ../database/usenet.db_struct | sqlite3 $DB
+sqlite3 $DB < ../database/usenet.db_struct
 
 # Create test data in the database:
 # 3 newgroups: "alt.wendzelnntpd.test", "alt.wendzelnntpd.test.empty" and "alt.wendzelnntpd.test.post"
 # 2 postings in newsgroup "alt.wendzelnntpd.test"
 # 1 user with the name "testuser" and password "password"
-cat create_db_test_data.sql | sqlite3 $DB
+sqlite3 $DB < create_db_test_data.sql
 
 # Copy existing posting
 cp test-files/cdp?@localhost $DATA_DIR/
