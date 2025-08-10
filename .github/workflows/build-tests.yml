@@ -20,14 +20,14 @@ jobs:
           - linux/arm64/v8
           - linux/ppc64le
           - linux/s390x
-        image: [debian:stable-slim]
+        image: [debian:bookworm-slim]
         include:
           - platform: linux/amd64
-            image: ubuntu:latest
+            image: ubuntu:24.04
           - platform: linux/amd64
-            image: fedora:latest
+            image: fedora:42
           - platform: linux/amd64
-            image: opensuse/leap:latest
+            image: opensuse/leap:15
           - platform: linux/amd64
             image: archlinux:latest
     services:
@@ -87,19 +87,19 @@ jobs:
           docker exec testcontainer bash -c "apt-get update -y && apt-get install -y
           gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev
           libmhash-dev make openssl libssl-dev libpq-dev procps"
-        if: ${{ matrix.image == 'debian:stable-slim' || matrix.image == 'ubuntu:latest' }}
+        if: ${{ matrix.image == 'debian:bookworm-slim' || matrix.image == 'ubuntu:24.04' }}
       - name: Install dependencies with dnf
         run: >
           docker exec testcontainer bash -c "dnf -y update && dnf -y install
           gcc flex bison sqlite sqlite-devel mariadb-connector-c-devel ca-certificates mhash-devel make openssl
           openssl-devel libpq-devel procps-ng"
-        if: ${{ matrix.image == 'fedora:latest' }}
+        if: ${{ matrix.image == 'fedora:42' }}
       - name: Install dependencies with zypper
         run: >
           docker exec testcontainer bash -c "zypper install -y
           gcc flex bison sqlite3 sqlite3-devel libmariadb-devel ca-certificates mhash-devel make openssl
           libopenssl-devel postgresql-devel procps"
-        if: ${{ matrix.image == 'opensuse/leap:latest' }}
+        if: ${{ matrix.image == 'opensuse/leap:15' }}
       - name: Install dependencies with pacman
         run: >
           docker exec testcontainer bash -c "pacman -Syu --noconfirm
@@ -245,6 +245,7 @@ jobs:
       - name: Start OpenBSD VM and build and install wendzelnntpd
         uses: vmactions/openbsd-vm@v1
         with:
+          release: "7.7"
           usesh: true
           prepare: |
             ifconfig em0 inet6 autoconf
@@ -262,6 +263,7 @@ jobs:
       - name: Start FreeBSD VM and build and install wendzelnntpd
         uses: vmactions/freebsd-vm@v1
         with:
+          release: "15.0"
           usesh: true
           prepare: |
             pkg install -y bash
@@ -278,6 +280,7 @@ jobs:
       - name: Start NetBSD VM and build and install wendzelnntpd
         uses: vmactions/netbsd-vm@v1
         with:
+          release: "10.1"
           usesh: true
           prepare: |
             # prefer ipv4 because pkg_add is very slow otherwise
