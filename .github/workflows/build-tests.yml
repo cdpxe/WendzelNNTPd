@@ -123,7 +123,10 @@ jobs:
       - name: Setup ssl certificates
         run: docker exec testcontainer bash -c "./create_certificate --environment local"
       - name: Initialize test data
-        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/"
+        run: >
+          docker exec testcontainer bash -c "cd unittesting/tls-testing
+          && ./initialize_db.sh
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/"
       - name: Test wendzelnntpadm
         run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./test_wendzelnntpadm.sh"
       - name: Reinitialize database
@@ -131,13 +134,21 @@ jobs:
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: Copy certificates from container to host
-        run: cd unittesting/tls-testing && mkdir tmp && docker cp testcontainer:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt && docker cp testcontainer:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+        run: >
+          cd unittesting/tls-testing
+          && mkdir tmp
+          && docker cp testcontainer:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt
+          && docker cp testcontainer:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting/tls-testing && ./create-client-cert.sh
       - name: get container ipv4
-        run: echo "ipv4=$(docker inspect -f '{{.NetworkSettings.Networks.ip6net.IPAddress}}' testcontainer)" >> $GITHUB_ENV
+        run: >
+          echo "ipv4=$(docker inspect -f '{{.NetworkSettings.Networks.ip6net.IPAddress}}' testcontainer)"
+          >> $GITHUB_ENV
       - name: get container ipv6
-        run: echo "ipv6=$(docker inspect -f '{{.NetworkSettings.Networks.ip6net.GlobalIPv6Address}}' testcontainer)" >> $GITHUB_ENV
+        run: >
+          echo "ipv6=$(docker inspect -f '{{.NetworkSettings.Networks.ip6net.GlobalIPv6Address}}' testcontainer)"
+          >> $GITHUB_ENV
       - name: Smoketest IPv4
         run: netcat ${{ env.ipv4 }} 119 -w 1
       - name: Smoketest IPv6
@@ -147,7 +158,9 @@ jobs:
       - name: expect tests IPv6
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Enable mandatory tls
-        run: docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && wendzelnntpd -d"
+        run: >
+          docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf
+          && pkill -9 wendzelnntpd && wendzelnntpd -d"
       - name: expect test for mandatory tls
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
       - name: reset config and enable acl
@@ -241,7 +254,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install test tools
-        run: sudo apt-get update -y && sudo apt-get install -y netcat-openbsd expect mariadb-client postgresql-client libvirt-daemon-system
+        run: >
+          sudo apt-get update -y
+          && sudo apt-get install -y netcat-openbsd expect mariadb-client postgresql-client libvirt-daemon-system
       - name: Configure IPv6
         run: |
           sudo virsh net-dumpxml default --inactive > default.xml.dump
@@ -313,7 +328,10 @@ jobs:
         run: cd $GITHUB_WORKSPACE && bash ./create_certificate --environment local
       - name: Initialize test data
         shell: vm {0}
-        run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && bash ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/
+        run: >
+          cd $GITHUB_WORKSPACE/unittesting/tls-testing
+          && bash ./initialize_db.sh
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/
       - name: Test wendzelnntpadm
         shell: vm {0}
         run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && PATH=/usr/local/sbin:$PATH ./test_wendzelnntpadm.sh
@@ -324,11 +342,17 @@ jobs:
         shell: vm {0}
         run: /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: Copy certificates from container to host
-        run: cd unittesting/tls-testing && mkdir tmp && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+        run: >
+          cd unittesting/tls-testing
+          && mkdir tmp
+          && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt
+          && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting/tls-testing && ./create-client-cert.sh
       - name: get vm ipv4
-        run: echo "ipv4=$(sudo virsh net-dhcp-leases default | grep ipv4 | tail -1 | grep -o -E '192.168.[0-9]*.[0-9]*')" >> $GITHUB_ENV
+        run: >
+          echo "ipv4=$(sudo virsh net-dhcp-leases default | grep ipv4 | tail -1 | grep -o -E '192.168.[0-9]*.[0-9]*')"
+          >> $GITHUB_ENV
       - name: get container ipv6
         run: |
           IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
@@ -343,7 +367,9 @@ jobs:
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Enable mandatory tls
         shell: vm {0}
-        run: echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
+        run: >
+          echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf
+          && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: expect test for mandatory tls
         run: cd unittesting/tls-testing && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
       - name: reset config and enable acl
