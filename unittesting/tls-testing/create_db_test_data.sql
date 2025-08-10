@@ -34,6 +34,7 @@ INSERT INTO users (name, password) VALUES ('testuser', 'ff36ffffffffffffff0fff3c
 -- create user with name "testuser2" and password "password2"
 INSERT INTO users (name, password) VALUES ('testuser2', 'ffffff3cffff151050ffff1cff1807ffff777cffffffff11ff67ff65ffff315c');
 
+INSERT INTO roles (role) VALUES ('testrole');
 INSERT INTO acl_users (username, ng) VALUES ('testuser', 'alt.wendzelnntpd.test');
 INSERT INTO acl_users (username, ng) VALUES ('testuser2', 'alt.wendzelnntpd.test.empty');
 INSERT INTO acl_roles (role, ng) VALUES ('testrole', 'alt.wendzelnntpd.test.post');

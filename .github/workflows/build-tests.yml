@@ -109,7 +109,10 @@ jobs:
         run: >
           docker exec testcontainer bash -c
           "sed -i 's/ff36ffffffffffffff0fff3cff32ffff794d4815ffff02ffff6fffff40ffff7d/c336f7d5bab8ccf4860fc53cb33290bb794d481590db02c0936fbaa74099c77d/' unittesting/tls-testing/create_db_test_data.sql;
-          sed -i 's/ffffff3cffff151050ffff1cff1807ffff777cffffffff11ff67ff65ffff315c/e2d1c03ca0e3151050bdc51cd31807debe777cd2dabedb11e267e46598cb315c/' unittesting/tls-testing/create_db_test_data.sql;"
+          sed -i 's/ffffff3cffff151050ffff1cff1807ffff777cffffffff11ff67ff65ffff315c/e2d1c03ca0e3151050bdc51cd31807debe777cd2dabedb11e267e46598cb315c/' unittesting/tls-testing/create_db_test_data.sql;
+          sed -i 's/ff36ffffffffffffff0fff3cff32ffff794d4815ffff02ffff6fffff40ffff7d/c336f7d5bab8ccf4860fc53cb33290bb794d481590db02c0936fbaa74099c77d/' unittesting/tls-testing/test_wendzelnntpadm.sh;
+          sed -i 's/ffffff3cffff151050ffff1cff1807ffff777cffffffff11ff67ff65ffff315c/e2d1c03ca0e3151050bdc51cd31807debe777cd2dabedb11e267e46598cb315c/' unittesting/tls-testing/test_wendzelnntpadm.sh;
+          sed -i 's/ffff6aff20342e7166ff3479ff1e0014ff5358ffffffff645c1f6076ff61fffff/89bf6a8320342e7166fb3479f81e0014af5358bbeff9b2645c1f6076bc618ef1/' unittesting/tls-testing/test_wendzelnntpadm.sh;"
         if: ${{ !(matrix.platform == 'linux/amd64' || matrix.platform == 'linux/386') }}
       - name: configure
         run: docker exec testcontainer bash -c "POSTGRES=YES ./configure"
@@ -121,6 +124,10 @@ jobs:
         run: docker exec testcontainer bash -c "./create_certificate --environment local"
       - name: Initialize test data
         run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/"
+      - name: Test wendzelnntpadm
+        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./test_wendzelnntpadm.sh"
+      - name: Reinitialize database
+        run: docker exec testcontainer bash -c "cd unittesting/tls-testing && ./initialize_db.sh"
       - name: run wendzelnntpd
         run: docker exec testcontainer bash -c "wendzelnntpd -d"
       - name: Copy certificates from container to host
@@ -307,6 +314,12 @@ jobs:
       - name: Initialize test data
         shell: vm {0}
         run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && bash ./initialize_db.sh && cp test-files/wendzelnntpd.conf /usr/local/etc/
+      - name: Test wendzelnntpadm
+        shell: vm {0}
+        run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && PATH=/usr/local/sbin:$PATH ./test_wendzelnntpadm.sh
+      - name: Reinitialize database
+        shell: vm {0}
+        run: cd $GITHUB_WORKSPACE/unittesting/tls-testing && bash ./initialize_db.sh
       - name: run wendzelnntpd
         shell: vm {0}
         run: /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
