@@ -7,7 +7,7 @@ DB=$DATA_DIR/usenet.db
 rm $DATA_DIR/*
 
 # Initialize database structure
-cat ../../database/usenet.db_struct | sqlite3 $DB
+cat ../database/usenet.db_struct | sqlite3 $DB
 
 # Create test data in the database:
 # 3 newgroups: "alt.wendzelnntpd.test", "alt.wendzelnntpd.test.empty" and "alt.wendzelnntpd.test.post"
