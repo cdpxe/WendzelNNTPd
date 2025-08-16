@@ -917,8 +917,8 @@ db_sqlite3_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 
 	sqlite3_snprintf((2*len) - 1, sql_cmd,
 		"insert into postings (msgid, date, author, newsgroups, subject, "
-		"lines, header) values ('%q', '%li', '%q', '%q', '%q', '%i', '%q');",
-		message_id, ltime, from, ngstrpb, subj, linecount, add_to_hdr);
+		"lines, header) values ('%q', '%lli', '%q', '%q', '%q', '%i', '%q');",
+		message_id, (long long) ltime, from, ngstrpb, subj, linecount, add_to_hdr);
 
 	sqlite3_secexec(inf, sql_cmd, NULL, 0);
 	sqlite3_free(sql_cmd);
