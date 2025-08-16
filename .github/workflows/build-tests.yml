@@ -13,14 +13,15 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - linux/amd64
           - linux/386
+          - linux/amd64
           - linux/arm/v5
           - linux/arm/v7
           - linux/arm64/v8
           - linux/ppc64le
+          - linux/riscv64
           - linux/s390x
-        image: [debian:bookworm-slim]
+        image: [debian:trixie-slim]
         include:
           - platform: linux/amd64
             image: ubuntu:24.04
@@ -87,7 +88,7 @@ jobs:
           docker exec testcontainer bash -c "apt-get update -y && apt-get install -y
           gcc flex bison sqlite3 libsqlite3-dev mariadb-client libmariadb-dev-compat ca-certificates libmariadb-dev
           libmhash-dev make openssl libssl-dev libpq-dev procps"
-        if: ${{ matrix.image == 'debian:bookworm-slim' || matrix.image == 'ubuntu:24.04' }}
+        if: ${{ matrix.image == 'debian:trixie-slim' || matrix.image == 'ubuntu:24.04' }}
       - name: Install dependencies with dnf
         run: >
           docker exec testcontainer bash -c "dnf -y update && dnf -y install
