@@ -286,7 +286,7 @@ jobs:
       - name: Start FreeBSD VM and build and install wendzelnntpd
         uses: vmactions/freebsd-vm@v1
         with:
-          release: "15.0"
+          release: "14.3"
           usesh: true
           prepare: |
             pkg install -y bash
