@@ -1,5 +1,3 @@
-#set -x
-
 check_returncode() {
     actual=$1
     expected=$2
