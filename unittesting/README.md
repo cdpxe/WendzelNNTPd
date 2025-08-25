@@ -13,8 +13,9 @@ The tests for `wendzelnntpd` and `wendzelnntpadm` assume specific data in the da
 Additionally, the tests for `wendzelnntpd` require a running instance of `wendzelnntpd`.
 Most of the following commands require root privileges.
 The setup of the database can be done with the script `initialize_db.sh` which creates a new SQLite database and
-initializes it with the test data. It also copies some files of existing posts to `/var/spool/news/wendzelnntpd`.
-`unittesting/wendzelnntpd.conf` contains the configuration as expected by the tests and need to be copied to the
+initializes it with the test data. It also copies some files of existing posts to `/var/spool/news/wendzelnntpd`
+and creates the file nextmsgid there.
+`unittesting/wendzelnntpd.conf` contains the configuration as expected by the tests and needs to be copied to the
 location of the configuration file of `wendzelnntpd` (`/usr/local/etc/wendzelnntpd.conf` by default):
 ```shell
 ./initialize_db.sh
@@ -53,7 +54,7 @@ cd /data/unittesting && chmod +x run.sh && ./run.sh
 ```
 
 It will test against the NNTP-Server which is specified under YOUR_DOMAIN_HERE.
-The tests run against `localohost` by default if `nntp_address` is not defined.
+The tests run against `localhost` by default if `nntp_address` is not defined.
 
 For local-testing you need to have installed TCL (https://core.tcl-lang.org/tcl/download) and Expect
 (https://core.tcl-lang.org/expect/index?name=Expect) and set the environment variable "nntp_address":
