@@ -559,9 +559,9 @@ db_postgres_xhdr(server_cb_inf *inf, short message_id_flg, int xhdr, char *artic
 	} else {
 	    sql_cmd =
 		"select * from xhdr_get($1, $2, null, $3, $4)";
-		paramValues[1] = inf->servinf->selected_group;
-        paramLengths[1] = strlen(paramValues[1]);
-        param++;
+	    paramValues[1] = inf->servinf->selected_group;
+	    paramLengths[1] = strlen(paramValues[1]);
+	    param++;
 	    paramValues[2] = min_s;
 	    paramLengths[2] = strlen(paramValues[2]);
 	    param++;

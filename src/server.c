@@ -1295,7 +1295,7 @@ docmd_post(server_cb_inf *inf)
 				kill_thread(inf);
 				/* NOTREACHED */
 			}
-			snprintf(message_id, MAX_IDNUM_LEN+3+strlen(addr), "%s%s>", newid, hostinfo->h_name);
+			snprintf(message_id, MAX_IDNUM_LEN+3+strlen(hostinfo->h_name), "%s%s>", newid, hostinfo->h_name);
 			//free(hostinfo);
 		}
 		free(addr);/* NEW */

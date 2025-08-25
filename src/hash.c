@@ -37,7 +37,7 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	int i;
 	MHASH td;
 	char *hash = NULL;
-	char *hash_raw = NULL;
+	unsigned char *hash_raw = NULL;
 	char *strs_plus_salt = NULL;
 	extern char *hash_salt; /* from configuration file */
 	int len_strs_plus_salt;
@@ -60,10 +60,10 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	bzero(strs_plus_salt, len_strs_plus_salt + 1);
 
 	/* combine salt (essentially [hash_salt||username] to prevent pw-identification attacks) and password */
-	snprintf(strs_plus_salt, len_strs_plus_salt, "%s%s%s", hash_salt, username, password);
+	snprintf(strs_plus_salt, len_strs_plus_salt + 1, "%s%s%s", hash_salt, username, password);
 
 	if ((td = mhash_init(MHASH_SHA256)) == MHASH_FAILED) {
-		bzero_and_free_sensitive_strings(hash, hash_raw, strs_plus_salt); /* overwrite with zeros */
+		bzero_and_free_sensitive_strings(hash, (char*) hash_raw, strs_plus_salt); /* overwrite with zeros */
 		DO_SYSL("mhash_init() returned MHASH_FAILED. Aborting connection.")
 		return NULL;
 	}
@@ -75,9 +75,9 @@ char *get_sha256_hash_from_str(char *username /* don't free! */, char *password)
 	mhash_deinit(td, hash_raw);
 
 	for (i = 0; i < SHA256_LEN/2; i++) {
-		snprintf(hash + (2 * i), 4, "%.2x", hash_raw[i]);
+		snprintf(hash + (2 * i), 3, "%.2x", hash_raw[i]);
 	}
-	bzero_and_free_sensitive_strings(hash_raw, strs_plus_salt, NULL); /* overwrite with zeros */
+	bzero_and_free_sensitive_strings((char*) hash_raw, strs_plus_salt, NULL); /* overwrite with zeros */
 	return hash;
 }
 

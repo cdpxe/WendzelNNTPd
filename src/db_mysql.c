@@ -554,7 +554,7 @@ db_mysql_article(server_cb_inf *inf,
 	char *param)
 {
 	int len;
-	char *sql_cmd;
+	char *sql_cmd = NULL;
 	char *msgid;
 	char *id;
 	char *sendbuffer;
@@ -562,7 +562,7 @@ db_mysql_article(server_cb_inf *inf,
 	MYSQL_RES *res;
 
 	assert(global_mode == MODE_THREAD);
-
+	
 	switch(type) {
 	case ARTCLTYP_MESSAGEID:
 		/* select * from ngposts where ng='%s' and messageid='%s'; */
@@ -588,6 +588,7 @@ db_mysql_article(server_cb_inf *inf,
 			inf->servinf->selected_group, inf->servinf->selected_article);
 		break;
 	}
+	assert(sql_cmd != NULL);
 
 	/* try to find the article and add header+body if found/needed */
 	if (mysql_real_query(inf->servinf->myhndl, sql_cmd, strlen(sql_cmd)) != 0) {
@@ -845,7 +846,7 @@ db_mysql_xover(server_cb_inf *inf, u_int32_t min, u_int32_t max)
 	int len;
 	char *sql_cmd;
 	int articlenum, lines;
-	int postlen;
+	int postlen = 0;
 	char *ref, *xref, *bodylen;
 	char *add_to_response;
 	char tbuf[40] = { '\0' };

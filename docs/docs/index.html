@@ -1,17 +1,13 @@
 <!DOCTYPE HTML>
 
-<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<!--Converted with LaTeX2HTML 2023 (Released January 1, 2023) -->
 <HTML lang="en">
 <HEAD>
 <TITLE>WendzelNNTPd Version 2.2 Documentation</TITLE>
-<META NAME="description" CONTENT="WendzelNNTPd Version 2.2 Documentation">
-<META NAME="keywords" CONTENT="docs">
-<META NAME="resource-type" CONTENT="document">
-<META NAME="distribution" CONTENT="global">
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
-<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2023">
 
 <LINK REL="STYLESHEET" HREF="docs.css">
 
@@ -33,9 +29,7 @@
 <DIV CLASS="author_info">
 
 <STRONG>Steffen Wendzel and contributors</STRONG>
-</DIV>
-
-<P>
+</DIV><P>
 
 <BR>
 
@@ -45,159 +39,160 @@ Contents</A>
 <!--Table of Contents-->
 
 <UL CLASS="TofC">
-<LI><A ID="tex2html76"
+<LI><A ID="tex2html77"
   HREF="docs.html#SECTION002000000000000000000"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <UL>
-<LI><A ID="tex2html77"
+<LI><A ID="tex2html78"
   HREF="docs.html#SECTION002100000000000000000"><SPAN CLASS="arabic">1</SPAN> Features</A>
 <UL>
-<LI><A ID="tex2html78"
-  HREF="docs.html#SECTION002110000000000000000"><SPAN CLASS="arabic">1</SPAN> License</A>
 <LI><A ID="tex2html79"
-  HREF="docs.html#SECTION002120000000000000000"><SPAN CLASS="arabic">2</SPAN> Database Abstraction Layer</A>
+  HREF="docs.html#SECTION002110000000000000000"><SPAN CLASS="arabic">1</SPAN> License</A>
 <LI><A ID="tex2html80"
-  HREF="docs.html#SECTION002130000000000000000"><SPAN CLASS="arabic">3</SPAN> Security</A>
+  HREF="docs.html#SECTION002120000000000000000"><SPAN CLASS="arabic">2</SPAN> Database Abstraction Layer</A>
 <LI><A ID="tex2html81"
-  HREF="docs.html#SECTION002140000000000000000"><SPAN CLASS="arabic">4</SPAN> Auto-prevention of double-postings</A>
+  HREF="docs.html#SECTION002130000000000000000"><SPAN CLASS="arabic">3</SPAN> Security</A>
 <LI><A ID="tex2html82"
-  HREF="docs.html#SECTION002150000000000000000"><SPAN CLASS="arabic">5</SPAN> IPv6</A>
+  HREF="docs.html#SECTION002140000000000000000"><SPAN CLASS="arabic">4</SPAN> Auto-prevention of double-postings</A>
 <LI><A ID="tex2html83"
+  HREF="docs.html#SECTION002150000000000000000"><SPAN CLASS="arabic">5</SPAN> IPv6</A>
+<LI><A ID="tex2html84"
   HREF="docs.html#SECTION002160000000000000000"><SPAN CLASS="arabic">6</SPAN> Why this is not a perfect Usenet server</A>
 </UL>
-<LI><A ID="tex2html84"
-  HREF="docs.html#SECTION002200000000000000000"><SPAN CLASS="arabic">2</SPAN> Contribute</A>
 <LI><A ID="tex2html85"
+  HREF="docs.html#SECTION002200000000000000000"><SPAN CLASS="arabic">2</SPAN> Contribute</A>
+<LI><A ID="tex2html86"
   HREF="docs.html#SECTION002300000000000000000"><SPAN CLASS="arabic">3</SPAN> History</A>
 </UL>
 <BR>
-<LI><A ID="tex2html86"
+<LI><A ID="tex2html87"
   HREF="docs.html#SECTION003000000000000000000"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <UL>
-<LI><A ID="tex2html87"
+<LI><A ID="tex2html88"
   HREF="docs.html#SECTION003100000000000000000"><SPAN CLASS="arabic">1</SPAN> Linux/*nix/BSD</A>
 <UL>
-<LI><A ID="tex2html88"
+<LI><A ID="tex2html89"
   HREF="docs.html#SECTION003110000000000000000"><SPAN CLASS="arabic">1</SPAN> Init Script for Automatic Startup</A>
 </UL>
-<LI><A ID="tex2html89"
-  HREF="docs.html#SECTION003200000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
 <LI><A ID="tex2html90"
+  HREF="docs.html#SECTION003200000000000000000"><SPAN CLASS="arabic">2</SPAN> Unofficial Note: Mac OS X</A>
+<LI><A ID="tex2html91"
   HREF="docs.html#SECTION003300000000000000000"><SPAN CLASS="arabic">3</SPAN> Windows</A>
 </UL>
 <BR>
-<LI><A ID="tex2html91"
+<LI><A ID="tex2html92"
   HREF="docs.html#SECTION004000000000000000000"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <UL>
-<LI><A ID="tex2html92"
+<LI><A ID="tex2html93"
   HREF="docs.html#SECTION004100000000000000000"><SPAN CLASS="arabic">1</SPAN> Choosing a database engine</A>
 <UL>
-<LI><A ID="tex2html93"
-  HREF="docs.html#SECTION004110000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
 <LI><A ID="tex2html94"
+  HREF="docs.html#SECTION004110000000000000000"><SPAN CLASS="arabic">1</SPAN> Modifying wendzelnntpd.conf</A>
+<LI><A ID="tex2html95"
   HREF="docs.html#SECTION004120000000000000000"><SPAN CLASS="arabic">2</SPAN> Generating your database tables</A>
 </UL>
-<LI><A ID="tex2html95"
-  HREF="docs.html#SECTION004200000000000000000"><SPAN CLASS="arabic">2</SPAN> Network Settings</A>
 <LI><A ID="tex2html96"
-  HREF="docs.html#SECTION004300000000000000000"><SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
+  HREF="docs.html#SECTION004200000000000000000"><SPAN CLASS="arabic">2</SPAN> Network Settings</A>
 <LI><A ID="tex2html97"
-  HREF="docs.html#SECTION004400000000000000000"><SPAN CLASS="arabic">4</SPAN> Verbose Mode</A>
+  HREF="docs.html#SECTION004300000000000000000"><SPAN CLASS="arabic">3</SPAN> Setting the Allowed Size of Postings</A>
 <LI><A ID="tex2html98"
+  HREF="docs.html#SECTION004400000000000000000"><SPAN CLASS="arabic">4</SPAN> Verbose Mode</A>
+<LI><A ID="tex2html99"
   HREF="docs.html#SECTION004500000000000000000"><SPAN CLASS="arabic">5</SPAN> Security Settings</A>
 <UL>
-<LI><A ID="tex2html99"
-  HREF="docs.html#SECTION004510000000000000000"><SPAN CLASS="arabic">1</SPAN> Authentication and Access Control Lists (ACL)</A>
 <LI><A ID="tex2html100"
-  HREF="docs.html#SECTION004520000000000000000"><SPAN CLASS="arabic">2</SPAN> Anonymized Message-ID</A>
+  HREF="docs.html#SECTION004510000000000000000"><SPAN CLASS="arabic">1</SPAN> Authentication and Access Control Lists (ACL)</A>
 <LI><A ID="tex2html101"
-  HREF="docs.html#SECTION004530000000000000000"><SPAN CLASS="arabic">3</SPAN> Changing the Default Salt for Password Hashing</A>
+  HREF="docs.html#SECTION004520000000000000000"><SPAN CLASS="arabic">2</SPAN> Anonymized Message-ID</A>
 <LI><A ID="tex2html102"
+  HREF="docs.html#SECTION004530000000000000000"><SPAN CLASS="arabic">3</SPAN> Changing the Default Salt for Password Hashing</A>
+<LI><A ID="tex2html103"
   HREF="docs.html#SECTION004540000000000000000"><SPAN CLASS="arabic">4</SPAN> Encrypted communication (TLS)</A>
 </UL>
 </UL>
 <BR>
-<LI><A ID="tex2html103"
+<LI><A ID="tex2html104"
   HREF="docs.html#SECTION005000000000000000000"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
 <UL>
-<LI><A ID="tex2html104"
-  HREF="docs.html#SECTION005100000000000000000"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
 <LI><A ID="tex2html105"
+  HREF="docs.html#SECTION005100000000000000000"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
+<LI><A ID="tex2html106"
   HREF="docs.html#SECTION005200000000000000000"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service</A>
 <UL>
-<LI><A ID="tex2html106"
+<LI><A ID="tex2html107"
   HREF="docs.html#SECTION005210000000000000000"><SPAN CLASS="arabic">1</SPAN> Automating Start, Stop, and Restart</A>
 </UL>
-<LI><A ID="tex2html107"
-  HREF="docs.html#SECTION005300000000000000000"><SPAN CLASS="arabic">3</SPAN> Administration Tool `wendzelnntpadm'</A>
 <LI><A ID="tex2html108"
+  HREF="docs.html#SECTION005300000000000000000"><SPAN CLASS="arabic">3</SPAN> Administration Tool `wendzelnntpadm'</A>
+<LI><A ID="tex2html109"
   HREF="docs.html#SECTION005400000000000000000"><SPAN CLASS="arabic">4</SPAN> Creating/Listing/Deleting Newsgroups</A>
 <UL>
-<LI><A ID="tex2html109"
-  HREF="docs.html#SECTION005410000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing existing newsgroups</A>
 <LI><A ID="tex2html110"
-  HREF="docs.html#SECTION005420000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new newsgroup</A>
+  HREF="docs.html#SECTION005410000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing existing newsgroups</A>
 <LI><A ID="tex2html111"
+  HREF="docs.html#SECTION005420000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new newsgroup</A>
+<LI><A ID="tex2html112"
   HREF="docs.html#SECTION005430000000000000000"><SPAN CLASS="arabic">3</SPAN> Deleting a newsgroup</A>
 </UL>
-<LI><A ID="tex2html112"
+<LI><A ID="tex2html113"
   HREF="docs.html#SECTION005500000000000000000"><SPAN CLASS="arabic">5</SPAN> User Accounts Administration</A>
 <UL>
-<LI><A ID="tex2html113"
-  HREF="docs.html#SECTION005510000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing Users (and Passwords)</A>
 <LI><A ID="tex2html114"
-  HREF="docs.html#SECTION005520000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new user</A>
+  HREF="docs.html#SECTION005510000000000000000"><SPAN CLASS="arabic">1</SPAN> Listing Users (and Passwords)</A>
 <LI><A ID="tex2html115"
+  HREF="docs.html#SECTION005520000000000000000"><SPAN CLASS="arabic">2</SPAN> Creating a new user</A>
+<LI><A ID="tex2html116"
   HREF="docs.html#SECTION005530000000000000000"><SPAN CLASS="arabic">3</SPAN> Deleting an existing user</A>
 </UL>
-<LI><A ID="tex2html116"
+<LI><A ID="tex2html117"
   HREF="docs.html#SECTION005600000000000000000"><SPAN CLASS="arabic">6</SPAN> Access Control List Administration (in case the standard NNTP authentication is not enough)</A>
 <UL>
-<LI><A ID="tex2html117"
-  HREF="docs.html#SECTION005610000000000000000"><SPAN CLASS="arabic">1</SPAN> Invisible Newsgroups</A>
 <LI><A ID="tex2html118"
-  HREF="docs.html#SECTION005620000000000000000"><SPAN CLASS="arabic">2</SPAN> Simple Access Control</A>
+  HREF="docs.html#SECTION005610000000000000000"><SPAN CLASS="arabic">1</SPAN> Invisible Newsgroups</A>
 <LI><A ID="tex2html119"
-  HREF="docs.html#SECTION005630000000000000000"><SPAN CLASS="arabic">3</SPAN> Adding and Removing ACL Roles</A>
+  HREF="docs.html#SECTION005620000000000000000"><SPAN CLASS="arabic">2</SPAN> Simple Access Control</A>
 <LI><A ID="tex2html120"
-  HREF="docs.html#SECTION005640000000000000000"><SPAN CLASS="arabic">4</SPAN> Connecting and Disconnecting Users with/from Roles</A>
+  HREF="docs.html#SECTION005630000000000000000"><SPAN CLASS="arabic">3</SPAN> Adding and Removing ACL Roles</A>
 <LI><A ID="tex2html121"
-  HREF="docs.html#SECTION005650000000000000000"><SPAN CLASS="arabic">5</SPAN> Connecting and Disconnecting Roles with/from Newsgroups</A>
+  HREF="docs.html#SECTION005640000000000000000"><SPAN CLASS="arabic">4</SPAN> Connecting and Disconnecting Users with/from Roles</A>
 <LI><A ID="tex2html122"
+  HREF="docs.html#SECTION005650000000000000000"><SPAN CLASS="arabic">5</SPAN> Connecting and Disconnecting Roles with/from Newsgroups</A>
+<LI><A ID="tex2html123"
   HREF="docs.html#SECTION005660000000000000000"><SPAN CLASS="arabic">6</SPAN> Listing Your Whole ACL Configuration Again</A>
 </UL>
-<LI><A ID="tex2html123"
+<LI><A ID="tex2html124"
   HREF="docs.html#SECTION005700000000000000000"><SPAN CLASS="arabic">7</SPAN> Hardening</A>
 </UL>
 <BR>
-<LI><A ID="tex2html124"
+<LI><A ID="tex2html125"
   HREF="docs.html#SECTION006000000000000000000"><SPAN CLASS="arabic">5</SPAN> Development</A>
 <UL>
-<LI><A ID="tex2html125"
-  HREF="docs.html#SECTION006010000000000000000"><SPAN CLASS="arabic">1</SPAN> Initial setup</A>
 <LI><A ID="tex2html126"
+  HREF="docs.html#SECTION006010000000000000000"><SPAN CLASS="arabic">1</SPAN> Initial setup</A>
+<LI><A ID="tex2html127"
   HREF="docs.html#SECTION006020000000000000000"><SPAN CLASS="arabic">2</SPAN> Test new code</A>
+<LI><A ID="tex2html128"
+  HREF="docs.html#SECTION006030000000000000000"><SPAN CLASS="arabic">3</SPAN> Edit configure or Makefile</A>
 </UL>
 <BR>
-<LI><A ID="tex2html127"
+<LI><A ID="tex2html129"
   HREF="docs.html#SECTION007000000000000000000"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 <UL>
-<LI><A ID="tex2html128"
-  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
-<LI><A ID="tex2html129"
-  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
 <LI><A ID="tex2html130"
-  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 <LI><A ID="tex2html131"
-  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
 <LI><A ID="tex2html132"
+  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+<LI><A ID="tex2html133"
+  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+<LI><A ID="tex2html134"
   HREF="docs.html#SECTION007500000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
 </UL>
 <BR>
-<LI><A ID="tex2html133"
+<LI><A ID="tex2html135"
   HREF="docs.html#SECTION008000000000000000000">Index</A>
 </UL>
-<!--End of Table of Contents-->
-<P>
+<!--End of Table of Contents--><P>
 
 <H1><A ID="SECTION002000000000000000000"></A><A ID="42"></A>
 <BR>
@@ -319,19 +314,19 @@ $ ./configure
 </PRE>
 
 <P>
-<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT MySQL or WITHOUT SQlite support</SPAN>, then run <SPAN  CLASS="textbf">MYSQL=NO ./configure</SPAN> or <SPAN  CLASS="textbf">SQLITE=NO ./configure</SPAN>, respectively.
+<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT MySQL or WITHOUT SQlite support</SPAN>, then run <SPAN  CLASS="textbf">./configure --disable-mysql</SPAN> or <SPAN  CLASS="textbf">./configure --disable-sqlite</SPAN>, respectively.
 
 <P>
 &nbsp;
 
 <P>
-<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e., run <SPAN  CLASS="texttt">MYSQL=NO ./configure</SPAN>). Run <SPAN  CLASS="texttt">configure</SPAN> as well as <SPAN  CLASS="texttt">make</SPAN> in the <SPAN  CLASS="texttt">bash</SPAN> shell (under some BSDs you first need to install <SPAN  CLASS="texttt">bash</SPAN>).</SPAN>
+<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">For FreeBSD/OpenBSD/NetBSD/*BSD: There is no MySQL support; you need to use SQLite (i.e., run <SPAN  CLASS="texttt">./configure --disable-mysql</SPAN>). Run <SPAN  CLASS="texttt">configure</SPAN> as well as <SPAN  CLASS="texttt">make</SPAN> in the <SPAN  CLASS="texttt">bash</SPAN> shell (under some BSDs you first need to install <SPAN  CLASS="texttt">bash</SPAN>).</SPAN>
 
 <P>
 &nbsp;
 
 <P>
-<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT TLS support</SPAN>, then run <SPAN  CLASS="textbf">TLS=NO ./configure</SPAN>.
+<SPAN  CLASS="textbf">Please Note:</SPAN> <SPAN  CLASS="textit">If you wish to compile WITHOUT TLS support</SPAN>, then run <SPAN  CLASS="textbf">./configure --disable-tls</SPAN>.
 
 <P>
 &nbsp;
@@ -409,7 +404,7 @@ Not supported.
 
 <P>
 
-<H1><A ID="SECTION004000000000000000000"></A><A ID="203"></A><A ID="Ch:Config"></A>
+<H1><A ID="SECTION004000000000000000000"></A><A ID="207"></A><A ID="Ch:Config"></A>
 <BR>
 <SPAN CLASS="arabic">3</SPAN> Basic Configuration
 </H1>
@@ -702,7 +697,8 @@ hash-salt 0.hG4//3baA-::_\
 
 <P>
 WendzelNNTPd applies the SHA-2 hash algorithm using a 256 bit hash value. Please also note that the final hash is calculated using a string that combines salt, username and password as an input to prevent password-identification attacks when an equal password is used by multiple users. However, utilizing the username is less secure than having a completely separate salt for every password.<A ID="tex2html2"
-  HREF="footnode.html#foot271"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
+  HREF="footnode.html#foot275"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A>
+
 <P>
 
 <H2><A ID="SECTION004540000000000000000">
@@ -712,14 +708,14 @@ Please look at section <A HREF="#network-settings">3.2</A> when you want to use 
 
 <P>
 
-<H1><A ID="SECTION005000000000000000000"></A><A ID="369"></A>
+<H1><A ID="SECTION005000000000000000000"></A><A ID="373"></A>
 <BR>
 <SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd
 </H1>
 
 <P>
 
-<H1><A ID="SECTION005100000000000000000"></A><A ID="371"></A>
+<H1><A ID="SECTION005100000000000000000"></A><A ID="375"></A>
 <BR>
 <SPAN CLASS="arabic">1</SPAN> Starting the Service
 </H1>
@@ -739,7 +735,7 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
 
 <P>
 
-<H1><A ID="SECTION005200000000000000000"></A><A ID="378"></A><A ID="379"></A>
+<H1><A ID="SECTION005200000000000000000"></A><A ID="382"></A><A ID="383"></A>
 <BR>
 <SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the Service
 </H1>
@@ -1254,7 +1250,7 @@ As mentioned above, you can safe time by using roles. For instance, if you add a
 
 <P>
 If you want to give all developers access to the group &ldquo;project-x.news&rdquo;, you also do not have to connect every developer with the project. Instead, you just connect the role with the newsgroup, what is one command instead of <SPAN CLASS="MATH"><IMG
- STYLE="height: 1.39ex; vertical-align: -0.10ex; " SRC="img1.svg"
+ STYLE="height: 1.19ex; vertical-align: -0.10ex; " SRC="img1.svg"
  ALT="$n$"></SPAN> commands. Of course, this time-saving concept also works if you want to delete a user.
 
 <P>
@@ -1265,14 +1261,14 @@ If you want to give all developers access to the group &ldquo;project-x.news&rdq
 
 <P>
 Besides the already mentioned authentication, ACL and RBAC features, the security of the server can be improved by putting WendzelNNTPd in a <SPAN  CLASS="textit">chroot</SPAN> environment or letting it run under an unprivileged user account (the user then needs write access to <SPAN  CLASS="textit">/var/spool/news/wendzelnntpd</SPAN> and read access to (<SPAN  CLASS="textit">/usr/local)/etc/wendzelnntpd.conf</SPAN>). An unprivileged user under Unix-like systems is also not able to create a listen socket on the default NNTP port (119) since all ports up to 1023 are usually<A ID="tex2html3"
-  HREF="footnode.html#foot467"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
- STYLE="height: 2.18ex; vertical-align: -0.41ex; " SRC="img2.svg"
+  HREF="footnode.html#foot471"><SUP><IMG  ALT="[*]" SRC="footnote.png"></SUP></A> reserved. This means that the server should use a port <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.98ex; vertical-align: -0.41ex; " SRC="img2.svg"
  ALT="$\geq$"></SPAN>1024 if it is started by a non-root user.
 
 <P>
 Please also note that WendzelNNTPd can be easily identified due to its welcoming `banner' (desired code `200' message of NNTP). Tools such as <SPAN  CLASS="texttt">nmap</SPAN> provide rules to identify WendzelNNTPd and its version this way. Theoretically, this could be changed by a slight code modification (welcome message, HELP output and other components that make the server identifiable). However, I do not recommend this as it is just a form of `security by obscurity'.
 
-<H1><A ID="SECTION006000000000000000000"></A><A ID="648"></A>
+<H1><A ID="SECTION006000000000000000000"></A><A ID="652"></A>
 <BR>
 <SPAN CLASS="arabic">5</SPAN> Development
 </H1>
@@ -1311,7 +1307,20 @@ $ docker stop wendzelnntpd
 </H2>
 The container is build without code included. The code is automatically mounted as volume into the container. After each change of source code, the application is compiled again.
 
-<H1><A ID="SECTION007000000000000000000"></A><A ID="666"></A><A ID="Ch:Upgrade"></A>
+<P>
+
+<H2><A ID="SECTION006030000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Edit configure or Makefile</A>
+</H2>
+This project uses <SPAN  CLASS="texttt">autoconf</SPAN> to generate the <SPAN  CLASS="textit">configure</SPAN> script from <SPAN  CLASS="textit">configure.ac</SPAN>. The files
+<SPAN  CLASS="textit">configure</SPAN>, <SPAN  CLASS="textit">aclocal.m4</SPAN>, <SPAN  CLASS="textit">config.guess</SPAN>, <SPAN  CLASS="textit">config.sub</SPAN> and <SPAN  CLASS="textit">install-sh</SPAN> are
+autogenerated. Do not edit them directly, but regenerate them with <SPAN  CLASS="texttt">autoreconf -fi</SPAN> after editing
+<SPAN  CLASS="textit">configure.ac</SPAN> or a macro in the <SPAN  CLASS="textit">m4</SPAN> directory.
+
+<P>
+The <SPAN  CLASS="textit">Makefile</SPAN> is generated by the <SPAN  CLASS="textit">configure</SPAN> script from the <SPAN  CLASS="textit">Makefile.in</SPAN>.
+
+<H1><A ID="SECTION007000000000000000000"></A><A ID="689"></A><A ID="Ch:Upgrade"></A>
 <BR>
 <SPAN CLASS="arabic">6</SPAN> Upgrading
 </H1>
@@ -1324,6 +1333,16 @@ The container is build without code included. The code is automatically mounted 
 
 <P>
 Please stop WendzelNNTPd and check the <SPAN  CLASS="textit">wendzelnntpd.conf</SPAN>. There is a new configuration style that breaks parts of the previous configuration style (especially due to the introduction of &ldquo;connectors&rdquo;).
+
+<P>
+Existing user passwords will no longer work. You need to recreate all users and their passwords using <SPAN  CLASS="textbf">wendzelnntpadm</SPAN>. Additionally, you must reapply any previously configured ACL roles and group memberships for the recreated users.
+
+<P>
+The behaviour of <SPAN  CLASS="textbf">./configure</SPAN> has changed. The environment variables for enabling and disabling features are no
+longer supported and replaced by CLI flags. The support for the databases can now be enabled/disabled by
+<SPAN  CLASS="textit">--disable-mysql</SPAN>, <SPAN  CLASS="textit">--disable-sqlite</SPAN> and <SPAN  CLASS="textit">--enable-postgres</SPAN>. The suppport for TLS can be
+disabled by <SPAN  CLASS="textit">--disable-tls</SPAN>. You can use <SPAN  CLASS="textbf">./configure --help</SPAN> for an overview of the available
+CLI flags.
 
 <P>
 
@@ -1529,25 +1548,24 @@ If this works, you can now run v2.x on 32bit and 64bit Linux :) Congrats, you ma
 Index</A>
 </H2><DL COMPACT>
 <DT><STRONG>Configuration</STRONG>
-<DD><A HREF="docs.html#203"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
+<DD><A HREF="docs.html#207"><SPAN CLASS="arabic">3</SPAN> Basic Configuration</A>
 <DT><STRONG>Development</STRONG>
-<DD><A HREF="docs.html#648"><SPAN CLASS="arabic">5</SPAN> Development</A>
+<DD><A HREF="docs.html#652"><SPAN CLASS="arabic">5</SPAN> Development</A>
 <DT><STRONG>Installation</STRONG>
 <DD><A HREF="docs.html#97"><SPAN CLASS="arabic">2</SPAN> Installation</A>
 <DT><STRONG>Introduction</STRONG>
 <DD><A HREF="docs.html#42"><SPAN CLASS="arabic">1</SPAN> Introduction</A>
 <DT><STRONG>Restarting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#379"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#383"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Starting WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#369"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
- | <A HREF="docs.html#371"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
+<DD><A HREF="docs.html#373"><SPAN CLASS="arabic">4</SPAN> Starting and Running WendzelNNTPd</A>
+ | <A HREF="docs.html#375"><SPAN CLASS="arabic">1</SPAN> Starting the Service</A>
 <DT><STRONG>Stopping WendzelNNTPd</STRONG>
-<DD><A HREF="docs.html#378"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
+<DD><A HREF="docs.html#382"><SPAN CLASS="arabic">2</SPAN> Stopping and Restarting the</A>
 <DT><STRONG>Upgrade</STRONG>
-<DD><A HREF="docs.html#666"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
+<DD><A HREF="docs.html#689"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 
 </DL>
-
 <P>
 
 <H1><A ID="SECTION009000000000000000000">
@@ -1555,12 +1573,12 @@ About this document ...</A>
 </H1>
  <STRONG>WendzelNNTPd Version 2.2 Documentation</STRONG><P>
 This document was generated using the
-<A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2021.2 (Released July 1, 2021)
+<A HREF="http://www.latex2html.org/">LaTeX2HTML</A> translator Version 2023 (Released January 1, 2023)
 <P>
 The command line arguments were: <BR>
  <kbd>latex2html -show_section_numbers -local_icons -split 2 docs.tex</kbd>
 <P>
-The translation was initiated on 2024-09-12
+The translation was initiated on 2025-08-03
 <BR><HR>
 <!--Table of Child-Links-->
 <A ID="CHILD_LINKS"></A>
@@ -1735,26 +1753,28 @@ The translation was initiated on 2024-09-12
   HREF="docs.html#SECTION006010000000000000000"><SPAN CLASS="arabic">1</SPAN> Initial setup</A>
 <LI><A ID="tex2html67"
   HREF="docs.html#SECTION006020000000000000000"><SPAN CLASS="arabic">2</SPAN> Test new code</A>
+<LI><A ID="tex2html68"
+  HREF="docs.html#SECTION006030000000000000000"><SPAN CLASS="arabic">3</SPAN> Edit configure or Makefile</A>
 </UL>
 <BR>
-<LI><A ID="tex2html68"
+<LI><A ID="tex2html69"
   HREF="docs.html#SECTION007000000000000000000"><SPAN CLASS="arabic">6</SPAN> Upgrading</A>
 <UL>
-<LI><A ID="tex2html69"
-  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 <LI><A ID="tex2html70"
-  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
+  HREF="docs.html#SECTION007100000000000000000"><SPAN CLASS="arabic">1</SPAN> Upgrade fom version 2.1.y to 2.2.x</A>
 <LI><A ID="tex2html71"
-  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
+  HREF="docs.html#SECTION007200000000000000000"><SPAN CLASS="arabic">2</SPAN> Upgrade from version 2.1.x to 2.1.y</A>
 <LI><A ID="tex2html72"
-  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+  HREF="docs.html#SECTION007300000000000000000"><SPAN CLASS="arabic">3</SPAN> Upgrade from version 2.0.x to 2.1.y</A>
 <LI><A ID="tex2html73"
+  HREF="docs.html#SECTION007400000000000000000"><SPAN CLASS="arabic">4</SPAN> Upgrade from version 2.0.x to 2.0.y</A>
+<LI><A ID="tex2html74"
   HREF="docs.html#SECTION007500000000000000000"><SPAN CLASS="arabic">5</SPAN> Upgrade from version 1.4.x to 2.0.x</A>
 </UL>
 <BR>
-<LI><A ID="tex2html74"
-  HREF="docs.html#SECTION008000000000000000000">Index</A>
 <LI><A ID="tex2html75"
+  HREF="docs.html#SECTION008000000000000000000">Index</A>
+<LI><A ID="tex2html76"
   HREF="docs.html#SECTION009000000000000000000">About this document ...</A>
 </UL>
 <!--End of Table of Child-Links-->
