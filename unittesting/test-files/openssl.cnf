@@ -1,0 +1,9 @@
+[req]
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+
+[v3_ca]
+basicConstraints = critical,CA:true
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer

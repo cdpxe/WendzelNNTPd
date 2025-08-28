@@ -231,7 +231,7 @@ db_postgres_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 	    "values ($1,$2,$3,$4,$5,$6,$7)";
 	char buf[128];
 	char buf_line[128];
-	snprintf(buf, 128-1, "%ld", ltime);
+	snprintf(buf, 128-1, "%lld", (long long) ltime);
 	snprintf(buf_line, 128-1, "%d", linecount);
 
 
@@ -239,7 +239,7 @@ db_postgres_post_insert_into_postings(server_cb_inf *inf, char *message_id,
 	    fprintf(stderr, "--- Dump Message ---\n");
 	    fprintf(stderr, "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
 		    message_id, buf, from, ngstrpb, subj, buf_line, add_to_hdr);
-	    fprintf(stderr, "%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n%ld\n",
+	    fprintf(stderr, "%zd\n%zd\n%zd\n%zd\n%zd\n%zd\n%zd\n",
 		    strlen(message_id),
 		    strlen(buf),
 		    strlen(from),
@@ -1808,7 +1808,7 @@ db_postgres_load_message_body(server_cb_inf *inf, char *message_id)
 	char *dup_s = strndup(body, octet);
 
 	if (be_verbose) {
-	    fprintf(stderr, "octent length / strlen: %u/%lu Bytes at (%p)\n",
+	    fprintf(stderr, "octent length / strlen: %u/%zu Bytes at (%p)\n",
 		    octet, strlen(body), body);
 	}
 	PQclear(res);

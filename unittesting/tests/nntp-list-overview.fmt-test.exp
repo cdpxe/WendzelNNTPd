@@ -1,0 +1,12 @@
+set timeout 2
+
+send_user "=== Test list overview.fmt command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of list overview.fmt command ==\n"
+send "list overview.fmt\n"
+expect {
+  timeout { send_user "Error: list overview.fmt command did not respond correctly\n"; exit 1 }
+  -re "215 Order of fields in overview database.\\r\\nSubject:\\r\\nFrom:\\r\\nDate:\\r\\nMessage-ID:\\r\\nReferences:\\r\\nBytes:\\r\\nLines:\\r\\nXref:full\\r\\n\\."
+}

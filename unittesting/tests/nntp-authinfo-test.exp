@@ -1,0 +1,48 @@
+set timeout 2
+
+send_user "=== Test authinfo command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of authinfo pass command before passing a username ==\n"
+send "authinfo pass password\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "381 More authentication information required."
+}
+
+send_user "== Check response of authinfo user command without parameter ==\n"
+send "authinfo user \n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "501 missing a parameter, see 'help'"
+}
+
+send_user "== Check response of authinfo user command with username ==\n"
+send "authinfo user testuser\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "381 More authentication information required."
+}
+
+send_user "== Check response of authinfo pass command without parameter ==\n"
+send "authinfo pass \n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "501 missing a parameter, see 'help'"
+}
+
+send_user "== Check response of authinfo pass command with wrong password ==\n"
+send "authinfo pass invalid\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "482 Authentication rejected."
+}
+
+send_user "== Check response of authinfo pass command with correct password ==\n"
+send "authinfo user testuser\n"
+send "authinfo pass password\n"
+expect {
+  timeout { send_user "Error: authinfo command did not respond correctly\n"; exit 1 }
+  -re "281 Authentication accepted."
+}

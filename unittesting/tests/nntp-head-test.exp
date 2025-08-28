@@ -1,0 +1,72 @@
+set timeout 2
+
+send_user "=== Test head command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of head command without selected group ==\n"
+send "head\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of head command without selected group with article number ==\n"
+send "head 1\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of head command without selected group with existing message-id ==\n"
+send "head <cdp1@localhost>\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "412 no news group current selected"
+}
+
+send_user "== Check response of head command with empty group ==\n"
+send "group alt.wendzelnntpd.test.empty\n"
+send "head\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "420 no \\(current\\) article selected"
+}
+
+send_user "== Check response of head command with non existing message-id ==\n"
+send "head <1>\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "430 no such article found"
+}
+
+send_user "== Check response of head command with non existing article number ==\n"
+send "head 1\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "430 no such article found"
+}
+
+send_user "== Check response of head command with group with article ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "head\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "221 1 <cdp1@localhost> article retrieved - head follows\\r\\nPath: test\\r\\nMessage-ID: <cdp1@localhost>\\r\\nDate: Sat, 28 Jun 2025 \\d{2}:\\d{2}:00 \\+\\d{4}\\r\\nLines: 1\\r\\nX-WendzelNNTPdBodysize: 9\\r\\nnewsgroups: alt.wendzelnntpd.test\\r\\nfrom: Testuser <test@example.com>\\r\\nsubject: Test\\r\\n."
+}
+
+send_user "== Check response of head command with group with article with message-id ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "head <cdp2@localhost>\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "221 2 <cdp2@localhost> article retrieved - head follows\\r\\nPath: test\\r\\nMessage-ID: <cdp2@localhost>\\r\\nDate: Sat, 28 Jun 2025 \\d{2}:\\d{2}:01 \\+\\d{4}\\r\\nLines: 1\\r\\nX-WendzelNNTPdBodysize: 10\\r\\nnewsgroups: alt.wendzelnntpd.test\\r\\nfrom: Testuser <test@example.com>\\r\\nsubject: Test2\\r\\n."
+}
+
+send_user "== Check response of head command with group with article with article number ==\n"
+send "group alt.wendzelnntpd.test\n"
+send "head 2\n"
+expect {
+  timeout { send_user "Error: head command did not respond correctly\n"; exit 1 }
+  -re "221 2 <cdp2@localhost> article retrieved - head follows\\r\\nPath: test\\r\\nMessage-ID: <cdp2@localhost>\\r\\nDate: Sat, 28 Jun 2025 \\d{2}:\\d{2}:01 \\+\\d{4}\\r\\nLines: 1\\r\\nX-WendzelNNTPdBodysize: 10\\r\\nnewsgroups: alt.wendzelnntpd.test\\r\\nfrom: Testuser <test@example.com>\\r\\nsubject: Test2\\r\\n."
+}

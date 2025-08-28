@@ -1,0 +1,11 @@
+set timeout 2
+
+send_user "=== Test initial connection ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of initial connection ==\n"
+expect {
+  timeout { send_user "Error while getting startup banner\n"; exit 1 }
+  -re "200 WendzelNNTPd.*ready \\(posting ok\\)"
+}

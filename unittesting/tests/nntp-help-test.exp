@@ -1,0 +1,12 @@
+set timeout 2
+
+send_user "=== Test help command ===\n"
+
+spawn telnet $env(nntp_address) 119
+
+send_user "== Check response of help command ==\n"
+send "help\n"
+expect {
+  timeout { send_user "Error: help command did not respond correctly\n"; exit 1 }
+  -re "100 help text follows\\r\\n.*\\r\\n\\."
+}

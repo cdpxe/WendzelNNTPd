@@ -3,20 +3,13 @@
 echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
 
-mkdir -p /usr/local/etc/ssl
-
-if [ "$USER" != "root" ]; then
-    echo "Run this script with root privileges!"
-    exit
-fi
-
 function usage {
     echo ""
     echo "Creates certificates for WendzelNNTPd (selfsigned or via LetsEncrypt)"
     echo ""
-    echo "usage: ./create_certificate --environment localhost | letsencrypt --email string --domain string"
+    echo "usage: ./create_certificate --environment local | letsencrypt --email string --domain string"
     echo ""
-    echo "  --environment string    context for generating certificates ('localhost' and 'letsencrypt' are allowed values)"
+    echo "  --environment string    context for generating certificates ('local' and 'letsencrypt' are allowed values)"
     echo "  --email string          only needed if 'letsencrypt' is used"
     echo "                          (example: test@test.de)"
     echo "  --domain string         only needed if 'letsencrypt' is used; specify domain under which your server is reachable"
@@ -37,6 +30,13 @@ while [ $# -gt 0 ]; do
     fi
     shift
 done
+
+if [ $(id -u) -ne 0 ]; then
+    echo "Run this script with root privileges!"
+    exit
+fi
+
+mkdir -p /usr/local/etc/ssl
 
 if [[ -z $environment || "$environment" = "local" ]]; then
     echo "Environment is set to 'local'. Certificates for 'local' use are generated now..."
