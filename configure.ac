@@ -17,7 +17,7 @@
 
 AC_PREREQ([2.71])
 AC_INIT([WendzelNNTPd],[2.2-alpha1], [steffen@wendzel.de])
-releasename="Giersleben"
+releasename="Bad Woerishofen"
 AC_SUBST([RELEASENAME], [$releasename])
 AC_DEFINE_UNQUOTED([RELEASENAME], ["$releasename"]) # should not include white-spaces!
 AC_COPYRIGHT([WendzelNNTPd is distributed under the GPLv3 license you can find a copy of the license in the 'LICENSE' file.])
