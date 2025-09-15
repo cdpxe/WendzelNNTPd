@@ -49,7 +49,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -days 3650 \
         -nodes \
         -extensions v3_ca \
-        -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
+        -config "openssl.cnf" \
         -keyout "/usr/local/etc/ssl/ca-key.pem" \
         -out "/usr/local/etc/ssl/ca.crt"
 
@@ -57,7 +57,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
     openssl req \
         -new -key "/usr/local/etc/ssl/server.key" \
         -out "/usr/local/etc/ssl/server.csr" \
-        -config "./docker/openssl/openssl.cnf"
+        -config "openssl.cnf"
 
     openssl x509 \
         -req \
@@ -67,7 +67,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -CAkey "/usr/local/etc/ssl/ca-key.pem" \
         -CAcreateserial \
         -extensions v3_req \
-        -extfile "./docker/openssl/openssl.cnf" \
+        -extfile "openssl.cnf" \
         -out "/usr/local/etc/ssl/server.crt"
 
     echo "Finished ..."

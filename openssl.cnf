@@ -24,8 +24,13 @@ basicConstraints     = CA:FALSE
 subjectKeyIdentifier = hash
 keyUsage             = digitalSignature, keyEncipherment
 extendedKeyUsage     = serverAuth
-subjectAltName = @alt_names
+subjectAltName       = @alt_names
 
 [alt_names]
 DNS.1 = localhost
 DNS.2 = 127.0.0.1
+
+[v3_ca]
+basicConstraints = critical,CA:true
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer

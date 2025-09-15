@@ -8,7 +8,7 @@ RUN go install github.com/cespare/reflex@latest
 
 RUN touch /var/log/wendzelnntpd
 
-COPY docker/openssl/openssl.cnf /usr/local/etc/ssl/openssl.cnf
+COPY openssl.cnf /usr/local/etc/ssl/openssl.cnf
 
 # Create server certificate for TLS
 RUN mkdir -p /usr/local/etc/ssl
@@ -20,7 +20,7 @@ RUN openssl req \
   -days 3650 \
   -nodes \
   -extensions v3_ca \
-  -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
+  -config "/usr/local/etc/ssl/openssl.cnf" \
   -keyout "/usr/local/etc/ssl/ca-key.pem" \
   -out "/usr/local/etc/ssl/ca.crt"
 
