@@ -54,6 +54,7 @@ FIXES:
  - Fix some errors when compiling and executing wendzelnntpd on a 32 bit
    system but with 64 bit time_t.
  - Fix the usage output of the script create_certificate.
+ - Fix formatting in the man page for wendzelnntpadm.
 MISC:
  - Applied NetBSD pkgsrc patch for err feature and for lexer/parser
    functions from Michael Baeuerle; thx for that!
