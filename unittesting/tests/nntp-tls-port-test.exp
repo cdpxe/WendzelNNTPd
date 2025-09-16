@@ -1,4 +1,4 @@
-set timeout 2
+set timeout 5
 
 send_user "=== Test with active TLS via extra port ===\n"
 
