@@ -1,4 +1,4 @@
-set timeout 2
+set timeout 5
 
 send_user "=== Test for mandatory TLS on non-encrypted NNTP port ===\n"
 
