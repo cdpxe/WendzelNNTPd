@@ -6,10 +6,10 @@ Once your WendzelNNTPd installation has been configured, you can run the
 server (in the default case you need superuser access to do that since
 this is required to bind WendzelNNTPd to the default NNTP port 119) by
 starting **/usr/local/sbin/wendzelnntpd**.
-
-    $ /usr/local/sbin/wendzelnntpd 
-    WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
-    26 2015 14:10:20 #2544) is ready.
+```console
+$ /usr/local/sbin/wendzelnntpd 
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct 26 2015 14:10:20 #2544) is ready.
+```
 
 **Note (Daemon Mode):** If you want to run WendzelNNTPd as a background
 daemon process on \*nix-like operating systems, you should use the
@@ -18,9 +18,9 @@ parameter **-d**.
 ## Stopping and Restarting the Service
 
 The server can be stopped by terminating its process:
-
-    $ pkill wendzelnntpd
-
+```console
+$ pkill wendzelnntpd
+```
 The server has a handler for the termination signal that allows to
 safely shutdown using **pkill** or **kill**.
 
@@ -32,9 +32,10 @@ The script **init.d_script** in the directory *scripts/startup* of the
 tarball can be used to start, restart, and stop WendzelNNTPd. It is a
 standard *init.d* script for Linux operating systems that can usually be
 copied to */etc/init.d* (it must be executable).
-
-    $ cp scripts/startup/init.d_script /etc/init.d/wendzelnntpd
-    $ chmod +x /etc/init.d/wendzelnntpd
+```console
+$ cp scripts/startup/init.d_script /etc/init.d/wendzelnntpd
+$ chmod +x /etc/init.d/wendzelnntpd
+```
 
 **Note:** Please note that some operating systems use different
 directories than */etc/init.d* or other startup script formats. In such
@@ -43,43 +44,43 @@ cases, the script works nevertheless but should simply be installed to
 
 To start, stop, and restart WendzelNNTPd, the following commands can be
 used afterwards:
+```console
+$ /etc/init.d/wendzelnntpd start
+Starting WendzelNNTPd ... done.
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct 26 2015 14:10:20 #2544) is ready.
 
-    $ /etc/init.d/wendzelnntpd start
-    Starting WendzelNNTPd ... done.
-    WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
-    26 2015 14:10:20 #2544) is ready.
+$ /etc/init.d/wendzelnntpd restart
+Stopping WendzelNNTPd ... done.
+Starting WendzelNNTPd ... done.
+WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct 26 2015 14:10:20 #2544) is ready.
 
-    $ /etc/init.d/wendzelnntpd restart
-    Stopping WendzelNNTPd ... done.
-    Starting WendzelNNTPd ... done.
-    WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct
-    26 2015 14:10:20 #2544) is ready.
-
-    $ /etc/init.d/wendzelnntpd stop
-    Stopping WendzelNNTPd ... done.
+$ /etc/init.d/wendzelnntpd stop
+Stopping WendzelNNTPd ... done.
+```
 
 ## Administration Tool 'wendzelnntpadm'
 
 Use the command line tool **wendzelnntpadm** to configure users, roles
 and newsgroups of your WendzelNNTPd installation. To get an overview of
-supported commands, run "wendzelnntpadm help":
-
-    $ wendzelnntpadm help
-    usage: wendzelnntpd <command> [parameters]
-    *** Newsgroup Administration:
-     <listgroups>
-     <addgroup | modgroup> <newsgroup> <posting-allowed-flag (y/n)>
-     <delgroup> <newsgroup>
-    *** User Administration:
-     <listusers>
-     <adduser> <username> [<password>]
-     <deluser> <username>
-    *** ACL (Access Control List) Administration:
-     <listacl>
-     <addacluser | delacluser> <username> <newsgroup>
-     <addaclrole | delaclrole> <role>
-     <rolegroupconnect | rolegroupdisconnect> <role> <newsgroup>
-     <roleuserconnect | roleuserdisconnect> <role> <username>
+supported commands, run `wendzelnntpadm help`:
+```console
+$ wendzelnntpadm help
+usage: wendzelnntpd <command> [parameters]
+*** Newsgroup Administration:
+ <listgroups>
+ <addgroup | modgroup> <newsgroup> <posting-allowed-flag (y/n)>
+ <delgroup> <newsgroup>
+*** User Administration:
+ <listusers>
+ <adduser> <username> [<password>]
+ <deluser> <username>
+*** ACL (Access Control List) Administration:
+ <listacl>
+ <addacluser | delacluser> <username> <newsgroup>
+ <addaclrole | delaclrole> <role>
+ <rolegroupconnect | rolegroupdisconnect> <role> <newsgroup>
+ <roleuserconnect | roleuserdisconnect> <role> <username>
+```
 
 ## Creating/Listing/Deleting Newsgroups
 
@@ -88,41 +89,46 @@ You can either list, create or delete newsgroups using
 
 ### Listing existing newsgroups
 
-    $ wendzelnntpadm listgroups
-    Newsgroup, Low-, High-Value, Posting-Flag
-    -----------------------------------------
-    alt.test 10 1 y
-    mgmt.talk 1 1 y
-    secret.project-x 20 1 y
-    done.
+```console
+$ wendzelnntpadm listgroups
+Newsgroup, Low-, High-Value, Posting-Flag
+-----------------------------------------
+alt.test 10 1 y
+mgmt.talk 1 1 y
+secret.project-x 20 1 y
+done.
+```
 
 ### Creating a new newsgroup
 
 To create a new newsgroup run the following command:
-
-    $ wendzelnntpadm addgroup my.cool.group y
-    Newsgroup my.cool.group does not exist. Creating new group.
-    done.
+```console
+$ wendzelnntpadm addgroup my.cool.group y
+Newsgroup my.cool.group does not exist. Creating new group.
+done.
+```
 
 You can also change the "posting allowed" flag of a newsgroup:
-
-    $ wendzelnntpadm modgroup my.cool.group y
-    Newsgroup my.cool.group exists: okay.
-    done.
-    $ wendzelnntpadm modgroup my.cool.group n
-    Newsgroup my.cool.group exists: okay.
-    done.
+```console
+$ wendzelnntpadm modgroup my.cool.group y
+Newsgroup my.cool.group exists: okay.
+done.
+$ wendzelnntpadm modgroup my.cool.group n
+Newsgroup my.cool.group exists: okay.
+done.
+```
 
 ### Deleting a newsgroup
-
-    $ wendzelnntpadm delgroup my.cool.group
-    Newsgroup my.cool.group exists: okay.
-    Clearing association class ... done
-    Clearing ACL associations of newsgroup my.cool.group... done
-    Clearing ACL role associations of newsgroup my.cool.group... done
-    Deleting newsgroup my.cool.group itself ... done
-    Cleanup: Deleting postings that do not belong to an existing newsgroup ... done
-    done.
+```console
+$ wendzelnntpadm delgroup my.cool.group
+Newsgroup my.cool.group exists: okay.
+Clearing association class ... done
+Clearing ACL associations of newsgroup my.cool.group... done
+Clearing ACL role associations of newsgroup my.cool.group... done
+Deleting newsgroup my.cool.group itself ... done
+Cleanup: Deleting postings that do not belong to an existing newsgroup ... done
+done.
+```
 
 ## User Accounts Administration
 
@@ -133,48 +139,51 @@ your configuration file). You can add, delete and list all users.
 ### Listing Users (and Passwords)
 
 This command always prints the (hashed) password of the users:
-
-    $ wendzelnntpadm listusers
-    Username, Password
-    ------------------
-    developer1, wegerhgrhtrthjtzj
-    developer2, erghnrehhnht
-    manager1, wegergergrhth
-    manager2, thnthnrothnht
-    swendzel, lalalegergreg
-    swendzel2, 94j5z5jh5th
-    swendzel3, lalalalala
-    swendzel4, wegwegwegwegweg
-    done.
+```console
+$ wendzelnntpadm listusers
+Username, Password
+------------------
+developer1, wegerhgrhtrthjtzj
+developer2, erghnrehhnht
+manager1, wegergergrhth
+manager2, thnthnrothnht
+swendzel, lalalegergreg
+swendzel2, 94j5z5jh5th
+swendzel3, lalalalala
+swendzel4, wegwegwegwegweg
+done.
+```
 
 ### Creating a new user
 
 You can either enter the password as additional parameter (useful for
 scripts that create users automatically) \...
-
-    $ wendzelnntpadm adduser UserName HisPassWord
-    User UserName does currently not exist: okay.
-    done.
-
+```console
+$ wendzelnntpadm adduser UserName HisPassWord
+User UserName does currently not exist: okay.
+done.
+```
 \... or you can type it using the prompt (in this case the input is
 shadowed):
-
-    $ wendzelnntpadm adduser UserName2
-    Enter new password for this user (max. 100 chars):
-    User UserName2 does currently not exist: okay.
-    done.
+```console
+$ wendzelnntpadm adduser UserName2
+Enter new password for this user (max. 100 chars):
+User UserName2 does currently not exist: okay.
+done.
+```
 
 **Please Note:** A password must include at least 8 characters and may
 not include more than 100 characters.
 
 ### Deleting an existing user
-
-    $ wendzelnntpadm deluser UserName2
-    User UserName2 exists: okay.
-    Clearing ACL associations of user UserName2... done
-    Clearing ACL role associations of user UserName2... done
-    Deleting user UserName2 from database ... done
-    done.
+```console
+$ wendzelnntpadm deluser UserName2
+User UserName2 exists: okay.
+Clearing ACL associations of user UserName2... done
+Clearing ACL role associations of user UserName2... done
+Deleting user UserName2 from database ... done
+done.
+```
 
 ## Access Control List Administration (in case the standard NNTP authentication is not enough)
 
@@ -206,33 +215,37 @@ which user will have access to which newsgroup.
 
 #### Giving a user access to a newsgroup
 
-    $ wendzelnntpadm addacluser swendzel alt.test
-    User swendzel exists: okay.
-    Newsgroup alt.test exists: okay.
-    done.
-    $ wendzelnntpadm listacl
-    List of roles in database:
-    Roles
-    -----
+```console
+$ wendzelnntpadm addacluser swendzel alt.test
+User swendzel exists: okay.
+Newsgroup alt.test exists: okay.
+done.
+$ wendzelnntpadm listacl
+List of roles in database:
+Roles
+-----
 
-    Connections between users and roles:
-    Role, User
-    ----------
+Connections between users and roles:
+Role, User
+----------
 
-    Username, Has access to group
-    -----------------------------
-    swendzel, alt.test
+Username, Has access to group
+-----------------------------
+swendzel, alt.test
 
-    Role, Has access to group
-    -------------------------
-    done.
+Role, Has access to group
+-------------------------
+done.
+```
 
 #### Removing a user's access to a newsgroup
 
-    $ wendzelnntpadm delacluser swendzel alt.test
-    User swendzel exists: okay.
-    Newsgroup alt.test exists: okay.
-    done.
+```console
+$ wendzelnntpadm delacluser swendzel alt.test
+User swendzel exists: okay.
+Newsgroup alt.test exists: okay.
+done.
+```
 
 ### Adding and Removing ACL Roles
 
@@ -250,36 +263,38 @@ and "developer3" access to the development role of "project-x" and
 connect their role to the newsgroups "project-x.discussion" and
 "project-x.support". To do so, we create the three users and the two
 newsgroups first:
+```console
+$ wendzelnntpadm adduser developer1
+Enter new password for this user (max. 100 chars):
+User developer1 does currently not exist: okay.
+done.
+$ wendzelnntpadm adduser developer2
+Enter new password for this user (max. 100 chars):
+User developer2 does currently not exist: okay.
+done.
+$ wendzelnntpadm adduser developer3
+Enter new password for this user (max. 100 chars):
+User developer3 does currently not exist: okay.
+done.
 
-    $ wendzelnntpadm adduser developer1
-    Enter new password for this user (max. 100 chars):
-    User developer1 does currently not exist: okay.
-    done.
-    $ wendzelnntpadm adduser developer2
-    Enter new password for this user (max. 100 chars):
-    User developer2 does currently not exist: okay.
-    done.
-    $ wendzelnntpadm adduser developer3
-    Enter new password for this user (max. 100 chars):
-    User developer3 does currently not exist: okay.
-    done.
-
-    $ wendzelnntpadm addgroup project-x.discussion y
-    Newsgroup project-x.discussion does not exist. Creating new group.
-    done.
-    $ wendzelnntpadm addgroup project-x.support y
-    Newsgroup project-x.support does not exist. Creating new group.
-    done.
+$ wendzelnntpadm addgroup project-x.discussion y
+Newsgroup project-x.discussion does not exist. Creating new group.
+done.
+$ wendzelnntpadm addgroup project-x.support y
+Newsgroup project-x.support does not exist. Creating new group.
+done.
+```
 
 #### Creating an ACL Role
 
 Before you can add users to a role and before you can connect a role to
 a newsgroup, you have to create an ACL *role* (you have to choose an
 ASCII name for it). In this example, the group is called "project-x".
-
-    $ wendzelnntpadm addaclrole project-x
-    Role project-x does not exists: okay.
-    done.
+```console
+$ wendzelnntpadm addaclrole project-x
+Role project-x does not exists: okay.
+done.
+```
 
 #### Deleting an ACL Role
 
@@ -296,30 +311,33 @@ to use the admin tool too.
 The second parameter ("project-x") is the role name and the third
 parameter ("developer1") is the username. Here we add our three
 developer users from the example above to the group project-x:
-
-    $ wendzelnntpadm roleuserconnect project-x developer1
-    Role project-x exists: okay.
-    User developer1 exists: okay.
-    Connecting role project-x with user developer1 ... done
-    done.
-    $ wendzelnntpadm roleuserconnect project-x developer2
-    Role project-x exists: okay.
-    User developer2 exists: okay.
-    Connecting role project-x with user developer2 ... done
-    done.
-    $ wendzelnntpadm roleuserconnect project-x developer3
-    Role project-x exists: okay.
-    User developer3 exists: okay.
-    Connecting role project-x with user developer3 ... done
-    done.
+```console
+$ wendzelnntpadm roleuserconnect project-x developer1
+Role project-x exists: okay.
+User developer1 exists: okay.
+Connecting role project-x with user developer1 ... done
+done.
+$ wendzelnntpadm roleuserconnect project-x developer2
+Role project-x exists: okay.
+User developer2 exists: okay.
+Connecting role project-x with user developer2 ... done
+done.
+$ wendzelnntpadm roleuserconnect project-x developer3
+Role project-x exists: okay.
+User developer3 exists: okay.
+Connecting role project-x with user developer3 ... done
+done.
+```
 
 #### Disconnecting a User from a Role
 
-    $ wendzelnntpadm roleuserdisconnect project-x developer1
-    Role project-x exists: okay.
-    User developer1 exists: okay.
-    Dis-Connecting role project-x from user developer1 ... done
-    done.
+```console
+$ wendzelnntpadm roleuserdisconnect project-x developer1
+Role project-x exists: okay.
+User developer1 exists: okay.
+Dis-Connecting role project-x from user developer1 ... done
+done.
+```
 
 ### Connecting and Disconnecting Roles with/from Newsgroups
 
@@ -332,17 +350,18 @@ To connect a role with a newsgroup, we have to use the command line tool
 for a last time (the 2nd parameter is the role, and the 3rd parameter is
 the name of the newsgroup). Here we connect our "project-x" role to the
 two newsgroups "project-x.discussion" and "project-x.support":
-
-    $ wendzelnntpadm rolegroupconnect project-x project-x.discussion
-    Role project-x exists: okay.
-    Newsgroup project-x.discussion exists: okay.
-    Connecting role project-x with newsgroup project-x.discussion ... done
-    done.
-    $ wendzelnntpadm rolegroupconnect project-x project-x.support
-    Role project-x exists: okay.
-    Newsgroup project-x.support exists: okay.
-    Connecting role project-x with newsgroup project-x.support ... done
-    done.
+```console
+$ wendzelnntpadm rolegroupconnect project-x project-x.discussion
+Role project-x exists: okay.
+Newsgroup project-x.discussion exists: okay.
+Connecting role project-x with newsgroup project-x.discussion ... done
+done.
+$ wendzelnntpadm rolegroupconnect project-x project-x.support
+Role project-x exists: okay.
+Newsgroup project-x.support exists: okay.
+Connecting role project-x with newsgroup project-x.support ... done
+done.
+```
 
 #### Disconnecting a Role From a Newsgroup
 
@@ -354,29 +373,30 @@ command "rolegroup**dis**connect" instead of "rolegroupconnect".
 Like mentioned before, you can use the command "listacl" to list your
 whole ACL configuration (except the list of users that will be listed by
 the command "listusers").
+```console
+$ wendzelnntpadm listacl
+List of roles in database:
+Roles
+-----
+project-x
 
-    $ wendzelnntpadm listacl
-    List of roles in database:
-    Roles
-    -----
-    project-x
+Connections between users and roles:
+Role, User
+----------
+project-x, developer1
+project-x, developer2
+project-x, developer3
 
-    Connections between users and roles:
-    Role, User
-    ----------
-    project-x, developer1
-    project-x, developer2
-    project-x, developer3
+Username, Has access to group
+-----------------------------
+swendzel, alt.test
 
-    Username, Has access to group
-    -----------------------------
-    swendzel, alt.test
-
-    Role, Has access to group
-    -------------------------
-    project-x, project-x.discussion
-    project-x, project-x.support
-    done.
+Role, Has access to group
+-------------------------
+project-x, project-x.discussion
+project-x, project-x.support
+done.
+```
 
 #### Saving time
 
@@ -390,7 +410,7 @@ already connected to both groups.
 If you want to give all developers access to the group "project-x.news",
 you also do not have to connect every developer with the project.
 Instead, you just connect the role with the newsgroup, what is one
-command instead of $n$ commands. Of course, this time-saving concept
+command instead of *n* commands. Of course, this time-saving concept
 also works if you want to delete a user.
 
 ## Hardening
@@ -404,7 +424,7 @@ account (the user then needs write access to
 Unix-like systems is also not able to create a listen socket on the
 default NNTP port (119) since all ports up to 1023 are usually[^1]
 reserved. This means that the server should use a port
-$\geq$`<!-- -->`{=html}1024 if it is started by a non-root user.
+greater than or equal to 1024 if it is started by a non-root user.
 
 Please also note that WendzelNNTPd can be easily identified due to its
 welcoming 'banner' (desired code '200' message of NNTP). Tools such as

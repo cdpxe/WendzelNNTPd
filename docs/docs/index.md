@@ -14,7 +14,7 @@ WendzelNNTPd uses the GPLv3 license.
 ### Database Abstraction Layer
 
 The server contains a database abstraction layer. Currently supported
-database systems are SQlite3 and MySQL (and experimental PostgreSQL
+database systems are SQLite3 and MySQL (and experimental PostgreSQL
 support). New databases can be easily added.
 
 ### Security
