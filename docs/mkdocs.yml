@@ -1,0 +1,7 @@
+site_name: WendzelNNTPd Documentation
+theme: readthedocs
+repo_url: https://github.com/cdpxe/WendzelNNTPd
+edit_uri: edit/master/docs/docs/
+copyright: GPLv3
+markdown_extensions:
+  - footnotes
