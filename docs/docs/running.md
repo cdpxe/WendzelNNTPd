@@ -422,7 +422,7 @@ account (the user then needs write access to
 */var/spool/news/wendzelnntpd* and read access to
 (*/usr/local)/etc/wendzelnntpd.conf*). An unprivileged user under
 Unix-like systems is also not able to create a listen socket on the
-default NNTP port (119) since all ports up to 1023 are usually[^1]
+default NNTP port (119) since all ports up to 1023 are usually[^3]
 reserved. This means that the server should use a port
 greater than or equal to 1024 if it is started by a non-root user.
 
@@ -434,5 +434,5 @@ Theoretically, this could be changed by a slight code modification
 identifiable). However, I do not recommend this as it is just a form of
 'security by obscurity'.
 
-[^1]: Some \*nix-like systems may have a different range of privileged
+[^3]: Some \*nix-like systems may have a different range of privileged
     ports.

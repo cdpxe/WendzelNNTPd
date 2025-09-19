@@ -249,11 +249,11 @@ value. Please also note that the final hash is calculated using a string
 that combines salt, username and password as an input to prevent
 password-identification attacks when an equal password is used by
 multiple users. However, utilizing the username is less secure than
-having a completely separate salt for every password.[^1]
+having a completely separate salt for every password.[^2]
 
 ### Encrypted communication (TLS)
 
 Please look at section [Network-Settings](#network-settings) when you want
 to use encryption over TLS.
 
-[^1]: Patches are appreciated!
+[^2]: Patches are appreciated!
