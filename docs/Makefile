@@ -1,19 +1,23 @@
-all :
-	rm -vf docs.{aux,bbl,blg,dvi,ilg,ind,lof,log,lot,ps,pdf,toc,nlo,nls}
-	pdflatex docs.tex
-	#makeindex docs
-	pdflatex docs.tex
-	makeindex docs
-	pdflatex docs.tex
+# List of the mardown files which should be included in the pdf documentation.
+# The order of the files corresponds to the order of the chapters in the PDF.
+DOCFILES=docs/index.md docs/install.md docs/configuration.md docs/running.md docs/development.md docs/upgrade.md
 
-#pdf :
-#	pdflatex docs.tex
+all : site docs.pdf
 
-v :
+site : mkdocs.yml $(DOCFILES)
+	mkdocs build
+
+docs.pdf : template.tex $(DOCFILES)
+	pandoc --from markdown+gfm_auto_identifiers+footnotes $(DOCFILES) --template template.tex --top-level-division=chapter --lua-filter=convert-links.lua -s -o docs.pdf
+
+v : docs.pdf
 	evince docs.pdf || atril docs.pdf || open docs.pdf
 
 view : v
 
-latex2html :
-	latex2html -show_section_numbers -local_icons -split 2 docs.tex
+serve-html :
+	mkdocs serve
 
+clean :
+	rm -f docs.pdf
+	rm -rf site/

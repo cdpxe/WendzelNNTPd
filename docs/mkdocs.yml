@@ -1,0 +1,16 @@
+site_name: WendzelNNTPd Documentation
+nav:
+  - Introduction: index.md
+  - Installation: install.md
+  - Configuration: configuration.md
+  - Running: running.md
+  - Development: development.md
+  - Upgrade: upgrade.md
+theme: readthedocs
+repo_url: https://github.com/cdpxe/WendzelNNTPd
+edit_uri: edit/master/docs/docs/
+copyright: GPLv3
+# don't use directory urls to make it possible to use the website directly with a browser without a webserver
+use_directory_urls: false
+markdown_extensions:
+  - footnotes

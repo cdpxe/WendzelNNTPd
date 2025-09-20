@@ -55,12 +55,12 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 ## More Information
 - List of contributors [https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS)
-- Website: [https://cdpxe.github.io/WendzelNNTPd/](https://cdpxe.github.io/WendzelNNTPd/)
 - Forum for your Questions and Comments: [https://sourceforge.net/p/wendzelnntpd/discussion/general/](https://sourceforge.net/p/wendzelnntpd/discussion/general/)
 
 ## Documentation
 
-The documentation can be found [here](https://github.com/cdpxe/WendzelNNTPd/blob/master/docs/docs.pdf).
+The documentation can be found [here](https://cdpxe.github.io/WendzelNNTPd/).
+It is also available as a PDF file [here](https://cdpxe.github.io/WendzelNNTPd/docs.pdf).
 
 ## Propaganda
 Some late 1990's/early 2000's-styled 'powered by' logos. Let me know if you include these into your websites.
