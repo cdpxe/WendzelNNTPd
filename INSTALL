@@ -2,11 +2,9 @@ Installing and Upgrading WendzelNNTPd under Linux/BSD/*nix:
 ===========================================================
 
 IMPORTANT NOTE: Please note that the entire documentation can be found
-in the directory ./docs/ (.tex files and .pdf file) as well as in the
-directory ./docs/docs (.html files).
+in the directory ./docs/docs/ (.md files).
 
-You can compile the latex code into PDF and HTML by using the Makefile
-contained in ./docs. However, there should be PDF and HTML files
-already present by default. Also, the PDF file should always be
-available on the online repository under ./docs.
-
+You can compile the Markdown files into PDF and HTML by using the Makefile
+contained in ./docs. The HTML website and PDF file are also available online
+under https://cdpxe.github.io/WendzelNNTPd/ and
+https://cdpxe.github.io/WendzelNNTPd/docs.pdf
