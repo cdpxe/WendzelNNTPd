@@ -55,7 +55,6 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 
 ## More Information
 - List of contributors [https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS)
-- Website: [https://cdpxe.github.io/WendzelNNTPd/](https://cdpxe.github.io/WendzelNNTPd/)
 - Forum for your Questions and Comments: [https://sourceforge.net/p/wendzelnntpd/discussion/general/](https://sourceforge.net/p/wendzelnntpd/discussion/general/)
 
 ## Documentation
