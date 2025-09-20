@@ -16,3 +16,4 @@ config.tab.h
 lex.yy.c
 .idea
 unittesting/tmp/
+create_certificate
