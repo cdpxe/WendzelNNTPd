@@ -4,10 +4,10 @@ DOCFILES=docs/index.md docs/install.md docs/configuration.md docs/running.md doc
 
 all : site docs.pdf
 
-site : mkdocs.yml docs/*
+site : mkdocs.yml $(DOCFILES)
 	mkdocs build
 
-docs.pdf : docs/*
+docs.pdf : template.tex $(DOCFILES)
 	pandoc --from markdown+gfm_auto_identifiers+footnotes $(DOCFILES) --template template.tex --top-level-division=chapter --lua-filter=convert-links.lua -s -o docs.pdf
 
 v : docs.pdf
