@@ -33,11 +33,11 @@ database-password mypass
     port		119
     listen	    127.0.0.1
     ;; configure SSL server certificate
-    tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    tls-server-certificate "@confdir@/ssl/server.crt"
     ;; configure SSL private key
-    tls-server-key "/usr/local/etc/ssl/server.key"
+    tls-server-key "@confdir@/ssl/server.key"
     ;; configure SSL CA certificate
-    tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    tls-ca-certificate "@confdir@/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     tls-cipher-suites "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -50,7 +50,7 @@ database-password mypass
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "@confdir@/ssl/ssl.crl"
 </connector>
 
 <connector>
@@ -59,11 +59,11 @@ database-password mypass
     port		119
     listen	    ::1
     ;; configure SSL server certificate
-    tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    tls-server-certificate "@confdir@/ssl/server.crt"
     ;; configure SSL private key
-    tls-server-key "/usr/local/etc/ssl/server.key"
+    tls-server-key "@confdir@/ssl/server.key"
     ;; configure SSL CA certificate
-    tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    tls-ca-certificate "@confdir@/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     tls-cipher-suites "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -76,7 +76,7 @@ database-password mypass
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "@confdir@/ssl/ssl.crl"
 </connector>
 
 <connector>
@@ -85,11 +85,11 @@ database-password mypass
     port		563
     listen	    127.0.0.1
     ;; configure SSL server certificate (required)
-    tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    tls-server-certificate "@confdir@/ssl/server.crt"
     ;; configure SSL private key (required)
-    tls-server-key "/usr/local/etc/ssl/server.key"
+    tls-server-key "@confdir@/ssl/server.key"
     ;; configure SSL CA certificate (required)
-    tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    tls-ca-certificate "@confdir@/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     tls-cipher-suites "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -102,7 +102,7 @@ database-password mypass
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "@confdir@/ssl/ssl.crl"
 </connector>
 
 <connector>
@@ -111,11 +111,11 @@ database-password mypass
     port		563
     listen	    ::1
     ;; configure SSL server certificate
-    tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    tls-server-certificate "@confdir@/ssl/server.crt"
     ;; configure SSL private key
-    tls-server-key "/usr/local/etc/ssl/server.key"
+    tls-server-key "@confdir@/ssl/server.key"
     ;; configure SSL CA certificate
-    tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    tls-ca-certificate "@confdir@/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     tls-cipher-suites "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -128,7 +128,7 @@ database-password mypass
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "@confdir@/ssl/ssl.crl"
 </connector>
 
 ; Uncomment 'verbose-mode' if you want to find errors or if you

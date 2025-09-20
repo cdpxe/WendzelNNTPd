@@ -16,6 +16,7 @@ SRC=$(srcdir)/src
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 sysconfdir=@sysconfdir@
+confdir=$(sysconfdir)/${PACKAGE_TARNAME}
 sbindir=@sbindir@
 datarootdir=@datarootdir@
 datadir=@datadir@
@@ -42,7 +43,7 @@ SQLITEINST=@SQLITEINST@
 CONFFILE=wendzelnntpd.conf
 UDBDIR=/var/spool/news/wendzelnntpd
 UDBFILE=$(UDBDIR)/usenet.db
-DESTCFLAGS=-DCONFDIR=\"$(sysconfdir)\"
+DESTCFLAGS=-DCONFDIR=\"$(confdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
 CFLAGS+= -Wall $(DESTCFLAGS)
 #CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
@@ -62,7 +63,7 @@ DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/us
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
 HTML_DOC_DIRS=$(shell cd docs/ && find site/ -type d)
 
-all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate
+all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate wendzelnntpd.conf
 	expr `cat build` \+ 1 >build
 	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpd
@@ -140,13 +141,16 @@ scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script
 	sed -e 's|@sbindir[@]|$(sbindir)|g' $@_raw > $@
 
 create_certificate : Makefile $(srcdir)/create_certificate_raw
-	sed -e 's|@sysconfdir[@]|$(sysconfdir)|g' $@_raw > $@
+	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
 	chmod +x create_certificate
+
+wendzelnntpd.conf : Makefile $(srcdir)/wendzelnntpd.conf_raw
+	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
 
 # misc targets
 
 install : bin/wendzelnntpd bin/wendzelnntpadm
-	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sysconfdir); fi
+	if [ ! -d $(DESTDIR)$(confdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(confdir); fi
 	if [ ! -d $(DESTDIR)$(sbindir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sbindir); fi
 	if [ ! -d $(DESTDIR)$(docdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir); fi
 	for dir in `cd docs/ && find site/ -type d`; do \
@@ -168,8 +172,8 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	# manpages
 	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
 	# config
-	@if [ -f $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
-	$(INSTALL_DATA) $(CONFFILE) $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf
+	@if [ -f $(DESTDIR)$(confdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(confdir)/wendzelnntpd.conf $(DESTDIR)$(confdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(confdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
+	$(INSTALL_DATA) $(CONFFILE) $(DESTDIR)$(confdir)/wendzelnntpd.conf
 	# create a backup of the old usenet database, if needed (only if not dev-mode)
 	@if [ -f $(DESTDIR)$(UDBFILE) ] && [ $(CONFFILE) != *"dev"* ]; then mv $(DESTDIR)$(UDBFILE) $(DESTDIR)$(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; chmod 0600 $(DESTDIR)$(UDBFILE).`date +"%m-%d-%y-%H:%M"`.bkp; echo "***Your old usenet database was backuped!***"; fi
 

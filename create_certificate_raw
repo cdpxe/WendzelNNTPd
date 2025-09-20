@@ -3,7 +3,7 @@
 echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
 
-targetdir=@sysconfdir@/ssl
+targetdir=@confdir@/ssl
 
 function usage {
     echo ""
@@ -17,7 +17,7 @@ function usage {
     echo "  --domain string         only needed if 'letsencrypt' is used; specify domain under which your server is reachable"
     echo "                          (example: test.de)"
     echo "  --targetdir string      specify the directory where the created certificates are placed into"
-    echo "                          (default: @sysconfdir@/ssl)"
+    echo "                          (default: @confdir@/ssl)"
     echo ""
 }
 
