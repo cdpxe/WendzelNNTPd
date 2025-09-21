@@ -198,6 +198,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 
 upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@echo "*** Please only upgrade your WendzelNNTPd if your existing installation is WendzelNNTPd version 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration files remain untouched. Press RETURN to perform an upgrade or press CTRL+C to abort. ***"
+	@if [ ! -f $(DESTDIR)$(confdir)/wendzelnntpd.conf ]; then echo "The format and location of the wendzelnntpd.conf changed in version 2.2.0. Please move your config file from $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf to $(DESTDIR)$(confdir)/wendzelnntpd.conf and adapt the configuration. Please consult the manual in docs/ for further information about the new config format."; fi
 	@read uselessinput
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/

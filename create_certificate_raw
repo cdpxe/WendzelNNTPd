@@ -9,7 +9,7 @@ function usage {
     echo ""
     echo "Creates certificates for WendzelNNTPd (selfsigned or via LetsEncrypt)"
     echo ""
-    echo "usage: ./create_certificate --environment local | letsencrypt --email string --domain string"
+    echo "usage: create_certificate --environment local | letsencrypt --email string --domain string"
     echo ""
     echo "  --environment string    context for generating certificates ('local' and 'letsencrypt' are allowed values)"
     echo "  --email string          only needed if 'letsencrypt' is used"

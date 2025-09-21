@@ -45,7 +45,7 @@ $ make
 
 If you want to generate SSL certificates you can use the helper script:
 ```console
-$ sudo ./create_certificate \
+$ sudo create_certificate \
     --environment letsencrypt \
     --email <YOUR-EMAIL> \
     --domain <YOUR-DOMAIN>
