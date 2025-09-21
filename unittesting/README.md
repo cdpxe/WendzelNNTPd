@@ -16,10 +16,10 @@ The setup of the database can be done with the script `initialize_db.sh` which c
 initializes it with the test data. It also copies some files of existing posts to `/var/spool/news/wendzelnntpd`
 and creates the file nextmsgid there.
 `unittesting/wendzelnntpd.conf` contains the configuration as expected by the tests and needs to be copied to the
-location of the configuration file of `wendzelnntpd` (`/usr/local/etc/wendzelnntpd.conf` by default):
+location of the configuration file of `wendzelnntpd` (`/usr/local/etc/wendzelnntpd/wendzelnntpd.conf` by default):
 ```shell
 ./initialize_db.sh
-cp test-files/wendzelnntpd.conf /usr/local/etc/
+cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
 ```
 
 Some of the tests are testing the TLS functionality of `wendzelnntpd` and require some certificates.
@@ -28,8 +28,8 @@ They can be generated with the scripts `create_certificate` and `create-client-c
 bash ./create_certificate --environment local
 cd unittesting
 mkdir tmp
-cp /usr/local/etc/ssl/ca.crt tmp/ca-self.crt
-cp /usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+cp /usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
+cp /usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
 ./create-client-cert.sh
 ```
 

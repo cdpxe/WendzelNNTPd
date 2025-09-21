@@ -112,13 +112,11 @@ jobs:
         run: docker exec testcontainer bash -c "make"
       - name: make install
         run: docker exec testcontainer bash -c "make install"
-      - name: Setup ssl certificates
-        run: docker exec testcontainer bash -c "./create_certificate --environment local"
       - name: Initialize test data
         run: >
           docker exec testcontainer bash -c "cd unittesting
           && ./initialize_db.sh
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/"
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/"
       - name: Test wendzelnntpadm
         run: docker exec testcontainer bash -c "cd unittesting && ./test_wendzelnntpadm.sh"
       - name: Reinitialize database
@@ -129,8 +127,8 @@ jobs:
         run: >
           cd unittesting
           && mkdir tmp
-          && docker cp testcontainer:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt
-          && docker cp testcontainer:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+          && docker cp testcontainer:/usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
+          && docker cp testcontainer:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting && ./create-client-cert.sh
       - name: get container ipv4
@@ -151,16 +149,16 @@ jobs:
         run: cd unittesting && nntp_address=${{ env.ipv6 }} ./run.sh
       - name: Enable mandatory tls
         run: >
-          docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf
+          docker exec testcontainer bash -c "echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
           && pkill -9 wendzelnntpd && wendzelnntpd -d"
       - name: expect test for mandatory tls
         run: cd unittesting && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
       - name: reset config and enable acl
         run: >
           docker exec testcontainer bash -c "cd unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd.conf
-          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd.conf"
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf"
       - name: restart wendzelnntpd
         run: docker exec testcontainer bash -c "pkill -9 wendzelnntpd && wendzelnntpd -d"
       - name: expect test for acl
@@ -168,9 +166,9 @@ jobs:
       - name: reset config and switch to mysql database
         run: >
           docker exec testcontainer bash -c "cd unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && sed -i 's/^database-engine sqlite3$/database-engine mysql/' /usr/local/etc/wendzelnntpd.conf
-          && sed -i 's/^database-server 127.0.0.1$/database-server mariadb/' /usr/local/etc/wendzelnntpd.conf"
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && sed -i 's/^database-engine sqlite3$/database-engine mysql/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && sed -i 's/^database-server 127.0.0.1$/database-server mariadb/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf"
       - name: Initialize test data in mariadb
         run: >
           mysql --host=127.0.0.1 --user=root --password=rootpass --execute
@@ -187,9 +185,9 @@ jobs:
       - name: reset config and switch to postgresql database
         run: >
           docker exec testcontainer bash -c "cd unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && sed -i 's/^database-engine sqlite3$/database-engine postgres/' /usr/local/etc/wendzelnntpd.conf
-          && sed -i 's/^database-server 127.0.0.1$/database-server postgres/' /usr/local/etc/wendzelnntpd.conf"
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && sed -i 's/^database-engine sqlite3$/database-engine postgres/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && sed -i 's/^database-server 127.0.0.1$/database-server postgres/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf"
       - name: Initialize test data in postgresql database
         run: >
           psql postgresql://testuser:testpass@127.0.0.1:5432/wendzelnntpd
@@ -313,15 +311,12 @@ jobs:
         if: ${{ matrix.distribution == 'netbsd' }}
       - name: Link vm shell script
         run: ln -s /home/runner/.local/bin/${{ matrix.distribution }} /home/runner/.local/bin/vm
-      - name: Setup ssl certificates
-        shell: vm {0}
-        run: cd $GITHUB_WORKSPACE && bash ./create_certificate --environment local
       - name: Initialize test data
         shell: vm {0}
         run: >
           cd $GITHUB_WORKSPACE/unittesting
           && bash ./initialize_db.sh
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
       - name: Test wendzelnntpadm
         shell: vm {0}
         run: cd $GITHUB_WORKSPACE/unittesting && PATH=/usr/local/sbin:$PATH ./test_wendzelnntpadm.sh
@@ -335,8 +330,8 @@ jobs:
         run: >
           cd unittesting
           && mkdir tmp
-          && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca.crt tmp/ca-self.crt
-          && scp ${{ matrix.distribution }}:/usr/local/etc/ssl/ca-key.pem tmp/ca-self.key
+          && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
+          && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting && ./create-client-cert.sh
       - name: get vm ipv4
@@ -358,7 +353,7 @@ jobs:
       - name: Enable mandatory tls
         shell: vm {0}
         run: >
-          echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd.conf
+          echo \"tls-is-mandatory\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
           && pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
       - name: expect test for mandatory tls
         run: cd unittesting && nntp_address=${{ env.ipv4 }} expect tests/special/nntp-mandatory-tls-test.exp
@@ -366,9 +361,9 @@ jobs:
         shell: vm {0}
         run: >
           cd $GITHUB_WORKSPACE/unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd.conf
-          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd.conf
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && echo \"use-authentication\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && echo \"use-acl\" >> /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
       - name: restart wendzelnntpd
         shell: vm {0}
         run: pkill -9 wendzelnntpd && /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
@@ -378,11 +373,11 @@ jobs:
         shell: vm {0}
         run: >
           cd $GITHUB_WORKSPACE/unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && sed 's/^database-engine sqlite3$/database-engine mysql/' /usr/local/etc/wendzelnntpd.conf > temp
-          && mv temp /usr/local/etc/wendzelnntpd.conf
-          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd.conf > temp
-          && mv temp /usr/local/etc/wendzelnntpd.conf
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && sed 's/^database-engine sqlite3$/database-engine mysql/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
       - name: Initialize test data in mariadb
         run: >
           mysql --host=127.0.0.1 --user=root --password=rootpass --execute
@@ -401,11 +396,11 @@ jobs:
         shell: vm {0}
         run: >
           cd $GITHUB_WORKSPACE/unittesting
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/
-          && sed 's/^database-engine sqlite3$/database-engine postgres/' /usr/local/etc/wendzelnntpd.conf > temp
-          && mv temp /usr/local/etc/wendzelnntpd.conf
-          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd.conf > temp
-          && mv temp /usr/local/etc/wendzelnntpd.conf
+          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
+          && sed 's/^database-engine sqlite3$/database-engine postgres/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+          && sed 's/^database-server 127\.0\.0\.1$/database-server 192\.168\.122\.1/' /usr/local/etc/wendzelnntpd/wendzelnntpd.conf > temp
+          && mv temp /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
       - name: Initialize test data in postgresql database
         run: >
           psql postgresql://testuser:testpass@127.0.0.1:5432/wendzelnntpd
