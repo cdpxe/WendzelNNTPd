@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
