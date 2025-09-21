@@ -38,7 +38,9 @@ SQLITEOBJ=@SQLITEOBJ@
 MYSQLOBJ=@MYSQLOBJ@
 POSTGRESOBJ=@POSTGRESOBJ@
 OPENSSLOBJ=@OPENSSLOBJ@
+
 SQLITEINST=@SQLITEINST@
+TLSINST=@TLSINST@
 
 CONFFILE=wendzelnntpd.conf
 UDBDIR=/var/spool/news/wendzelnntpd
@@ -185,6 +187,10 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	@#
 	@# only create if there is no database file already
 	@if [ ! -f $(DESTDIR)$(UDBFILE) ]; then if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(DESTDIR)$(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi; fi
+
+	@# create certificates if the certificates do not already exist and TLS support is enabled
+	@if [ ! -f $(DESTDIR)$(confdir)/ssl/server.key ] && [ "$(TLSINST)" != "NO" ]; then ./create_certificate --targetdir $(DESTDIR)$(confdir)/ssl; fi
+
 	@echo "Installation finished. Please note that your existing wendzelnntpd.conf might have been replaced (a backup should be located in the same folder as your original configuration file)."
 	@echo "Thank you for using this software! Have fun using it!"
 

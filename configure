@@ -677,6 +677,7 @@ LEX
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+TLSINST
 OPENSSLOBJ
 OPENSSL
 OPENSSL_LDFLAGS
@@ -2610,6 +2611,7 @@ then :
 fi
 
 
+# Check if at least one of the databases is enabled
 if test "x$enable_mysql" = "xno" && test "x$enable_sqlite" = "xno" && test "x$enable_postgres" != "xyes"
 then :
 
@@ -5196,6 +5198,11 @@ then :
 
 fi
 	OPENSSLOBJ=libssl.o
+
+
+else $as_nop
+
+	TLSINST=NO
 
 
 fi
