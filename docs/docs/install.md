@@ -5,19 +5,19 @@ This chapter provides a guide on how to install WendzelNNTPd 2.x.
 ## Linux/*nix/BSD
 
 To install WendzelNNTPd from source you need to download the provided
-archive file (e.g., *wendzelnntpd-2.0.0.tar.gz*) file.[^1] Extract it
+archive file (e.g., *wendzelnntpd-2.2.0.tar.gz*) file.[^1] Extract it
 and run `./configure`. Please note that configure indicates missing
 libraries and packages that you may first need to install using the
 package system of your operating system.
 ```console
-$ tar -xzf wendzelnntpd-2.0.0.tgz
+$ tar -xzf wendzelnntpd-2.2.0.tgz
 $ cd wendzelnntpd
 $ ./configure
 ...
 ```
 
 **Please Note:** *If you wish to compile WITHOUT MySQL or WITHOUT SQLite
-support*, then run `./configure --disable-mysql` or `./configure--disable-sqlite`,
+support*, then run `./configure --disable-mysql` or `./configure --disable-sqlite`,
 respectively.
 
 **Please Note:** *For FreeBSD/OpenBSD/NetBSD/\*BSD: There is no MySQL
