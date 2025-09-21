@@ -420,7 +420,7 @@ security of the server can be improved by putting WendzelNNTPd in a
 *chroot* environment or letting it run under an unprivileged user
 account (the user then needs write access to
 */var/spool/news/wendzelnntpd* and read access to
-(*/usr/local)/etc/wendzelnntpd.conf*). An unprivileged user under
+(*/usr/local)/etc/wendzelnntpd/wendzelnntpd.conf*). An unprivileged user under
 Unix-like systems is also not able to create a listen socket on the
 default NNTP port (119) since all ports up to 1023 are usually[^3]
 reserved. This means that the server should use a port

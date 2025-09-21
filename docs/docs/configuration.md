@@ -4,13 +4,13 @@ This chapter will explain how to configure WendzelNNTPd after
 installation.
 
 **Note:** The configuration file for WendzelNNTPd is named
-*/usr/local/etc/wendzelnntpd.conf*. The format of the configuration file
+*/usr/local/etc/wendzelnntpd/wendzelnntpd.conf*. The format of the configuration file
 should be self-explanatory and the default configuration file includes
 many comments which will help you to understand its content.
 
 **Note:** On \*nix-like operating systems the default installation path
 is */usr/local/\**, i.e., the configuration file of WendzelNNTPd will be
-*/usr/local/etc/wendzelnntpd.conf*, and the binaries will be placed in
+*/usr/local/etc/wendzelnntpd/wendzelnntpd.conf*, and the binaries will be placed in
 */usr/local/sbin*.
 
 ## Choosing a database engine
@@ -107,11 +107,11 @@ connector. You can find an example for NNTP over port 119 below.
     port        119
     listen      127.0.0.1
     ;; configure SSL server certificate (required)
-    ;tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    ;tls-server-certificate "/usr/local/etc/wendzelnntpd/ssl/server.crt"
     ;; configure SSL private key (required)
-    ;tls-server-key "/usr/local/etc/ssl/server.key"
+    ;tls-server-key "/usr/local/etc/wendzelnntpd/ssl/server.key"
     ;; configure SSL CA certificate (required)
-    ;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    ;tls-ca-certificate "/usr/local/etc/wendzelnntpd/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     ;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -125,7 +125,7 @@ connector. You can find an example for NNTP over port 119 below.
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "/usr/local/etc/wendzelnntpd/ssl/ssl.crl"
 </connector>
 ```
 
@@ -138,11 +138,11 @@ The example below is for SNNTP over port 563.
     port        563
     listen      127.0.0.1
     ;; configure SSL server certificate (required)
-    ;tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    ;tls-server-certificate "/usr/local/etc/wendzelnntpd/ssl/server.crt"
     ;; configure SSL private key (required)
-    ;tls-server-key "/usr/local/etc/ssl/server.key"
+    ;tls-server-key "/usr/local/etc/wendzelnntpd/ssl/server.key"
     ;; configure SSL CA certificate (required)
-    ;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    ;tls-ca-certificate "/usr/local/etc/wendzelnntpd/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
     ;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
@@ -156,7 +156,7 @@ The example below is for SNNTP over port 563.
     ;tls-verify-client-depth 0
     ;; possibility to use certificate revocation list (none | leaf | chain)
     ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    ;tls-crl-file "/usr/local/etc/wendzelnntpd/ssl/ssl.crl"
 </connector>
 ```
 
