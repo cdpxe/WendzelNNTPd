@@ -58,8 +58,9 @@ GDBON=-ggdb -g #-lefence
 DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 # The list of documentation files we wish to install
-DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql docs/docs.pdf
+DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
+HTML_DOC_DIRS=$(shell cd docs/ && find site/ -type d)
 
 all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script
 	expr `cat build` \+ 1 >build
@@ -144,7 +145,9 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sysconfdir); fi
 	if [ ! -d $(DESTDIR)$(sbindir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sbindir); fi
 	if [ ! -d $(DESTDIR)$(docdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir); fi
-	if [ ! -d $(DESTDIR)$(docdir)/docs ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/docs; fi
+	for dir in `cd docs/ && find site/ -type d`; do \
+		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
+	done
 	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# nextmsgid and database/usenet.db are placed here:
 	# og-rwx since the passwords are stored in the database too!
@@ -154,7 +157,10 @@ install : bin/wendzelnntpd bin/wendzelnntpadm
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	# documentation and config files
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
-	$(INSTALL_DATA) docs/docs/* $(DESTDIR)$(docdir)/docs/
+	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
+	-for file in `cd docs/ && find site/ -type f`; do \
+		$(INSTALL_DATA) docs/$$file $(DESTDIR)$(docdir)/$$file; \
+	done
 	# manpages
 	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
 	# config
@@ -181,7 +187,14 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	# documentation
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
-	$(INSTALL_DATA) docs/docs/* $(DESTDIR)$(docdir)/docs/
+	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
+	for dir in `cd docs/ && find site/ -type d`; do \
+		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
+	done
+	-for file in `cd docs/ && find site/ -type f`; do \
+		$(INSTALL_DATA) docs/$$file $(DESTDIR)$(docdir)/$$file; \
+	done
+	-rm -rf $(DESTDIR)$(docdir)/docs
 	# manpages
 	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
 	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
@@ -200,11 +213,7 @@ clean :
 	y.output gpmon.out log *.BAK lex.*.[ch] *.tab.[ch] `find . -name '*~'` \
 	config.output temp.c
 	@# documentation cleanup
-	rm -f docs/docs.ilg docs/docs.ind docs/*.idx docs/*.aux docs/*.toc \
-	docs/*.log docs/docs.out \
-	docs/docs/*.tex docs/docs/*.pl docs/docs/*.log docs/docs/*.idx \
-	docs/docs/WARNINGS docs/docs/*.old docs/docs/*.aux docs/docs/images.out \
-	docs/docs/images.pdf docs/docs/crossref.png
+	cd docs && $(MAKE) clean
 	rm -f $(srcdir)/scripts/startup/init.d_script
 
 print_version :

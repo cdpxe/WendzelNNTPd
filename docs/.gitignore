@@ -1,15 +1,2 @@
-*.aux
-*.bbl
-*.bcf
-*.blg
-*.lof
-*.lot
-*.out
-*.lol
-*.run.xml
-*.synctex.gz
-*.toc
-*.log
-*.idx
-*.ilg
-*.ind
+site/
+docs.pdf
