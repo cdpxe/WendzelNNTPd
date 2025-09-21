@@ -41,22 +41,6 @@ $ make
 ...
 ```
 
-##### Generating SSL certifiates
-
-If you want to generate SSL certificates you can use the helper script:
-```console
-$ sudo create_certificate \
-    --environment letsencrypt \
-    --email <YOUR-EMAIL> \
-    --domain <YOUR-DOMAIN>
-```
-For the parameter `--environment`, "*local*" is also a valid value. In
-that case, the certificate is generated only for usage on localhost and
-is self-signed. After generating the certificate you have to adjust
-*wendzelnntpd.conf* (check Section [Network-Settings](configuration.md#network-settings))
-to activate TLS (configuration option *enable-tls*).
-The paths for certificate and server key can stay as they are.
-
 ##### Installing WendzelNNTPd
 
 To install WendzelNNTPd on your system, you need superuser access. Run
@@ -72,6 +56,27 @@ for an upgrade. Please cf. Section [Upgrading](upgrade.md#upgrading).
 was set up during `make install`. Please refer to
 Section [Basic Configuration](configuration.md#basic-configuration) to learn how to generate
 the MySQL database.
+
+##### Generating SSL certificates
+
+TLS is enabled by default in *wendzelnntpd.conf* as long as WendzelNNTPd has
+not been compiled without TLS support. `make install` generates a self-signed
+certificate for usage on localhost so that TLS can be used out-of-the-box.
+
+If you want to generate an SSL certificate, which is signed by Let's Encrypt,
+or a new self-signed certificate, you can use the helper script `create_certificate`:
+```console
+$ sudo create_certificate \
+    --environment letsencrypt \
+    --email <YOUR-EMAIL> \
+    --domain <YOUR-DOMAIN>
+```
+For the parameter `--environment`, "*local*" is also a valid value. In
+that case, the certificate is generated only for usage on localhost and
+is self-signed. The location of the generated certificates can be adjusted
+with the parameter `--targetdir`. You also need to adjust the paths in
+*wendzelnntpd.conf* if you use a non-default location
+(check Section [Network-Settings](configuration.md#network-settings)).
 
 ### Init Script for Automatic Startup
 
