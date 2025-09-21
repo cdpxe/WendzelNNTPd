@@ -37,7 +37,7 @@ done
 
 if [ $(id -u) -ne 0 ]; then
     echo "Run this script with root privileges!"
-    exit
+    exit 1
 fi
 
 mkdir -p ${targetdir}
