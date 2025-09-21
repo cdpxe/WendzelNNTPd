@@ -63,10 +63,10 @@ DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 # The list of documentation files we wish to install
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
-MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8
+MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
 HTML_DOC_DIRS=$(shell cd docs/ && find site/ -type d)
 
-all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate wendzelnntpd.conf
+all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate docs/create_certificate.8 wendzelnntpd.conf
 	expr `cat build` \+ 1 >build
 	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpd
@@ -146,6 +146,9 @@ scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script
 create_certificate : Makefile $(srcdir)/create_certificate_raw
 	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
 	chmod +x create_certificate
+
+docs/create_certificate.8 : Makefile $(srcdir)/docs/create_certificate.8_raw
+	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
 
 wendzelnntpd.conf : Makefile $(srcdir)/wendzelnntpd.conf_raw
 	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@

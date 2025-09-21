@@ -17,4 +17,5 @@ lex.yy.c
 .idea
 unittesting/tmp/
 create_certificate
+docs/create_certificate.8
 wendzelnntpd.conf
