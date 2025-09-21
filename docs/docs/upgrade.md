@@ -13,8 +13,8 @@ for the recreated users.
 
 The behaviour of `./configure` has changed. The environment variables
 for enabling and disabling features are no longer supported and replaced
-by CLI flags. The support for the databases can now be enabled/disabled
-by *\--disable-mysql*, *\--disable-sqlite* and *\--enable-postgres*. The
+by CLI flags. The support for the databases can now be enabled/disabled.
+Examples: *\--disable-mysql*, *\--enable-sqlite*, *\--enable-postgres*. The
 suppport for TLS can be disabled by *\--disable-tls*. You can use
 `./configure --help` for an overview of the available CLI flags.
 
