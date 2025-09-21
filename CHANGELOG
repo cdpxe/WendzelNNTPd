@@ -4,7 +4,7 @@ WendzelNNTPd ChangeLog:
 
 2.2-alpha "Bad Woerishofen" : t.b.d.
  --- This is expected to become a new major release once the TODO
- --- tasks are finished in circa late-2024.
+ --- tasks are finished in late-2025.
 ***TODO***:
  - Make sure the server still runs on Net/Open/FreeBSD.
  - Check functioning of "posting (not) allowed" flag when using the
