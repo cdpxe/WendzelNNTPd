@@ -5,6 +5,7 @@ echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
 
 targetdir=@confdir@/ssl
+datadir=@package_datadir@
 
 function usage {
     echo ""
@@ -54,7 +55,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -days 3650 \
         -nodes \
         -extensions v3_ca \
-        -config "openssl.cnf" \
+        -config "${datadir}/openssl.cnf" \
         -keyout "${targetdir}/ca-key.pem" \
         -out "${targetdir}/ca.crt"
 
@@ -62,7 +63,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
     openssl req \
         -new -key "${targetdir}/server.key" \
         -out "${targetdir}/server.csr" \
-        -config "openssl.cnf"
+        -config "${datadir}/openssl.cnf"
 
     openssl x509 \
         -req \
@@ -72,7 +73,7 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -CAkey "${targetdir}/ca-key.pem" \
         -CAcreateserial \
         -extensions v3_req \
-        -extfile "openssl.cnf" \
+        -extfile "${datadir}/openssl.cnf" \
         -out "${targetdir}/server.crt"
 
     echo "Finished ..."

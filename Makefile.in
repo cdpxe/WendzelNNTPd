@@ -20,6 +20,7 @@ confdir=$(sysconfdir)/${PACKAGE_TARNAME}
 sbindir=@sbindir@
 datarootdir=@datarootdir@
 datadir=@datadir@
+package_datadir=$(datadir)/${PACKAGE_TARNAME}
 docdir=@docdir@
 mandir=@mandir@
 man8dir=$(mandir)/man8
@@ -144,7 +145,7 @@ scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script
 	sed -e 's|@sbindir[@]|$(sbindir)|g' $@_raw > $@
 
 create_certificate : Makefile $(srcdir)/create_certificate_raw
-	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
+	sed -e 's|@confdir[@]|$(confdir)|g' -e 's|@package_datadir[@]|$(package_datadir)|g' $@_raw > $@
 	chmod +x create_certificate
 
 docs/create_certificate.8 : Makefile $(srcdir)/docs/create_certificate.8_raw
@@ -158,6 +159,7 @@ wendzelnntpd.conf : Makefile $(srcdir)/wendzelnntpd.conf_raw
 install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 	if [ ! -d $(DESTDIR)$(confdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(confdir); fi
 	if [ ! -d $(DESTDIR)$(sbindir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(sbindir); fi
+	if [ ! -d $(DESTDIR)$(package_datadir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(package_datadir); fi
 	if [ ! -d $(DESTDIR)$(docdir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir); fi
 	for dir in `cd docs/ && find site/ -type d`; do \
 		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
@@ -170,6 +172,8 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
+	# data files
+	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
 	# documentation and config files
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
 	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
@@ -194,7 +198,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 	@if [ ! -f $(DESTDIR)$(UDBFILE) ]; then if [ "$(SQLITEINST)" != "NO" ]; then echo "Setting up sqlite3 database ..."; cat database/usenet.db_struct | sqlite3 $(DESTDIR)$(UDBFILE) && ( ./bin/wendzelnntpadm addgroup alt.wendzelnntpd.test y || echo "no new newsgroup created." ); else echo "*** NO sqlite3 database setup performed (you use MySQL). Please read the manual (docs/docs.pdf) to learn how to set up the MySQL database within a few minutes. ***"; fi; fi
 
 	@# create certificates if the certificates do not already exist and certificate creation is not disabled
-	@if [ ! -f $(DESTDIR)$(confdir)/ssl/server.key ] && [ "$(CREATE_CERTIFICATES)" != "NO" ]; then bash ./create_certificate --environment local --targetdir $(DESTDIR)$(confdir)/ssl; fi
+	@if [ ! -f $(DESTDIR)$(confdir)/ssl/server.key ] && [ "$(CREATE_CERTIFICATES)" != "NO" ]; then bash create_certificate --environment local --targetdir $(DESTDIR)$(confdir)/ssl; fi
 
 	@echo "Installation finished. Please note that your existing wendzelnntpd.conf might have been replaced (a backup should be located in the same folder as your original configuration file)."
 	@echo "Thank you for using this software! Have fun using it!"
@@ -206,6 +210,8 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
+	# data files
+	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
 	# documentation
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
 	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/

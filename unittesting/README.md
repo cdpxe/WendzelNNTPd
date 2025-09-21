@@ -22,10 +22,11 @@ location of the configuration file of `wendzelnntpd` (`/usr/local/etc/wendzelnnt
 cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
 ```
 
-Some of the tests are testing the TLS functionality of `wendzelnntpd` and require some certificates.
-They can be generated with the scripts `create_certificate` and `create-client-cert.sh`:
+Some tests are testing the TLS functionality of `wendzelnntpd` and require some certificates.
+Most certificates are already generated during `make install` by the script `create_certificate`.
+Additionally, you need to copy the CA certificate to the directory `tmp` and generate client certificates
+with the script `create-client-cert.sh`:
 ```shell
-bash ./create_certificate --environment local
 cd unittesting
 mkdir tmp
 cp /usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
