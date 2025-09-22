@@ -30,7 +30,7 @@ database-password mypass
 <connector>
     ;; enables STARTTLS for this port
     enable-starttls
-    port		119
+    port        119
     listen	    127.0.0.1
     ;; configure SSL server certificate
     tls-server-certificate "@confdir@/ssl/server.crt"
@@ -56,7 +56,7 @@ database-password mypass
 <connector>
     ;; enables STARTTLS for this port
     enable-starttls
-    port		119
+    port        119
     listen	    ::1
     ;; configure SSL server certificate
     tls-server-certificate "@confdir@/ssl/server.crt"
@@ -82,7 +82,7 @@ database-password mypass
 <connector>
     ;; enables TLS for this port
     enable-tls
-    port		563
+    port        563
     listen	    127.0.0.1
     ;; configure SSL server certificate (required)
     tls-server-certificate "@confdir@/ssl/server.crt"
@@ -108,7 +108,7 @@ database-password mypass
 <connector>
     ;; enables TLS for this port
     enable-tls
-    port		563
+    port        563
     listen	    ::1
     ;; configure SSL server certificate
     tls-server-certificate "@confdir@/ssl/server.crt"

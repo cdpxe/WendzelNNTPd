@@ -76,7 +76,7 @@ that case, the certificate is generated only for usage on localhost and
 is self-signed. The location of the generated certificates can be adjusted
 with the parameter `--targetdir`. You also need to adjust the paths in
 *wendzelnntpd.conf* if you use a non-default location
-(check Section [Network-Settings](configuration.md#network-settings)).
+(check Section [Encrypted connections over TLS](configuration.md#encrypted-connections-over-tls)).
 
 ### Init Script for Automatic Startup
 
