@@ -5,6 +5,10 @@
 Please stop WendzelNNTPd and check the *wendzelnntpd.conf*. There is a
 new configuration style that breaks parts of the previous configuration
 style (especially due to the introduction of "connectors").
+Additionally, the configuration file has been moved into the subdirectory
+*wendzelnntpd*. So, for example, if the file was previously located at
+*/usr/local/etc/wendzelnntpd.conf*, it must now be moved to
+*/usr/local/etc/wendzelnntpd/wendzelnntpd.conf*.
 
 Existing user passwords will no longer work. You need to recreate all
 users and their passwords using **wendzelnntpadm**. Additionally, you

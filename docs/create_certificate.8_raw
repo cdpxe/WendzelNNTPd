@@ -1,0 +1,45 @@
+.TH CREATE_CERTIFICATE 8 "21 Sep 2025" ""
+.\"=====================================================================
+.SH "NAME"
+create_certificate \- Creates certificates for \fBwendzelnntpd(8)\fP (selfsigned or via LetsEncrypt).
+
+.SH "SYNOPSIS"
+\fBcreate_certificate\fP [options]
+
+.SH "DESCRIPTION"
+.B create_certificate
+is used to create certificates for \fBwendzelnntpd(8)\fP (selfsigned or via LetsEncrypt) for SSL connections.
+
+.\"=====================================================================
+.SH OPTIONS
+This version of \fBcreate_certificate\fP understands the following options.
+.TP
+\fB\-\-environment\fR
+context for generating certificates ('local' and 'letsencrypt' are allowed values)
+.TP
+\fB\-\-email\fR
+only needed if 'letsencrypt' is used (example: test@test.de)
+.TP
+\fB\-\-domain\fR
+Only needed if 'letsencrypt' is used; specify domain under which your server is reachable (example: test.de)
+.TP
+\fB\-\-targetdir\fR
+specify the directory where the created certificates are placed into (default: @confdir@/ssl)
+
+.SH "WEBSITE"
+\fIhttps://www.wendzel.de\fP
+and
+\fIhttps://cdpxe.github.io/WendzelNNTPd/\fP
+
+.SH "AUTHORS"
+WendzelNNTPd was originally developed by Steffen Wendzel. The development started in 2004. See the
+.I
+AUTHORS
+file for a list of all major contributors.
+
+.SH "BUGS"
+Please send bug reports to  \fIsteffen@wendzel.de\fP.
+
+.SH SEE ALSO
+.BR wendzelnntpd (8)
+.BR wendzelnntpadm (8)

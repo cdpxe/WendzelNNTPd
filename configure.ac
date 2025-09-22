@@ -75,6 +75,8 @@ AS_IF([test "x$enable_tls" != "xno"], [
 		AC_MSG_ERROR([You need openssl in your PATH])
 	])
 	AC_SUBST([OPENSSLOBJ], [libssl.o])
+], [
+	AC_SUBST([TLSINST], [NO])
 ])
 
 # Checks for programs.

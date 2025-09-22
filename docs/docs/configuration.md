@@ -4,13 +4,13 @@ This chapter will explain how to configure WendzelNNTPd after
 installation.
 
 **Note:** The configuration file for WendzelNNTPd is named
-*/usr/local/etc/wendzelnntpd.conf*. The format of the configuration file
+*/usr/local/etc/wendzelnntpd/wendzelnntpd.conf*. The format of the configuration file
 should be self-explanatory and the default configuration file includes
 many comments which will help you to understand its content.
 
 **Note:** On \*nix-like operating systems the default installation path
 is */usr/local/\**, i.e., the configuration file of WendzelNNTPd will be
-*/usr/local/etc/wendzelnntpd.conf*, and the binaries will be placed in
+*/usr/local/etc/wendzelnntpd/wendzelnntpd.conf*, and the binaries will be placed in
 */usr/local/sbin*.
 
 ## Choosing a database engine
@@ -98,72 +98,143 @@ wendzelnntpd=> commit; quit;
 
 ## Network Settings
 
-For each type of IP address (IPv4 and/or IPv6) you have to define a own
-connector. You can find an example for NNTP over port 119 below.
+For each type of IP address (IPv4 and/or IPv6) you have to define an own
+connector. You can find a minimal example for NNTP over port 119 on
+localhost over IPv4 and IPv6 below.
 ```ini
 <connector>
-    ;; enables STARTTLS for this port
-    ;enable-starttls
-    port        119
-    listen      127.0.0.1
-    ;; configure SSL server certificate (required)
-    ;tls-server-certificate "/usr/local/etc/ssl/server.crt"
-    ;; configure SSL private key (required)
-    ;tls-server-key "/usr/local/etc/ssl/server.key"
-    ;; configure SSL CA certificate (required)
-    ;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
-    ;; configure TLS ciphers for TLSv1.3
-    ;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
-    ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
-    ;tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
-    ;; configure allowed TLS version (1.0-1.3)
-    ;tls-version "1.2-1.3"
-    ;; possibility to force the client to authenticate 
-    ;;with client certificate (none | optional | require)
-    ;tls-verify-client "required"
-    ;; define depth for checking client certificate
-    ;tls-verify-client-depth 0
-    ;; possibility to use certificate revocation list (none | leaf | chain)
-    ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    port		119
+    listen	    127.0.0.1
+</connector>
+
+<connector>
+    port		119
+    listen	    ::1
 </connector>
 ```
 
+### Encrypted connections over TLS
+
+WendzelNNTPd supports encrypted connections over TLS. There are two
+ways to use TLS: STARTTLS and dedicated TLS (SNNTP).
+Both ways require an SSL certificate, which is created during installation
+by default, but you can also create a new certificate or provide your own
+(see [Generating SSL certificates](install.md#generating-ssl-certificates)
+for more information).
+The configuration options `tls-server-certificate`, `tls-server-key` and
+`tls-ca-certificate` contain the paths to the SSL certificate, the private
+key of the certificate and the certificate of the certificate authority (CA)
+which signed the SSL certificate.
+These options are required for using TLS or STARTTLS with NNTP.
+All other TLS-related options are optional.
+
+#### STARTTLS
+
+STARTTLS can be added to an existing port and makes it possible
+to create encrypted and unencrypted connections over the same port.
+Encrypted connections are created by starting an unencrypted connection
+and switching to TLS using the STARTTLS NNTP command.
+The example below is for NNTP over port 119.
+```ini
+<connector>
+    ;; enables STARTTLS for this port
+    enable-starttls
+    port        119
+    listen	    127.0.0.1
+    ;; configure SSL server certificate (required)
+    tls-server-certificate "/usr/local/etc/wendzelnntpd/ssl/server.crt"
+    ;; configure SSL private key (required)
+    tls-server-key "/usr/local/etc/wendzelnntpd/ssl/server.key"
+    ;; configure SSL CA certificate (required)
+    tls-ca-certificate "/usr/local/etc/wendzelnntpd/ssl/ca.crt"
+    ;; configure TLS ciphers for TLSv1.3
+    tls-cipher-suites "TLS_AES_128_GCM_SHA256"
+    ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
+    tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+    ;; configure allowed TLS version (1.0-1.3)
+    tls-version "1.2-1.3"
+</connector>
+```
+
+#### Dedicated TLS (SNNTP)
+
 To use dedicated TLS with NNTP (SNNTP) you can define another connector.
+This connector only accepts encrypted connections.
 The example below is for SNNTP over port 563.
 ```ini
 <connector>
     ;; enables TLS for this port
-    ;enable-tls
+    enable-tls
     port        563
-    listen      127.0.0.1
+    listen	    127.0.0.1
     ;; configure SSL server certificate (required)
-    ;tls-server-certificate "/usr/local/etc/ssl/server.crt"
+    tls-server-certificate "/usr/local/etc/wendzelnntpd/ssl/server.crt"
     ;; configure SSL private key (required)
-    ;tls-server-key "/usr/local/etc/ssl/server.key"
+    tls-server-key "/usr/local/etc/wendzelnntpd/ssl/server.key"
     ;; configure SSL CA certificate (required)
-    ;tls-ca-certificate "/usr/local/etc/ssl/ca.crt"
+    tls-ca-certificate "/usr/local/etc/wendzelnntpd/ssl/ca.crt"
     ;; configure TLS ciphers for TLSv1.3
-    ;tls-cipher-suites "TLS_AES_128_GCM_SHA256"
+    tls-cipher-suites "TLS_AES_128_GCM_SHA256"
     ;; configure TLS ciphers for TLSv1.1 and TLSv1.2
-    ;tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+    tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
     ;; configure allowed TLS version (1.0-1.3)
-    ;tls-version "1.2-1.3"
-    ;; possibility to force the client to authenticate 
-    ;;with client certificate (none | optional | require)
-    ;tls-verify-client "required"
-    ;; define depth for checking client certificate
-    ;tls-verify-client-depth 0
-    ;; possibility to use certificate revocation list (none | leaf | chain)
-    ;tls-crl "none"
-    ;tls-crl-file "/usr/local/etc/ssl/ssl.crl"
+    tls-version "1.2-1.3"
 </connector>
 ```
 
-The configuration options *tls-server-certificate*, *tls-server-key* and
-*tls-ca-certificate* are required for using TLS or STARTTLS with NNTP.
-All other TLS-related options are optional. More examples are in the
-existing *wendzelnntpd.conf* file.
+#### Mutual authentication (mTLS) and certificate revocation lists (CRLs)
+
+WendzelNNTPd supports mutual authentication over TLS (mTLS).
+The option `tls-verify-client` enables mTLS, which accepts the following options:
+
+- require: the client certificate is requested and validated by the server
+- optional: the client certificate is not requested by the server, but validated if sent by the client
+- none: the client certificate is neither requested nor validated by the server
+
+The option `tls-verify-client-depth` defines the depth of the validation of the certificate chain.
+It needs to be set to 0 if selfsigned certificates are used.
+
+It is possible to check the client certificates against a certificate revocation list (CRL).
+The option `tls-crl` enables CRL checking, which accepts the following options:
+
+- chain: the entire certificate chain of the client certificate is checked against the CRL
+- leaf: the client certificate is checked against the CRL
+- none: CRL checking is disabled
+
+```ini
+; mutual auth needed
+<connector>
+    enable-tls
+    port        563
+    listen	    127.0.0.1
+
+    tls-server-certificate "/usr/local/etc/wendzelnntpd/ssl/server.crt"
+    tls-server-key "/usr/local/etc/wendzelnntpd/ssl/server.key"
+    tls-ca-certificate "/usr/local/etc/wendzelnntpd/ssl/ca.crt"
+    tls-cipher-suites "TLS_AES_128_GCM_SHA256"
+    tls-ciphers "ALL:!COMPLEMENTOFDEFAULT:!eNULL"
+    tls-version "1.3-1.3"
+
+    ; possibility to force the client to authenticate with
+    ; client certificate (none | optional | require)
+    tls-verify-client "required"
+    tls-verify-client-depth 0
+    
+    ; possibility to use certificate revocation list
+    ; (none | leaf | chain)
+    tls-crl "leaf"
+    tls-crl-file "/usr/local/etc/wendzelnntpd/ssl/ssl.crl"
+</connector>
+```
+
+#### Mandatory TLS
+
+It is possible to make TLS mandatory with the parameter `tls-is-mandatory`.
+This is a global setting that will be applied to all connectors and needs
+to be set outside of the connectors.
+```ini
+tls-is-mandatory
+```
 
 ## Setting the Allowed Size of Postings
 
@@ -251,9 +322,9 @@ password-identification attacks when an equal password is used by
 multiple users. However, utilizing the username is less secure than
 having a completely separate salt for every password.[^2]
 
-### Encrypted communication (TLS)
+### Encrypted communication (TLS) and mutual authentication (mTLS)
 
-Please look at section [Network-Settings](#network-settings) when you want
-to use encryption over TLS.
+Please look at section [Encrypted connections over TLS](configuration.md#encrypted-connections-over-tls)
+when you want to use encryption and mutual authentication over TLS.
 
 [^2]: Patches are appreciated!

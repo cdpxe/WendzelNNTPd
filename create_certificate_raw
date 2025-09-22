@@ -1,19 +1,25 @@
 #!/bin/bash
+set -e
 
 echo "This is the WendzelNNTPd script for generating SSL certificates."
 echo
+
+targetdir=@confdir@/ssl
+datadir=@package_datadir@
 
 function usage {
     echo ""
     echo "Creates certificates for WendzelNNTPd (selfsigned or via LetsEncrypt)"
     echo ""
-    echo "usage: ./create_certificate --environment local | letsencrypt --email string --domain string"
+    echo "usage: create_certificate --environment local | letsencrypt --email string --domain string"
     echo ""
     echo "  --environment string    context for generating certificates ('local' and 'letsencrypt' are allowed values)"
     echo "  --email string          only needed if 'letsencrypt' is used"
     echo "                          (example: test@test.de)"
     echo "  --domain string         only needed if 'letsencrypt' is used; specify domain under which your server is reachable"
     echo "                          (example: test.de)"
+    echo "  --targetdir string      specify the directory where the created certificates are placed into"
+    echo "                          (default: @confdir@/ssl)"
     echo ""
 }
 
@@ -33,10 +39,10 @@ done
 
 if [ $(id -u) -ne 0 ]; then
     echo "Run this script with root privileges!"
-    exit
+    exit 1
 fi
 
-mkdir -p /usr/local/etc/ssl
+mkdir -p ${targetdir}
 
 if [[ -z $environment || "$environment" = "local" ]]; then
     echo "Environment is set to 'local'. Certificates for 'local' use are generated now..."
@@ -49,29 +55,29 @@ if [[ -z $environment || "$environment" = "local" ]]; then
         -days 3650 \
         -nodes \
         -extensions v3_ca \
-        -subj "/C=DE/ST=Hagen/O=Test-Cert Inc." \
-        -keyout "/usr/local/etc/ssl/ca-key.pem" \
-        -out "/usr/local/etc/ssl/ca.crt"
+        -config "${datadir}/openssl.cnf" \
+        -keyout "${targetdir}/ca-key.pem" \
+        -out "${targetdir}/ca.crt"
 
-    openssl genrsa -out "/usr/local/etc/ssl/server.key" 2048
+    openssl genrsa -out "${targetdir}/server.key" 2048
     openssl req \
-        -new -key "/usr/local/etc/ssl/server.key" \
-        -out "/usr/local/etc/ssl/server.csr" \
-        -config "./docker/openssl/openssl.cnf"
+        -new -key "${targetdir}/server.key" \
+        -out "${targetdir}/server.csr" \
+        -config "${datadir}/openssl.cnf"
 
     openssl x509 \
         -req \
         -days 365 \
-        -in "/usr/local/etc/ssl/server.csr" \
-        -CA "/usr/local/etc/ssl/ca.crt" \
-        -CAkey "/usr/local/etc/ssl/ca-key.pem" \
+        -in "${targetdir}/server.csr" \
+        -CA "${targetdir}/ca.crt" \
+        -CAkey "${targetdir}/ca-key.pem" \
         -CAcreateserial \
         -extensions v3_req \
-        -extfile "./docker/openssl/openssl.cnf" \
-        -out "/usr/local/etc/ssl/server.crt"
+        -extfile "${datadir}/openssl.cnf" \
+        -out "${targetdir}/server.crt"
 
     echo "Finished ..."
-    echo "You can find the certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo "You can find the certificate at: ${targetdir}/server.crt, key: ${targetdir}/server.key, CA certificate: ${targetdir}/ca.crt"
     echo
 elif [ "$environment" = "letsencrypt" ]; then
     echo "Environment is set to local. Certificates are generated now via LetsEncrypt certbot..."
@@ -91,12 +97,12 @@ elif [ "$environment" = "letsencrypt" ]; then
     echo "Generating certificates..."
     certbot certonly --standalone -n --agree-tos --email $email --domains $domain --cert-name wendzelnntpd
 
-    ln -sf /etc/letsencrypt/live/wendzelnntpd/fullchain.pem /usr/local/etc/ssl/server.crt
-    ln -sf /etc/letsencrypt/live/wendzelnntpd/privkey.pem /usr/local/etc/ssl/server.key
-    ln -sf /etc/letsencrypt/live/wendzelnntpd/chain.pem /usr/local/etc/ssl/ca.crt
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/fullchain.pem ${targetdir}/server.crt
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/privkey.pem ${targetdir}/server.key
+    ln -sf /etc/letsencrypt/live/wendzelnntpd/chain.pem ${targetdir}/ca.crt
 
     echo "Finished ..."
-    echo "You can find certificate at: /usr/local/etc/ssl/server.crt, key: /usr/local/etc/ssl/server.key, CA certificate: /usr/local/etc/ssl/ca.crt"
+    echo "You can find certificate at: ${targetdir}/server.crt, key: ${targetdir}/server.key, CA certificate: ${targetdir}/ca.crt"
     echo
 else
     echo "Unknown environment for script generation provided..."
