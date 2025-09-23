@@ -60,7 +60,7 @@ with other NNTP servers.
 
 ## Contribute
 
-See the *CONTRIBUTE* file in the tarball.
+See the [*CONTRIBUTING* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/CONTRIBUTING.md).
 
 ## History
 
@@ -72,6 +72,6 @@ development of Xyria:DNSd. Version 1.0.0 was released in 2007, version
 minor features. The inclusion of larger features was strongly supported
 by my university students.
 
-A detailed history can be found in the *HISTORY* file in the tarball.
+A detailed history can be found in the [*HISTORY* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/HISTORY) in the tarball.
 Fortunately, several people contributed to the code and documentation,
-see *AUTHORS* file.
+see [*AUTHORS* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS).
