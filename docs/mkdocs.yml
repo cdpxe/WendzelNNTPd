@@ -6,6 +6,7 @@ nav:
   - Running: running.md
   - Development: development.md
   - Upgrade: upgrade.md
+  - Uninstallation: uninstall.md
 theme: readthedocs
 repo_url: https://github.com/cdpxe/WendzelNNTPd
 edit_uri: edit/master/docs/docs/

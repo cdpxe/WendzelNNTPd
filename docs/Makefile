@@ -1,6 +1,6 @@
 # List of the mardown files which should be included in the pdf documentation.
 # The order of the files corresponds to the order of the chapters in the PDF.
-DOCFILES=docs/index.md docs/install.md docs/configuration.md docs/running.md docs/development.md docs/upgrade.md
+DOCFILES=docs/index.md docs/install.md docs/configuration.md docs/running.md docs/development.md docs/upgrade.md docs/uninstall.md
 
 all : site docs.pdf
 

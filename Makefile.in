@@ -249,7 +249,8 @@ uninstall :
 	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(UDBDIR)
 	@echo
 	@echo "Uninstall finished. Please note that the wendzelnntpd.conf (and possibly backups of it) and ssl certificates are left in place under $(DESTDIR)$(confdir)."
-	@echo "The database (and possibly backups) and other user data like articles are also left in place under $(UDBDIR). You might consider deleting them now."
+	@echo "The database (and possibly backups) and other user data like articles are also left in place under $(UDBDIR)."
+	@echo "The log file /var/log/wendzelnntpd is also left in place. You might consider deleting them now."
 
 exec : bin/wendzelnntpd
 	./bin/wendzelnntpd
