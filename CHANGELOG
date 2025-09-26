@@ -20,6 +20,7 @@ ADDED FEATURES:
    the TLS implementation of WendzelNNTPd!
  - Docker environment for development purposes was provided by
    @SvenLie -- thanks for that!
+ - Add Docker image for production use
  - EXPERIMENTAL:
    - EXP: Added Postgres database support (experimental), thanks to
      Christian Barthel for providing a massive patch!
