@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Test and publish Docker image
 
 on:
   push:
@@ -28,6 +28,17 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/wendzelnntpd
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./packages/docker/Dockerfile
+          load: true
+          tags: ${{ env.TEST_TAG }}
+      - name: Install test tools
+        run: sudo apt-get update -y && sudo apt-get install -y expect
+      - name: Test
+        run:  cd unittesting && ./test_dockerimage.sh ${{ env.TEST_TAG }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
