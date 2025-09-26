@@ -15,8 +15,7 @@ check_returncode() {
 }
 
 echo "== Test wendzelnntp"
-#docker run --name wendzelnntpd --rm -d -p 119:119 -p 563:563 wendzelnntpd
-output=$(docker run --name "$image" --rm -d -p 119:119 -p 563:563 wendzelnntpd 2>&1)
+output=$(docker run --name wendzelnntpd --rm -d -p 119:119 -p 563:563 "$image" 2>&1)
 returncode=$?
 check_returncode $returncode 0 "$output"
 
