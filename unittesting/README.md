@@ -6,6 +6,7 @@ The subdirectory [tests](tests) contains scripts, which use the `expect` command
 and need a properly configured and initialized `wendzelnntpd` server.
 The script `run.sh` can be used to run the tests, but they can also be executed individually.
 The testing of `wendzelnntpadm` is done by the script `test_wendzelnntpadm.sh`.
+The testing of the Docker image for WendzelNNTPd is done by the script `test_dockerimage.sh`.
 
 ## Setup of the testing environment
 
@@ -115,4 +116,14 @@ mysql --host=127.0.0.1 --user=root --password=rootpass --execute "set session sq
 Example for initializing a PostgreSQL database:
 ```shell
 psql postgresql://testuser:testpass@127.0.0.1:5432/wendzelnntpd --file database/postgres_db_struct.sql --file unittesting/create_db_test_data.sql
+```
+
+## Execution of the tests for the Docker image
+
+You need to build the Docker image with `make docker-build` before running the tests.
+These tests require no further setup of the testing environment.
+```shell
+make docker-build
+cd unittesting/
+./test_dockerimage.sh
 ```

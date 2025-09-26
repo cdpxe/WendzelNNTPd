@@ -20,6 +20,8 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
      - Installation via `installpkg (filename)`
 - *NetBSD*:
   - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
+- *Docker*:
+  - [cdpxe/wendzelnntpd](https://hub.docker.com/r/cdpxe/wendzelnntpd)
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
 
