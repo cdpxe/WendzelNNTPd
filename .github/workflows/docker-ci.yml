@@ -2,9 +2,14 @@ name: Publish Docker image
 
 on:
   push:
+    branches:
+      - "**"
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
+
+env:
+    TEST_TAG: wendzelnntpd:test
 
 jobs:
   push_to_registry:
@@ -24,8 +29,8 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/wendzelnntpd
       - name: Build and push Docker image
-        id: push
         uses: docker/build-push-action@v6
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           context: .
           file: ./packages/docker/Dockerfile
