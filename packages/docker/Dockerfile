@@ -1,4 +1,4 @@
-FROM debian:stable-slim as build-env
+FROM debian:stable-slim AS build-env
 
 # install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
