@@ -3,14 +3,7 @@ WendzelNNTPd ChangeLog:
 ----------------- version 2.x ------------------
 
 2.2-alpha "Bad Woerishofen" : t.b.d.
- --- This is expected to become a new major release once the TODO
- --- tasks are finished in late-2025.
-***TODO***:
- - Make sure the server still runs on Net/Open/FreeBSD.
- - Check functioning of "posting (not) allowed" flag when using the
-   MySQL database.
- - Excessive testing of the POST function because of the removed
-   memory leaks.
+ --- scheduled for release in late-2025.
 ADDED FEATURES:
  - Finally, the "posting allowed" flag is considered in POST :)
  - New configuration with dedicated connectors.
@@ -20,7 +13,7 @@ ADDED FEATURES:
    the TLS implementation of WendzelNNTPd!
  - Docker environment for development purposes was provided by
    @SvenLie -- thanks for that!
- - Add Docker image for production use
+ - Add Docker image for production use (thanks to @oleludwig)
  - EXPERIMENTAL:
    - EXP: Added Postgres database support (experimental), thanks to
      Christian Barthel for providing a massive patch!
