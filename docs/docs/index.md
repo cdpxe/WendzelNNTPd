@@ -64,14 +64,12 @@ See the [*CONTRIBUTING* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/
 
 ## History
 
-The project started in 2004 under the name Xyria:cdpNNTPd, as part of
-the Xyria project that also contained a DNS server, called
-Xyria:DNSd. In 2007, I renamed it to WendzelNNTPd and stopped
-development of Xyria:DNSd. Version 1.0.0 was released in 2007, version
-2.0.0 in 2011. Since then I have primarily fixed reported bugs and added
-minor features. The inclusion of larger features was strongly supported
-by my university students.
+The project started in 2004 and was written by [Steffen Wendzel](https://www.wendzel.de).
+Version 1.0 was released in 2007, version 2.0 in 2011, finally version 2.1 in 2021.
 
-A detailed history can be found in the [*HISTORY* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/HISTORY) in the tarball.
-Fortunately, several people contributed to the code and documentation,
-see [*AUTHORS* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS).
+Since around 2018 the development was strongly supported by Wendzel's students at the
+[University of Hagen](https://en.wikipedia.org/wiki/University_of_Hagen). See the
+[*AUTHORS* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/AUTHORS) for a list
+of major contributors.
+
+A detailed history can be found in the [*HISTORY* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/HISTORY).
