@@ -10,6 +10,7 @@ Major Contributors (in chronological order):
      - several code cleanups
      - packaging support
      - transforming the LaTeX docs into markdown + making it web-based
+     - Extended Docker support for production images
      - ... and several more enhancements, cf. CHANGELOG!
   - Sven Liebert (FernUniversität in Hagen, 2024):
      - Docker support for development purposes
