@@ -6,6 +6,7 @@ autom4te.cache
 /config.sub
 
 scripts/startup/init.d_script
+scripts/startup/wendzelnntpd.service
 test.man
 *.o
 bin/wendzelnntpadm

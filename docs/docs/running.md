@@ -28,6 +28,8 @@ To restart the service, terminate and start the service.
 
 ### Automating Start, Stop, and Restart
 
+#### init.d script
+
 The script **init.d_script** in the directory *scripts/startup* of the
 tarball can be used to start, restart, and stop WendzelNNTPd. It is a
 standard *init.d* script for Linux operating systems that can usually be
@@ -56,6 +58,43 @@ WendzelNNTPd: version 2.0.7 'Berlin'  - (Oct 26 2015 14:10:20 #2544) is ready.
 
 $ /etc/init.d/wendzelnntpd stop
 Stopping WendzelNNTPd ... done.
+```
+
+#### systemd service unit
+
+The project also includes a systemd service unit file that can be used
+to start, stop, and restart wendzelnntpd on systems which use systemd as their init system.
+The file can be found in under *scripts/startup/wendzelnntpd.service* after building the
+project with `make`.
+You can install it by copying it to */etc/systemd/system* and then
+reloading the unit files:
+```console
+$ sudo cp scripts/startup/wendzelnntpd.service /etc/systemd/system/
+$ sudo systemctl daemon-reload
+```
+
+To start, stop, and restart WendzelNNTPd, to enable and disable the service and to show the status,
+the following commands can be used afterwards:
+```console
+$ sudo systemctl start wendzelnntpd.service
+$ sudo systemctl status wendzelnntpd
+wendzelnntpd.service - WendzelNNTPd Usenet server
+     Loaded: loaded (/etc/systemd/system/wendzelnntpd.service; enabled; preset: enabled)
+     Active: active (running) since Sat 2025-09-27 21:25:30 CEST; 1min 11s ago
+       Docs: man:wendzelnntpd(8)
+   Main PID: 105845 (wendzelnntpd)
+      Tasks: 1 (limit: 38345)
+     Memory: 1.5M
+        CPU: 1min 11.173s
+     CGroup: /system.slice/wendzelnntpd.service
+...
+$ sudo systemctl restart wendzelnntp
+$ sudo systemctl stop wendzelnntpd
+$ sudo systemctl enable wendzelnntpd
+Created symlink /etc/systemd/system/multi-user.target.wants/wendzelnntpd.service 
+    → /etc/systemd/system/wendzelnntpd.service.
+$ sudo systemctl disable wendzelnntpd
+Removed "/etc/systemd/system/multi-user.target.wants/wendzelnntpd.service".
 ```
 
 ## Administration Tool 'wendzelnntpadm'

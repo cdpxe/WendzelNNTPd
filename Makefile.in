@@ -66,7 +66,7 @@ DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
 
-all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate docs/create_certificate.8 wendzelnntpd.conf
+all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script scripts/startup/wendzelnntpd.service create_certificate docs/create_certificate.8 wendzelnntpd.conf
 	expr `cat build` \+ 1 >build
 	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpd
@@ -141,6 +141,9 @@ wendzelnntpadm : cdpnntpadm.o db_abstraction.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGR
 	#strip bin/wendzelnntpadm
 
 scripts/startup/init.d_script : Makefile $(srcdir)/scripts/startup/init.d_script_raw
+	sed -e 's|@sbindir[@]|$(sbindir)|g' $@_raw > $@
+
+scripts/startup/wendzelnntpd.service : Makefile $(srcdir)/scripts/startup/wendzelnntpd.service_raw
 	sed -e 's|@sbindir[@]|$(sbindir)|g' $@_raw > $@
 
 create_certificate : Makefile $(srcdir)/create_certificate_raw
@@ -271,6 +274,7 @@ clean :
 	@# documentation cleanup
 	cd docs && $(MAKE) clean
 	rm -f $(srcdir)/scripts/startup/init.d_script
+	rm -f $(srcdir)/scripts/startup/wendzelnntpd.service
 	rm -f $(srcdir)/docs/create_certificate.8
 	rm -f $(srcdir)/create_certificate
 	rm -f $(srcdir)/wendzelnntpd.conf
