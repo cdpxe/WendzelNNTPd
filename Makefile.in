@@ -65,7 +65,6 @@ DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 # The list of documentation files we wish to install
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
-HTML_DOC_DIRS=$(shell cd docs/ && find site/ -type d)
 
 all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script create_certificate docs/create_certificate.8 wendzelnntpd.conf
 	expr `cat build` \+ 1 >build
@@ -234,19 +233,23 @@ uninstall :
 	# data files
 	-rm -f $(DESTDIR)$(package_datadir)/openssl.cnf
 	# documentation
-	-cd $(DESTDIR)$(docdir)/ && rm -f $(notdir $(DOCFILES_TO_INST))
+	-cd $(DESTDIR)$(docdir)/ && for f in $(DOCFILES_TO_INST); do \
+    	rm -f `basename $$f`; \
+	done
 	-rm -f $(DESTDIR)$(docdir)/docs.pdf
 	-rm -rf $(DESTDIR)$(docdir)/site/
 	# manpages
-	-cd $(DESTDIR)$(man8dir) && rm -f $(notdir $(MANPAGES))
+	-cd $(DESTDIR)$(man8dir) && for f in $(MANPAGES); do \
+    	rm -f `basename $$f`; \
+	done
 	# directories
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(confdir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(sbindir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(package_datadir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(docdir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(man8dir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(mandir)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(UDBDIR)
+	-rmdir $(DESTDIR)$(confdir)
+	-rmdir $(DESTDIR)$(sbindir)
+	-rmdir $(DESTDIR)$(package_datadir)
+	-rmdir $(DESTDIR)$(docdir)
+	-rmdir $(DESTDIR)$(man8dir)
+	-rmdir $(DESTDIR)$(mandir)
+	-rmdir $(DESTDIR)$(UDBDIR)
 	@echo
 	@echo "Uninstall finished. Please note that the wendzelnntpd.conf (and possibly backups of it) and ssl certificates are left in place under $(DESTDIR)$(confdir)."
 	@echo "The database (and possibly backups) and other user data like articles are also left in place under $(UDBDIR)."
