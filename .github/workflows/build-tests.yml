@@ -199,6 +199,16 @@ jobs:
         run: cd unittesting && nntp_address=${{ env.ipv4 }} ./run.sh
       - name: expect tests IPv6
         run: cd unittesting && nntp_address=${{ env.ipv6 }} ./run.sh
+      - name: make uninstall
+        run: docker exec testcontainer bash -c "make uninstall"
+      - name: Check if directories/files are removed
+        run: >
+          docker exec testcontainer bash -c "
+          if [ -d '/usr/local/sbin/wendzelnntpd' ]; then echo '/usr/local/sbin/wendzelnntpd still exists'; exit 1; fi
+          && if [ -d '/usr/local/sbin/wendzelnntpadm' ]; then echo '/usr/local/sbin/wendzelnntpadm still exists'; exit 1; fi
+          && if [ -d '/usr/local/sbin/create_certificate' ]; then echo '/usr/local/sbin/create_certificate still exists'; exit 1; fi
+          && if [ -d '/usr/local/share/wendzelnntpd/' ]; then echo '/usr/local/share/wendzelnntpd/ still exists'; exit 1; fi
+          && if [ -d '/usr/local/doc/wendzelnntpd/' ]; then echo '/usr/local/doc/wendzelnntpd/ still exists'; exit 1; fi"
       - name: Stop Docker container
         run: docker stop testcontainer -t 1
 
@@ -413,3 +423,12 @@ jobs:
         run: cd unittesting && nntp_address=${{ env.ipv4 }} ./run.sh
       - name: expect tests IPv6
         run: cd unittesting && nntp_address=${{ env.ipv6 }} ./run.sh
+      - name: make uninstall
+        shell: vm {0}
+        run: cd $GITHUB_WORKSPACE/ && make uninstall
+      - name: Check if directories are removed
+        shell: vm {0}
+        run: |
+          if [ -d "/usr/local/sbin/" ]; then echo "/usr/local/sbin/ still exists"; exit 1; fi
+          if [ -d "/usr/local/share/wendzelnntpd/" ]; then echo "/usr/local/share/wendzelnntpd/ still exists"; exit 1; fi
+          if [ -d "/usr/local/doc/wendzelnntpd/" ]; then echo "/usr/local/doc/wendzelnntpd/ still exists"; exit 1; fi
