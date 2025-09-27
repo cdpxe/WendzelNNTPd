@@ -271,6 +271,9 @@ clean :
 	@# documentation cleanup
 	cd docs && $(MAKE) clean
 	rm -f $(srcdir)/scripts/startup/init.d_script
+	rm -f $(srcdir)/docs/create_certificate.8
+	rm -f $(srcdir)/create_certificate
+	rm -f $(srcdir)/wendzelnntpd.conf
 
 print_version :
 	@echo "$(PACKAGE_VERSION) $(RELEASENAME)"
