@@ -5,7 +5,7 @@ This chapter provides a guide on how to install WendzelNNTPd 2.x.
 ## Linux/*nix/BSD from source
 
 To install WendzelNNTPd from source you can either [download the provided
-archive file of a stable version (e.g., *v-2.x.y.tar.gz*)](https://sourceforge.net/projects/wendzelnntpd/files/) and extract it or you can [clone the current WendzelNNTPd development repository](https://github.com/cdpxe/WendzelNNTPd).
+archive file of a stable version (e.g., *v-2.x.y.tar.gz*)](https://sourceforge.net/projects/wendzelnntpd/files/) and extract it[^1] or you can [clone the current WendzelNNTPd development repository](https://github.com/cdpxe/WendzelNNTPd).
 Afterwards, run `./configure`. Please note that configure indicates missing
 libraries and packages that you may first need to install using the
 package system of your operating system.
@@ -186,4 +186,4 @@ Not supported.
 [^1]: On some \*nix-like operating systems you need to first run
     `gzip -d wendzelnntpd-VERSION.tgz` and then 
     `tar -xf wendzelnntpd-VERSION.tar` instead of letting `tar` do the whole
-    job.
+    job as in the listing.
