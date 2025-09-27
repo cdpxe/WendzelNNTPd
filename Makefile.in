@@ -281,10 +281,19 @@ man_wendzelnntpadm :
 	man -l test.man
 
 docker-build:
-	docker build -f ./docker/Dockerfile -t wendzelnntpd:latest .
+	docker build -f ./packages/docker/Dockerfile -t wendzelnntpd:latest .
 
 docker-run:
-	docker run --name wendzelnntpd --rm -it -p 118:118 -p 119:119 -p 563:563 -p 564:564 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
+	docker run --name wendzelnntpd --rm -d -p 119:119 -p 563:563 -v wendzelnntpd_data:/var/spool/news/wendzelnntpd wendzelnntpd:latest
 
 docker-stop:
 	docker stop wendzelnntpd
+
+docker-dev-build:
+	docker build -f ./docker/Dockerfile -t wendzelnntpd-dev:latest .
+
+docker-dev-run:
+	docker run --name wendzelnntpd-dev --rm -it -p 118:118 -p 119:119 -p 563:563 -p 564:564 -v ${PWD}:/wendzelnntpd -v wendzelnntpd_dev_data:/var/spool/news/wendzelnntpd wendzelnntpd-dev:latest
+
+docker-dev-stop:
+	docker stop wendzelnntpd-dev

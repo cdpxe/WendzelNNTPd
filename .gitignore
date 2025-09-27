@@ -15,7 +15,8 @@ config.tab.c
 config.tab.h
 lex.yy.c
 .idea
-unittesting/tmp/
-create_certificate
-docs/create_certificate.8
-wendzelnntpd.conf
+/unittesting/tmp/
+/unittesting/out/
+/create_certificate
+/docs/create_certificate.8
+/wendzelnntpd.conf

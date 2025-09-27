@@ -2,7 +2,7 @@
 
 This chapter provides a guide on how to install WendzelNNTPd 2.x.
 
-## Linux/*nix/BSD
+## Linux/*nix/BSD from source
 
 To install WendzelNNTPd from source you can either [download the provided
 archive file of a stable version (e.g., *v-2.x.y.tar.gz*)](https://sourceforge.net/projects/wendzelnntpd/files/) and extract it or you can [clone the current WendzelNNTPd development repository](https://github.com/cdpxe/WendzelNNTPd).
@@ -82,6 +82,95 @@ with the parameter `--targetdir`. You also need to adjust the paths in
 
 There is an init script in the directory scripts/startup. It uses the
 usual parameters like "start", "stop" and "restart".
+
+## Docker image for Linux
+
+WendzelNNTPd is available as a [Docker image on Docker Hub](https://hub.docker.com/r/cdpxe/wendzelnntpd).
+
+##### Run WendzelNNTPd in a Docker container
+
+```console
+$ docker run --name wendzelnntpd -d -p 119:119 -p 563:563 cdpxe/wendzelnntpd
+```
+
+##### Specify volumes for the database and configuration files
+
+```console
+$ docker run --name my-wendzelnntpd -d -p 119:119 -p 563:563 \
+    -v wendzelnntpd_config:/usr/local/etc/wendzelnntpd \
+    -v wendzelnntpd_data:/var/spool/news/wendzelnntpd \
+    cdpxe/wendzelnntpd
+```
+
+##### Administration with wendzelnntpadm
+
+```console
+$ docker run --rm -v wendzelnntpd_config:/usr/local/etc/wendzelnntpd \
+    -v wendzelnntpd_data:/var/spool/news/wendzelnntpd \
+     cdpxe/wendzelnntpd wendzelnntpadm
+```
+Find further information regarding the administration of WendzelNNTPd in [Running](running.md#administration-tool-wendzelnntpadm).
+
+##### Create new certificates
+
+```console
+$ docker run --rm -v wendzelnntpd_config:/usr/local/etc/wendzelnntpd \
+    cdpxe/wendzelnntpd create_certificate
+```
+Finy further information in [Generating SSL certificates](#generating-ssl-certificates).
+
+##### Get the configuration file
+
+Copy the default configuration file from the image to the host:
+```console
+$ docker run --rm --entrypoint=cat cdpxe/wendzelnntpd \
+    /usr/local/etc/wendzelnntpd/wendzelnntpd.conf \
+    > /home/youruser/wendzelnntpd.conf
+```
+
+Or copy the current configuration file from your container:
+```console
+$ docker cp my-wendzelnntpd:/usr/local/etc/wendzelnntpd/wendzelnntpd.conf \
+    /home/youruser/wendzelnntpd.conf 
+```
+
+##### Edit the configuration file
+
+Find further information regarding the configuration of WendzelNNTPd in [Configuration](configuration.md#basic-configuration).
+
+##### Provide the configuration file to the container
+
+Copy the configuration file back to the container:
+```console
+$ docker cp /home/youruser/wendzelnntpd.conf \
+    my-wendzelnntpd:/usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+```
+
+Or bind mount the configuration file (the file needs to be owned by root in this case):
+```console
+$ sudo chown 0:0 /home/youruser/wendzelnntpd.conf
+$ docker run --name wendzelnntpd -d -p 119:119 -p 563:563 \
+    -v wendzelnntpd_config:/usr/local/etc/wendzelnntpd \
+    -v wendzelnntpd_data:/var/spool/news/wendzelnntpd \
+    -v /home/youruser/wendzelnntpd.conf:\
+/usr/local/etc/wendzelnntpd/wendzelnntpd.conf:ro \
+     -d cdpxe/wendzelnntpd
+```
+
+Or build a new image with your configuration file:
+```dockerfile
+FROM cdpxe/wendzelnntpd
+COPY wendzelnntpd.conf /usr/local/etc/wendzelnntpd/wendzelnntpd.conf
+```
+
+##### Create the Docker image from source
+
+You can also build the Docker image from source instead of using the pre-built image from Docker Hub.
+Therefore, you need to get the source code of WendzelNNTPd like explained in [Linux/*nix/BSD from source](#linuxnixbsd-from-source).
+After that you can build the image with `make`:
+```console
+$ make docker-build
+```
 
 ## Unofficial Note: Mac OS X
 
