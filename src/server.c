@@ -1330,7 +1330,7 @@ docmd_post(server_cb_inf *inf)
 	len = ptr - buf;
 
 	/* Remove 'Message-ID/Date/Lines';
-	   Note: header is != NULL here. Otherwise function would have terminated earlier */
+	   Note: header is != NULL here. Otherwise this function would have terminated earlier. */
 	for (e = 0; remove_lines[e] != NULL;  e++) {
 		for (i = 0; i < len; i++) {
 			if (strncasecmp(header+i, remove_lines[e], strlen(remove_lines[e])) == 0) {
