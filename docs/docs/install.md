@@ -78,10 +78,11 @@ with the parameter `--targetdir`. You also need to adjust the paths in
 *wendzelnntpd.conf* if you use a non-default location
 (check Section [Encrypted connections over TLS](configuration.md#encrypted-connections-over-tls)).
 
-### Init Script for Automatic Startup
+### Automatic startup
 
-There is an init script in the directory scripts/startup. It uses the
-usual parameters like "start", "stop" and "restart".
+There is an init script and a systemd service unit in the directory scripts/startup for automatic
+startup of `wendzelnntpd`. More information can be found in
+[Automating Start, Stop, and Restart](running.md#automating-start-stop-and-restart)
 
 ## Docker image for Linux
 

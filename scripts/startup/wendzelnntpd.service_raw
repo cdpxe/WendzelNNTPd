@@ -1,0 +1,11 @@
+[Unit]
+Description=WendzelNNTPd Usenet server
+Documentation=man:wendzelnntpd(8)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=@sbindir@/wendzelnntpd
+
+[Install]
+WantedBy=multi-user.target
