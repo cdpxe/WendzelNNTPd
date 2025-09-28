@@ -64,7 +64,7 @@ Stopping WendzelNNTPd ... done.
 
 The project also includes a systemd service unit file that can be used
 to start, stop, and restart wendzelnntpd on systems which use systemd as their init system.
-The file can be found in under *scripts/startup/wendzelnntpd.service* after building the
+The file *scripts/startup/wendzelnntpd.service* is present after building the
 project with `make`.
 You can install it by copying it to */etc/systemd/system* and then
 reloading the unit files:
