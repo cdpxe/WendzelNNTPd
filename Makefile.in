@@ -47,9 +47,8 @@ CREATE_CERTIFICATES=$(TLSINST)
 CONFFILE=wendzelnntpd.conf
 UDBDIR=/var/spool/news/wendzelnntpd
 UDBFILE=$(UDBDIR)/usenet.db
-DESTCFLAGS=-DCONFDIR=\"$(confdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
-CFLAGS+= -Wall $(DESTCFLAGS)
+CFLAGS+= -Wall -DCONFDIR=\"$(confdir)\"
 #CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
 #	-Wsign-compare -Wstrict-prototypes -Wcast-align \
 #	-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow \
@@ -77,13 +76,13 @@ lex.yy.c : $(SRC)/config.l
 	$(LEX) src/config.l
 
 lex.yy.o : lex.yy.c config.tab.c $(HEADERS)
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c lex.yy.c
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c lex.yy.c
 
 config.tab.c : $(SRC)/config.y
 	$(YACC) -v -d -t -o config.tab.c $(SRC)/config.y
 
 config.tab.o : config.tab.c $(HEADERS)
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c config.tab.c
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c config.tab.c
 
 database.o : $(SRC)/database.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
