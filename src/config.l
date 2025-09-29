@@ -32,6 +32,9 @@ extern char *yytext;
 
 %}
 
+%option nounput
+%option noinput
+
 %%
 verbose-mode                        return TOK_VERBOSE_MODE;
 database-engine                     return TOK_DB_ENGINE;

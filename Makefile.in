@@ -47,9 +47,8 @@ CREATE_CERTIFICATES=$(TLSINST)
 CONFFILE=wendzelnntpd.conf
 UDBDIR=/var/spool/news/wendzelnntpd
 UDBFILE=$(UDBDIR)/usenet.db
-DESTCFLAGS=-DCONFDIR=\"$(confdir)\"
 HEADERS=$(SRC)/include/cdpstrings.h $(SRC)/include/main.h $(SRC)/include/wendzelnntpdpath.h
-CFLAGS+= -Wall $(DESTCFLAGS)
+CFLAGS+= -Wall -DCONFDIR=\"$(confdir)\"
 #CFLAGS+=-Wmissing-prototypes -Wmissing-declarations -Wshadow -Wcast-qual \
 #	-Wsign-compare -Wstrict-prototypes -Wcast-align \
 #	-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow \
@@ -63,7 +62,7 @@ GDBON=-ggdb -g #-lefence
 DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 # The list of documentation files we wish to install
-DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE database/usenet.db_struct database/mysql_db_struct.sql
+DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE
 MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
 
 all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script scripts/startup/wendzelnntpd.service create_certificate docs/create_certificate.8 wendzelnntpd.conf
@@ -77,13 +76,13 @@ lex.yy.c : $(SRC)/config.l
 	$(LEX) src/config.l
 
 lex.yy.o : lex.yy.c config.tab.c $(HEADERS)
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c lex.yy.c
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c lex.yy.c
 
 config.tab.c : $(SRC)/config.y
 	$(YACC) -v -d -t -o config.tab.c $(SRC)/config.y
 
 config.tab.o : config.tab.c $(HEADERS)
-	$(CC) $(DEBUG) $(ADD_CFLAGS) $(CPPFLAGS) $(DESTCFLAGS) -c config.tab.c
+	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c config.tab.c
 
 database.o : $(SRC)/database.c $(HEADERS)
 	$(CC) $(DEBUG) $(BUILD) $(CFLAGS) $(CPPFLAGS) -c $<
@@ -176,6 +175,8 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
 	# data files
 	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
+	$(INSTALL_DATA) database/usenet.db_struct $(DESTDIR)$(package_datadir)/
+	$(INSTALL_DATA) database/mysql_db_struct.sql $(DESTDIR)$(package_datadir)/
 	# documentation and config files
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
 	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
@@ -214,6 +215,8 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
 	# data files
 	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
+	$(INSTALL_DATA) database/usenet.db_struct $(DESTDIR)$(package_datadir)/
+	$(INSTALL_DATA) database/mysql_db_struct.sql $(DESTDIR)$(package_datadir)/
 	# documentation
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
 	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
@@ -226,6 +229,9 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	-rm -rf $(DESTDIR)$(docdir)/docs
 	# manpages
 	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
+	# remove files from old versions
+	-rm -rf $(DESTDIR)$(docdir)/usenet.db_struct
+	-rm -rf $(DESTDIR)$(docdir)/mysql_db_struct.sql
 	@echo "Upgrade finished. Thank you for upgrading and using this software. Have fun!"
 
 uninstall :
@@ -235,6 +241,8 @@ uninstall :
 	-rm -f $(DESTDIR)$(sbindir)/create_certificate
 	# data files
 	-rm -f $(DESTDIR)$(package_datadir)/openssl.cnf
+	-rm -f $(DESTDIR)$(package_datadir)/usenet.db_struct
+	-rm -f $(DESTDIR)$(package_datadir)/mysql_db_struct.sql
 	# documentation
 	-cd $(DESTDIR)$(docdir)/ && for f in $(DOCFILES_TO_INST); do \
     	rm -f `basename $$f`; \
