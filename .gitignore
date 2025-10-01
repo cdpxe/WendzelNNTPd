@@ -19,5 +19,6 @@ lex.yy.c
 /unittesting/tmp/
 /unittesting/out/
 /create_certificate
+/docs/wendzelnntpd.conf.5
 /docs/create_certificate.8
 /wendzelnntpd.conf
