@@ -1,0 +1,9 @@
+etc/
+scripts/startup/wendzelnntpd.service usr/lib/systemd/system/
+usr/sbin/
+usr/share/doc/wendzelnntpd/AUTHORS
+usr/share/doc/wendzelnntpd/CHANGELOG
+usr/share/doc/wendzelnntpd/HISTORY
+usr/share/doc/wendzelnntpd/README.md
+usr/share/man/
+usr/share/wendzelnntpd/

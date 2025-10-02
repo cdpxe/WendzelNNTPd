@@ -1,0 +1,20 @@
+Tests: test-wendzelnntpadm.sh
+Restrictions: isolation-container needs-root
+Depends:
+ @,
+
+Tests: test-wendzelnntpd.sh
+Restrictions: isolation-container needs-root
+Depends:
+ expect,
+ telnet,
+ @,
+
+Tests: test-wendzelnntpd-with-mysql.sh
+Restrictions: isolation-container needs-root
+Depends:
+ expect,
+ mariadb-client,
+ mariadb-server,
+ telnet,
+ @,

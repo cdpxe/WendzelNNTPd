@@ -1,0 +1,5 @@
+wendzelnntpd (2.2.0~git20250929.dbedbb3-1) unstable; urgency=medium
+
+  * Initial release. Closes: #1116664
+
+ -- Ole Ludwig <mail@oleludwig.de>  Fri, 03 Oct 2025 00:55:34 +0200

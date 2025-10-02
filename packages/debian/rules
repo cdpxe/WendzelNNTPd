@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+execute_after_dh_auto_build-indep:
+ifeq (,$(findstring nodoc, $(DEB_BUILD_OPTIONS)))
+	cd docs && TZ=GMT make
+	rm docs/site/sitemap.xml.gz
+endif
+
+override_dh_auto_install:
+	dh_auto_install -- SQLITEINST=NO CREATE_CERTIFICATES=NO
+
+execute_after_dh_installdocs-indep:
+ifeq (,$(findstring nodoc, $(DEB_BUILD_OPTIONS)))
+	dh_mkdocs --indep
+endif
+
+execute_after_dh_clean:
+	rm -rf docs/site
