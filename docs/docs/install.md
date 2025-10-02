@@ -80,7 +80,7 @@ with the parameter `--targetdir`. You also need to adjust the paths in
 
 ### Automatic startup
 
-There is an init script and a systemd service unit in the directory scripts/startup for automatic
+There is an init script and a systemd service unit in the directory *scripts/startup* for automatic
 startup of `wendzelnntpd`. More information can be found in
 [Automating Start, Stop, and Restart](running.md#automating-start-stop-and-restart)
 
