@@ -72,7 +72,7 @@ The port number that the server will listen on.
 .PP
 \fBlisten\fR address
 .RS 4
-The ip address that the server will listen on.
+The IP address that the server will listen on.
 .RE
 .PP
 \fBenable-starttls\fR

@@ -100,7 +100,7 @@ wendzelnntpd=> commit; quit;
 
 WendzelNNTPd stores the message body and the unique message index over the
 filesystem normally. They can also be stored in the database instead
-(currently only supported for PostgreSQL).
+(currently **only supported for PostgreSQL**).
 `message-body-in-db` enables the storage of the message body in the database
 and `message-count-in-db` enables the storage of the unique message index
 in the database.
@@ -357,7 +357,7 @@ when you want to use encryption and mutual authentication over TLS.
 | enable-starttls         | Enables STARTTLS for this port (see [STARTTLS](#starttls))                                                                                                                                          |
 | enable-tls              | Enables TLS for this port (see [Dedicated TLS (SNNTP)](#dedicated-tls-snntp))                                                                                                                       |
 | hash-salt               | The salt to be used in conjunction with the passwords to calculate the cryptographic hashes (see [Changing the Default Salt for Password Hashing](#changing-the-default-salt-for-password-hashing)) |
-| listen                  | The ip address that the server will listen on (see [Network Settings](#network-settings))                                                                                                           |
+| listen                  | The IP address that the server will listen on (see [Network Settings](#network-settings))                                                                                                           |
 | max-size-of-postings    | The max. allowed size of a single posting (in bytes) (see [Setting the Allowed Size of Postings](#setting-the-allowed-size-of-postings))                                                            |
 | message-body-in-db      | Store the Message Body in the database (only possible with postgres) (see [Store message body and count in the database](#store-message-body-and-count-in-the-database))                            |
 | message-count-in-db     | Store/load the unique message index within the database system (only possible with postgres) (see [Store message body and count in the database](#store-message-body-and-count-in-the-database))    |
