@@ -103,6 +103,18 @@ There is an init script and a systemd service unit in the directory *scripts/sta
 startup of `wendzelnntpd`. More information can be found in
 [Automating Start, Stop, and Restart](running.md#automating-start-stop-and-restart)
 
+## Packages for Linux and BSD
+
+WendzelNNTPd is available as a package for some Linux and BSD distributions.
+You can use them to install WendzelNNTPd instead of installing it from source.
+Please consult the documentation of you distribution for further information about package installation.
+Here is a list of known packages:
+
+- *Slackware Linux*:
+    - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
+    - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (Installation via `installpkg (filename)`)
+- *NetBSD*: [WendzelNNTPd port at pkgsrc](https://pkgsrc.se/wip/wendzelnntpd)
+
 ## Docker image for Linux
 
 WendzelNNTPd is available as a [Docker image on Docker Hub](https://hub.docker.com/r/cdpxe/wendzelnntpd).
