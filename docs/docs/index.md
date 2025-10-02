@@ -58,6 +58,41 @@ used is not 100% compatible with the NNTP matching in commands like
 "XGTITLE". Another limitation is that WendzelNNTPd cannot share messages
 with other NNTP servers.
 
+### Supported RFCs, NNTP commands and capabilities
+
+The initial [RFC 977 (Network News Transfer Protocol)](https://datatracker.ietf.org/doc/html/rfc977)
+for NNTP is partially supported:
+
+- Supported commands: ARTICLE, BODY, HEAD, STAT, GROUP, HELP, LIST, POST, QUIT
+- Unsupported commands: IHAVE, LAST, NEWGROUPS, NEWNEWS, NEXT, SLAVE
+
+WendzelNNTPd also supports some commands from 
+[RFC 2980 (Common NNTP Extensions)](https://datatracker.ietf.org/doc/html/rfc2980):
+LIST NEWSGROUPS, LIST OVERVIEW.FMT, LISTGROUP, MODE READER, XGTITLE, XHDR, XOVER, DATE
+
+The newer NNTP standard [RFC 3977 (Network News Transfer Protocol)](https://datatracker.ietf.org/doc/html/rfc3977)
+supersedes RFC 977 and RFC 2980. WendzelNNTPd supports this standard partially.
+The new command CAPABILITIES is supported.
+The RFC contains some changes to the commands from RFC 977 and 2980.
+WendzelNNTPd does not support all changes.
+It is generally safer to assume that WendzelNNTPd behaves as described in RFC 977 and 2980.
+
+[RFC 4642 (Using Transport Layer Security (TLS) with NNTP)](https://datatracker.ietf.org/doc/html/rfc4642)
+is supported (including the new command STARTTLS).
+
+[RFC 4643 (Extension for authentication)](https://datatracker.ietf.org/doc/html/rfc4643) is partially supported.
+WendzelNNTPd supports authentication with username and password
+(the commands AUTHINFO USER and AUTHINFO PASS).
+Authentication with the Simple Authentication and Security Layer (SASL)
+is not supported (command AUTHINFO SASL).
+
+The RFCs
+[4644 (Extension for Streaming Feeds)](https://datatracker.ietf.org/doc/html/rfc4644),
+[6048 (Additions to LIST Command)](https://datatracker.ietf.org/doc/html/rfc6048)
+and [8054 (Extension for Compression)](https://datatracker.ietf.org/doc/html/rfc8054) are unsupported.
+
+Supported capabilities: AUTHINFO, LIST, MODE-READER, POST, STARTTLS, VERSION
+
 ## Contribute
 
 See the [*CONTRIBUTING* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/CONTRIBUTING.md).
