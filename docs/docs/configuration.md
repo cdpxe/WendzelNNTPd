@@ -343,4 +343,37 @@ having a completely separate salt for every password.[^2]
 Please look at section [Encrypted connections over TLS](configuration.md#encrypted-connections-over-tls)
 when you want to use encryption and mutual authentication over TLS.
 
+## Configuration options reference
+
+| Configuration option    | Description                                                                                                                                                                                         |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| database-engine         | Specify a database engine (see [Choosing a database engine](#choosing-a-database-engine))                                                                                                           |
+| database-password       | Password for authentication with the database (see [Choosing a database engine](#choosing-a-database-engine))                                                                                       |
+| database-port           | Your database port (see [Choosing a database engine](#choosing-a-database-engine))                                                                                                                  |
+| database-server         | Your database hostname (see [Choosing a database engine](#choosing-a-database-engine))                                                                                                              |
+| database-username       | Username for authentication with the database (see [Choosing a database engine](#choosing-a-database-engine))                                                                                       |
+| port                    | The port number that the server will listen on (see [Network Settings](#network-settings))                                                                                                          |
+| enable-anonym-mids      | Prevents that IPs or hostnames will become part of the message ID (see [Anonymized Message-ID](#anonymized-message-id))                                                                             |
+| enable-starttls         | Enables STARTTLS for this port (see [STARTTLS](#starttls))                                                                                                                                          |
+| enable-tls              | Enables TLS for this port (see [Dedicated TLS (SNNTP)](#dedicated-tls-snntp))                                                                                                                       |
+| hash-salt               | The salt to be used in conjunction with the passwords to calculate the cryptographic hashes (see [Changing the Default Salt for Password Hashing](#changing-the-default-salt-for-password-hashing)) |
+| listen                  | The ip address that the server will listen on (see [Network Settings](#network-settings))                                                                                                           |
+| max-size-of-postings    | The max. allowed size of a single posting (in bytes) (see [Setting the Allowed Size of Postings](#setting-the-allowed-size-of-postings))                                                            |
+| message-body-in-db      | Store the Message Body in the database (only possible with postgres) (see [Store message body and count in the database](#store-message-body-and-count-in-the-database))                            |
+| message-count-in-db     | Store/load the unique message index within the database system (only possible with postgres) (see [Store message body and count in the database](#store-message-body-and-count-in-the-database))    |
+| tls-ca-certificate      | Configure SSL CA certificate (see [Encrypted connections over TLS](#encrypted-connections-over-tls))                                                                                                |
+| tls-cipher-suites       | Configure TLS ciphers for TLSv1.3 (see [Encrypted connections over TLS](#encrypted-connections-over-tls))                                                                                           |
+| tls-ciphers             | Configure TLS ciphers for TLSv1.1 and TLSv1.2 (see [Encrypted connections over TLS](#encrypted-connections-over-tls))                                                                               |
+| tls-crl                 | Enables verification of client certificates against CRLs for mTLS (see [mTLS and CRLs](#mutual-authentication-mtls-and-certificate-revocation-lists-crls))                                          |
+| tls-crl-file            | Path to the certificate revocation list (see [mTLS and CRLs](#mutual-authentication-mtls-and-certificate-revocation-lists-crls))                                                                    |
+| tls-is-mandatory        | Make TLS mandatory for all connectors (see [Mandatory TLS](#mandatory-tls))                                                                                                                         |
+| tls-server-certificate  | Configure SSL server certificate (see [Encrypted connections over TLS](#encrypted-connections-over-tls))                                                                                            |
+| tls-server-key          | Configure SSL private key (see [Encrypted connections over TLS](#encrypted-connections-over-tls))                                                                                                   |
+| tls-verify-client       | Enables mutual authentication over TLS (see [mTLS and CRLs](#mutual-authentication-mtls-and-certificate-revocation-lists-crls))                                                                     |
+| tls-verify-client-depth | Depth of the validation of the certificate chain (see [mTLS and CRLs](#mutual-authentication-mtls-and-certificate-revocation-lists-crls))                                                           |
+| tls-versions            | Configure allowed TLS versions (see [Encrypted connections over TLS](#encrypted-connections-over-tls)                                                                                               |
+| use-authentication      | Activate authentication (see [Authentication and Access Control Lists](#authentication-and-access-control-lists-acl))                                                                               |
+| use-acl                 | Activate access control lists (ACL) (see [Authentication and Access Control Lists](#authentication-and-access-control-lists-acl))                                                                   |
+| verbose-mode            | Write additional log messages and write logs to STDERR (see [Verbose Mode](#verbose-mode))                                                                                                          |
+
 [^2]: Patches are appreciated!
