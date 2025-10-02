@@ -96,6 +96,22 @@ wendzelnntpd=> \i database/postgres_db_struct.sql
 wendzelnntpd=> commit; quit;
 ```
 
+### Store message body and count in the database
+
+WendzelNNTPd stores the message body and the unique message index over the
+filesystem normally. They can also be stored in the database instead
+(currently only supported for PostgreSQL).
+`message-body-in-db` enables the storage of the message body in the database
+and `message-count-in-db` enables the storage of the unique message index
+in the database.
+Both settings should not be changed after initial utilization of the server
+as old message bodies would not be locatable anymore and the message counter
+would be corrupted.
+```ini
+message-body-in-db
+message-count-in-db
+```
+
 ## Network Settings
 
 For each type of IP address (IPv4 and/or IPv6) you have to define an own
