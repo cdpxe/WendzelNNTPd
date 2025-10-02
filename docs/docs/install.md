@@ -27,13 +27,32 @@ $ ./configure
 support*, then run `./configure --disable-mysql` or `./configure --disable-sqlite`,
 respectively.
 
-**Please Note:** *For FreeBSD/OpenBSD/NetBSD/\*BSD: There is no MySQL
-support; you need to use SQLite (i.e., run
-`./configure --disable-mysql`). Run `configure` as well as `make` in the
+**Please Note:** Run `configure` as well as `make` in the
 `bash` shell (under some BSDs you first need to install `bash`).*
 
 **Please Note:** *If you wish to compile WITHOUT TLS support*, then run
 `./configure --disable-tls`.
+
+##### Dependencies
+
+WendzelNNTPd depends on some programs and libraries.
+`./configure` will inform you about missing dependencies.
+Here is a list of packages for some distributions which provide the dependencies.
+The list may omit some packages which are already installed by default.
+Dependencies for the experimental PostgreSQL support are in brackets:
+
+- Debian/Ubuntu: gcc flex bison sqlite3 libsqlite3-dev libmariadb-dev-compat ca-certificates
+  libmariadb-dev libmhash-dev make openssl libssl-dev (libpq-dev)
+- Fedora: gcc flex bison sqlite sqlite-devel mariadb-connector-c-devel ca-certificates mhash-devel make openssl
+  openssl-devel (libpq-devel)
+- openSUSE Leap: gcc flex bison sqlite3 sqlite3-devel libmariadb-devel ca-certificates mhash-devel make openssl
+  libopenssl-devel (postgresql-devel)
+- Arch Linux: gcc flex bison sqlite mariadb-libs ca-certificates mhash make openssl (postgresql-libs)
+- FreeBSD 14: bash sqlite3 bison mhash mariadb114-client (postgresql17-client)
+- OpenBSD: bash bison mhash mariadb-client (postgresql-client)
+- NetBSD 10: bash bison mhash mariadb-client (postgresql17-client)
+
+##### Compiling WendzelNNTPd
 
 After `configure` has finished, run `make`:
 ```console
@@ -80,9 +99,21 @@ with the parameter `--targetdir`. You also need to adjust the paths in
 
 ### Automatic startup
 
-There is an init script and a systemd service unit in the directory scripts/startup for automatic
+There is an init script and a systemd service unit in the directory *scripts/startup* for automatic
 startup of `wendzelnntpd`. More information can be found in
 [Automating Start, Stop, and Restart](running.md#automating-start-stop-and-restart)
+
+## Packages for Linux and BSD
+
+WendzelNNTPd is available as a package for some Linux and BSD distributions.
+You can use them to install WendzelNNTPd instead of installing it from source.
+Please consult the documentation of your distribution for further information about package installation.
+Here is a list of known packages:
+
+- *Slackware Linux*:
+    - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
+    - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (Installation via `installpkg (filename)`)
+- *NetBSD*: [WendzelNNTPd port at pkgsrc](https://pkgsrc.se/wip/wendzelnntpd)
 
 ## Docker image for Linux
 
@@ -183,6 +214,38 @@ WendzelNNTPd on a Mac.
 ## Windows
 
 Not supported.
+
+## Installed files
+
+This documentation assumes that you have installed WendzelNNTPd with
+default paths to `/usr/local`. The installation prefix as well as the
+path for the subdirectories like `sbin`  or `share/man/man8` can be changed
+when calling `./configure` or `make install`. Please consult 
+`./configure --help` for a list of available options.
+Here is an overview of the installed files as well as files which
+are created during runtime:
+
+[The spacing for the first column in the table is intentional to make the column big enough for the paths]: #
+[The columns would overlap in the PDF output without it]: #
+
+| Path                                                                                                                                          | Description                                                                                            |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| /usr/local/etc/wendzelnntpd/wendzelnntpd.conf                                                                                                 | [Cofiguration file](configuration.md#basic-configuration)                                              |
+| /usr/local/etc/wendzelnntpd/ssl/*                                                                                                             | SSL certificates for [encrypted connections over TLS](configuration.md#encrypted-connections-over-tls) |
+| /usr/local/sbin/create_certificate                                                                                                            | Script for [generating SSL certificates](#generating-ssl-certificates)                                 |
+| /usr/local/sbin/wendzelnntpadm                                                                                                                | [Administration tool](running.md#administration-tool-wendzelnntpadm)                                   |
+| /usr/local/sbin/wendzelnntpd                                                                                                                  | The Usenet server                                                                                      |
+| /usr/local/share/doc/wendzelnntpd/*                                                                                                           | Various documentation files                                                                            |
+| /usr/local/share/man/man5/*                                                                                                                   | Man pages for configuration files                                                                      |
+| /usr/local/share/man/man8/*                                                                                                                   | Man pages for commands                                                                                 |
+| /usr/local/share/wendzelnntpd/mysql_db_struct.sql                                                                                             | SQL file to [create the database schema of the MySQL database](configuration.md#mysql)                 |
+| /usr/local/share/wendzelnntpd/openssl.cnf                                                                                                     | openssl config for create_certificate                                                                  |
+| /usr/local/share/wendzelnntpd/usenet.db_struct                                                                                                | SQL file to [create the database schema of the SQLite database](configuration.md#sqlite)               |
+| /var/log/wendzelnntpd                                                                                                                         | Logfile                                                                                                |
+| /var/spool/news/wendzelnntpd/cdp*                                                                                                             | Message bodies of the postings                                                                         |
+| /var/spool/news/wendzelnntpd/nextmsgid                                                                                                        | Next unique message id                                                                                 |
+| /var/spool/news/wendzelnntpd/usenet.db                                                                                                        | SQLite database                                                                                        |
+
 
 [^1]: On some \*nix-like operating systems you need to first run
     `gzip -d wendzelnntpd-VERSION.tgz` and then 

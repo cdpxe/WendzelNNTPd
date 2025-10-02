@@ -23,6 +23,7 @@ datadir=@datadir@
 package_datadir=$(datadir)/${PACKAGE_TARNAME}
 docdir=@docdir@
 mandir=@mandir@
+man5dir=$(mandir)/man5
 man8dir=$(mandir)/man8
 
 CC=@PTHREAD_CC@
@@ -63,9 +64,10 @@ DEBUG=$(GDBON) -DDEBUG -DXXDEBUG
 
 # The list of documentation files we wish to install
 DOCFILES_TO_INST=AUTHORS CHANGELOG HISTORY README.md INSTALL LICENSE
-MANPAGES=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
+MANPAGES_5=docs/wendzelnntpd.conf.5
+MANPAGES_8=docs/wendzelnntpd.8 docs/wendzelnntpadm.8 docs/create_certificate.8
 
-all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script scripts/startup/wendzelnntpd.service create_certificate docs/create_certificate.8 wendzelnntpd.conf
+all : wendzelnntpadm main.o log.o database.o cdpstrings.o server.o lexyacc charstack.o libfunc.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) $(OPENSSLOBJ) globals.o scripts/startup/init.d_script scripts/startup/wendzelnntpd.service create_certificate docs/create_certificate.8 docs/wendzelnntpd.conf.5 wendzelnntpd.conf
 	expr `cat build` \+ 1 >build
 	$(CC) $(DEBUG) $(CFLAGS) $(LDFLAGS) -o bin/wendzelnntpd main.o log.o server.o lex.yy.o config.tab.o database.o globals.o cdpstrings.o acl.o db_abstraction.o hash.o $(SQLITEOBJ) $(MYSQLOBJ) $(POSTGRESOBJ) charstack.o libfunc.o $(OPENSSLOBJ) $(LIBS)
 	#strip bin/wendzelnntpd
@@ -149,6 +151,9 @@ create_certificate : Makefile $(srcdir)/create_certificate_raw
 	sed -e 's|@confdir[@]|$(confdir)|g' -e 's|@package_datadir[@]|$(package_datadir)|g' $@_raw > $@
 	chmod +x create_certificate
 
+docs/wendzelnntpd.conf.5 : Makefile $(srcdir)/docs/wendzelnntpd.conf.5_raw
+	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
+
 docs/create_certificate.8 : Makefile $(srcdir)/docs/create_certificate.8_raw
 	sed -e 's|@confdir[@]|$(confdir)|g' $@_raw > $@
 
@@ -165,6 +170,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 	for dir in `cd docs/ && find site/ -type d`; do \
 		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
 	done
+	if [ ! -d $(DESTDIR)$(man5dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man5dir); fi
 	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# nextmsgid and database/usenet.db are placed here:
 	# og-rwx since the passwords are stored in the database too!
@@ -184,7 +190,8 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 		$(INSTALL_DATA) docs/$$file $(DESTDIR)$(docdir)/$$file; \
 	done
 	# manpages
-	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
+	$(INSTALL_DATA) $(MANPAGES_5) $(DESTDIR)$(man5dir)
+	$(INSTALL_DATA) $(MANPAGES_8) $(DESTDIR)$(man8dir)
 	# config
 	@if [ -f $(DESTDIR)$(confdir)/wendzelnntpd.conf ]; then cp $(DESTDIR)$(confdir)/wendzelnntpd.conf $(DESTDIR)$(confdir)/wendzelnntpd.conf.bkp; chmod 0644 $(DESTDIR)$(confdir)/wendzelnntpd.conf.bkp; echo "***Your old wendzelnntpd.conf was backuped!***"; fi
 	$(INSTALL_DATA) $(CONFFILE) $(DESTDIR)$(confdir)/wendzelnntpd.conf
@@ -210,6 +217,13 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	@echo "*** Please only upgrade your WendzelNNTPd if your existing installation is WendzelNNTPd version 2.0.0 or newer. This script replaces only binaries and documentation files. Your databases and configuration files remain untouched. Press RETURN to perform an upgrade or press CTRL+C to abort. ***"
 	@if [ ! -f $(DESTDIR)$(confdir)/wendzelnntpd.conf ]; then echo "The format and location of the wendzelnntpd.conf changed in version 2.2.0. Please move your config file from $(DESTDIR)$(sysconfdir)/wendzelnntpd.conf to $(DESTDIR)$(confdir)/wendzelnntpd.conf and adapt the configuration. Please consult the manual in docs/ for further information about the new config format."; fi
 	@read uselessinput
+	# directories
+	if [ ! -d $(DESTDIR)$(package_datadir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(package_datadir); fi
+	for dir in `cd docs/ && find site/ -type d`; do \
+		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
+	done
+	if [ ! -d $(DESTDIR)$(man5dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man5dir); fi
+	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
 	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
@@ -220,15 +234,13 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	# documentation
 	$(INSTALL_DATA) $(DOCFILES_TO_INST) $(DESTDIR)$(docdir)/
 	-$(INSTALL_DATA) docs/docs.pdf $(DESTDIR)$(docdir)/
-	for dir in `cd docs/ && find site/ -type d`; do \
-		if [ ! -d $(DESTDIR)$(docdir)/$$dir ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(docdir)/$$dir; fi \
-	done
 	-for file in `cd docs/ && find site/ -type f`; do \
 		$(INSTALL_DATA) docs/$$file $(DESTDIR)$(docdir)/$$file; \
 	done
 	-rm -rf $(DESTDIR)$(docdir)/docs
 	# manpages
-	$(INSTALL_DATA) $(MANPAGES) $(DESTDIR)$(man8dir)
+	$(INSTALL_DATA) $(MANPAGES_5) $(DESTDIR)$(man5dir)
+	$(INSTALL_DATA) $(MANPAGES_8) $(DESTDIR)$(man8dir)
 	# remove files from old versions
 	-rm -rf $(DESTDIR)$(docdir)/usenet.db_struct
 	-rm -rf $(DESTDIR)$(docdir)/mysql_db_struct.sql
@@ -250,7 +262,10 @@ uninstall :
 	-rm -f $(DESTDIR)$(docdir)/docs.pdf
 	-rm -rf $(DESTDIR)$(docdir)/site/
 	# manpages
-	-cd $(DESTDIR)$(man8dir) && for f in $(MANPAGES); do \
+	-cd $(DESTDIR)$(man5dir) && for f in $(MANPAGES_5); do \
+    	rm -f `basename $$f`; \
+	done
+	-cd $(DESTDIR)$(man8dir) && for f in $(MANPAGES_8); do \
     	rm -f `basename $$f`; \
 	done
 	# directories
@@ -258,6 +273,7 @@ uninstall :
 	-rmdir $(DESTDIR)$(sbindir)
 	-rmdir $(DESTDIR)$(package_datadir)
 	-rmdir $(DESTDIR)$(docdir)
+	-rmdir $(DESTDIR)$(man5dir)
 	-rmdir $(DESTDIR)$(man8dir)
 	-rmdir $(DESTDIR)$(mandir)
 	-rmdir $(DESTDIR)$(UDBDIR)
@@ -283,19 +299,29 @@ clean :
 	cd docs && $(MAKE) clean
 	rm -f $(srcdir)/scripts/startup/init.d_script
 	rm -f $(srcdir)/scripts/startup/wendzelnntpd.service
+	rm -f $(srcdir)/docs/wendzelnntpd.conf.5
 	rm -f $(srcdir)/docs/create_certificate.8
 	rm -f $(srcdir)/create_certificate
 	rm -f $(srcdir)/wendzelnntpd.conf
+	rm -f $(srcdir)/test.man
 
 print_version :
 	@echo "$(PACKAGE_VERSION) $(RELEASENAME)"
 
 man_wendzelnntpd :
-	groff -Tascii -man wendzelnntpd.8  > test.man
+	groff -Tascii -man docs/wendzelnntpd.8  > test.man
 	man -l test.man
 
 man_wendzelnntpadm :
-	groff -Tascii -man wendzelnntpadm.8  > test.man
+	groff -Tascii -man docs/wendzelnntpadm.8  > test.man
+	man -l test.man
+
+man_wendzelnntpd.conf : docs/wendzelnntpd.conf.5
+	groff -Tascii -man docs/wendzelnntpd.conf.5  > test.man
+	man -l test.man
+
+man_create_certificate : docs/create_certificate.8
+	groff -Tascii -man docs/create_certificate.8  > test.man
 	man -l test.man
 
 docker-build:

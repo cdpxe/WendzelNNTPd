@@ -18,6 +18,13 @@
 \usepackage{nomencl}
 \usepackage[a4paper,left=3.5cm,right=1.5cm,bottom=3cm,top=3.5cm]{geometry}
 
+\usepackage{longtable,booktabs,array}
+\usepackage{multirow}
+\usepackage{calc} % for calculating minipage widths
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
 \usepackage{fancyvrb}
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 \usepackage{xcolor}

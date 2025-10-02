@@ -48,7 +48,7 @@ Read my [blog posting on WendzelNNTPd](http://www.wendzel.de/misc/2021/01/04/new
 * It is open + free software! :)
 * v.2.2: TLS server authentication and data encryption
 * v.2.2: Supports multiple connectors so that multiple socket configurations can be used simultaneously
-* v.2.2.: Supports NNTPS ans SNNTP with TLS 1.0-1.3
+* v.2.2.: Supports NNTPS and SNNTP with TLS 1.0-1.3
 * v.2.2.: Support for client certificate verification (mTLS) and CRL checks
 
 #### Features Under Development/Call for Testing
