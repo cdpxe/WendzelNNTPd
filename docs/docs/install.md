@@ -107,7 +107,7 @@ startup of `wendzelnntpd`. More information can be found in
 
 WendzelNNTPd is available as a package for some Linux and BSD distributions.
 You can use them to install WendzelNNTPd instead of installing it from source.
-Please consult the documentation of you distribution for further information about package installation.
+Please consult the documentation of your distribution for further information about package installation.
 Here is a list of known packages:
 
 - *Slackware Linux*:
