@@ -35,6 +35,27 @@ support; you need to use SQLite (i.e., run
 **Please Note:** *If you wish to compile WITHOUT TLS support*, then run
 `./configure --disable-tls`.
 
+##### Dependencies
+
+WendzelNNTPd depends on some programs and libraries.
+`./configure` will inform you about missing dependencies.
+Here is a list of packages for some distributions which provide the dependencies.
+The list may omit some packages which are already installed by default.
+Dependencies for the experimental PostgreSQL support are in brackets:
+
+- Debian/Ubuntu: gcc flex bison sqlite3 libsqlite3-dev libmariadb-dev-compat ca-certificates
+  libmariadb-dev libmhash-dev make openssl libssl-dev (libpq-dev)
+- Fedora: gcc flex bison sqlite sqlite-devel mariadb-connector-c-devel ca-certificates mhash-devel make openssl
+  openssl-devel (libpq-devel)
+- openSUSE Leap: gcc flex bison sqlite3 sqlite3-devel libmariadb-devel ca-certificates mhash-devel make openssl
+  libopenssl-devel (postgresql-devel)
+- Arch Linux: gcc flex bison sqlite mariadb-libs ca-certificates mhash make openssl (postgresql-libs)
+- FreeBSD 14: bash sqlite3 bison mhash mariadb114-client (postgresql17-client)
+- OpenBSD: bash bison mhash mariadb-client (postgresql-client)
+- NetBSD 10: bash bison mhash mariadb-client (postgresql17-client)
+
+##### Compiling WendzelNNTPd
+
 After `configure` has finished, run `make`:
 ```console
 $ make
