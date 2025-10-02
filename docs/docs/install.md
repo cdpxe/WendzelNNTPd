@@ -27,9 +27,7 @@ $ ./configure
 support*, then run `./configure --disable-mysql` or `./configure --disable-sqlite`,
 respectively.
 
-**Please Note:** *For FreeBSD/OpenBSD/NetBSD/\*BSD: There is no MySQL
-support; you need to use SQLite (i.e., run
-`./configure --disable-mysql`). Run `configure` as well as `make` in the
+**Please Note:** Run `configure` as well as `make` in the
 `bash` shell (under some BSDs you first need to install `bash`).*
 
 **Please Note:** *If you wish to compile WITHOUT TLS support*, then run
