@@ -17,7 +17,9 @@ database-server 127.0.0.1
 ; The database connection port (not used in case of sqlite3).
 ; Comment out to use the default port of your database engine.
 database-port 3306
-; Server authentication (not required for sqlite3)
+; Server authentication (not required for sqlite3). Make sure your
+; configuration file is not readable by other users if you store
+; username/password here.
 database-username myuser
 database-password mypass
 

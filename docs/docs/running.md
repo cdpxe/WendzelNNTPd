@@ -465,6 +465,11 @@ default NNTP port (119) since all ports up to 1023 are usually[^3]
 reserved. This means that the server should use a port
 greater than or equal to 1024 if it is started by a non-root user.
 
+In case you use MySQL or Postgres databases with authentication, your
+*wendzelnntpd.conf* contains a username and password to access the
+database. Make sure that only the server's user has read (and write)
+access to the configuration file.
+
 Please also note that WendzelNNTPd can be easily identified due to its
 welcoming 'banner' (desired code '200' message of NNTP). Tools such as
 `nmap` provide rules to identify WendzelNNTPd and its version this way.
