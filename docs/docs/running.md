@@ -182,14 +182,14 @@ This command always prints the (hashed) password of the users:
 $ wendzelnntpadm listusers
 Username, Password
 ------------------
-developer1, wegerhgrhtrthjtzj
-developer2, erghnrehhnht
-manager1, wegergergrhth
-manager2, thnthnrothnht
-swendzel, lalalegergreg
-swendzel2, 94j5z5jh5th
-swendzel3, lalalalala
-swendzel4, wegwegwegwegweg
+developer1, 8d67111f9e4fd067cd5e420267c87ea07cbedffa0a21bdcf296de17c7745ae22
+developer2, 162d3865cbc7cd028a782c9cf48e287bbc7cdd6206260e0110c76560d3c24da0
+manager1, 6b33743ed8443f561dce6bab8740a36d2855b4f14a626bdc232693f10b69d635
+manager2, 9115cefd91e130dfe0e7fb66dc4d5f42c19cfc5ff8c19b680871116cec0476d7
+swendzel, 66a86c99f02cc2f7b3a3c40a6a1549eeaeaa92b2e5e38b2554446e18069268d0
+swendzel2, 97aefc76b7d35254d51c13a10cd9f059d9ff343042448d9449f9d225c1ccc5f4
+swendzel3, 64b762f32fba01816dec50f834a2a97dd897ef20fbe33a1840dfdf4484e344e9
+swendzel4, ea9c61de864bda5bf75ec3c2912a310918537a40cdb9aef075a536e3d149cd16
 done.
 ```
 
