@@ -1,7 +1,7 @@
 Source: wendzelnntpd
 Section: news
 Priority: optional
-Maintainer: Ole Ludwig <mail@oleludwig.de>
+Maintainer: Steffen Wendzel <steffen@wendzel.de>
 Build-Depends:
  autoconf,
  bison,
@@ -23,8 +23,8 @@ Build-Depends-Indep:
 Standards-Version: 4.7.2
 Homepage: https://github.com/cdpxe/WendzelNNTPd
 Rules-Requires-Root: no
-Vcs-Git: https://salsa.debian.org/oludwig/wendzelnntpd.git
-Vcs-Browser: https://salsa.debian.org/oludwig/wendzelnntpd
+Vcs-Git: https://github.com/cdpxe/WendzelNNTPd.git
+Vcs-Browser: https://github.com/cdpxe/WendzelNNTPd
 
 Package: wendzelnntpd
 Architecture: any
