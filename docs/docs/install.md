@@ -215,6 +215,38 @@ WendzelNNTPd on a Mac.
 
 Not supported.
 
+## Installed files
+
+This documentation assumes that you have installed WendzelNNTPd with
+default paths to `/usr/local`. The installation prefix as well as the
+path for the subdirectories like `sbin`  or `share/man/man8` can be changed
+when calling `./configure` or `make install`. Please consult 
+`./configure --help` for a list of available options.
+Here is an overview of the installed files as well as files which
+are created during runtime:
+
+[The spacing for the first column in the table is intentional to make the column big enough for the paths]: #
+[The columns would overlap in the PDF output without it]: #
+
+| Path                                                                                                                                          | Description                                                                                            |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| /usr/local/etc/wendzelnntpd/wendzelnntpd.conf                                                                                                 | [Cofiguration file](configuration.md#basic-configuration)                                              |
+| /usr/local/etc/wendzelnntpd/ssl/*                                                                                                             | SSL certificates for [encrypted connections over TLS](configuration.md#encrypted-connections-over-tls) |
+| /usr/local/sbin/create_certificate                                                                                                            | Script for [generating SSL certificates](#generating-ssl-certificates)                                 |
+| /usr/local/sbin/wendzelnntpadm                                                                                                                | [Administration tool](running.md#administration-tool-wendzelnntpadm)                                   |
+| /usr/local/sbin/wendzelnntpd                                                                                                                  | The Usenet server                                                                                      |
+| /usr/local/share/doc/wendzelnntpd/*                                                                                                           | Various documentation files                                                                            |
+| /usr/local/share/man/man5/*                                                                                                                   | Man pages for configuration files                                                                      |
+| /usr/local/share/man/man8/*                                                                                                                   | Man pages for commands                                                                                 |
+| /usr/local/share/wendzelnntpd/mysql_db_struct.sql                                                                                             | SQL file to [create the database schema of the MySQL database](configuration.md#mysql)                 |
+| /usr/local/share/wendzelnntpd/openssl.cnf                                                                                                     | openssl config for create_certificate                                                                  |
+| /usr/local/share/wendzelnntpd/usenet.db_struct                                                                                                | SQL file to [create the database schema of the SQLite database](configuration.md#sqlite)               |
+| /var/log/wendzelnntpd                                                                                                                         | Logfile                                                                                                |
+| /var/spool/news/wendzelnntpd/cdp*                                                                                                             | Message bodies of the postings                                                                         |
+| /var/spool/news/wendzelnntpd/nextmsgid                                                                                                        | Next unique message id                                                                                 |
+| /var/spool/news/wendzelnntpd/usenet.db                                                                                                        | SQLite database                                                                                        |
+
+
 [^1]: On some \*nix-like operating systems you need to first run
     `gzip -d wendzelnntpd-VERSION.tgz` and then 
     `tar -xf wendzelnntpd-VERSION.tar` instead of letting `tar` do the whole
