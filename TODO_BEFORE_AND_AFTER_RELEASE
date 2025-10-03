@@ -1,0 +1,17 @@
+Before release:
+  -> Test it with:
+	- sylpheed
+	- outlook express (if available)
+	- slrn
+	- mozilla
+	- knode
+	- cone (@deavmi can do so)
+  - Set the new version in configure.ac and packages/debian/changelog
+
+After release:
+  - Download the build artifacts from GitHub Actions from the workflow "Build debian packages"
+    and upload the files wendzelnntpd_<version>.orig.tar.gz, wendzelnntpd_<version>-1.dsc
+    and wendzelnntpd_<version>-1.debian.tar.gz to the repository on https://build.opensuse.org
+    so that the Open Build Service builds the Debian packages and repository for the new version.
+  - Change the version to a new prerelease version and set a new releasename in configure.ac
+  - Create a new changelog entry in package/debian/changelog by calling `make add_new_version_to_debian_changelog`
