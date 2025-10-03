@@ -308,6 +308,19 @@ clean :
 print_version :
 	@echo "$(PACKAGE_VERSION) $(RELEASENAME)"
 
+add_new_version_to_debian_changelog :
+	echo -n "wendzelnntpd (" > packages/debian/changelog.tmp
+	echo -n "$(PACKAGE_VERSION)" | sed 's/-/~/' >> packages/debian/changelog.tmp
+	echo "-1) unstable; urgency=medium" >> packages/debian/changelog.tmp
+	echo "" >> packages/debian/changelog.tmp
+	echo "  * New version" >> packages/debian/changelog.tmp
+	echo "" >> packages/debian/changelog.tmp
+	echo -n " -- Steffen Wendzel <steffen@wendzel.de>  " >> packages/debian/changelog.tmp
+	date -R >> packages/debian/changelog.tmp
+	echo "" >> packages/debian/changelog.tmp
+	cat packages/debian/changelog >> packages/debian/changelog.tmp
+	mv packages/debian/changelog.tmp packages/debian/changelog
+
 man_wendzelnntpd :
 	groff -Tascii -man docs/wendzelnntpd.8  > test.man
 	man -l test.man

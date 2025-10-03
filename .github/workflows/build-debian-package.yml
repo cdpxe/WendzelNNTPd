@@ -1,0 +1,42 @@
+name: Build debian packages
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+
+jobs:
+  build-debian-packages:
+    runs-on: ubuntu-latest
+    name: Build debian packages
+    container: debian:unstable
+    steps:
+      - name: Install git and devscripts
+        run: apt-get update && apt-get install -y git devscripts
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install devscripts
+        run: apt-get update && apt-get install -y devscripts
+      - name: Prepare build-area
+        run: |
+          mkdir build-area
+          cd packages/
+          # get version from changelog without debian revision
+          VERSION=$(dpkg-parsechangelog --show-field Version | sed 's/-[^-]*$//')
+          cd ..
+          # create source tarball
+          git config --global --add safe.directory .
+          git archive --format=tar.gz HEAD -o build-area/wendzelnntpd_${VERSION}.orig.tar.gz
+          cd build-area/
+          mkdir source
+          tar -xvzf wendzelnntpd_${VERSION}.orig.tar.gz -C source
+          cd source
+          cp -r packages/debian/ .
+      - name: Install build dependencies
+        run: cd build-area/source/ && apt-get build-dep -y .
+      - name: Build package
+        run: cd build-area/source/ && debuild -us -uc --lintian-opts --suppress-tags initial-upload-closes-no-bugs
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: build-area/wendzelnntpd*

@@ -1,0 +1,6 @@
+/var/log/wendzelnntpd {
+    rotate 12
+    weekly
+    compress
+    missingok
+}

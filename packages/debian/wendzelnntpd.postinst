@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+    # create ssl certificates
+    if [ ! -e /etc/wendzelnntpd/ssl/server.crt ] \
+        || [ ! -e /etc/wendzelnntpd/ssl/server.key ] \
+        || [ ! -e /etc/wendzelnntpd/ssl/ca.crt ]; then
+        create_certificate --environment local
+    fi
+
+    # initialize sqlite database
+    mkdir -p /var/spool/news/wendzelnntpd/
+    if [ ! -e /var/spool/news/wendzelnntpd/usenet.db ]; then
+        cat /usr/share/wendzelnntpd/usenet.db_struct | sqlite3 /var/spool/news/wendzelnntpd/usenet.db
+        wendzelnntpadm addgroup alt.wendzelnntpd.test y
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0
