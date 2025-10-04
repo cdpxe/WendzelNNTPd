@@ -6,6 +6,7 @@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 PACKAGE_TARNAME=@PACKAGE_TARNAME@
 PACKAGE_VERSION=@PACKAGE_VERSION@
@@ -178,7 +179,7 @@ install : bin/wendzelnntpd bin/wendzelnntpadm create_certificate
 
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
+	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_SCRIPT) create_certificate $(DESTDIR)$(sbindir)/; fi
 	# data files
 	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
 	$(INSTALL_DATA) database/usenet.db_struct $(DESTDIR)$(package_datadir)/
@@ -226,7 +227,7 @@ upgrade : bin/wendzelnntpd bin/wendzelnntpadm
 	if [ ! -d $(DESTDIR)$(man8dir) ]; then $(INSTALL) -d -m 0755 $(DESTDIR)$(man8dir); fi
 	# binaries
 	$(INSTALL_PROGRAM) bin/wendzelnntpd bin/wendzelnntpadm $(DESTDIR)$(sbindir)/
-	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_PROGRAM) create_certificate $(DESTDIR)$(sbindir)/; fi
+	if [ "$(TLSINST)" != "NO" ]; then $(INSTALL_SCRIPT) create_certificate $(DESTDIR)$(sbindir)/; fi
 	# data files
 	$(INSTALL_DATA) openssl.cnf $(DESTDIR)$(package_datadir)/
 	$(INSTALL_DATA) database/usenet.db_struct $(DESTDIR)$(package_datadir)/
