@@ -19,7 +19,7 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
   - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (v. 2.1.3 -- tgz)
      - Installation via `installpkg (filename)`
 - *NetBSD* (v. 2.2.0):
-  - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
+  - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.2.0](https://pkgsrc.se/wip/wendzelnntpd)
 - *Debian* und *Ubuntu* (v. 2.2.0):
   - [WendzelNNTPd at openSUSE Build Service](https://software.opensuse.org/download.html?project=home%3Acdpxe%3Awendzelnntpd&package=wendzelnntpd)
     (provides the packages wendzelnntpd and wendzelnntpd-doc, the doc package contains the documentation in HTML and PDF format)
