@@ -18,7 +18,7 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
   - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
   - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (v. 2.1.3 -- tgz)
      - Installation via `installpkg (filename)`
-- *NetBSD* (v. 2.1.3):
+- *NetBSD* (v. 2.2.0):
   - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
 - *Debian* und *Ubuntu* (v. 2.2.0):
   - [WendzelNNTPd at openSUSE Build Service](https://software.opensuse.org/download.html?project=home%3Acdpxe%3Awendzelnntpd&package=wendzelnntpd)
