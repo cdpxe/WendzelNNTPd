@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "purge" ]; then
+    # remove ssl certificates
+    if [ -e /etc/wendzelnntpd/ssl/ ]; then
+        rm -f /etc/wendzelnntpd/ssl/ca-key.pem \
+            /etc/wendzelnntpd/ssl/ca.crt \
+            /etc/wendzelnntpd/ssl/ca.srl \
+            /etc/wendzelnntpd/ssl/server.crt \
+            /etc/wendzelnntpd/ssl/server.csr \
+            /etc/wendzelnntpd/ssl/server.key
+        rmdir --ignore-fail-on-non-empty /etc/wendzelnntpd/ssl/
+    fi
+
+    # remove database and posting
+    rm -rf /var/spool/news/wendzelnntpd/
+
+    # remove logfile
+    rm -rf /var/log/wendzelnntpd
+fi
+
+#DEBHELPER#
+
+exit 0

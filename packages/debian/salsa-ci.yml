@@ -1,0 +1,10 @@
+---
+include:
+  - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/recipes/debian.yml
+
+variables:
+  # Override the BUILD_DIR because the default conflicts with the file `build` from WendzelNNTPd
+  BUILD_DIR: $CI_PROJECT_DIR/build-dir/
+
+reprotest:
+  allow_failure: true
