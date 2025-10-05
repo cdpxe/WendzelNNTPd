@@ -12,6 +12,8 @@ Major Contributors (in chronological order):
      - transforming the LaTeX docs into markdown + making it web-based
      - extended Docker support for production images
      - systemd service
+     - additional packages (especially Debian and integration into
+       openSUSE build service)
      - revised/extended the set of manpages
      - ... and several more enhancements, cf. CHANGELOG!
   - Sven Liebert (FernUniversität in Hagen, 2024):
