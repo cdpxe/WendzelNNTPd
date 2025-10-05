@@ -6,24 +6,24 @@ This server is tailored for retro computing people as well as small workgroups, 
 
 ## Download
 
-##### Version 2.2-alpha
+##### Current Development Version
 
-The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) contains the latest version (2.2 alpha) that includes TLS support and several more enhancements.
+The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) contains the latest version (2.2.0-alpha) that includes TLS support and several more enhancements.
 
-##### Source (version 2.1.3)
+##### Stable Source (version 2.1.3)
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
 
 ##### Packages & Executables
-- *Slackware Linux*: 
+- *Slackware Linux* (v. 2.1.2/2.1.3): 
   - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
   - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (v. 2.1.3 -- tgz)
      - Installation via `installpkg (filename)`
-- *NetBSD*:
+- *NetBSD* (v. 2.1.3):
   - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
-- *Debian* und *Ubuntu*:
+- *Debian* und *Ubuntu* (v. 2.2.0):
   - [WendzelNNTPd at openSUSE Build Service](https://software.opensuse.org/download.html?project=home%3Acdpxe%3Awendzelnntpd&package=wendzelnntpd)
     (provides the packages wendzelnntpd and wendzelnntpd-doc, the doc package contains the documentation in HTML and PDF format)
-- *Docker*:
+- *Docker* (v. 2.2.0):
   - [cdpxe/wendzelnntpd](https://hub.docker.com/r/cdpxe/wendzelnntpd)
 - *Windows*:
   - Legacy WendzelNNTPd 1.4.6 branch: [WendzelNNTPd-1.4.6-Setup.exe](https://sourceforge.net/projects/wendzelnntpd/files/wendzelnntpd/1.4.6/)
