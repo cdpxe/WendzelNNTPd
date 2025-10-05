@@ -114,6 +114,9 @@ Here is a list of known packages:
     - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
     - Slackware64-current: [Slackware package](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/slackware64-current-package/) (Installation via `installpkg (filename)`)
 - *NetBSD*: [WendzelNNTPd port at pkgsrc](https://pkgsrc.se/wip/wendzelnntpd)
+- *Debian* and *Ubuntu*:
+    - [WendzelNNTPd at openSUSE Build Service](https://software.opensuse.org/download.html?project=home%3Acdpxe%3Awendzelnntpd&package=wendzelnntpd)
+    (provides the packages wendzelnntpd and wendzelnntpd-doc, the doc package contains the documentation in HTML and PDF format)
 
 ## Docker image for Linux
 

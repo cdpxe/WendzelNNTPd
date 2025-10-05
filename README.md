@@ -20,6 +20,9 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
      - Installation via `installpkg (filename)`
 - *NetBSD*:
   - WendzelNNTPd port at pkgsrc: [WendzelNNTPd-2.1.3](https://pkgsrc.se/wip/wendzelnntpd)
+- *Debian* und *Ubuntu*:
+  - [WendzelNNTPd at openSUSE Build Service](https://software.opensuse.org/download.html?project=home%3Acdpxe%3Awendzelnntpd&package=wendzelnntpd)
+    (provides the packages wendzelnntpd and wendzelnntpd-doc, the doc package contains the documentation in HTML and PDF format)
 - *Docker*:
   - [cdpxe/wendzelnntpd](https://hub.docker.com/r/cdpxe/wendzelnntpd)
 - *Windows*:
