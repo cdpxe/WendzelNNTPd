@@ -152,7 +152,7 @@ Find further information regarding the administration of WendzelNNTPd in [Runnin
 $ docker run --rm -v wendzelnntpd_config:/usr/local/etc/wendzelnntpd \
     cdpxe/wendzelnntpd create_certificate
 ```
-Finy further information in [Generating SSL certificates](#generating-ssl-certificates).
+Further information in [Generating SSL certificates](#generating-ssl-certificates).
 
 ##### Get the configuration file
 
@@ -222,7 +222,7 @@ Not supported.
 
 This documentation assumes that you have installed WendzelNNTPd with
 default paths to `/usr/local`. The installation prefix as well as the
-path for the subdirectories like `sbin`  or `share/man/man8` can be changed
+path for the subdirectories like `sbin` or `share/man/man8` can be changed
 when calling `./configure` or `make install`. Please consult 
 `./configure --help` for a list of available options.
 Here is an overview of the installed files as well as files which

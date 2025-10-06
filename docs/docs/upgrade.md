@@ -1,6 +1,6 @@
 # Upgrading
 
-## Upgrade fom version 2.1.y to 2.2.x
+## Upgrade from version 2.1.y to 2.2.x
 
 Please stop WendzelNNTPd and check the *wendzelnntpd.conf*. There is a
 new configuration style that breaks parts of the previous configuration
@@ -15,11 +15,11 @@ users and their passwords using **wendzelnntpadm**. Additionally, you
 must reapply any previously configured ACL roles and group memberships
 for the recreated users.
 
-The behaviour of `./configure` has changed. The environment variables
+The behavior of `./configure` has changed. The environment variables
 for enabling and disabling features are no longer supported and replaced
 by CLI flags. The support for the databases can now be enabled/disabled.
 Examples: *\--disable-mysql*, *\--enable-sqlite*, *\--enable-postgres*. The
-suppport for TLS can be disabled by *\--disable-tls*. You can use
+support for TLS can be disabled by *\--disable-tls*. You can use
 `./configure --help` for an overview of the available CLI flags.
 
 ## Upgrade from version 2.1.x to 2.1.y
@@ -95,7 +95,7 @@ database-engine sqlite3
 
 Now comes the tricky part. The install command should have created
 **/var/spool/news/wendzelnntpd/usenet.db**. However, it is an empty
-usenet database file in the new format. Now REPLACE that file with the
+Usenet database file in the new format. Now REPLACE that file with the
 file you use on your existing WendzelNNTPd installation, which uses the
 old 1.4.x format. Also copy all of your old **cdp\*** files and the old
 **nextmsgid** file from your Windows system/from your backup directory

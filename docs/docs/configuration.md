@@ -28,7 +28,7 @@ not have to read this section.
 In the configuration file you will find a parameter called
 **database-engine**. You can choose to use either MySQL or SQLite as the
 backend storage system by appending either **sqlite** or **mysql**.
-Experimental support for PostgreSQL can be activiated with **postgres**.
+Experimental support for PostgreSQL can be activated with **postgres**.
 ```ini
 database-engine mysql
 ```
@@ -208,7 +208,7 @@ The option `tls-verify-client` enables mTLS, which accepts the following options
 - none: the client certificate is neither requested nor validated by the server
 
 The option `tls-verify-client-depth` defines the depth of the validation of the certificate chain.
-It needs to be set to 0 if selfsigned certificates are used.
+It needs to be set to 0 if selfi-signed certificates are used.
 
 It is possible to check the client certificates against a certificate revocation list (CRL).
 The option `tls-crl` enables CRL checking, which accepts the following options:
@@ -269,7 +269,7 @@ information about what is happening, you can uncomment the
 ```ini
 ; Uncomment 'verbose-mode' if you want to find errors or if you
 ; have problems with the logging subsystem. All log strings are
-; written to stderr too, if verbose-mode is set. Additionally all
+; written to stderr too, if verbose-mode is set. Additionally, all
 ; commands sent by clients are written to stderr too (but not to
 ; logfile)
 verbose-mode

@@ -227,7 +227,7 @@ done.
 ## Access Control List Administration (in case the standard NNTP authentication is not enough)
 
 Welcome to the advanced part of WendzelNNTPd. WendzelNNTPd includes a
-powerful role based access control system. You can either only use
+powerful role-based access control system. You can either only use
 normal access control lists where you can configure which user will have
 access to which newsgroup. Or you can use the advanced role system: You
 can add users to roles (e.g., the user "boss99" to the role
@@ -291,7 +291,7 @@ done.
 If you have many users, some of them should have access to the same
 newsgroup (e.g., the developers of a new system should have access to
 the development newsgroup of the system). With roles you do not have to
-give every user explicit access to such a group. Instead you add the
+give every user explicit access to such a group. Instead, you add the
 users to a role and give the role access to the group. (One advantage is
 that you can easily give the complete role access to another group with
 only one command instead of adding each of its users to the list of
@@ -439,7 +439,7 @@ done.
 
 #### Saving time
 
-As mentioned above, you can safe time by using roles. For instance, if
+As mentioned above, you can save time by using roles. For instance, if
 you add a new developer to the system, and the developer should have
 access to the two groups "project-x.discussion" and "project-x.support",
 you do not have to assign the user to both (or even more) groups by

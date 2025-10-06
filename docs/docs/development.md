@@ -14,7 +14,7 @@ $ make docker-dev-build
 $ make docker-dev-run
 ```
 
-To stop the Docker container you can use the following command:
+To stop the Docker container, you can use the following command:
 ```console
 $ make docker-dev-stop
 ```
