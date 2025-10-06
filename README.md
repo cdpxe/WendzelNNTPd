@@ -6,15 +6,11 @@ This server is tailored for retro computing people as well as small workgroups, 
 
 ## Download
 
-##### Current Development Version
+##### Source Code Downloads
+ - Stable Source (version 2.1.3) for Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
+ - Testing Source (version 2.2.0-alpha) for Linux/Unix/*BSD/POSIX: [Latest testing code](https://sourceforge.net/projects/wendzelnntpd/files/v2.2.0-alpha/) (v. 2.2.0-alpha -- tgz)
+ - Latest Development Code: [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd).
 
-The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) contains the latest version (2.2.0-alpha) that includes TLS support and several more enhancements.
-
-##### Stable Source (version 2.1.3)
-- Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
-
-#### Testing Source (version 2.2.0-alpha)
-- Linux/Unix/*BSD/POSIX: [Latest testing code](https://sourceforge.net/projects/wendzelnntpd/files/v2.2.0-alpha/) (v. 2.2.0-alpha -- tgz)
 
 ##### Packages & Executables
 - *Slackware Linux* (v. 2.1.2/2.1.3): 
