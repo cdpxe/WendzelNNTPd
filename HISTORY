@@ -3,9 +3,12 @@ WendzelNNTPd History:
 
 upcoming:
 
-??-???-20?? - WendzelNNTPd 2.2 released! First major step since 2021.
-              XX,XXXX LOC. Added TLS support, autotools replaced the
-              configure script, several bugs have been fixed. Network
+06-Oct-2025 - WendzelNNTPd 2.2 (alpha) released! First major advancement
+              since 2021. C. 11,000 LOC.
+			  Added TLS support, several packages, Docker support,
+              autotools replaced the configure script, several bugs have
+			  been fixed. Installation, upgrade, deinstallation
+              procedures and manpages have been revised/added. Network
               settings can now be configured much more fine-granular.
               Experimental Postgres support was added. Code-cleanup
               was done and documentation was improved as well.
