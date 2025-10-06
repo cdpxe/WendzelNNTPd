@@ -58,7 +58,7 @@ the server as the message counter would be corrupted otherwise!
 
 .SS Network settings
 \fIwendzelnntpd\fR can listen on multiple interfaces and ports with
-different configurations simultaniously. The configuration needs to
+different configurations simultaneously. The configuration needs to
 specify one connector per interface and port. Each connector block
 starts with '<connector>' and ends with '</connector>' and can contain
 the following options.
