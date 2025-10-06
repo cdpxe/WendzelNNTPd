@@ -13,6 +13,9 @@ The [Git repository's master branch](https://github.com/cdpxe/WendzelNNTPd) cont
 ##### Stable Source (version 2.1.3)
 - Linux/Unix/*BSD/POSIX: [Latest stable release code](https://sourceforge.net/projects/wendzelnntpd/files/v2.1.3/) (v. 2.1.3 -- tgz)
 
+#### Testing Source (version 2.2.0-alpha)
+- Linux/Unix/*BSD/POSIX: [Latest testing code](https://sourceforge.net/projects/wendzelnntpd/files/v2.2.0-alpha/) (v. 2.2.0-alpha -- tgz)
+
 ##### Packages & Executables
 - *Slackware Linux* (v. 2.1.2/2.1.3): 
   - Slackware: Slackbuilds.org Build Script [Slackware 14.2](https://slackbuilds.org/repository/14.2/network/wendzelnntpd/), [Slackware 15.0](https://slackbuilds.org/repository/15.0/network/wendzelnntpd/?search=wendzelnntpd)
