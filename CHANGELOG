@@ -29,7 +29,7 @@ FIXES:
    rare errors.
  - Fixed two buffer overflows of PR#44; thanks to @oleludwig
  - Once xhdr requested "date", all following responses were interpreted
-   as "date" format, too.  Solved this by resettting inf->speccmd = 0;
+   as "date" format, too.  Solved this by resetting inf->speccmd = 0;
  - Make sure that Sqlite3 statements with quotes are double-escaped to
    prevent SQL injections. *** security fix ***
  - Fix database check in src/include/main.h, thx to @Christian Barthel.
@@ -81,7 +81,7 @@ MISC:
  - Fixed some typos in CHANGELOG and HISTORY files.
  - Improved the documentation.
  - Installed atomic switches for SIGTERM and SIGHUP. It is now a 
-   statefull kill. SIGHUP can be used to signal conditions in future.
+   stateful kill. SIGHUP can be used to signal conditions in future.
    Thanks to @SvenLie for the patch.
  - Rewrite the configure-script with autoconf (thanks to @oleludwig):
    - Generate configure with autoconf from autoconf.ac.
@@ -100,7 +100,7 @@ MISC:
      - --enable-postgres replaces POSTGRES=YES
    - Compiler optimizations (-O2) are enabled by default when compiling
      with gcc.
-   - The Makefile uses standardised variables from autoconf for the
+   - The Makefile uses standardized variables from autoconf for the
      compiler flags and installation directories like @sysconfdir@ for the
      configfiles, @sbindir@ for the binaries, @docdir@ for the
      documentation and @mandir@ for the manfiles.
@@ -127,7 +127,7 @@ MISC:
    anymore. Pass for example "-m 0700" to the install command if special
    permissions are needed or leave it out if the defaults from
    @INSTALL_PROGRAM@ and @INSTALL_DATA@ are enough. This makes it possible
-   to change the behaviour by overriding the variables for INSTALL_PROGRAM
+   to change the behavior by overriding the variables for INSTALL_PROGRAM
    and INSTALL_DATA (thanks to @oleludwig).
  - Do not change the owner and group of the created files and directories
    in the make install target. This change makes it possible to run
@@ -138,7 +138,7 @@ MISC:
  - Remove the getver.sh script. The make target print_version uses
    variables from autoconf instead (thanks to @oleludwig).
  - Use "-n" instead of "-g" as the flag for the sort command in the Make
-   target count because it is standardised and results in the same sorting
+   target count because it is standardized and results in the same sorting
    (thanks to @oleludwig).
  - Also update the manpages when calling "make upgrade" (thx @oleludwig).
  - Refactor make targets lex.yy.o and config.tab.o to avoid build failures
@@ -276,7 +276,7 @@ MISC:
  MISC:
  - Improved the 1.4.x -> 2.0.x upgrade documentation (thx to @Ann).
  - Performed other tiny improvements in the documentation.
- - Dont show 'read uselessinput' when asking for RETURN in make upgrade
+ - Don't show 'read uselessinput' when asking for RETURN in make upgrade
  - Improved hints in ./configure for disabling MySQL and SQLite3 support
  - Performed a cleanup of several text files in base directory
 
@@ -284,7 +284,7 @@ MISC:
  SECURITY FIXES:
  - Shut down connection in case peer disconnects while the posting
    is received to prevent loops. However, no Usenet client is known
-   to me that does this. It must be explicitely caused by an
+   to me that does this. It must be explicitly caused by an
    attacker or a client-side software failure.
    This is a security-fix release and published immediately after the
    problem was recognized.
@@ -324,13 +324,13 @@ MISC:
  NOTES:
  - Improved create_code_pkg.sh (only useful for developers); current
    version has to be defined only in /src/include/main.h for future
-   releases instead of additionally defining the verison in
+   releases instead of additionally defining the version in
    create_code_pkg.sh.
  MISC:
  - Be nice to TELNET posters -- the select() timeout value of 1s was
-   definetly too low. Now a better algorithm for receiving posting data
+   definitely too low. Now a better algorithm for receiving posting data
    was implemented.
- - Let 'make clean' also remove unneded files in docs/ and docs/docs/.
+ - Let 'make clean' also remove unneeded files in docs/ and docs/docs/.
  FIXES:
  - Fixed a bug related to the MySQL db_abstraction that could cause
    the server to exit. (thx to @rk for reporting this bug)
@@ -385,14 +385,14 @@ MISC:
    robust.
  - Fixed a format string where an unsigned int was included using %i
    instead of %u.
- - Fixed GROUP behaviour (now the first article in the group is auto-
+ - Fixed GROUP behavior (now the first article in the group is auto-
    selected like RFC 977 wants it)
- - Fixed cathing 'LIST NEWSGROUPS' -> returns 502 now
+ - Fixed catching 'LIST NEWSGROUPS' -> returns 502 now
  - NEWNEWS command is now catched and returns 502 since not implemented
    instead of 500.
  - Fixed HELP output and added missing commands
- - If the server is not configured to use authentification, and a user
-   tries to authentify nevertheless, and the authentification fails,
+ - If the server is not configured to use authentication, and a user
+   tries to authentify nevertheless, and the authentication fails,
    then don't behave like the server is in auth mode for this client
    and the client is not able to execute the usual NNTP commands.
    Instead catch this behavior and act as configured.
@@ -471,7 +471,7 @@ MISC:
  - GUI: Check fread() return value when reading the config file.
  - GUI: compile script needs to check for ../../Makefile.inc to pre-
    vent an empty CONFDIR value if Makefile.inc does not exist (this
-   occours if someone tries to build the GUI before running configure).
+   occurs if someone tries to build the GUI before running configure).
  ADDED FEATURES:
  - 'wendzelnntpadm delete <newsgroup>' now deletes all postings that
    are associated with this newsgroup only(!) too as well as all
@@ -485,7 +485,7 @@ MISC:
  - GUI: improved adjustment of elements
  - Added a HISTORY file
  - Tiny code cleanup was done; tiny_doc.txt added (lists internal
-   functions I don't wan't to forget)
+   functions I don't want to forget)
  - Added a README file that includes the URL to the documentation
 
 1.4.3-stable "Alice's Adventures in Crashdump Land II" : 16-Aug-2009
@@ -651,10 +651,10 @@ MISC:
 
 1.0.5-stable "Who cares about IKNZ?" release : 05-Dec-2007
  FIXES:
- - added an important bugfix (discovered and patch sent by Kristijan
+ - added an important bugfix. Discovered and patch sent by Kristijan
    Smiljanic to prevent that wendzelnntpd stops working after 27
    posted messages because of a read error on windoze. Win needs a "b"
-   for the binary mode when fopen'ing files.
+   for the binary mode when fopen'ing files. Thx.
  MISC:
  - added environment var support to configure script, Makefile and
    the path header file to make it possibly to place installations
@@ -664,7 +664,7 @@ MISC:
    packages for Linux/*BSD) possibly by letting the user set the env
    variable FAKECDIR (what places the config file in a the specified
    dir but the daemon will look for it on the real place specified in
-   CONFDIR). Normal users do normaly NOT need that but I plan to
+   CONFDIR). Normal users do normally NOT need that but I plan to
    provide an OpenBSD port and this will help me a lot with it.
  - removing installer script install.sh
  - added 'install' target to the Makefile
@@ -690,7 +690,7 @@ MISC:
 1.0.2-stable "IKNZ knows everything!" release : 02-Sep-2007
  MISC:
  - make all functions only used within a file 'static'
- - removed two unneded functions (welcome() and getopenfilelen()) from
+ - removed two unneeded functions (welcome() and getopenfilelen()) from
    xyria.c, what left xyria.c empty ;-) -> I removed xyria.c from the
    project.
  - merged libCDPStrings into the main code for the win32 version too
@@ -701,7 +701,7 @@ MISC:
    The Send() function still uses pthread_exit() but this is the ONLY
    function left!
  - removed two unused global vars in server.c
- - remove two unneded -lt zero checks for unsigned vars min+max in
+ - remove two unneeded -lt zero checks for unsigned vars min+max in
    docmd_xover (atoi() only returns >= 0 too, what makes this check
    senseless)
  - in w32trial.c: only count the newsgroups to check if we have a
@@ -742,7 +742,7 @@ MISC:
  - implement file permission checks for all files the server opens
    using fopen(). Also check if the file is a symbolic link to pre-
    vent symlink attacks (or at least report it to the admin)
- - remove all unneded trailing \n's in DO_SYSL calls since \n is
+ - remove all unneeded trailing \n's in DO_SYSL calls since \n is
    auto-generated
  - bugfix: allow multiple newsgroups per posting within the 'News-
    groups:' line of the NNTP header
@@ -768,7 +768,7 @@ MISC:
  - removed auth-user + auth-pass
  - implemented multi-user authentication trough SQL backend
  - added user management functionality in wendzelnntpadm
- - log entries now include the date wihin the timestamp
+ - log entries now include the date within the timestamp
 
 2007a-beta5: 12-Jun-2007
  - Win32 fix for the nextmsg id file
@@ -918,7 +918,7 @@ MISC:
  - added a function for writing posts to a file
  - added a function to get and set the message-ids
  - added a function to get and set the local group-message-ids
- - check if newsgroup names are realy valid
+ - check if newsgroup names are really valid
 
 0.0.3-alpha: 23.10.2004; 1102 loc
  - admin-tool with 'create' function for newsgroups
