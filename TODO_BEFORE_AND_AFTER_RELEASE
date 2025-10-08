@@ -14,4 +14,4 @@ After release:
     and wendzelnntpd_<version>-1.debian.tar.xz to the repository on https://build.opensuse.org
     so that the Open Build Service builds the Debian packages and repository for the new version.
   - Change the version to a new prerelease version and set a new releasename in configure.ac.
-  - Create a new changelog entry in package/debian/changelog by calling `make add_new_version_to_debian_changelog`.
+  - Create a new changelog entry in packages/debian/changelog by calling `make add_new_version_to_debian_changelog`.
