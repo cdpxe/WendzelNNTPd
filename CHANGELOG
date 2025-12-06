@@ -2,6 +2,17 @@ WendzelNNTPd ChangeLog:
 
 ----------------- version 2.x ------------------
 
+2.2-beta "Bad Woerishofen" : ??-???-20??
+NOTES:
+ This version is not configured in the code yet.
+ADDED FEATURES:
+ - nothing so far.
+FIXES:
+ - nothing so far.
+MISC:
+ - Tiny improvements on the notes for upgrading an outdated 1.4.x
+   Installation to a less-outdated 2.0 installation.
+
 2.2-alpha "Bad Woerishofen" : 06-Oct-2025
 NOTES:
  This release was made possible due to extensive contributions by
