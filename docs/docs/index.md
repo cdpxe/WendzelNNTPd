@@ -100,7 +100,8 @@ See the [*CONTRIBUTING* file](https://github.com/cdpxe/WendzelNNTPd/blob/master/
 ## History
 
 The project started in 2004 and was written by [Steffen Wendzel](https://www.wendzel.de).
-Version 1.0 was released in 2007, version 2.0 in 2011, finally version 2.1 in 2021.
+Version 1.0 was released in 2007, version 2.0 in 2011. Ten years later (2021), version 2.1 was released.
+The current version 2.2 was released in autumn of 2025.
 
 Since around 2018 the development was strongly supported by Wendzel's students at the
 [University of Hagen](https://en.wikipedia.org/wiki/University_of_Hagen). See the
