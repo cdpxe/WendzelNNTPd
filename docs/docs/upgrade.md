@@ -93,16 +93,17 @@ database-engine sqlite3
 
 ##### Third Step:
 
-Now comes the tricky part. The install command should have created
+Now comes the tricky part. The `make install` command should have created
 **/var/spool/news/wendzelnntpd/usenet.db**. However, it is an empty
 Usenet database file in the new format. Now REPLACE that file with the
 file you use on your existing WendzelNNTPd installation, which uses the
 old 1.4.x format. Also copy all of your old **cdp\*** files and the old
-**nextmsgid** file from your Windows system/from your backup directory
-to **/var/spool/news/wendzelnntpd/**.
+**nextmsgid** file from your 1.4.x installation (either WendzelNNTPd's
+directory in your Windows installation or your Linux/*nix backup directory)
+to **/var/spool/news/wendzelnntpd/** of your new 2.0 environment.
 
 The following step is a very dirty hack but I hope it works for you. It
-is not 100% perfect as important table columns are then still of the
+is not perfect as important table columns are then still of the
 type 'STRING' instead of the type 'TEXT'!
 
 Load the sqlite3 tool with your replaced database file:
@@ -111,7 +112,7 @@ $ sudo sqlite3 /var/spool/news/wendzelnntpd/usenet.db
 ```
 
 This will open the new file in editing mode. We now add the tables which
-are not part of v.1.4.x to your existing database file. Therefore enter
+are not part of v.1.4.x to your existing database file. Therefore, enter
 the following commands:
 ```sql
 CREATE TABLE roles (role TEXT PRIMARY KEY);
@@ -124,8 +125,8 @@ CREATE TABLE acl_roles (role TEXT, ng TEXT, PRIMARY KEY(role, ng));
 ##### Fix Postings
 
 You will probably see no post bodies right now if posts are requested by
-your client. Therefore, switch into **/var/spool/news/wendzelnntpd** and
-run (as superuser) this command, it will replace the broken trailings
+your client. Therefore, go to **/var/spool/news/wendzelnntpd** and
+run (as superuser) the following command, it will replace the broken trailings
 with corrected ones:
 ```console
 $ cd /var/spool/news/wendzelnntpd
@@ -137,17 +138,20 @@ head -n $num new > $filn; done
 
 ##### Last Step (Checking whether it works!):
 
-First check, whether the database file is accepted at all:
+First, check whether the database file is accepted at all:
 ```console
 $ sudo wendzelnntpadm listgroups
 ```
 
-It should list all your newsgroups
+The previous command should list all your newsgroups.
+
+Further, the following command should list all existing users:
+
 ```console
 $ sudo wendzelnntpadm listusers
 ```
+Accordingly,
 
-It should list all existing users. Accordingly
 ```console
 $ sudo wendzelnntpadm listacl
 ```
@@ -157,9 +161,9 @@ but if no error message appears, the related tables are now part of your
 database file!).
 
 Now start WendzelNNTPd via `sudo wendzelnntpd` and try to connect with
-a NNTP client to your WendzelNNTPd and then try reading posts, sending
-new posts and replying to these posts.
+an NNTP client to your WendzelNNTPd server and then try reading posts,
+sending new posts and replying to these posts.
 
 If this works, you can now run v2.x on 32bit and 64bit Linux :)
-Congrats, you made it and chances are you are the second user who did
-that. Let me know via e-mail if it worked for you.
+Congrats, you made it and chances are that you are the second non-developer
+user who did that! :-) Let me know via e-mail if it worked for you.
