@@ -2,8 +2,12 @@ WendzelNNTPd was originally written by Steffen Wendzel (since 2004) who is
 also the maintainer of this project.
    mail: steffen (at) wendzel (dot) de | web: https://www.wendzel.de
 
+If you contributed to the project but are not mentioned below: please drop
+me an e-mail and I will be happy to add you! :)
+
 Major Contributors (in chronological order):
-  - Ole Ludwig (FernUniversität in Hagen, 2025-):
+
+14. Ole Ludwig (FernUniversität in Hagen, 2025):
      - autotools (configure) replacement of original configure script
      - several bugfixes
      - sighandler improvement
@@ -16,15 +20,30 @@ Major Contributors (in chronological order):
        openSUSE build service)
      - revised/extended the set of manpages
      - ... and several more enhancements, cf. CHANGELOG!
-  - Sven Liebert (FernUniversität in Hagen, 2024):
+13. Sven Liebert (FernUniversität in Hagen, 2024):
      - Docker support for development purposes
      - improved signal handling
-  - Sven Liebert, Michael Dunsky, and Christoph Grill (all FernUniversität in Hagen, 2022-2024):
-     - TLS/NTTPS/SNNTP support
-  - Christian Barthel (2023):
+12. Christian Barthel (2023):
      - Postgres support (currently experimental) and code clean-up
-  - @deavmi (2018-2019):
-     - code clean-up and documentation fixes (2018-2019)
+11. Michael Baeuerle (since 2023):
+     - provision of NetBSD port to pkgsrc
+     - provision of multiple patches
+8-10.Sven Liebert,
+     Michael Dunsky, and
+     Christoph Grill (all FernUniversität in Hagen, 2022-2024):
+     - TLS/NTTPS/SNNTP support
+ 7. @deavmi (2018-2019):
+     - code clean-up and documentation fixes
+ 6. @pintman (2015):
+     - motivated configurable posting size limit (feature request)
+ 5. @rk (2012):
+     - reported multiple bugs
+ 4. Ann Lynnworth (2009-2015)
+     - bug reporting, testing, enduser feedback, helped improving documentation
+ 3. Nils Dabrock (2009):
+     - bug report
+ 2. Kristijan Smiljanic (2008):
+     - contributed PHP-based database converter script for the 1.3.0-release
+ 1. killerfox (2005):
+     - early tests of v. 0.1.4-beta under Solaris and Linux
 
-Additional patches by:
-  - Michael Baeuerle (NetBSD pkgsrc)

@@ -14,6 +14,7 @@ MISC:
    - Tiny improvements on the notes for upgrading an outdated 1.4.x
      installation to a less-outdated 2.0 installation.
    - Minor editorial improvements.
+   - Added historic contributors to AUTHORS file.
 
 2.2-alpha "Bad Woerishofen" : 06-Oct-2025
 NOTES:
@@ -458,7 +459,7 @@ MISC:
  - Added a pdf copy of the online documentation to the tarball.
 
 1.4.6-stable "Jupiter" : 05-Mar-2010
- FIXES:
+ SELECTED BACKPORT FIXES FROM 2.0.x:
   - Accept "From:" lines with mutations too (backport fix from 2.0.0
      development branch).
 
