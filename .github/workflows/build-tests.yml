@@ -346,8 +346,9 @@ jobs:
         run: cd unittesting && ./create-client-cert.sh
       - name: get addr ipv4 revised
         run: |
-          IPV4=$(ssh ${{ matrix.distribution }} "/sbin/ifconfig | awk '/inet / && !/127.0.0.1/ { print \$2; exit }'")
+          IPV4=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet / && !/127.0.0.1/ { print \$2; exit }"')
           echo "ipv4=$IPV4" >> $GITHUB_ENV
+          echo "ipv4=$IPV4"
       - name: get container ipv6
         run: |
           IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
