@@ -344,10 +344,10 @@ jobs:
           && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting && ./create-client-cert.sh
-      - name: get vm ipv4
-        run: >
-          echo "ipv4=$(sudo virsh net-dhcp-leases default | grep ipv4 | tail -1 | grep -o -E '192.168.[0-9]*.[0-9]*')"
-          >> $GITHUB_ENV
+      - name: get addr ipv4 revised
+        run: |
+          IPV4=$(ssh ${{ matrix.distribution }} "/sbin/ifconfig | awk '/inet / && !/127.0.0.1/ { print \$2; exit }'")
+          echo "ipv4=$IPV4" >> $GITHUB_ENV
       - name: get container ipv6
         run: |
           IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
