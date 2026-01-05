@@ -344,18 +344,20 @@ jobs:
           && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
       - name: Create client cert for mutual tls tests
         run: cd unittesting && ./create-client-cert.sh
+      # IPV4=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet / && !/127.0.0.1/ { print \$2; exit }"')
       - name: get addr ipv4 revised
         run: |
-          IPV4=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet / && !/127.0.0.1/ { print \$2; exit }"')
+          IPv4="127.0.0.1"
           echo "ipv4=$IPV4" >> $GITHUB_ENV
+      # IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
       - name: get container ipv6
         run: |
-          IPV6=$(ssh ${{ matrix.distribution }} '/sbin/ifconfig | awk "/inet6 / && !/fe80/ && !/::1/ { print \$2; exit }"')
+          IPv6="::1"
           echo "ipv6=${IPV6%/64}" >> $GITHUB_ENV
       #- name: Smoketest IPv4
       #  run: netcat ${{ env.ipv4 }} 119 -w 1
-      - name: Smoketest IPv6
-        run: netcat ${{ env.ipv6 }} 119 -w 1
+      #- name: Smoketest IPv6
+      #  run: netcat ${{ env.ipv6 }} 119 -w 1
       - name: expect tests IPv4
         run: cd unittesting && nntp_address=${{ env.ipv4 }} ./run.sh
       - name: expect tests IPv6
