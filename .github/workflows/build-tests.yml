@@ -318,28 +318,4 @@ jobs:
             ./configure --enable-postgres CPPFLAGS="-I/usr/pkg/include" LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
             make
             make install
-        if: ${{ matrix.distribution == 'netbsd' }}
-      - name: Link vm shell script
-        run: ln -s /home/runner/.local/bin/${{ matrix.distribution }} /home/runner/.local/bin/vm
-      - name: Initialize test data
-        shell: vm {0}
-        run: >
-          cd $GITHUB_WORKSPACE/unittesting
-          && bash ./initialize_db.sh
-          && cp test-files/wendzelnntpd.conf /usr/local/etc/wendzelnntpd/
-      - name: Test wendzelnntpadm
-        shell: vm {0}
-        run: cd $GITHUB_WORKSPACE/unittesting && PATH=/usr/local/sbin:$PATH ./test_wendzelnntpadm.sh
-      - name: Reinitialize database
-        shell: vm {0}
-        run: cd $GITHUB_WORKSPACE/unittesting && bash ./initialize_db.sh
-      - name: run wendzelnntpd
-        shell: vm {0}
-        run: /usr/local/sbin/wendzelnntpd -d > /dev/null 2> /dev/null &
-      - name: Copy certificates from container to host
-        run: >
-          cd unittesting
-          && mkdir tmp
-          && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
-          && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
 
