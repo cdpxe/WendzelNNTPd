@@ -10,6 +10,11 @@ ADDED FEATURES:
 FIXES:
  - nothing so far.
 MISC:
+ - Github workflows:
+   - Temporarily disabled *BSD unit-testings in the Github workflows,
+     except for the plain build test. No changes in the actual code
+     were made, but a new issue #65 was added, see:
+     https://github.com/cdpxe/WendzelNNTPd/issues/65
  - Documentation:
    - Tiny improvements on the notes for upgrading an outdated 1.4.x
      installation to a less-outdated 2.0 installation.
