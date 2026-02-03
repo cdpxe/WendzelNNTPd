@@ -342,6 +342,4 @@ jobs:
           && mkdir tmp
           && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca.crt tmp/ca-self.crt
           && scp ${{ matrix.distribution }}:/usr/local/etc/wendzelnntpd/ssl/ca-key.pem tmp/ca-self.key
-      - name: Create client cert for mutual tls tests
-        run: cd unittesting && ./create-client-cert.sh
 
